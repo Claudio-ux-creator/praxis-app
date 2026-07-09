@@ -1,0 +1,5 @@
+- [ ] Scaffold the project with TypeScript, Node.js, Express, and Prisma.
+- [ ] Keep project files in the current workspace root.
+- [ ] Do not add unrelated dependencies.
+- [ ] Ensure README and project metadata are present.
+- [ ] Verify that the project builds successfully.

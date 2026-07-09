@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Patient {
+  id                 String @id @default(uuid())
+  versichertennummer String
+}
+
+model Employee {
+  id           String         @id @default(uuid())
+  name         String
+  role         String
+  availability Availability[]
+}
+
+model Availability {
+  id         String   @id @default(uuid())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId String
+  weekday    String
+  startTime  String
+  endTime    String
+  note       String?
+}

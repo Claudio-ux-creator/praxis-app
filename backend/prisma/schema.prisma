@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// -- Patient ----------------------------------
+model Patient {
+  id               Int    @id @default(autoincrement())
+  insuranceNumber  String @unique @map("insurance_number")
+  firstName        String @map("first_name")
+  lastName         String @map("last_name")
+  dateOfBirth      String @map("date_of_birth")
+  phone            String
+  email            String?
+  emailOptIn       Boolean @default(false) @map("email_opt_in")
+  lastConsultation String? @map("last_consultation")
+  noShowCount      Int    @default(0) @map("no_show_count")
+  parentAccountId  Int?   @map("parent_account_id")
+
+  parentAccount Patient?      @relation("ParentChild", fields: [parentAccountId], references: [id])
+  children      Patient[]     @relation("ParentChild")
+  appointments  Appointment[]
+  prescriptions Prescription[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("patients")
+}
+
+// -- Doctor -----------------------------------
+model Doctor {
+  id               Int    @id @default(autoincrement())
+  firstName        String @map("first_name")
+  lastName         String @map("last_name")
+  color            String?
+  acuteSlotsPerDay Int    @default(3) @map("acute_slots_per_day")
+
+  appointments Appointment[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("doctors")
+}
+
+// -- Appointment ------------------------------
+model Appointment {
+  id            Int    @id @default(autoincrement())
+  patientId     Int    @map("patient_id")
+  doctorId      Int    @map("doctor_id")
+  category      String
+  date          String
+  time          String
+  status        String @default("SCHEDULED")
+  bookingType   String @default("ONLINE") @map("booking_type")
+  mfaNote       String? @map("mfa_note")
+  bufferMinutes Int    @default(5) @map("buffer_minutes")
+
+  patient Patient @relation(fields: [patientId], references: [id])
+  doctor  Doctor  @relation(fields: [doctorId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("appointments")
+}
+
+// -- Prescription (Wiederholungsrezept) ------
+model Prescription {
+  id                  Int     @id @default(autoincrement())
+  patientId           Int     @map("patient_id")
+  medicationName      String  @map("medication_name")
+  dosage              String?
+  notes               String?
+  initiatedByMfaId    Int     @map("initiated_by_mfa_id")
+  responsibleDoctorId Int     @map("responsible_doctor_id")
+  status              String  @default("PENDING")
+  requestDate         String  @map("request_date")
+  approvedDate        String? @map("approved_date")
+  pickupAppointmentId Int?    @map("pickup_appointment_id")
+
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("prescriptions")
+}
+
+// -- Absence (Praxisschlieﬂung) --------------
+model Absence {
+  id            Int     @id @default(autoincrement())
+  type          String
+  doctorIds     String  @map("doctor_ids")
+  startDate     String  @map("start_date")
+  endDate       String  @map("end_date")
+  reason        String?
+  blocksBooking Boolean @default(true) @map("blocks_booking")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("absences")
+}
+
+// -- Staff (MFA / Arzt-User) -----------------
+model Staff {
+  id        Int    @id @default(autoincrement())
+  firstName String @map("first_name")
+  lastName  String @map("last_name")
+  role      String
+  doctorId  Int?   @map("doctor_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("staff")
+}
+
+// -- Question (Fragebogen-Frage) -------------
+model Question {
+  id           Int     @id @default(autoincrement())
+  category     String
+  questionText String  @map("question_text")
+  sortOrder    Int     @map("sort_order")
+  answerType   String  @default("text") @map("answer_type")
+  required     Boolean @default(false)
+
+  @@map("questions")
+}
+
+// -- AppointmentTypeConfig (Terminart-Konfig) -
+model AppointmentTypeConfig {
+  category                String  @id
+  name                    String
+  onlineBookable          Boolean @default(true) @map("online_bookable")
+  defaultDurationMinutes  Int     @default(20) @map("default_duration_minutes")
+  defaultBufferMinutes    Int     @default(5) @map("default_buffer_minutes")
+  maxQuestions            Int     @default(5) @map("max_questions")
+
+  @@map("appointment_type_configs")
+}

@@ -1,0 +1,12 @@
+{
+  ""version"": ""5.22.0"",
+  ""migrations"": [
+    {
+      ""id"": ""0001_init"",
+      ""checksum"": """",
+      ""started_at"": ""2026-07-05T00:00:00.000Z"",
+      ""applied_steps_count"": 1,
+      ""rolled_back_steps_count"": 0
+    }
+  ]
+}
