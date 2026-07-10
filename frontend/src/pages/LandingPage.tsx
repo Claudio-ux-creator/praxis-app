@@ -1,9 +1,38 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LandingPage() {
+  const navigate = useNavigate();
+  const [insuranceNumber, setInsuranceNumber] = useState("A123456789");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/patients/lookup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ insuranceNumber, dateOfBirth: dateOfBirth || undefined }),
+      }).then((r) => r.json());
+      if (res.success && res.data) {
+        navigate("/patient");
+      } else {
+        setError(res.error || "Patient nicht gefunden");
+      }
+    } catch {
+      setError("Verbindungsfehler");
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 p-4">
       <Card className="w-full max-w-md shadow-lg">
@@ -12,20 +41,36 @@ export default function LandingPage() {
           <CardDescription>Online-Terminverwaltung</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="insuranceNumber">Versichertennummer</Label>
-              <Input id="insuranceNumber" placeholder="z. B. A123456789" required />
+              <Input
+                id="insuranceNumber"
+                value={insuranceNumber}
+                onChange={(e) => setInsuranceNumber(e.target.value)}
+                placeholder="z. B. A123456789"
+                required
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Passwort</Label>
-              <Input id="password" type="password" placeholder="Passwort" required />
+              <Label htmlFor="dob">Geburtsdatum (optional)</Label>
+              <Input
+                id="dob"
+                type="date"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">Nur erforderlich bei mehreren Patienten mit gleicher Versichertennummer.</p>
             </div>
-            <Button type="submit" className="w-full">Anmelden</Button>
+            {error && <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive">{error}</div>}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Wird geprüft..." : "Anmelden"}
+            </Button>
           </form>
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            Praxis-Mitarbeiter? <a href="/mfa" className="text-primary underline">MFA-Login</a>
-          </p>
+          <div className="mt-4 space-y-2 text-center text-sm text-muted-foreground">
+            <p>Testzugang: <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">A123456789</code></p>
+            <p><a href="/mfa" className="text-primary underline">MFA-Login</a></p>
+          </div>
         </CardContent>
       </Card>
     </div>

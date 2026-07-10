@@ -123,7 +123,7 @@ export default function MFAReminders() {
                 <div>
                   <div className="font-medium">{r.patient_last_name}, {r.patient_first_name}</div>
                   <div className="text-xs text-muted-foreground">
-                    {r.appointment_date} um {r.appointment_time} Uhr · Dr. {r.doctor_last_name}
+                    {r.appointment_date} um {r.appointment_time} Uhr Â· Dr. {r.doctor_last_name}
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

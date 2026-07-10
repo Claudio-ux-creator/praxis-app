@@ -82,7 +82,7 @@ function categoryLabel(cat: string): string {
     PRESCRIPTION_PICKUP: "Rezept-Abholung",
     ACUTE: "Akut",
     BLOOD_DRAW: "Blutabnahme",
-    INITIAL: "Erstgespr�ch",
+    INITIAL: "Erstgespräch",
   };
   return map[cat] || cat;
 }
@@ -113,11 +113,11 @@ function statusLabel(status: string): string {
 
 function rxStatusBadge(status: string): { class: string; label: string } {
   const map: Record<string, { class: string; label: string }> = {
-    PENDING: { class: "bg-red-100 text-red-800 border-red-300", label: "?? Neu" },
-    IN_PROGRESS: { class: "bg-yellow-100 text-yellow-800 border-yellow-300", label: "?? In Pr�fung" },
-    APPROVED: { class: "bg-green-100 text-green-800 border-green-300", label: "?? Freigegeben" },
-    REJECTED: { class: "bg-gray-200 text-gray-700 border-gray-400", label: "? Abgelehnt" },
-    COLLECTED: { class: "bg-blue-100 text-blue-800 border-blue-300", label: "?? Abgeholt" },
+    PENDING: { class: "bg-red-100 text-red-800 border-red-300", label: "🔴 Neu" },
+    IN_PROGRESS: { class: "bg-yellow-100 text-yellow-800 border-yellow-300", label: "🟡 In Prüfung" },
+    APPROVED: { class: "bg-green-100 text-green-800 border-green-300", label: "🟢 Freigegeben" },
+    REJECTED: { class: "bg-gray-200 text-gray-700 border-gray-400", label: "⚪ Abgelehnt" },
+    COLLECTED: { class: "bg-blue-100 text-blue-800 border-blue-300", label: "🔵 Abgeholt" },
   };
   return map[status] || { class: "bg-gray-100 text-gray-700", label: status };
 }
@@ -170,7 +170,7 @@ export default function MFADashboard() {
     loadDashboard();
   }, [loadDashboard]);
 
-  // -- Status-�nderung Termin --------------------
+  // -- Status-Änderung Termin --------------------
   const handleStatusChange = async (appointmentId: number, newStatus: string) => {
     await patch("/appointments/" + appointmentId + "/status", { status: newStatus });
     loadDashboard();
@@ -185,7 +185,7 @@ export default function MFADashboard() {
     loadDashboard();
   };
 
-  // -- Rezept-Status �ndern ----------------------
+  // -- Rezept-Status ändern ----------------------
   const handleRxStatusChange = async (id: number, newStatus: string) => {
     await patch("/prescriptions/" + id + "/status", { status: newStatus });
     loadDashboard();
@@ -215,7 +215,7 @@ export default function MFADashboard() {
         <div className="flex items-center gap-3">
           <Badge variant="outline" className="text-sm">Heute, {today}</Badge>
           <Button size="sm" variant="outline" onClick={loadDashboard} disabled={loading}>
-            {loading ? "..." : "? Aktualisieren"}
+            {loading ? "..." : "🔄 Aktualisieren"}
           </Button>
         </div>
       </div>
@@ -247,7 +247,7 @@ export default function MFADashboard() {
           <CardContent className="space-y-3 max-h-[70vh] overflow-y-auto">
             {!dashboard || dashboard.todaysAppointments.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4 text-center">
-                Keine Termine f�r heute.
+                Keine Termine für heute.
               </p>
             ) : (
               dashboard.todaysAppointments.map((apt) => (
@@ -261,7 +261,7 @@ export default function MFADashboard() {
                         {apt.patient_last_name}, {apt.patient_first_name}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {apt.insurance_number} � {apt.phone}
+                        {apt.insurance_number} · {apt.phone}
                       </div>
                     </div>
                     <div className="text-right">
@@ -279,7 +279,7 @@ export default function MFADashboard() {
                     />
                     Dr. {apt.doctor_last_name}
                     <span className="ml-auto">
-                      {apt.booking_type === "PHONE" ? "?? Tel." : "?? Online"}
+                      {apt.booking_type === "PHONE" ? "📞 Tel." : "🌐 Online"}
                     </span>
                   </div>
 
@@ -309,7 +309,7 @@ export default function MFADashboard() {
                         }}
                         title="Notiz"
                       >
-                        ??
+📝
                       </Button>
                     </div>
                   </div>
@@ -322,7 +322,7 @@ export default function MFADashboard() {
 
                   {apt.no_show_count >= 2 && (
                     <div className="text-xs text-destructive font-medium">
-                      ?? No-Shows: {apt.no_show_count}
+                      ⚠️ No-Shows: {apt.no_show_count}
                     </div>
                   )}
                 </div>
@@ -344,7 +344,7 @@ export default function MFADashboard() {
               )}
             </CardTitle>
             <CardDescription>
-              Ampel-Workflow: ?? Neu ? ?? Pr�fung ? ?? Fertig
+              Ampel-Workflow: 🔴 Neu → 🟡 Prüfung → 🟢 Fertig
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 max-h-[70vh] overflow-y-auto">
@@ -384,7 +384,7 @@ export default function MFADashboard() {
                     </div>
 
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      ?? Dr. {rx.doctor_last_name}
+                      👨‍⚕️ Dr. {rx.doctor_last_name}
                       <span className="ml-auto">?? {rx.request_date}</span>
                     </div>
 
@@ -404,7 +404,7 @@ export default function MFADashboard() {
                           className="text-xs"
                           onClick={() => handleRxStatusChange(rx.id, ns)}
                         >
-                          {ns === "IN_PROGRESS" ? "?? Pr�fen" :
+                          {ns === "IN_PROGRESS" ? "?? Prüfen" :
                            ns === "APPROVED" ? "?? Freigeben" :
                            ns === "REJECTED" ? "? Ablehnen" :
                            ns === "COLLECTED" ? "?? Abgeholt" : ns}
@@ -435,7 +435,7 @@ export default function MFADashboard() {
           <CardContent className="space-y-4">
             {!dashboard || dashboard.acuteSlotInfo.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4 text-center">
-                Keine Daten verf�gbar.
+                Keine Daten verfügbar.
               </p>
             ) : (
               dashboard.acuteSlotInfo.map((slot) => {
@@ -490,7 +490,7 @@ export default function MFADashboard() {
             <CardHeader>
               <CardTitle className="text-base">Notiz zu Termin</CardTitle>
               <CardDescription>
-                {selectedAppointment.patient_last_name}, {selectedAppointment.patient_first_name} � {selectedAppointment.time} Uhr
+                {selectedAppointment.patient_last_name}, {selectedAppointment.patient_first_name} – {selectedAppointment.time} Uhr
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -520,7 +520,7 @@ export default function MFADashboard() {
             <CardHeader>
               <CardTitle className="text-base">Neues Rezept anlegen</CardTitle>
               <CardDescription>
-                Rezeptanfrage f�r einen Patienten erfassen
+                Rezeptanfrage für einen Patienten erfassen
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">

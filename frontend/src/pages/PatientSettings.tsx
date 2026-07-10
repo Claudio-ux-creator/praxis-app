@@ -141,21 +141,21 @@ export default function PatientSettings() {
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <div className="flex items-start gap-2">
-            <span className="mt-0.5">??</span>
+            <span className="mt-0.5 text-lg">📧</span>
             <div>
               <span className="font-medium">24h-Erinnerung</span>
               <p className="text-xs text-muted-foreground">Am Vortag Ihres Termins erhalten Sie eine E-Mail mit Datum, Uhrzeit und Arzt.</p>
             </div>
           </div>
           <div className="flex items-start gap-2">
-            <span className="mt-0.5">?</span>
+            <span className="mt-0.5 text-lg">🔒</span>
             <div>
               <span className="font-medium">Keine Speicherung</span>
               <p className="text-xs text-muted-foreground">Ihre Daten werden nur zur Terminverwaltung genutzt und nicht an Dritte weitergegeben.</p>
             </div>
           </div>
           <div className="flex items-start gap-2">
-            <span className="mt-0.5">??</span>
+            <span className="mt-0.5 text-lg">📧</span>
             <div>
               <span className="font-medium">DSGVO-konform</span>
               <p className="text-xs text-muted-foreground">Sie koennen Ihre Einwilligung jederzeit widerrufen.</p>

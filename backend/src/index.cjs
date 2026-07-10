@@ -7,6 +7,15 @@ const fs = require('fs');
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static('../frontend/dist'));
+
+// SPA-Fallback: alle nicht-API-Routen -> index.html
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) return next();
+  res.sendFile('index.html', { root: '../frontend/dist' }, (err) => {
+    if (err) next();
+  });
+});
 
 const DB_PATH = path.resolve(__dirname, '../prisma/praxis.db');
 const dbDir = path.dirname(DB_PATH);

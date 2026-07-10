@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { get, post, patch } from "@/lib/api";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // -- Typen -------------------------------------
 interface Doctor {
@@ -55,15 +56,15 @@ interface AppointmentResult {
 type Step = "login" | "category" | "seriesChoice" | "seriesTemplate" | "doctor" | "datetime" | "questions" | "confirm" | "overview";
 
 const CATEGORIES = [
-  { value: "CHECKUP", label: "Vorsorge", icon: "??" },
-  { value: "CONSULTATION", label: "Beratung", icon: "??" },
-  { value: "VACCINATION", label: "Impfung", icon: "??" },
-  { value: "PRESCRIPTION_PICKUP", label: "Rezept-Abholung", icon: "??" },
+  { value: "CHECKUP", label: "Vorsorge", icon: "ü©∫" },
+  { value: "CONSULTATION", label: "Beratung", icon: "üí¨" },
+  { value: "VACCINATION", label: "Impfung", icon: "üíâ" },
+  { value: "PRESCRIPTION_PICKUP", label: "Rezept-Abholung", icon: "üíä" },
 ];
 
 const STATUS_MAP: Record<string, string> = {
   SCHEDULED: "Geplant",
-  PENDING_CONFIRMATION: "Best‰tigung ausstehend",
+  PENDING_CONFIRMATION: "Best√§tigung ausstehend",
   CHECKED_IN: "Eingecheckt",
   IN_PROGRESS: "In Behandlung",
   COMPLETED: "Abgeschlossen",
@@ -84,6 +85,10 @@ export default function PatientPortal() {
   const [insuranceNumber, setInsuranceNumber] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [patientName, setPatientName] = useState("");
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const activeTab = location.pathname;
 
   // Booking state
   const [step, setStep] = useState<Step>("login");
@@ -241,7 +246,7 @@ export default function PatientPortal() {
 
     const missing = questions.filter((q) => q.required && !answers.find((a) => a.questionId === q.id)?.answer);
     if (missing.length > 0) {
-      setError("Bitte f¸ellen Sie alle Pflichtfelder aus.");
+      setError("Bitte f√ºellen Sie alle Pflichtfelder aus.");
       return;
     }
 
@@ -305,7 +310,7 @@ export default function PatientPortal() {
     if (res.success) {
       loadAppointments();
     } else {
-      setError(res.error || "Best‰tigung fehlgeschlagen");
+      setError(res.error || "Best√§tigung fehlgeschlagen");
     }
   };
 
@@ -328,6 +333,7 @@ export default function PatientPortal() {
   const handleBackToMenu = () => {
     setShowAppointments(false);
     setStep("overview");
+    navigate("/patient");
   };
 
   const today = new Date();
@@ -343,10 +349,10 @@ export default function PatientPortal() {
           <Card className="max-w-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-600">
-                ? Impfserie gebucht
+                ‚úÖ Impfserie gebucht
               </CardTitle>
               <CardDescription>
-                {s.templateName} ñ {s.appointments.length} Dosen
+                {s.templateName} ‚Äì {s.appointments.length} Dosen
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -363,11 +369,11 @@ export default function PatientPortal() {
                 ))}
               </div>
               <p className="text-xs text-muted-foreground">
-                ? Folgetermine m¸ssen Sie sp‰ter einzeln best‰tigen.
+                üí° Folgetermine m√ºssen Sie sp√§ter einzeln best√§tigen.
               </p>
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={handleBackToMenu}>
-                  ‹bersicht
+                  √úbersicht
                 </Button>
                 <Button className="flex-1" onClick={handleNewBooking}>
                   Weiteren Termin buchen
@@ -386,7 +392,7 @@ export default function PatientPortal() {
         <h1 className="text-2xl font-semibold">Mein Bereich</h1>
         <Card className="max-w-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-600">? Termin best‰tigt</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-green-600">‚úÖ Termin best√§tigt</CardTitle>
             <CardDescription>Ihre Buchung wurde erfolgreich gespeichert.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -410,7 +416,7 @@ export default function PatientPortal() {
             </div>
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={handleBackToMenu}>
-                ‹bersicht
+                √úbersicht
               </Button>
               <Button className="flex-1" onClick={handleNewBooking}>
                 Weiteren Termin buchen
@@ -449,22 +455,22 @@ export default function PatientPortal() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
-                ? Best‰tigung ausstehend
+                ‚è≥ Best√§tigung ausstehend
                 <Badge variant="secondary" className="ml-auto">
                   {myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").length}
                 </Badge>
               </CardTitle>
-              <CardDescription>Folgetermine einer Impfserie, die Sie best‰tigen m¸ssen</CardDescription>
+              <CardDescription>Folgetermine einer Impfserie, die Sie best√§tigen m√ºssen</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").map((apt) => (
                 <div key={apt.id} className="flex items-center justify-between rounded-lg border p-3">
                   <div>
-                    <div className="font-medium text-sm">Dosis {apt.series_dose_number} ñ {apt.date} um {apt.time} Uhr</div>
+                    <div className="font-medium text-sm">Dosis {apt.series_dose_number} ‚Äì {apt.date} um {apt.time} Uhr</div>
                     <div className="text-xs text-muted-foreground">Dr. {apt.doctor_last_name}</div>
                   </div>
                   <Button size="sm" onClick={() => handleConfirmDose(apt.id)} disabled={loading}>
-                    {loading ? "..." : "Best‰tigen"}
+                    {loading ? "..." : "Best√§tigen"}
                   </Button>
                 </div>
               ))}
@@ -480,7 +486,7 @@ export default function PatientPortal() {
             <Card key={groupId}>
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
-                  ?? {seriesName}
+                  üíâ {seriesName}
                 </CardTitle>
                 <CardDescription>{sorted.length} Dosen</CardDescription>
               </CardHeader>
@@ -524,7 +530,7 @@ export default function PatientPortal() {
           </Card>
         )}
 
-        <Button variant="outline" onClick={handleBackToMenu}>Zur¸ck zur ‹bersicht</Button>
+        <Button variant="outline" onClick={handleBackToMenu}>Zur√ºck zur √úbersicht</Button>
       </div>
     );
   }
@@ -538,13 +544,36 @@ export default function PatientPortal() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">
-          {step === "login" ? "Mein Bereich" : "Termin buchen"}
+          Patientenportal
         </h1>
         {patientName && (
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="ghost" onClick={async () => { await loadAppointments(); setShowAppointments(true); }}>
-              Meine Termine
-            </Button>
+            <div className="flex rounded-lg border bg-muted p-0.5">
+              <button
+                onClick={() => { setStep("overview"); setShowAppointments(false); navigate("/patient"); }}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  activeTab === "/patient" || activeTab === "/patient/" ? "bg-white text-primary shadow-sm" : "hover:text-foreground"
+                }`}
+              >√úbersicht</button>
+              <button
+                onClick={() => { setStep("category"); setShowAppointments(false); navigate("/patient/book"); }}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  step !== "login" && step !== "overview" && !showAppointments ? "bg-white text-primary shadow-sm" : "hover:text-foreground"
+                }`}
+              >Buchen</button>
+              <button
+                onClick={async () => { await loadAppointments(); setShowAppointments(true); navigate("/patient/appointments"); }}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  showAppointments ? "bg-white text-primary shadow-sm" : "hover:text-foreground"
+                }`}
+              >Termine</button>
+              <button
+                onClick={() => navigate("/patient/prescriptions")}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                  activeTab === "/patient/prescriptions" ? "bg-white text-primary shadow-sm" : "hover:text-foreground"
+                }`}
+              >Rezepte</button>
+            </div>
             <Badge variant="outline" className="text-sm">{patientName}</Badge>
           </div>
         )}
@@ -563,7 +592,7 @@ export default function PatientPortal() {
                 {i + 1}
               </span>
               <span className={i + 1 === currentIdx ? "font-medium text-foreground" : ""}>{label}</span>
-              {i < 3 && <span className="mx-1">?</span>}
+              {i < 3 && <span className="mx-1">‚Ä∫</span>}
             </span>
           ))}
         </div>
@@ -614,14 +643,14 @@ export default function PatientPortal() {
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="cursor-pointer transition-all hover:border-primary hover:shadow-md" onClick={() => handleSeriesChoice("single")}>
             <CardHeader>
-              <CardTitle className="text-lg">?? Einzeltermin</CardTitle>
+              <CardTitle className="text-lg">üíâ Einzeltermin</CardTitle>
               <CardDescription>Nur eine Impfung buchen</CardDescription>
             </CardHeader>
           </Card>
           <Card className="cursor-pointer transition-all hover:border-primary hover:shadow-md" onClick={() => handleSeriesChoice("series")}>
             <CardHeader>
-              <CardTitle className="text-lg">?? Impfserie</CardTitle>
-              <CardDescription>Mehrere Dosen im Voraus planen (FSME, Hepatitis B, Ö)</CardDescription>
+              <CardTitle className="text-lg">üìÖ Impfserie</CardTitle>
+              <CardDescription>Mehrere Dosen im Voraus planen (FSME, Hepatitis B, ‚Ä¶)</CardDescription>
             </CardHeader>
           </Card>
         </div>
@@ -634,7 +663,7 @@ export default function PatientPortal() {
             <Card key={tpl.id} className="cursor-pointer transition-all hover:border-primary hover:shadow-md" onClick={() => handleSeriesTemplate(tpl.id)}>
               <CardHeader>
                 <CardTitle className="text-base">{tpl.name}</CardTitle>
-                <CardDescription>{tpl.doses} Dosen ñ {tpl.description?.split("ñ")[1] || tpl.description}</CardDescription>
+                <CardDescription>{tpl.doses} Dosen ‚Äì {tpl.description?.split("‚Äì")[1] || tpl.description}</CardDescription>
               </CardHeader>
             </Card>
           ))}
@@ -662,14 +691,14 @@ export default function PatientPortal() {
       {step === "datetime" && (
         <div className="grid gap-6 md:grid-cols-[auto_1fr]">
           <div>
-            <Label className="mb-2 block">Datum ausw‰hlen</Label>
+            <Label className="mb-2 block">Datum ausw√§hlen</Label>
             <Calendar mode="single" selected={date} onSelect={handleDateSelect} disabled={(d: Date) => d < today} />
           </div>
           <div>
             <Label className="mb-2 block">
-              Verf¸gbare Zeiten{loading && <span className="ml-2 text-xs text-muted-foreground">(lade...)</span>}
+              Verf√ºgbare Zeiten{loading && <span className="ml-2 text-xs text-muted-foreground">(lade...)</span>}
             </Label>
-            {!date && <p className="text-sm text-muted-foreground">Bitte w‰hlen Sie zuerst ein Datum.</p>}
+            {!date && <p className="text-sm text-muted-foreground">Bitte w√§hlen Sie zuerst ein Datum.</p>}
             {date && slots.length === 0 && !loading && <p className="text-sm text-muted-foreground">Keine freien Slots an diesem Tag.</p>}
             {date && slots.length > 0 && (
               <div className="flex flex-wrap gap-2">
@@ -687,10 +716,10 @@ export default function PatientPortal() {
         <Card className="max-w-lg">
           <CardHeader>
             <CardTitle>Fragebogen</CardTitle>
-            <CardDescription>Bitte beantworten Sie die folgenden Fragen f¸r Ihren Termin.</CardDescription>
+            <CardDescription>Bitte beantworten Sie die folgenden Fragen f√ºr Ihren Termin.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {questions.length === 0 && <p className="text-sm text-muted-foreground">F¸r diese Terminart sind keine Fragen hinterlegt.</p>}
+            {questions.length === 0 && <p className="text-sm text-muted-foreground">F√ºr diese Terminart sind keine Fragen hinterlegt.</p>}
             {questions.map((q) => {
               const answer = answers.find((a) => a.questionId === q.id);
               return (
@@ -708,7 +737,7 @@ export default function PatientPortal() {
               );
             })}
             <div className="flex gap-3 pt-2">
-              <Button variant="outline" onClick={() => setStep("datetime")}>Zur¸ck</Button>
+              <Button variant="outline" onClick={() => setStep("datetime")}>Zur√ºck</Button>
               <Button className="flex-1" onClick={handleSubmit} disabled={loading}>
                 {loading ? "Wird gebucht..." : "Termin verbindlich buchen"}
               </Button>
