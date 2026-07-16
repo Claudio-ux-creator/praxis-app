@@ -1,4 +1,4 @@
-# architecture.md - Arzt/MFA Terminplaner
+﻿# architecture.md - Arzt/MFA Terminplaner
 
 _Stand: 26.06.2026_
 
@@ -215,20 +215,21 @@ Das Projekt ist nun eine vollst�ndige Full-Stack-Anwendung:
 
 ### Aktueller Stand
 
-Das Projekt ist nun eine vollständige Full-Stack-Anwendung:
+Das Projekt ist nun eine vollstaendige Full-Stack-Anwendung:
 
 - **Backend**: Express + better-sqlite3 in einer einzigen Datei ackend/src/index.cjs (CommonJS).
   - 22 REST-API-Endpunkte unter /api/...
   - Auto-Migration-System in index.cjs selbst (5 Migrationen)
-  - Seed-Daten werden beim ersten Start automatisch eingefügt
-  - Kein Prisma-Client zur Laufzeit mehr nötig; Prisma-Schema dient als Referenz
+  - Seed-Daten werden beim ersten Start automatisch eingefuegt
+  - Kein Prisma-Client zur Laufzeit mehr noetig; Prisma-Schema dient als Referenz
 - **Frontend**: React 18 + Vite 5 + Tailwind CSS 3 + shadcn/ui in rontend/
 - **Datenbank**: SQLite in ackend/prisma/praxis.db + WAL-Modus
 
 ### Bekannte technische Schulden
 
-- index.cjs enthält die gesamte Backend-Logik (keine saubere Trennung)
+- index.cjs enthaelt die gesamte Backend-Logik (keine saubere Trennung)
 - TypeScript-Dateien in src/ sind parallel und nicht im Einsatz
 - Keine Tests vorhanden
-- SQLite ist für lokale Entwicklung passend, Produktivdatenbank offen
+- SQLite ist fuer lokale Entwicklung passend, Produktivdatenbank offen
 - Tomedo-Synchronisation nicht implementiert (AMT-074 bis AMT-076)
+

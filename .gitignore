@@ -1,0 +1,14 @@
+﻿node_modules/
+.vite/
+dist/
+data/
+*.db
+*.db-shm
+*.db-wal
+.env
+server.log
+server.err
+package-lock.json
+Untitled-1.md
+Untitled-1.txt
+test-esbuild.cjs

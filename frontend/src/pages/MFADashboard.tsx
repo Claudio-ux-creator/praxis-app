@@ -385,7 +385,7 @@ export default function MFADashboard() {
 
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
                       👨‍⚕️ Dr. {rx.doctor_last_name}
-                      <span className="ml-auto">?? {rx.request_date}</span>
+                      <span className="ml-auto">📅 {rx.request_date}</span>
                     </div>
 
                     {rx.notes && (
@@ -404,10 +404,10 @@ export default function MFADashboard() {
                           className="text-xs"
                           onClick={() => handleRxStatusChange(rx.id, ns)}
                         >
-                          {ns === "IN_PROGRESS" ? "?? Prüfen" :
-                           ns === "APPROVED" ? "?? Freigeben" :
-                           ns === "REJECTED" ? "? Ablehnen" :
-                           ns === "COLLECTED" ? "?? Abgeholt" : ns}
+                          {ns === "IN_PROGRESS" ? "🔍 Prüfen" :
+                           ns === "APPROVED" ? "✅ Freigeben" :
+                           ns === "REJECTED" ? "❌ Ablehnen" :
+                           ns === "COLLECTED" ? "📦 Abgeholt" : ns}
                         </Button>
                       ))}
                     </div>

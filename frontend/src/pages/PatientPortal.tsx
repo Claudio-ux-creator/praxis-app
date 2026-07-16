@@ -114,7 +114,19 @@ export default function PatientPortal() {
   const [myAppointments, setMyAppointments] = useState<AppointmentResult[]>([]);
   const [showAppointments, setShowAppointments] = useState(false);
 
-  // Load doctors once
+  useEffect(() => {
+    const storedInsurance = localStorage.getItem("patient_insurance");
+    const storedName = localStorage.getItem("patient_name");
+    if (storedInsurance && storedName) {
+      setInsuranceNumber(storedInsurance);
+      setPatientName(storedName);
+      setStep("category");
+      get<AppointmentResult[]>("/appointments?insuranceNumber=" + storedInsurance).then((res) => {
+        if (res.success && res.data) setMyAppointments(res.data);
+      });
+    }
+  }, []);
+
   useEffect(() => {
     get<Doctor[]>("/doctors").then((res) => {
       if (res.success && res.data) setDoctors(res.data);

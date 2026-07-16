@@ -23,6 +23,8 @@ export default function LandingPage() {
         body: JSON.stringify({ insuranceNumber, dateOfBirth: dateOfBirth || undefined }),
       }).then((r) => r.json());
       if (res.success && res.data) {
+        localStorage.setItem("patient_insurance", insuranceNumber);
+        localStorage.setItem("patient_name", res.data.first_name + " " + res.data.last_name);
         navigate("/patient");
       } else {
         setError(res.error || "Patient nicht gefunden");

@@ -1,4 +1,4 @@
-import express from "express";
+﻿import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import staffRouter from "./routes/staff.js";
@@ -14,9 +14,10 @@ app.use(express.json());
 app.use("/api/staff", staffRouter);
 
 app.get("/", (req, res) => {
-  res.send({ message: "Arzt/MFA Terminplaner API läuft." });
+  res.send({ message: "Arzt/MFA Terminplaner API laeuft." });
 });
 
 app.listen(port, () => {
-  console.log(`Server läuft auf http://localhost:${port}`);
+  console.log(`Server laeuft auf http://localhost:${port}`);
 });
+

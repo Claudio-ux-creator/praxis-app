@@ -32,6 +32,22 @@ export default function PatientSettings() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    const storedInsurance = localStorage.getItem("patient_insurance");
+    const storedName = localStorage.getItem("patient_name");
+    if (storedInsurance && storedName) {
+      setInsuranceNumber(storedInsurance);
+      setPatientName(storedName);
+      setLoggedIn(true);
+      const res2 = await fetch("/api/patients/lookup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ insuranceNumber: storedInsurance }),
+      }).then((r) => r.json());
+      if (res2.success && res2.data) {
+        loadSettings(res2.data.id);
+      }
+      return;
+    }
     setLoading(true);
     const res = await fetch("/api/patients/lookup", {
       method: "POST",

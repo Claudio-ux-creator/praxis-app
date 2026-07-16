@@ -71,34 +71,9 @@ Was wurde entschieden?
 
 -->
 
-## 2026-07-09 - KP-001: Gäste als Light-Patienten ohne Login
+## 2026-07-09 - KP-001: Gaeste als Light-Patienten ohne Login
 
-**Kontext:** Bei der Abgabe wurde rückgemeldet, dass die App schnell erreichbar sein muss, ohne dass Patienten ein Passwort verwalten oder sich registrieren müssen. Der bestehende Login per Versichertennummer + Geburtsdatum ist bereits in der App umgesetzt.
-
-### Entscheidung
-
-Die App verwendet ein Login-light-Modell:
-
-- Patienten loggen sich mit Versichertennummer + Geburtsdatum ein (kein Passwort).
-- Es gibt keine separate Registrierung: Jeder Patient, der in der Praxis angelegt ist, kann sich einloggen.
-- Gäste (z.?B. Familienmitglieder oder Erstkontakte) können ohne vorherige Anlage in der Praxis nicht online buchen – eine MFA muss sie vorher im System anlegen.
-- Für Kinder wird ein Eltern-Konto via `parent_account_id` abgebildet.
-
-### Alternativen verworfen
-
-- **Vollständiges Registrierungs-Portal mit Passwort:** Zu hohe Hürde für Patienten, die nur schnell einen Termin brauchen.
-- **Gast-Zugang ohne Identifikation:** Medizinisch nicht vertretbar, da Patient zugeordnet sein muss.
-
-### Konsequenzen
-
-- Login-Flow ist minimal (2 Felder: Versichertennummer + Geburtsdatum).
-- Prinzipieller Zugang nur für bereits angelegte Patienten.
-- MFA muss neue Patienten manuell anlegen können.
-- Eltern-Konto (AMT-007) wird dadurch wichtiger für Kindertermine.
-
-## 2026-07-09 - KP-001: Gäste als Light-Patienten ohne Login
-
-**Kontext:** Bei der Abgabe wurde rückgemeldet, dass die App schnell erreichbar sein muss, ohne dass Patienten ein Passwort verwalten oder sich registrieren müssen. Der bestehende Login per Versichertennummer + Geburtsdatum ist bereits in der App umgesetzt.
+**Kontext:** Bei der Abgabe wurde rueckgemeldet, dass die App schnell erreichbar sein muss, ohne dass Patienten ein Passwort verwalten oder sich registrieren muessen. Der bestehende Login per Versichertennummer + Geburtsdatum ist bereits in der App umgesetzt.
 
 ### Entscheidung
 
@@ -106,17 +81,43 @@ Die App verwendet ein Login-light-Modell:
 
 - Patienten loggen sich mit Versichertennummer + Geburtsdatum ein (kein Passwort).
 - Es gibt keine separate Registrierung: Jeder Patient, der in der Praxis angelegt ist, kann sich einloggen.
-- Gäste (z. B. Familienmitglieder oder Erstkontakte) können ohne vorherige Anlage in der Praxis nicht online buchen – eine MFA muss sie vorher im System anlegen.
-- Für Kinder wird ein Eltern-Konto via parent_account_id abgebildet.
+- Gaeste (z.?B. Familienmitglieder oder Erstkontakte) koennen ohne vorherige Anlage in der Praxis nicht online buchen – eine MFA muss sie vorher im System anlegen.
+- Fuer Kinder wird ein Eltern-Konto via `parent_account_id` abgebildet.
 
 ### Alternativen verworfen
 
-- **Vollständiges Registrierungs-Portal mit Passwort:** Zu hohe Hürde für Patienten, die nur schnell einen Termin brauchen.
+- **Vollstaendiges Registrierungs-Portal mit Passwort:** Zu hohe Huerde fuer Patienten, die nur schnell einen Termin brauchen.
 - **Gast-Zugang ohne Identifikation:** Medizinisch nicht vertretbar, da Patient zugeordnet sein muss.
 
 ### Konsequenzen
 
 - Login-Flow ist minimal (2 Felder: Versichertennummer + Geburtsdatum).
-- Prinzipieller Zugang nur für bereits angelegte Patienten.
-- MFA muss neue Patienten manuell anlegen können.
-- Eltern-Konto (AMT-007) wird dadurch wichtiger für Kindertermine.
+- Prinzipieller Zugang nur fuer bereits angelegte Patienten.
+- MFA muss neue Patienten manuell anlegen koennen.
+- Eltern-Konto (AMT-007) wird dadurch wichtiger fuer Kindertermine.
+
+## 2026-07-09 - KP-001: Gaeste als Light-Patienten ohne Login
+
+**Kontext:** Bei der Abgabe wurde rueckgemeldet, dass die App schnell erreichbar sein muss, ohne dass Patienten ein Passwort verwalten oder sich registrieren muessen. Der bestehende Login per Versichertennummer + Geburtsdatum ist bereits in der App umgesetzt.
+
+### Entscheidung
+
+Die App verwendet ein Login-light-Modell:
+
+- Patienten loggen sich mit Versichertennummer + Geburtsdatum ein (kein Passwort).
+- Es gibt keine separate Registrierung: Jeder Patient, der in der Praxis angelegt ist, kann sich einloggen.
+- Gaeste (z. B. Familienmitglieder oder Erstkontakte) koennen ohne vorherige Anlage in der Praxis nicht online buchen – eine MFA muss sie vorher im System anlegen.
+- Fuer Kinder wird ein Eltern-Konto via parent_account_id abgebildet.
+
+### Alternativen verworfen
+
+- **Vollstaendiges Registrierungs-Portal mit Passwort:** Zu hohe Huerde fuer Patienten, die nur schnell einen Termin brauchen.
+- **Gast-Zugang ohne Identifikation:** Medizinisch nicht vertretbar, da Patient zugeordnet sein muss.
+
+### Konsequenzen
+
+- Login-Flow ist minimal (2 Felder: Versichertennummer + Geburtsdatum).
+- Prinzipieller Zugang nur fuer bereits angelegte Patienten.
+- MFA muss neue Patienten manuell anlegen koennen.
+- Eltern-Konto (AMT-007) wird dadurch wichtiger fuer Kindertermine.
+

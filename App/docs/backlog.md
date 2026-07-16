@@ -142,7 +142,7 @@ _Stabile Feature-IDs. Nicht umnummerieren. Killed-IDs bleiben killed._
 | AMT-080 | Produktiv-Datenbankentscheidung treffen | 5 | hypo | docs/architecture.md | SQLite ist Starterstand, Produktivziel offen |
 
 
-## KP-001 - Gäste / Light-Patienten
+## KP-001 - Gaeste / Light-Patienten
 
 | ID | Name | Phase | Status | Quelle | Notiz |
 |----|------|-------|--------|--------|-------|
@@ -157,6 +157,7 @@ _Stabile Feature-IDs. Nicht umnummerieren. Killed-IDs bleiben killed._
 ## Verhaeltnis zur Spec
 
 `docs/spec.md` beschreibt die fachliche Grundlage, Produktziele und Prioritaeten. Dieses Backlog ist die operative Feature-Liste. Roadmap-Sicht = nach `Phase` filtern.
+
 
 
 

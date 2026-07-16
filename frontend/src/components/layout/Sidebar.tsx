@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const patientLinks = [
-  { to: "/patient", icon: Home, label: "Übersicht" },
+  { to: "/patient", icon: Home, label: "ï¿½bersicht" },
   { to: "/patient/book", icon: Calendar, label: "Termin buchen" },
   { to: "/patient/appointments", icon: ClipboardList, label: "Meine Termine" },
   { to: "/patient/prescriptions", icon: Pill, label: "Rezepte" },
@@ -59,6 +59,10 @@ export function Sidebar({ role }: SidebarProps) {
       <div className="p-2 border-t">
         <NavLink
           to="/"
+          onClick={() => {
+            localStorage.removeItem("patient_insurance");
+            localStorage.removeItem("patient_name");
+          }}
           className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           <LogOut className="h-4 w-4" />

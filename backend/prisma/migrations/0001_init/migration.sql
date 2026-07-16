@@ -109,7 +109,7 @@ VALUES
     ('PRESCRIPTION_PICKUP', 'Rezept-Abholung', 1, 5, 0, 0),
     ('ACUTE', 'Akuttermin', 0, 10, 5, 0),
     ('BLOOD_DRAW', 'Blutabnahme', 0, 10, 5, 0),
-    ('INITIAL', 'Erstgespräch', 0, 30, 10, 0);
+    ('INITIAL', 'Erstgespraech', 0, 30, 10, 0);
 
 -- Seed: Doctors
 INSERT OR IGNORE INTO doctors (id, first_name, last_name, color, acute_slots_per_day)
@@ -131,23 +131,24 @@ VALUES
 INSERT OR IGNORE INTO questions (category, question_text, sort_order, answer_type, required)
 VALUES
     ('CHECKUP', 'Haben Sie in den letzten 12 Monaten einen Arzt aufgesucht?', 1, 'boolean', 1),
-    ('CHECKUP', 'Nehmen Sie regelmäßig Medikamente?', 2, 'boolean', 1),
+    ('CHECKUP', 'Nehmen Sie regelmaessig Medikamente?', 2, 'boolean', 1),
     ('CHECKUP', 'Haben Sie Allergien?', 3, 'boolean', 1),
     ('CHECKUP', 'Wenn ja, welche Allergien?', 4, 'text', 0),
-    ('CHECKUP', 'Haben Sie Beschwerden, die Sie besprechen möchten?', 5, 'text', 0);
+    ('CHECKUP', 'Haben Sie Beschwerden, die Sie besprechen moechten?', 5, 'text', 0);
 
 INSERT OR IGNORE INTO questions (category, question_text, sort_order, answer_type, required)
 VALUES
     ('CONSULTATION', 'Was ist der Grund Ihrer Beratung?', 1, 'text', 1),
     ('CONSULTATION', 'Bestehen akute Beschwerden?', 2, 'boolean', 1),
-    ('CONSULTATION', 'Sind Sie in ärztlicher Behandlung?', 3, 'boolean', 1);
+    ('CONSULTATION', 'Sind Sie in aerztlicher Behandlung?', 3, 'boolean', 1);
 
 INSERT OR IGNORE INTO questions (category, question_text, sort_order, answer_type, required)
 VALUES
-    ('VACCINATION', 'Welche Impfung ist gewünscht?', 1, 'text', 1),
-    ('VACCINATION', 'Haben Sie früher bereits diese Impfung erhalten?', 2, 'boolean', 1),
+    ('VACCINATION', 'Welche Impfung ist gewuenscht?', 1, 'text', 1),
+    ('VACCINATION', 'Haben Sie frueher bereits diese Impfung erhalten?', 2, 'boolean', 1),
     ('VACCINATION', 'Besteht eine bekannte Allergie?', 3, 'boolean', 1);
 
 -- Seed: Sample patient
 INSERT OR IGNORE INTO patients (id, insurance_number, first_name, last_name, date_of_birth, phone, email, email_opt_in)
 VALUES (1, 'A123456789', 'Max', 'Mustermann', '1990-05-15', '+49 176 12345678', 'max@example.com', 1);
+
