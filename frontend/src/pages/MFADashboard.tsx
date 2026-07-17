@@ -90,6 +90,7 @@ function categoryLabel(cat: string): string {
 function statusBadgeClass(status: string): string {
   const map: Record<string, string> = {
     SCHEDULED: "bg-slate-100 text-slate-700 border-slate-300",
+    PENDING_CONFIRMATION: "bg-amber-100 text-amber-700 border-amber-300",
     CHECKED_IN: "bg-blue-100 text-blue-700 border-blue-300",
     IN_PROGRESS: "bg-yellow-100 text-yellow-700 border-yellow-300",
     COMPLETED: "bg-green-100 text-green-700 border-green-300",
@@ -102,6 +103,7 @@ function statusBadgeClass(status: string): string {
 function statusLabel(status: string): string {
   const map: Record<string, string> = {
     SCHEDULED: "Geplant",
+    PENDING_CONFIRMATION: "Ausstehend",
     CHECKED_IN: "Eingecheckt",
     IN_PROGRESS: "In Behandlung",
     COMPLETED: "Abgeschlossen",
@@ -123,6 +125,7 @@ function rxStatusBadge(status: string): { class: string; label: string } {
 }
 
 const NEXT_STATUS_MAP: Record<string, string[]> = {
+  PENDING_CONFIRMATION: ["SCHEDULED"],
   SCHEDULED: ["CHECKED_IN", "CANCELLED"],
   CHECKED_IN: ["IN_PROGRESS", "NO_SHOW", "CANCELLED"],
   IN_PROGRESS: ["COMPLETED", "NO_SHOW"],
