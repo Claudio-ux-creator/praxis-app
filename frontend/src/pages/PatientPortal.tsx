@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -82,16 +82,16 @@ const CATEGORY_LABEL: Record<string, string> = {
 
 export default function PatientPortal() {
   // Login
-  const [insuranceNumber, setInsuranceNumber] = useState("");
+  const [insuranceNumber, setInsuranceNumber] = useState(localStorage.getItem("patient_insurance") || "");
   const [dateOfBirth, setDateOfBirth] = useState("");
-  const [patientName, setPatientName] = useState("");
+  const [patientName, setPatientName] = useState(localStorage.getItem("patient_name") || "");
 
   const location = useLocation();
   const navigate = useNavigate();
   const activeTab = location.pathname;
 
   // Booking state
-  const [step, setStep] = useState<Step>("login");
+  const [step, setStep] = useState<Step>(localStorage.getItem("patient_insurance") ? "category" : "login");
   const [category, setCategory] = useState("");
   const [bookingMode, setBookingMode] = useState<"single" | "series">("single");
   const [seriesTemplates, setSeriesTemplates] = useState<VaccinationTemplate[]>([]);
