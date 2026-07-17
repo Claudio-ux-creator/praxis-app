@@ -56,13 +56,27 @@ export default function MFAAppointments() {
   const [filter, setFilter] = useState<string>('ALL');
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadAppointments = () => {
     setLoading(true);
     get<Appointment[]>('/mfa/appointments').then((r) => {
       if (r.success && r.data) setAppointments(r.data);
       setLoading(false);
     });
+  };
+
+  useEffect(() => {
+    loadAppointments();
   }, []);
+
+  const handleConfirm = async (id: number) => {
+    await patch("/appointments/" + id + "/confirm-series", {});
+    loadAppointments();
+  };
+
+  const handleStatusChange = async (id: number, newStatus: string) => {
+    await patch("/appointments/" + id + "/status", { status: newStatus });
+    loadAppointments();
+  };
 
   const filtered = filter === 'ALL'
     ? appointments
@@ -136,9 +150,26 @@ export default function MFAAppointments() {
                     </span>
                   </div>
                 </div>
-                <Badge variant={(STATUS_BADGE[a.status] || 'outline') as any}>
-                  {STATUS_MAP[a.status] || a.status}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  {a.status === "PENDING_CONFIRMATION" && (
+                    <Button size="sm" variant="default" onClick={() => handleConfirm(a.id)}>
+                      Bestätigen
+                    </Button>
+                  )}
+                  {a.status === "SCHEDULED" && (
+                    <>
+                      <Button size="sm" variant="outline" onClick={() => handleStatusChange(a.id, "CHECKED_IN")}>
+                        Check-In
+                      </Button>
+                      <Button size="sm" variant="destructive" onClick={() => handleStatusChange(a.id, "CANCELLED")}>
+                        Stornieren
+                      </Button>
+                    </>
+                  )}
+                  <Badge variant={(STATUS_BADGE[a.status] || 'outline') as any}>
+                    {STATUS_MAP[a.status] || a.status}
+                  </Badge>
+                </div>
               </div>
             </CardContent>
           </Card>
