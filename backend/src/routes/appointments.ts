@@ -53,10 +53,10 @@ appointmentsRouter.post('/appointments', (req, res) => {
 
     if (answers && Array.isArray(answers)) {
       const insertAnswer = db.prepare(
-        'INSERT INTO questionnaire_answers (appointment_id, question_id, answer) VALUES (?, ?, ?)'
+        'INSERT INTO questionnaire_answers (appointment_id, question_id, question_text, answer) VALUES (?, ?, ?, ?)'
       );
       for (const a of answers) {
-        insertAnswer.run(result.lastInsertRowid, a.questionId, a.answer);
+        insertAnswer.run(result.lastInsertRowid, a.questionId, a.questionText || "", a.answer);
       }
     }
 
