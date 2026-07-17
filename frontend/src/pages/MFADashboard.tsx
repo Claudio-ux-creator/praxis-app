@@ -253,7 +253,15 @@ export default function MFADashboard() {
                 Keine Termine für heute.
               </p>
             ) : (
-              dashboard.todaysAppointments.map((apt) => (
+              {dashboard && dashboard.todaysAppointments.filter(a => a.status === "PENDING_CONFIRMATION").length > 0 && (
+    <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+      <p className="text-sm font-medium text-amber-800 flex items-center gap-2">
+        <span className="inline-flex size-2 rounded-full bg-amber-500" />
+        {dashboard.todaysAppointments.filter(a => a.status === "PENDING_CONFIRMATION").length} Termin(e) warten auf Bestätigung
+      </p>
+    </div>
+  )}
+  dashboard.todaysAppointments.map((apt) => (
                 <div
                   key={apt.id}
                   className="rounded-lg border p-3 space-y-2 text-sm hover:border-blue-200 transition-colors"

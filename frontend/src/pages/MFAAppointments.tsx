@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, User, Stethoscope, FileText } from 'lucide-react';
-import { get } from '@/lib/api';
+import { get, patch } from '@/lib/api';
 
 interface Appointment {
   id: number;

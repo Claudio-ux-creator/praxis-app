@@ -26,7 +26,7 @@ interface PrescriptionResult {
 }
 
 const STATUS_MAP: Record<string, string> = {
-  SCHEDULED: 'Geplant',
+  SCHEDULED: 'Gebucht',
   PENDING_CONFIRMATION: 'Bestätigung ausstehend',
   CHECKED_IN: 'Eingecheckt',
   IN_PROGRESS: 'In Behandlung',
