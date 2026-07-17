@@ -1,10 +1,10 @@
-# Praxis-App Demir & Kollegen
+﻿# Praxis-App Demir & Kollegen
 
-Online-Terminverwaltung zur Reduzierung des Telefonstress f�r medizinische Fachangestellte (MFAs).
+Online-Terminverwaltung zur Reduzierung des Telefonstress für medizinische Fachangestellte (MFAs).
 
-## �berblick
+## Überblick
 
-Patienten k�nnen online Termine buchen, Impfserien planen und Wiederholungsrezepte anfragen.
+Patienten können online Termine buchen, Impfserien planen und Wiederholungsrezepte anfragen.
 Das MFA-Dashboard bietet eine 3-Spalten-Ansicht mit heutigen Terminen, offenen Rezeptanfragen
 und Akutslot-Verwaltung. Automatische E-Mail-Erinnerungen reduzieren No-Shows.
 
@@ -20,23 +20,23 @@ und Akutslot-Verwaltung. Automatische E-Mail-Erinnerungen reduzieren No-Shows.
 ## Features
 
 ### Patienten-Portal (`/patient`)
-- **Termin buchen** � 5-Stufen-Flow: Login ? Terminart ? Arzt ? Datum/Zeit ? Fragebogen
-- **Impfserien** � FSME, Hepatitis B, HPV, COVID-19 als Mehrfachbuchung (1. Dosis sofort, Folgedosen best�tigbar)
-- **Meine Termine** � �bersicht aller Termine + Serien mit Best�tigungs-Button f�r ausstehende Dosen
-- **Einstellungen** � E-Mail-Adresse + Opt-in f�r Erinnerungen verwalten
+- **Termin buchen**  5-Stufen-Flow: Login → Terminart → Arzt → Datum/Zeit → Fragebogen
+- **Impfserien**  FSME, Hepatitis B, HPV, COVID-19 als Mehrfachbuchung (1. Dosis sofort, Folgedosen bestätigbar)
+- **Meine Termine**  Übersicht aller Termine + Serien mit Bestätigungs-Button für ausstehende Dosen
+- **Einstellungen**  E-Mail-Adresse + Opt-in für Erinnerungen verwalten
 
 ### MFA-Dashboard (`/mfa`)
-- **Heutige Termine** � Liste mit Status-�nderung (Check-In, No-Show, Abschluss) + Notiz-Funktion
-- **Offene Rezeptanfragen** � Ampel-Workflow: ?? Neu ? ?? Pr�fung ? ?? Freigabe / ? Ablehnung
-- **Akutslots** � Verbleibende Slots pro Arzt mit farbigem Fortschrittsbalken
-- **Erinnerungs-Zentrale** � Ausstehende Erinnerungen anzeigen + verarbeiten
+- **Heutige Termine**  Liste mit Status-änderung (Check-In, No-Show, Abschluss) + Notiz-Funktion
+- **Offene Rezeptanfragen**  Ampel-Workflow: →→ Neu → →→ Prüfung → →→ Freigabe / → Ablehnung
+- **Akutslots**  Verbleibende Slots pro Arzt mit farbigem Fortschrittsbalken
+- **Erinnerungs-Zentrale**  Ausstehende Erinnerungen anzeigen + verarbeiten
 
-### Gesch�ftslogik
-- **No-Show-Sperre** � Ab 3 vers�umten Terminen keine Online-Buchung mehr m�glich
-- **Akutslots** � Nur am gleichen Tag ab 07:00 Uhr buchbar, fest pro Arzt zugewiesen
-- **Praxis-Schlie�ungen** � Pro Arzt oder gesamte Praxis, blockiert Buchungen
-- **Fragebogen** � Max. 5 Fragen pro Terminart, Pflichtfelder werden validiert
-- **DSGVO** � Opt-in f�r E-Mail-Erinnerungen, minimale Datenspeicherung
+### Geschüftslogik
+- **No-Show-Sperre**  Ab 3 versüumten Terminen keine Online-Buchung mehr müglich
+- **Akutslots**  Nur am gleichen Tag ab 07:00 Uhr buchbar, fest pro Arzt zugewiesen
+- **Praxis-Schlieüungen**  Pro Arzt oder gesamte Praxis, blockiert Buchungen
+- **Fragebogen**  Max. 5 Fragen pro Terminart, Pflichtfelder werden validiert
+- **DSGVO**  Opt-in für E-Mail-Erinnerungen, minimale Datenspeicherung
 
 ## Installation & Start
 
@@ -51,7 +51,7 @@ cd backend
 node src/index.cjs
 ```
 
-Der Server l�uft auf `http://localhost:3000`.
+Der Server lüuft auf `http://localhost:3000`.
 
 ### Frontend starten
 
@@ -61,18 +61,18 @@ npm install
 npm run dev
 ```
 
-Das Frontend l�uft auf `http://localhost:5173` und proxied `/api`-Anfragen an den Backend-Server.
+Das Frontend lüuft auf `http://localhost:5173` und proxied `/api`-Anfragen an den Backend-Server.
 
 ### Datenbank
 
 Die SQLite-Datenbank liegt unter `backend/prisma/praxis.db`.
-Migrationen (Tabellen + Seed-Daten) werden beim Backend-Start automatisch ausgef�hrt.
+Migrationen (Tabellen + Seed-Daten) werden beim Backend-Start automatisch ausgeführt.
 
 Enthaltene Seed-Daten:
-- **3 �rzte**: Ahmet Demir, Fatma Demir, Mehmet Kollegen
+- **3 ürzte**: Ahmet Demir, Fatma Demir, Mehmet Kollegen
 - **2 MFAs**: Ayse Yilmaz, Ali Kaya
 - **1 Test-Patient**: Max Mustermann (Versichertennummer: A123456789, Geburtsdatum: 1990-05-15)
-- **Frageb�gen**: F�r Vorsorge (5), Beratung (3), Impfung (3)
+- **Fragebügen**: Für Vorsorge (5), Beratung (3), Impfung (3)
 - **5 Impfvorlagen**: FSME, Hepatitis B, HPV, COVID-19, Tetanus/Diphtherie
 
 ## API-Referenz
@@ -83,12 +83,12 @@ Enthaltene Seed-Daten:
 |---|---|---|
 | GET | `/api/health` | Server-Status + DB-Statistiken |
 
-### �rzte & Slots
+### ürzte & Slots
 
 | Methode | Endpunkt | Beschreibung |
 |---|---|---|
-| GET | `/api/doctors` | Alle �rzte mit Farbe und Akutslot-Kontingent |
-| GET | `/api/slots?doctorId=&date=&category=` | Freie Online-Buchungsslots |
+| GET | `/api/doctors` | Alle ürzte mit Farbe und Akutslot-Kontingent |
+| GET | `/api/slots→doctorId=&date=&category=` | Freie Online-Buchungsslots |
 | GET | `/api/slots/acute` | Verbleibende Akutslots pro Arzt (heute) |
 
 ### Patienten
@@ -97,24 +97,24 @@ Enthaltene Seed-Daten:
 |---|---|---|
 | POST | `/api/patients/lookup` | Patient per Versichertennummer suchen |
 | GET | `/api/patients/:id/reminder-settings` | Opt-in-Status abrufen |
-| PATCH | `/api/patients/:id/reminder-settings` | Opt-in + E-Mail �ndern |
+| PATCH | `/api/patients/:id/reminder-settings` | Opt-in + E-Mail ündern |
 
 ### Termine
 
 | Methode | Endpunkt | Beschreibung |
 |---|---|---|
-| POST | `/api/appointments` | Termin buchen (mit No-Show-Pr�fung + Fragebogen) |
-| GET | `/api/appointments?insuranceNumber=` | Termine eines Patienten abrufen |
-| PATCH | `/api/appointments/:id/status` | Status �ndern (MFA) |
+| POST | `/api/appointments` | Termin buchen (mit No-Show-Prüfung + Fragebogen) |
+| GET | `/api/appointments→insuranceNumber=` | Termine eines Patienten abrufen |
+| PATCH | `/api/appointments/:id/status` | Status ündern (MFA) |
 | PATCH | `/api/appointments/:id/note` | MFA-Notiz speichern |
 | POST | `/api/appointments/series` | Impfserie buchen (mehrere Dosen) |
-| PATCH | `/api/appointments/:id/confirm-series` | Folgetermin best�tigen |
+| PATCH | `/api/appointments/:id/confirm-series` | Folgetermin bestütigen |
 
 ### Rezepte
 
 | Methode | Endpunkt | Beschreibung |
 |---|---|---|
-| GET | `/api/prescriptions?status=` | Rezepte abrufen (filterbar) |
+| GET | `/api/prescriptions→status=` | Rezepte abrufen (filterbar) |
 | POST | `/api/prescriptions` | Neues Rezept anlegen (MFA) |
 | PATCH | `/api/prescriptions/:id/status` | Status-Workflow (MFA/Arzt) |
 
@@ -123,7 +123,7 @@ Enthaltene Seed-Daten:
 | Methode | Endpunkt | Beschreibung |
 |---|---|---|
 | GET | `/api/mfa/dashboard` | Aggregierte Dashboard-Daten |
-| GET | `/api/questions?category=` | Fragebogen-Fragen pro Kategorie |
+| GET | `/api/questions→category=` | Fragebogen-Fragen pro Kategorie |
 | GET | `/api/vaccination-series` | Impfserien-Vorlagen |
 
 ### Erinnerungen
@@ -139,35 +139,35 @@ Enthaltene Seed-Daten:
 ### Termin buchen (Patient)
 
 1. **`/patient`** aufrufen
-2. Versichertennummer eingeben (z.?B. `A123456789`)
-3. Terminart ausw�hlen (Vorsorge, Beratung, Impfung, Rezept-Abholung)
-4. Bei Impfung: Einzeltermin oder Impfserie w�hlen
-5. Arzt ausw�hlen
+2. Versichertennummer eingeben (z.→B. `A123456789`)
+3. Terminart auswühlen (Vorsorge, Beratung, Impfung, Rezept-Abholung)
+4. Bei Impfung: Einzeltermin oder Impfserie wühlen
+5. Arzt auswühlen
 6. Datum im Kalender + freie Uhrzeit klicken
-7. Fragebogen ausf�llen (Pflichtfelder sind markiert)
-8. "Termin verbindlich buchen" � Best�tigung abwarten
+7. Fragebogen ausfüllen (Pflichtfelder sind markiert)
+8. "Termin verbindlich buchen"  Bestütigung abwarten
 
-### Impfserie best�tigen (Patient)
+### Impfserie bestütigen (Patient)
 
 1. Nach Anmeldung "Meine Termine" klicken
-2. Unter "Best�tigung ausstehend" den "Best�tigen"-Button klicken
-3. Der Status wechselt von "Best�tigung ausstehend" zu "Geplant"
+2. Unter "Bestütigung ausstehend" den "Bestütigen"-Button klicken
+3. Der Status wechselt von "Bestütigung ausstehend" zu "Geplant"
 
 ### MFA-Dashboard bedienen
 
 1. **`/mfa`** aufrufen
-2. **Linke Spalte**: Termin-Status per Klick �ndern (Check-In, No-Show, Abschluss)
-3. **??-Button**: Notiz zu einem Termin hinzuf�gen
-4. **Mitte Spalte**: Rezept-Workflow steuern (Pr�fen ? Freigeben/Ablehnen)
+2. **Linke Spalte**: Termin-Status per Klick ündern (Check-In, No-Show, Abschluss)
+3. **→→-Button**: Notiz zu einem Termin hinzufügen
+4. **Mitte Spalte**: Rezept-Workflow steuern (Prüfen → Freigeben/Ablehnen)
 5. **"+ Neues Rezept anlegen"**: Versichertennummer + Medikament eingeben
 6. **Rechte Spalte**: Akutslot-Auslastung beobachten
-7. **??-Men�**: Erinnerungs-Zentrale mit "Jetzt verarbeiten & senden"
+7. **→→-Menü**: Erinnerungs-Zentrale mit "Jetzt verarbeiten & senden"
 
 ## Datenbank-Migrationen
 
-Migrationen werden beim Backend-Start automatisch ausgef�hrt:
+Migrationen werden beim Backend-Start automatisch ausgeführt:
 
-| # | Name | �nderung |
+| # | Name | änderung |
 |---|---|---|
 | 0001 | Init | Alle Basistabellen + Seed-Daten |
 | 0002 | Fragebogen | `questionnaire_answers`-Tabelle |
@@ -180,21 +180,21 @@ Migrationen werden beim Backend-Start automatisch ausgef�hrt:
 ```
 praxis-app/
 +-- backend/
-�   +-- prisma/
-�   �   +-- migrations/       # SQL-Migrationen
-�   �   +-- praxis.db         # SQLite-Datenbank
-�   +-- src/
-�       +-- db/               # DB-Connection + Migration
-�       +-- routes/           # Express-Router (TS)
-�       +-- index.cjs         # Server-Einstiegspunkt
+   +-- prisma/
+      +-- migrations/       # SQL-Migrationen
+      +-- praxis.db         # SQLite-Datenbank
+   +-- src/
+       +-- db/               # DB-Connection + Migration
+       +-- routes/           # Express-Router (TS)
+       +-- index.cjs         # Server-Einstiegspunkt
 +-- frontend/
-�   +-- src/
-�   �   +-- components/
-�   �   �   +-- layout/       # Sidebar, RootLayout
-�   �   �   +-- ui/           # shadcn/ui-Komponenten
-�   �   +-- lib/              # API-Client, Utils
-�   �   +-- pages/            # LandingPage, PatientPortal, MFADashboard, MFAReminders, PatientSettings
-�   +-- package.json
+   +-- src/
+      +-- components/
+         +-- layout/       # Sidebar, RootLayout
+         +-- ui/           # shadcn/ui-Komponenten
+      +-- lib/              # API-Client, Utils
+      +-- pages/            # LandingPage, PatientPortal, MFADashboard, MFAReminders, PatientSettings
+   +-- package.json
 +-- shared/
     +-- types/                # TypeScript-Shared-Types (Enums, Entities, API-DTOs)
 ```
