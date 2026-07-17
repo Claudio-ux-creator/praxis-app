@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -248,6 +248,14 @@ export default function MFADashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 max-h-[70vh] overflow-y-auto">
+            {dashboard && dashboard.todaysAppointments.filter(a => a.status === "PENDING_CONFIRMATION").length > 0 && (
+              <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                <p className="text-sm font-medium text-amber-800 flex items-center gap-2">
+                  <span className="inline-flex size-2 rounded-full bg-amber-500" />
+                  {dashboard.todaysAppointments.filter(a => a.status === "PENDING_CONFIRMATION").length} Termin(e) warten auf Bestätigung
+                </p>
+              </div>
+            )}
             {!dashboard || dashboard.todaysAppointments.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4 text-center">
                 Keine Termine für heute.
