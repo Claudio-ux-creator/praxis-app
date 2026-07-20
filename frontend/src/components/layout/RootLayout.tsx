@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 
 interface RootLayoutProps {
-  role: "patient" | "mfa";
+  role: "patient" | "mfa" | "doctor";
 }
 
 export function RootLayout({ role }: RootLayoutProps) {

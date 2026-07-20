@@ -1,9 +1,10 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, User, Stethoscope, FileText } from 'lucide-react';
 import { get, patch } from '@/lib/api';
+import { formatDate } from "@/lib/utils";
 
 interface Appointment {
   id: number;
@@ -178,3 +179,5 @@ export default function MFAAppointments() {
     </div>
   );
 }
+
+

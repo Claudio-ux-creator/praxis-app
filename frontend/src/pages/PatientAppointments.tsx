@@ -1,8 +1,9 @@
-﻿import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { get, patch } from '@/lib/api';
+import { formatDate } from "@/lib/utils";
 
 interface AppointmentResult {
   id: number;
@@ -48,6 +49,7 @@ const STATUS_BADGE: Record<string, string> = {
 export default function PatientAppointments() {
   const insuranceNumber = localStorage.getItem('patient_insurance') || '';
   const [appointments, setAppointments] = useState<AppointmentResult[]>([]);
+  const [filter, setFilter] = useState<string>('ALL');
   const [loading, setLoading] = useState(true);
 
   const loadAppointments = () => {
@@ -67,8 +69,15 @@ export default function PatientAppointments() {
     if (r.success) loadAppointments();
   };
 
-  const pendingConfirmations = appointments.filter((a) => a.status === 'PENDING_CONFIRMATION');
-  const scheduledAppointments = appointments.filter((a) => a.status !== 'PENDING_CONFIRMATION');
+  const filtered = filter === 'ALL'
+    ? appointments
+    : appointments.filter((a) => a.status === filter);
+
+  const counts: Record<string, number> = {};
+  for (const a of appointments) {
+    counts[a.status] = (counts[a.status] || 0) + 1;
+  }
+  counts['ALL'] = appointments.length;
 
   if (loading) {
     return <div className="flex items-center justify-center py-12"><p className="text-muted-foreground">Lade Termine...</p></div>;
@@ -76,7 +85,26 @@ export default function PatientAppointments() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Meine Termine</h1>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <h1 className="text-2xl font-semibold">Meine Termine</h1>
+        <div className="flex gap-1 flex-wrap">
+          {['ALL', ...Object.keys(STATUS_MAP)].map((s) => {
+            if (!counts[s] && s !== 'ALL') return null;
+            return (
+              <Button
+                key={s}
+                size="sm"
+                variant={filter === s ? 'default' : 'outline'}
+                onClick={() => setFilter(s)}
+                className="text-xs"
+              >
+                {s === 'ALL' ? 'Alle' : STATUS_MAP[s]}
+                <span className="ml-1.5 opacity-70">({counts[s] || 0})</span>
+              </Button>
+            );
+          })}
+        </div>
+      </div>
 
       {appointments.length === 0 && (
         <Card>
@@ -87,53 +115,38 @@ export default function PatientAppointments() {
         </Card>
       )}
 
-      {/* Bestätigung ausstehend */}
-      {pendingConfirmations.length > 0 && (
-        <div>
-          <h2 className="text-lg font-medium mb-3 text-amber-700">Bestätigung ausstehend</h2>
-          <div className="space-y-3">
-            {pendingConfirmations.map((a) => (
-              <Card key={a.id} className="border-amber-200">
-                <CardContent className="py-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{a.date} um {a.time}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {CATEGORY_LABEL[a.category] || a.category} bei Dr. {a.doctor_last_name}
-                      {a.series_dose_number && <span className="ml-2">(Dosis {a.series_dose_number})</span>}
-                    </p>
-                  </div>
-                  <Button size="sm" onClick={() => handleConfirmSeries(a.id)}>Bestätigen</Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+      {filtered.length === 0 && appointments.length > 0 && (
+        <Card>
+          <CardContent className="py-8 text-center">
+            <p className="text-muted-foreground">Keine Termine mit diesem Status.</p>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Geplante & frühere Termine */}
-      {scheduledAppointments.length > 0 && (
-        <div>
-          <h2 className="text-lg font-medium mb-3">Alle Termine</h2>
-          <div className="space-y-3">
-            {scheduledAppointments.map((a) => (
-              <Card key={a.id}>
-                <CardContent className="py-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{a.date} um {a.time}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {CATEGORY_LABEL[a.category] || a.category} bei Dr. {a.doctor_last_name}
-                      {a.series_dose_number && <span className="ml-2">(Dosis {a.series_dose_number})</span>}
-                    </p>
-                  </div>
-                  <Badge variant={STATUS_BADGE[a.status] as any || 'outline'}>
-                    {STATUS_MAP[a.status] || a.status}
-                  </Badge>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="space-y-3">
+        {filtered.map((a) => (
+          <Card key={a.id}>
+            <CardContent className="py-4 flex items-center justify-between">
+              <div>
+                <p className="font-medium">{a.date} um {a.time}</p>
+                <p className="text-sm text-muted-foreground">
+                  {CATEGORY_LABEL[a.category] || a.category} bei Dr. {a.doctor_last_name}
+                  {a.series_dose_number && <span className="ml-2">(Dosis {a.series_dose_number})</span>}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {a.status === 'PENDING_CONFIRMATION' && (
+                  <Button size="sm" onClick={() => handleConfirmSeries(a.id)}>Bestätigen</Button>
+                )}
+                <Badge variant={STATUS_BADGE[a.status] as any || 'outline'}>
+                  {STATUS_MAP[a.status] || a.status}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
+

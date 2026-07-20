@@ -1,9 +1,10 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Pill, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
 import { get, patch } from '@/lib/api';
+import { formatDate } from "@/lib/utils";
 
 interface Prescription {
   id: number;
@@ -39,7 +40,7 @@ const STATUS_BADGE: Record<string, string> = {
 
 const RX_NEXT_STATUS: Record<string, string[]> = {
   PENDING: ['IN_PROGRESS', 'REJECTED'],
-  IN_PROGRESS: ['APPROVED', 'REJECTED'],
+  IN_PROGRESS: [],
   APPROVED: ['COLLECTED'],
   REJECTED: [],
   COLLECTED: [],
@@ -117,8 +118,8 @@ export default function MFAPrescriptions() {
                   </div>
                   <div className="text-sm text-muted-foreground">
                     {rx.patient_last_name}, {rx.patient_first_name} ({rx.insurance_number})
-                    {' · '}Dr. {rx.doctor_last_name}
-                    {' · '}angefragt: {rx.request_date}
+                    {' Â· '}Dr. {rx.doctor_last_name}
+                    {' Â· '}angefragt: {rx.request_date}
                   </div>
                   {rx.notes && (
                     <div className="text-xs italic bg-muted p-2 rounded inline-block">{rx.notes}</div>
@@ -130,7 +131,7 @@ export default function MFAPrescriptions() {
                           key={ns}
                           size="xs"
                           variant={
-                            ns === 'APPROVED' ? 'default' :
+                            ns === 'IN_PROGRESS' ? 'default' :
                             ns === 'REJECTED' ? 'destructive' : 'outline'
                           }
                           onClick={() => handleStatusChange(rx.id, ns)}
@@ -156,3 +157,10 @@ export default function MFAPrescriptions() {
     </div>
   );
 }
+
+
+
+
+
+
+

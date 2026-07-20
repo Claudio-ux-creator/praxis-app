@@ -1,4 +1,4 @@
-﻿import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { RootLayout } from '@/components/layout/RootLayout';
 import LandingPage from '@/pages/LandingPage';
 import PatientPortal from '@/pages/PatientPortal';
@@ -12,12 +12,18 @@ import MFAAppointments from '@/pages/MFAAppointments';
 import MFAPrescriptions from '@/pages/MFAPrescriptions';
 import MFAVaccinations from '@/pages/MFAVaccinations';
 import MFAReminders from '@/pages/MFAReminders';
+import DoctorLogin from '@/pages/DoctorLogin';
+import DoctorDashboard from '@/pages/DoctorDashboard';
+import DoctorPrescriptions from '@/pages/DoctorPrescriptions';
+import DoctorAbsences from '@/pages/DoctorAbsences';
+import DoctorMasterData from '@/pages/DoctorMasterData';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/doctor-login" element={<DoctorLogin />} />
 
         {/* Patientenbereich */}
         <Route element={<RootLayout role="patient" />}>
@@ -36,6 +42,14 @@ export default function App() {
           <Route path="/mfa/prescriptions" element={<MFAPrescriptions />} />
           <Route path="/mfa/vaccinations" element={<MFAVaccinations />} />
           <Route path="/mfa/reminders" element={<MFAReminders />} />
+        </Route>
+
+        {/* Arzt-Bereich */}
+        <Route element={<RootLayout role="doctor" />}>
+          <Route path="/doctor" element={<DoctorDashboard />} />
+          <Route path="/doctor/prescriptions" element={<DoctorPrescriptions />} />
+          <Route path="/doctor/absences" element={<DoctorAbsences />} />
+          <Route path="/doctor/master-data" element={<DoctorMasterData />} />
         </Route>
       </Routes>
     </BrowserRouter>

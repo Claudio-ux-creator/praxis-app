@@ -1,7 +1,8 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { get } from '@/lib/api';
+import { formatDate } from "@/lib/utils";
 
 interface PrescriptionResult {
   id: number;
@@ -68,7 +69,7 @@ export default function PatientPrescriptions() {
                 <p className="text-sm text-muted-foreground">
                   {p.dosage && <span>Dosierung: {p.dosage} &middot; </span>}
                   Dr. {p.doctor_last_name}
-                  {' — '}
+                  {' â€” '}
                   {p.request_date}
                 </p>
                 {p.notes && <p className="text-xs text-muted-foreground mt-1">{p.notes}</p>}
@@ -83,3 +84,7 @@ export default function PatientPrescriptions() {
     </div>
   );
 }
+
+
+
+

@@ -1,4 +1,4 @@
-﻿# Praxis-App Demir & Kollegen
+# Praxis-App Demir & Kollegen
 
 Online-Terminverwaltung zur Reduzierung des Telefonstress für medizinische Fachangestellte (MFAs).
 

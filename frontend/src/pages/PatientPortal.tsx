@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { get, post, patch } from "@/lib/api";
 import { useLocation, useNavigate } from "react-router-dom";
+import { formatDate } from "@/lib/utils";
 
 // -- Typen -------------------------------------
 interface Doctor {
@@ -175,6 +176,8 @@ export default function PatientPortal() {
     setLoading(false);
     if (res.success && res.data) {
       setPatientName(res.data.first_name + " " + res.data.last_name);
+      localStorage.setItem("patient_insurance", insuranceNumber);
+      localStorage.setItem("patient_name", res.data.first_name + " " + res.data.last_name);
       setStep("category");
       loadAppointments();
     } else {
@@ -685,7 +688,7 @@ export default function PatientPortal() {
       {/* Step: Doctor */}
       {step === "doctor" && (
         <div className="grid gap-4 md:grid-cols-3">
-          {doctors.map((doc) => (
+          {(doctors.filter(function(d) { return category !== "VACCINATION" || d.id === 1; })).map((doc) => (
             <Card key={doc.id} className={"cursor-pointer transition-all hover:shadow-md " + (doctorId === doc.id ? "ring-2 ring-primary" : "hover:border-primary")} onClick={() => handleDoctor(doc.id)}>
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
@@ -760,3 +763,7 @@ export default function PatientPortal() {
     </div>
   );
 }
+
+
+
+

@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "outDir": "./build-tsc",
+    "noEmit": false
+  },
+  "include": ["src", "../shared/types"]
+}

@@ -2,35 +2,63 @@
 import cors from 'cors';
 import { initDatabase } from './db/connection.ts';
 import { migrateSchema } from './db/migrate.ts';
-import { healthRouter } from './routes/health.ts';
-import { doctorsRouter } from './routes/doctors.ts';
-import { slotsRouter } from './routes/slots.ts';
-import { patientsRouter } from './routes/patients.ts';
-import { appointmentsRouter } from './routes/appointments.ts';
-import { questionsRouter } from './routes/questions.ts';
-import { vaccinationsRouter } from './routes/vaccinations.ts';
-import { prescriptionsRouter } from './routes/prescriptions.ts';
-import { mfaRouter } from './routes/mfa.ts';
-import { remindersRouter } from './routes/reminders.ts';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+process.on('uncaughtException', (err) => console.error('[UNCAUGHT]', err.message));
+process.on('unhandledRejection', (reason) => console.error('[UNHANDLED]', reason));
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const FRONTEND = path.resolve(__dirname, '../../frontend');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
-initDatabase();
-migrateSchema();
+try { initDatabase(); migrateSchema(); console.log('DB OK'); }
+catch (err) { console.error('[DB]', err); process.exit(1); }
 
-app.use('/api', healthRouter);
-app.use('/api', doctorsRouter);
-app.use('/api', slotsRouter);
-app.use('/api', patientsRouter);
-app.use('/api', appointmentsRouter);
-app.use('/api', questionsRouter);
-app.use('/api', vaccinationsRouter);
-app.use('/api', prescriptionsRouter);
-app.use('/api', mfaRouter);
-app.use('/api', remindersRouter);
+// API-Routen
+app.use('/api', (await import('./routes/health.ts')).healthRouter);
+app.use('/api', (await import('./routes/doctors.ts')).doctorsRouter);
+app.use('/api', (await import('./routes/slots.ts')).slotsRouter);
+app.use('/api', (await import('./routes/patients.ts')).patientsRouter);
+app.use('/api', (await import('./routes/appointments.ts')).appointmentsRouter);
+app.use('/api', (await import('./routes/questions.ts')).questionsRouter);
+app.use('/api', (await import('./routes/vaccinations.ts')).vaccinationsRouter);
+app.use('/api', (await import('./routes/prescriptions.ts')).prescriptionsRouter);
+app.use('/api', (await import('./routes/mfa.ts')).mfaRouter);
+app.use('/api', (await import('./routes/reminders.ts')).remindersRouter);
+app.use('/api', (await import('./routes/doctor.ts')).doctorRouter);
+app.use('/api', (await import('./routes/availability.ts')).availabilityRouter);
 
-app.listen(3000, () => {
-  console.log('Server läuft auf http://localhost:3000');
+// Statische Dateien + SPA-Fallback in einer Middleware
+app.use((req, res, next) => {
+  if (req.method !== 'GET') return next();
+
+  // Nur Pfade ohne API-Prefix behandeln
+  const requestedPath = req.path === '/' ? '/index.html' : req.path;
+  const filePath = path.join(FRONTEND, requestedPath);
+
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    // Existierende Datei ausliefern
+    return res.sendFile(filePath);
+  }
+
+  // SPA-Fallback: index.html senden
+  res.sendFile(path.join(FRONTEND, 'index.html'));
 });
+
+app.use((err, _req, res, _next) => { console.error(err); res.status(500).json({ success: false, error: 'Serverfehler' }); });
+
+const PORT = parseInt(process.env.PORT || '3000', 10);
+function startServer(port) {
+  const server = app.listen(port, () => console.log('Server: http://localhost:' + port));
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') { if (port < 3010) startServer(port + 1); }
+    else console.error('Fehler:', err.message);
+  });
+}
+startServer(PORT);
+

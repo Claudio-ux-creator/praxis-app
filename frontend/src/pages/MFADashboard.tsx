@@ -1,10 +1,11 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { get, post, patch } from "@/lib/api";
+import { formatDate } from "@/lib/utils";
 // -- Typen -------------------------------------
 interface TodayAppointment {
   id: number;
@@ -115,11 +116,11 @@ function statusLabel(status: string): string {
 
 function rxStatusBadge(status: string): { class: string; label: string } {
   const map: Record<string, { class: string; label: string }> = {
-    PENDING: { class: "bg-red-100 text-red-800 border-red-300", label: "🔴 Neu" },
-    IN_PROGRESS: { class: "bg-yellow-100 text-yellow-800 border-yellow-300", label: "🟡 In Prüfung" },
-    APPROVED: { class: "bg-green-100 text-green-800 border-green-300", label: "🟢 Freigegeben" },
-    REJECTED: { class: "bg-gray-200 text-gray-700 border-gray-400", label: "⚪ Abgelehnt" },
-    COLLECTED: { class: "bg-blue-100 text-blue-800 border-blue-300", label: "🔵 Abgeholt" },
+    PENDING: { class: "bg-red-100 text-red-800 border-red-300", label: "[Neu]" },
+    IN_PROGRESS: { class: "bg-yellow-100 text-yellow-800 border-yellow-300", label: "[In Prüfung]" },
+    APPROVED: { class: "bg-green-100 text-green-800 border-green-300", label: "[Freigegeben]" },
+    REJECTED: { class: "bg-gray-200 text-gray-700 border-gray-400", label: "[Abgelehnt]" },
+    COLLECTED: { class: "bg-blue-100 text-blue-800 border-blue-300", label: "[Abgeholt]" },
   };
   return map[status] || { class: "bg-gray-100 text-gray-700", label: status };
 }
@@ -135,8 +136,8 @@ const NEXT_STATUS_MAP: Record<string, string[]> = {
 };
 
 const RX_NEXT_STATUS: Record<string, string[]> = {
-  PENDING: ["IN_PROGRESS"],
-  IN_PROGRESS: ["APPROVED", "REJECTED"],
+  PENDING: ["IN_PROGRESS", "REJECTED"],
+  IN_PROGRESS: [],
   APPROVED: ["COLLECTED"],
   REJECTED: [],
   COLLECTED: [],
@@ -218,7 +219,7 @@ export default function MFADashboard() {
         <div className="flex items-center gap-3">
           <Badge variant="outline" className="text-sm">Heute, {today}</Badge>
           <Button size="sm" variant="outline" onClick={loadDashboard} disabled={loading}>
-            {loading ? "..." : "🔄 Aktualisieren"}
+            {loading ? "..." : " Aktualisieren"}
           </Button>
         </div>
       </div>
@@ -291,7 +292,7 @@ export default function MFADashboard() {
                     />
                     Dr. {apt.doctor_last_name}
                     <span className="ml-auto">
-                      {apt.booking_type === "PHONE" ? "📞 Tel." : "🌐 Online"}
+                      {apt.booking_type === "PHONE" ? "Tel." : "Online"}
                     </span>
                   </div>
 
@@ -321,7 +322,7 @@ export default function MFADashboard() {
                         }}
                         title="Notiz"
                       >
-                        📝
+                        
                       </Button>
                     </div>
                   </div>
@@ -356,7 +357,7 @@ export default function MFADashboard() {
               )}
             </CardTitle>
             <CardDescription>
-              Ampel-Workflow: 🔴 Neu → 🟡 Prüfung → 🟢 Fertig
+              Ampel-Workflow: [Neu] &rarr; [In Prüfung] &rarr; [Freigegeben]
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 max-h-[70vh] overflow-y-auto">
@@ -396,8 +397,8 @@ export default function MFADashboard() {
                     </div>
 
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      👨‍⚕️ Dr. {rx.doctor_last_name}
-                      <span className="ml-auto">📅 {rx.request_date}</span>
+                      Dr. {rx.doctor_last_name}
+                      <span className="ml-auto"> {formatDate(rx.request_date)}</span>
                     </div>
 
                     {rx.notes && (
@@ -410,16 +411,16 @@ export default function MFADashboard() {
                           key={ns}
                           size="xs"
                           variant={
-                            ns === "APPROVED" ? "default" :
+                            ns === "IN_PROGRESS" ? "default" :
                             ns === "REJECTED" ? "destructive" : "outline"
                           }
                           className="text-xs"
                           onClick={() => handleRxStatusChange(rx.id, ns)}
                         >
-                          {ns === "IN_PROGRESS" ? "🔍 Prüfen" :
-                           ns === "APPROVED" ? "✅ Freigeben" :
-                           ns === "REJECTED" ? "❌ Ablehnen" :
-                           ns === "COLLECTED" ? "📦 Abgeholt" : ns}
+                          {ns === "IN_PROGRESS" ? "Prüfen & weiterleiten" :
+                           ns === "APPROVED" ? "Freigeben" :
+                           ns === "REJECTED" ? "Ablehnen" :
+                           ns === "COLLECTED" ? "Abgeholt" : ns}
                         </Button>
                       ))}
                     </div>
@@ -567,3 +568,11 @@ export default function MFADashboard() {
     </div>
   );
 }
+
+
+
+
+
+
+
+

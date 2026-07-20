@@ -1,0 +1,22 @@
+﻿{
+  "imports": {
+    "react": "/node_modules/react/index.js",
+    "react/jsx-runtime": "/node_modules/react/jsx-runtime.js",
+    "react/jsx-dev-runtime": "/node_modules/react/jsx-dev-runtime.js",
+    "react-dom": "/node_modules/react-dom/index.js",
+    "react-dom/client": "/node_modules/react-dom/client.js",
+    "react-router-dom": "/node_modules/react-router-dom/dist/index.mjs",
+    "react-day-picker": "/node_modules/react-day-picker/dist/esm/index.js",
+    "lucide-react": "/node_modules/lucide-react/dist/esm/lucide-react.js",
+    "date-fns": "/node_modules/date-fns/index.js",
+    "clsx": "/node_modules/clsx/dist/clsx.mjs",
+    "class-variance-authority": "/node_modules/class-variance-authority/dist/index.mjs",
+    "tailwind-merge": "/node_modules/tailwind-merge/dist/index.mjs",
+    "@radix-ui/react-slot": "/node_modules/@radix-ui/react-slot/dist/index.mjs",
+    "@radix-ui/react-dialog": "/node_modules/@radix-ui/react-dialog/dist/index.mjs",
+    "@radix-ui/react-dropdown-menu": "/node_modules/@radix-ui/react-dropdown-menu/dist/index.mjs",
+    "@radix-ui/react-select": "/node_modules/@radix-ui/react-select/dist/index.mjs",
+    "@radix-ui/react-tabs": "/node_modules/@radix-ui/react-tabs/dist/index.mjs",
+    "@radix-ui/react-toast": "/node_modules/@radix-ui/react-toast/dist/index.mjs"
+  }
+}

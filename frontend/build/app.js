@@ -1,0 +1,22588 @@
+"use strict";
+var PraxisApp = (() => {
+  var __create = Object.create;
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getProtoOf = Object.getPrototypeOf;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __commonJS = (cb, mod) => function __require() {
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  };
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+    // If the importer is in node compatibility mode or this is not an ESM
+    // file that has been converted to a CommonJS file using a Babel-
+    // compatible transform (i.e. "__esModule" has not been set), then set
+    // "default" to the CommonJS "module.exports" for node compatibility.
+    isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+    mod
+  ));
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+  // node_modules/react/cjs/react.production.min.js
+  var require_react_production_min = __commonJS({
+    "node_modules/react/cjs/react.production.min.js"(exports) {
+      "use strict";
+      var l = Symbol.for("react.element");
+      var n = Symbol.for("react.portal");
+      var p = Symbol.for("react.fragment");
+      var q = Symbol.for("react.strict_mode");
+      var r2 = Symbol.for("react.profiler");
+      var t = Symbol.for("react.provider");
+      var u = Symbol.for("react.context");
+      var v = Symbol.for("react.forward_ref");
+      var w = Symbol.for("react.suspense");
+      var x = Symbol.for("react.memo");
+      var y = Symbol.for("react.lazy");
+      var z = Symbol.iterator;
+      function A(a) {
+        if (null === a || "object" !== typeof a) return null;
+        a = z && a[z] || a["@@iterator"];
+        return "function" === typeof a ? a : null;
+      }
+      var B = { isMounted: function() {
+        return false;
+      }, enqueueForceUpdate: function() {
+      }, enqueueReplaceState: function() {
+      }, enqueueSetState: function() {
+      } };
+      var C = Object.assign;
+      var D = {};
+      function E(a, b, e) {
+        this.props = a;
+        this.context = b;
+        this.refs = D;
+        this.updater = e || B;
+      }
+      E.prototype.isReactComponent = {};
+      E.prototype.setState = function(a, b) {
+        if ("object" !== typeof a && "function" !== typeof a && null != a) throw Error("setState(...): takes an object of state variables to update or a function which returns an object of state variables.");
+        this.updater.enqueueSetState(this, a, b, "setState");
+      };
+      E.prototype.forceUpdate = function(a) {
+        this.updater.enqueueForceUpdate(this, a, "forceUpdate");
+      };
+      function F() {
+      }
+      F.prototype = E.prototype;
+      function G(a, b, e) {
+        this.props = a;
+        this.context = b;
+        this.refs = D;
+        this.updater = e || B;
+      }
+      var H = G.prototype = new F();
+      H.constructor = G;
+      C(H, E.prototype);
+      H.isPureReactComponent = true;
+      var I = Array.isArray;
+      var J = Object.prototype.hasOwnProperty;
+      var K = { current: null };
+      var L = { key: true, ref: true, __self: true, __source: true };
+      function M(a, b, e) {
+        var d, c = {}, k = null, h = null;
+        if (null != b) for (d in void 0 !== b.ref && (h = b.ref), void 0 !== b.key && (k = "" + b.key), b) J.call(b, d) && !L.hasOwnProperty(d) && (c[d] = b[d]);
+        var g = arguments.length - 2;
+        if (1 === g) c.children = e;
+        else if (1 < g) {
+          for (var f = Array(g), m = 0; m < g; m++) f[m] = arguments[m + 2];
+          c.children = f;
+        }
+        if (a && a.defaultProps) for (d in g = a.defaultProps, g) void 0 === c[d] && (c[d] = g[d]);
+        return { $$typeof: l, type: a, key: k, ref: h, props: c, _owner: K.current };
+      }
+      function N(a, b) {
+        return { $$typeof: l, type: a.type, key: b, ref: a.ref, props: a.props, _owner: a._owner };
+      }
+      function O(a) {
+        return "object" === typeof a && null !== a && a.$$typeof === l;
+      }
+      function escape(a) {
+        var b = { "=": "=0", ":": "=2" };
+        return "$" + a.replace(/[=:]/g, function(a2) {
+          return b[a2];
+        });
+      }
+      var P = /\/+/g;
+      function Q(a, b) {
+        return "object" === typeof a && null !== a && null != a.key ? escape("" + a.key) : b.toString(36);
+      }
+      function R(a, b, e, d, c) {
+        var k = typeof a;
+        if ("undefined" === k || "boolean" === k) a = null;
+        var h = false;
+        if (null === a) h = true;
+        else switch (k) {
+          case "string":
+          case "number":
+            h = true;
+            break;
+          case "object":
+            switch (a.$$typeof) {
+              case l:
+              case n:
+                h = true;
+            }
+        }
+        if (h) return h = a, c = c(h), a = "" === d ? "." + Q(h, 0) : d, I(c) ? (e = "", null != a && (e = a.replace(P, "$&/") + "/"), R(c, b, e, "", function(a2) {
+          return a2;
+        })) : null != c && (O(c) && (c = N(c, e + (!c.key || h && h.key === c.key ? "" : ("" + c.key).replace(P, "$&/") + "/") + a)), b.push(c)), 1;
+        h = 0;
+        d = "" === d ? "." : d + ":";
+        if (I(a)) for (var g = 0; g < a.length; g++) {
+          k = a[g];
+          var f = d + Q(k, g);
+          h += R(k, b, e, f, c);
+        }
+        else if (f = A(a), "function" === typeof f) for (a = f.call(a), g = 0; !(k = a.next()).done; ) k = k.value, f = d + Q(k, g++), h += R(k, b, e, f, c);
+        else if ("object" === k) throw b = String(a), Error("Objects are not valid as a React child (found: " + ("[object Object]" === b ? "object with keys {" + Object.keys(a).join(", ") + "}" : b) + "). If you meant to render a collection of children, use an array instead.");
+        return h;
+      }
+      function S(a, b, e) {
+        if (null == a) return a;
+        var d = [], c = 0;
+        R(a, d, "", "", function(a2) {
+          return b.call(e, a2, c++);
+        });
+        return d;
+      }
+      function T(a) {
+        if (-1 === a._status) {
+          var b = a._result;
+          b = b();
+          b.then(function(b2) {
+            if (0 === a._status || -1 === a._status) a._status = 1, a._result = b2;
+          }, function(b2) {
+            if (0 === a._status || -1 === a._status) a._status = 2, a._result = b2;
+          });
+          -1 === a._status && (a._status = 0, a._result = b);
+        }
+        if (1 === a._status) return a._result.default;
+        throw a._result;
+      }
+      var U = { current: null };
+      var V = { transition: null };
+      var W = { ReactCurrentDispatcher: U, ReactCurrentBatchConfig: V, ReactCurrentOwner: K };
+      function X() {
+        throw Error("act(...) is not supported in production builds of React.");
+      }
+      exports.Children = { map: S, forEach: function(a, b, e) {
+        S(a, function() {
+          b.apply(this, arguments);
+        }, e);
+      }, count: function(a) {
+        var b = 0;
+        S(a, function() {
+          b++;
+        });
+        return b;
+      }, toArray: function(a) {
+        return S(a, function(a2) {
+          return a2;
+        }) || [];
+      }, only: function(a) {
+        if (!O(a)) throw Error("React.Children.only expected to receive a single React element child.");
+        return a;
+      } };
+      exports.Component = E;
+      exports.Fragment = p;
+      exports.Profiler = r2;
+      exports.PureComponent = G;
+      exports.StrictMode = q;
+      exports.Suspense = w;
+      exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = W;
+      exports.act = X;
+      exports.cloneElement = function(a, b, e) {
+        if (null === a || void 0 === a) throw Error("React.cloneElement(...): The argument must be a React element, but you passed " + a + ".");
+        var d = C({}, a.props), c = a.key, k = a.ref, h = a._owner;
+        if (null != b) {
+          void 0 !== b.ref && (k = b.ref, h = K.current);
+          void 0 !== b.key && (c = "" + b.key);
+          if (a.type && a.type.defaultProps) var g = a.type.defaultProps;
+          for (f in b) J.call(b, f) && !L.hasOwnProperty(f) && (d[f] = void 0 === b[f] && void 0 !== g ? g[f] : b[f]);
+        }
+        var f = arguments.length - 2;
+        if (1 === f) d.children = e;
+        else if (1 < f) {
+          g = Array(f);
+          for (var m = 0; m < f; m++) g[m] = arguments[m + 2];
+          d.children = g;
+        }
+        return { $$typeof: l, type: a.type, key: c, ref: k, props: d, _owner: h };
+      };
+      exports.createContext = function(a) {
+        a = { $$typeof: u, _currentValue: a, _currentValue2: a, _threadCount: 0, Provider: null, Consumer: null, _defaultValue: null, _globalName: null };
+        a.Provider = { $$typeof: t, _context: a };
+        return a.Consumer = a;
+      };
+      exports.createElement = M;
+      exports.createFactory = function(a) {
+        var b = M.bind(null, a);
+        b.type = a;
+        return b;
+      };
+      exports.createRef = function() {
+        return { current: null };
+      };
+      exports.forwardRef = function(a) {
+        return { $$typeof: v, render: a };
+      };
+      exports.isValidElement = O;
+      exports.lazy = function(a) {
+        return { $$typeof: y, _payload: { _status: -1, _result: a }, _init: T };
+      };
+      exports.memo = function(a, b) {
+        return { $$typeof: x, type: a, compare: void 0 === b ? null : b };
+      };
+      exports.startTransition = function(a) {
+        var b = V.transition;
+        V.transition = {};
+        try {
+          a();
+        } finally {
+          V.transition = b;
+        }
+      };
+      exports.unstable_act = X;
+      exports.useCallback = function(a, b) {
+        return U.current.useCallback(a, b);
+      };
+      exports.useContext = function(a) {
+        return U.current.useContext(a);
+      };
+      exports.useDebugValue = function() {
+      };
+      exports.useDeferredValue = function(a) {
+        return U.current.useDeferredValue(a);
+      };
+      exports.useEffect = function(a, b) {
+        return U.current.useEffect(a, b);
+      };
+      exports.useId = function() {
+        return U.current.useId();
+      };
+      exports.useImperativeHandle = function(a, b, e) {
+        return U.current.useImperativeHandle(a, b, e);
+      };
+      exports.useInsertionEffect = function(a, b) {
+        return U.current.useInsertionEffect(a, b);
+      };
+      exports.useLayoutEffect = function(a, b) {
+        return U.current.useLayoutEffect(a, b);
+      };
+      exports.useMemo = function(a, b) {
+        return U.current.useMemo(a, b);
+      };
+      exports.useReducer = function(a, b, e) {
+        return U.current.useReducer(a, b, e);
+      };
+      exports.useRef = function(a) {
+        return U.current.useRef(a);
+      };
+      exports.useState = function(a) {
+        return U.current.useState(a);
+      };
+      exports.useSyncExternalStore = function(a, b, e) {
+        return U.current.useSyncExternalStore(a, b, e);
+      };
+      exports.useTransition = function() {
+        return U.current.useTransition();
+      };
+      exports.version = "18.3.1";
+    }
+  });
+
+  // node_modules/react/index.js
+  var require_react = __commonJS({
+    "node_modules/react/index.js"(exports, module) {
+      "use strict";
+      if (true) {
+        module.exports = require_react_production_min();
+      } else {
+        module.exports = null;
+      }
+    }
+  });
+
+  // node_modules/scheduler/cjs/scheduler.production.min.js
+  var require_scheduler_production_min = __commonJS({
+    "node_modules/scheduler/cjs/scheduler.production.min.js"(exports) {
+      "use strict";
+      function f(a, b) {
+        var c = a.length;
+        a.push(b);
+        a: for (; 0 < c; ) {
+          var d = c - 1 >>> 1, e = a[d];
+          if (0 < g(e, b)) a[d] = b, a[c] = e, c = d;
+          else break a;
+        }
+      }
+      function h(a) {
+        return 0 === a.length ? null : a[0];
+      }
+      function k(a) {
+        if (0 === a.length) return null;
+        var b = a[0], c = a.pop();
+        if (c !== b) {
+          a[0] = c;
+          a: for (var d = 0, e = a.length, w = e >>> 1; d < w; ) {
+            var m = 2 * (d + 1) - 1, C = a[m], n = m + 1, x = a[n];
+            if (0 > g(C, c)) n < e && 0 > g(x, C) ? (a[d] = x, a[n] = c, d = n) : (a[d] = C, a[m] = c, d = m);
+            else if (n < e && 0 > g(x, c)) a[d] = x, a[n] = c, d = n;
+            else break a;
+          }
+        }
+        return b;
+      }
+      function g(a, b) {
+        var c = a.sortIndex - b.sortIndex;
+        return 0 !== c ? c : a.id - b.id;
+      }
+      if ("object" === typeof performance && "function" === typeof performance.now) {
+        l = performance;
+        exports.unstable_now = function() {
+          return l.now();
+        };
+      } else {
+        p = Date, q = p.now();
+        exports.unstable_now = function() {
+          return p.now() - q;
+        };
+      }
+      var l;
+      var p;
+      var q;
+      var r2 = [];
+      var t = [];
+      var u = 1;
+      var v = null;
+      var y = 3;
+      var z = false;
+      var A = false;
+      var B = false;
+      var D = "function" === typeof setTimeout ? setTimeout : null;
+      var E = "function" === typeof clearTimeout ? clearTimeout : null;
+      var F = "undefined" !== typeof setImmediate ? setImmediate : null;
+      "undefined" !== typeof navigator && void 0 !== navigator.scheduling && void 0 !== navigator.scheduling.isInputPending && navigator.scheduling.isInputPending.bind(navigator.scheduling);
+      function G(a) {
+        for (var b = h(t); null !== b; ) {
+          if (null === b.callback) k(t);
+          else if (b.startTime <= a) k(t), b.sortIndex = b.expirationTime, f(r2, b);
+          else break;
+          b = h(t);
+        }
+      }
+      function H(a) {
+        B = false;
+        G(a);
+        if (!A) if (null !== h(r2)) A = true, I(J);
+        else {
+          var b = h(t);
+          null !== b && K(H, b.startTime - a);
+        }
+      }
+      function J(a, b) {
+        A = false;
+        B && (B = false, E(L), L = -1);
+        z = true;
+        var c = y;
+        try {
+          G(b);
+          for (v = h(r2); null !== v && (!(v.expirationTime > b) || a && !M()); ) {
+            var d = v.callback;
+            if ("function" === typeof d) {
+              v.callback = null;
+              y = v.priorityLevel;
+              var e = d(v.expirationTime <= b);
+              b = exports.unstable_now();
+              "function" === typeof e ? v.callback = e : v === h(r2) && k(r2);
+              G(b);
+            } else k(r2);
+            v = h(r2);
+          }
+          if (null !== v) var w = true;
+          else {
+            var m = h(t);
+            null !== m && K(H, m.startTime - b);
+            w = false;
+          }
+          return w;
+        } finally {
+          v = null, y = c, z = false;
+        }
+      }
+      var N = false;
+      var O = null;
+      var L = -1;
+      var P = 5;
+      var Q = -1;
+      function M() {
+        return exports.unstable_now() - Q < P ? false : true;
+      }
+      function R() {
+        if (null !== O) {
+          var a = exports.unstable_now();
+          Q = a;
+          var b = true;
+          try {
+            b = O(true, a);
+          } finally {
+            b ? S() : (N = false, O = null);
+          }
+        } else N = false;
+      }
+      var S;
+      if ("function" === typeof F) S = function() {
+        F(R);
+      };
+      else if ("undefined" !== typeof MessageChannel) {
+        T = new MessageChannel(), U = T.port2;
+        T.port1.onmessage = R;
+        S = function() {
+          U.postMessage(null);
+        };
+      } else S = function() {
+        D(R, 0);
+      };
+      var T;
+      var U;
+      function I(a) {
+        O = a;
+        N || (N = true, S());
+      }
+      function K(a, b) {
+        L = D(function() {
+          a(exports.unstable_now());
+        }, b);
+      }
+      exports.unstable_IdlePriority = 5;
+      exports.unstable_ImmediatePriority = 1;
+      exports.unstable_LowPriority = 4;
+      exports.unstable_NormalPriority = 3;
+      exports.unstable_Profiling = null;
+      exports.unstable_UserBlockingPriority = 2;
+      exports.unstable_cancelCallback = function(a) {
+        a.callback = null;
+      };
+      exports.unstable_continueExecution = function() {
+        A || z || (A = true, I(J));
+      };
+      exports.unstable_forceFrameRate = function(a) {
+        0 > a || 125 < a ? console.error("forceFrameRate takes a positive int between 0 and 125, forcing frame rates higher than 125 fps is not supported") : P = 0 < a ? Math.floor(1e3 / a) : 5;
+      };
+      exports.unstable_getCurrentPriorityLevel = function() {
+        return y;
+      };
+      exports.unstable_getFirstCallbackNode = function() {
+        return h(r2);
+      };
+      exports.unstable_next = function(a) {
+        switch (y) {
+          case 1:
+          case 2:
+          case 3:
+            var b = 3;
+            break;
+          default:
+            b = y;
+        }
+        var c = y;
+        y = b;
+        try {
+          return a();
+        } finally {
+          y = c;
+        }
+      };
+      exports.unstable_pauseExecution = function() {
+      };
+      exports.unstable_requestPaint = function() {
+      };
+      exports.unstable_runWithPriority = function(a, b) {
+        switch (a) {
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+            break;
+          default:
+            a = 3;
+        }
+        var c = y;
+        y = a;
+        try {
+          return b();
+        } finally {
+          y = c;
+        }
+      };
+      exports.unstable_scheduleCallback = function(a, b, c) {
+        var d = exports.unstable_now();
+        "object" === typeof c && null !== c ? (c = c.delay, c = "number" === typeof c && 0 < c ? d + c : d) : c = d;
+        switch (a) {
+          case 1:
+            var e = -1;
+            break;
+          case 2:
+            e = 250;
+            break;
+          case 5:
+            e = 1073741823;
+            break;
+          case 4:
+            e = 1e4;
+            break;
+          default:
+            e = 5e3;
+        }
+        e = c + e;
+        a = { id: u++, callback: b, priorityLevel: a, startTime: c, expirationTime: e, sortIndex: -1 };
+        c > d ? (a.sortIndex = c, f(t, a), null === h(r2) && a === h(t) && (B ? (E(L), L = -1) : B = true, K(H, c - d))) : (a.sortIndex = e, f(r2, a), A || z || (A = true, I(J)));
+        return a;
+      };
+      exports.unstable_shouldYield = M;
+      exports.unstable_wrapCallback = function(a) {
+        var b = y;
+        return function() {
+          var c = y;
+          y = b;
+          try {
+            return a.apply(this, arguments);
+          } finally {
+            y = c;
+          }
+        };
+      };
+    }
+  });
+
+  // node_modules/scheduler/index.js
+  var require_scheduler = __commonJS({
+    "node_modules/scheduler/index.js"(exports, module) {
+      "use strict";
+      if (true) {
+        module.exports = require_scheduler_production_min();
+      } else {
+        module.exports = null;
+      }
+    }
+  });
+
+  // node_modules/react-dom/cjs/react-dom.production.min.js
+  var require_react_dom_production_min = __commonJS({
+    "node_modules/react-dom/cjs/react-dom.production.min.js"(exports) {
+      "use strict";
+      var aa = require_react();
+      var ca = require_scheduler();
+      function p(a) {
+        for (var b = "https://reactjs.org/docs/error-decoder.html?invariant=" + a, c = 1; c < arguments.length; c++) b += "&args[]=" + encodeURIComponent(arguments[c]);
+        return "Minified React error #" + a + "; visit " + b + " for the full message or use the non-minified dev environment for full errors and additional helpful warnings.";
+      }
+      var da = /* @__PURE__ */ new Set();
+      var ea = {};
+      function fa(a, b) {
+        ha(a, b);
+        ha(a + "Capture", b);
+      }
+      function ha(a, b) {
+        ea[a] = b;
+        for (a = 0; a < b.length; a++) da.add(b[a]);
+      }
+      var ia = !("undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement);
+      var ja = Object.prototype.hasOwnProperty;
+      var ka = /^[:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD][:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]*$/;
+      var la = {};
+      var ma = {};
+      function oa(a) {
+        if (ja.call(ma, a)) return true;
+        if (ja.call(la, a)) return false;
+        if (ka.test(a)) return ma[a] = true;
+        la[a] = true;
+        return false;
+      }
+      function pa(a, b, c, d) {
+        if (null !== c && 0 === c.type) return false;
+        switch (typeof b) {
+          case "function":
+          case "symbol":
+            return true;
+          case "boolean":
+            if (d) return false;
+            if (null !== c) return !c.acceptsBooleans;
+            a = a.toLowerCase().slice(0, 5);
+            return "data-" !== a && "aria-" !== a;
+          default:
+            return false;
+        }
+      }
+      function qa(a, b, c, d) {
+        if (null === b || "undefined" === typeof b || pa(a, b, c, d)) return true;
+        if (d) return false;
+        if (null !== c) switch (c.type) {
+          case 3:
+            return !b;
+          case 4:
+            return false === b;
+          case 5:
+            return isNaN(b);
+          case 6:
+            return isNaN(b) || 1 > b;
+        }
+        return false;
+      }
+      function v(a, b, c, d, e, f, g) {
+        this.acceptsBooleans = 2 === b || 3 === b || 4 === b;
+        this.attributeName = d;
+        this.attributeNamespace = e;
+        this.mustUseProperty = c;
+        this.propertyName = a;
+        this.type = b;
+        this.sanitizeURL = f;
+        this.removeEmptyString = g;
+      }
+      var z = {};
+      "children dangerouslySetInnerHTML defaultValue defaultChecked innerHTML suppressContentEditableWarning suppressHydrationWarning style".split(" ").forEach(function(a) {
+        z[a] = new v(a, 0, false, a, null, false, false);
+      });
+      [["acceptCharset", "accept-charset"], ["className", "class"], ["htmlFor", "for"], ["httpEquiv", "http-equiv"]].forEach(function(a) {
+        var b = a[0];
+        z[b] = new v(b, 1, false, a[1], null, false, false);
+      });
+      ["contentEditable", "draggable", "spellCheck", "value"].forEach(function(a) {
+        z[a] = new v(a, 2, false, a.toLowerCase(), null, false, false);
+      });
+      ["autoReverse", "externalResourcesRequired", "focusable", "preserveAlpha"].forEach(function(a) {
+        z[a] = new v(a, 2, false, a, null, false, false);
+      });
+      "allowFullScreen async autoFocus autoPlay controls default defer disabled disablePictureInPicture disableRemotePlayback formNoValidate hidden loop noModule noValidate open playsInline readOnly required reversed scoped seamless itemScope".split(" ").forEach(function(a) {
+        z[a] = new v(a, 3, false, a.toLowerCase(), null, false, false);
+      });
+      ["checked", "multiple", "muted", "selected"].forEach(function(a) {
+        z[a] = new v(a, 3, true, a, null, false, false);
+      });
+      ["capture", "download"].forEach(function(a) {
+        z[a] = new v(a, 4, false, a, null, false, false);
+      });
+      ["cols", "rows", "size", "span"].forEach(function(a) {
+        z[a] = new v(a, 6, false, a, null, false, false);
+      });
+      ["rowSpan", "start"].forEach(function(a) {
+        z[a] = new v(a, 5, false, a.toLowerCase(), null, false, false);
+      });
+      var ra = /[\-:]([a-z])/g;
+      function sa(a) {
+        return a[1].toUpperCase();
+      }
+      "accent-height alignment-baseline arabic-form baseline-shift cap-height clip-path clip-rule color-interpolation color-interpolation-filters color-profile color-rendering dominant-baseline enable-background fill-opacity fill-rule flood-color flood-opacity font-family font-size font-size-adjust font-stretch font-style font-variant font-weight glyph-name glyph-orientation-horizontal glyph-orientation-vertical horiz-adv-x horiz-origin-x image-rendering letter-spacing lighting-color marker-end marker-mid marker-start overline-position overline-thickness paint-order panose-1 pointer-events rendering-intent shape-rendering stop-color stop-opacity strikethrough-position strikethrough-thickness stroke-dasharray stroke-dashoffset stroke-linecap stroke-linejoin stroke-miterlimit stroke-opacity stroke-width text-anchor text-decoration text-rendering underline-position underline-thickness unicode-bidi unicode-range units-per-em v-alphabetic v-hanging v-ideographic v-mathematical vector-effect vert-adv-y vert-origin-x vert-origin-y word-spacing writing-mode xmlns:xlink x-height".split(" ").forEach(function(a) {
+        var b = a.replace(
+          ra,
+          sa
+        );
+        z[b] = new v(b, 1, false, a, null, false, false);
+      });
+      "xlink:actuate xlink:arcrole xlink:role xlink:show xlink:title xlink:type".split(" ").forEach(function(a) {
+        var b = a.replace(ra, sa);
+        z[b] = new v(b, 1, false, a, "http://www.w3.org/1999/xlink", false, false);
+      });
+      ["xml:base", "xml:lang", "xml:space"].forEach(function(a) {
+        var b = a.replace(ra, sa);
+        z[b] = new v(b, 1, false, a, "http://www.w3.org/XML/1998/namespace", false, false);
+      });
+      ["tabIndex", "crossOrigin"].forEach(function(a) {
+        z[a] = new v(a, 1, false, a.toLowerCase(), null, false, false);
+      });
+      z.xlinkHref = new v("xlinkHref", 1, false, "xlink:href", "http://www.w3.org/1999/xlink", true, false);
+      ["src", "href", "action", "formAction"].forEach(function(a) {
+        z[a] = new v(a, 1, false, a.toLowerCase(), null, true, true);
+      });
+      function ta(a, b, c, d) {
+        var e = z.hasOwnProperty(b) ? z[b] : null;
+        if (null !== e ? 0 !== e.type : d || !(2 < b.length) || "o" !== b[0] && "O" !== b[0] || "n" !== b[1] && "N" !== b[1]) qa(b, c, e, d) && (c = null), d || null === e ? oa(b) && (null === c ? a.removeAttribute(b) : a.setAttribute(b, "" + c)) : e.mustUseProperty ? a[e.propertyName] = null === c ? 3 === e.type ? false : "" : c : (b = e.attributeName, d = e.attributeNamespace, null === c ? a.removeAttribute(b) : (e = e.type, c = 3 === e || 4 === e && true === c ? "" : "" + c, d ? a.setAttributeNS(d, b, c) : a.setAttribute(b, c)));
+      }
+      var ua = aa.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+      var va = Symbol.for("react.element");
+      var wa = Symbol.for("react.portal");
+      var ya = Symbol.for("react.fragment");
+      var za = Symbol.for("react.strict_mode");
+      var Aa = Symbol.for("react.profiler");
+      var Ba = Symbol.for("react.provider");
+      var Ca = Symbol.for("react.context");
+      var Da = Symbol.for("react.forward_ref");
+      var Ea = Symbol.for("react.suspense");
+      var Fa = Symbol.for("react.suspense_list");
+      var Ga = Symbol.for("react.memo");
+      var Ha = Symbol.for("react.lazy");
+      Symbol.for("react.scope");
+      Symbol.for("react.debug_trace_mode");
+      var Ia = Symbol.for("react.offscreen");
+      Symbol.for("react.legacy_hidden");
+      Symbol.for("react.cache");
+      Symbol.for("react.tracing_marker");
+      var Ja = Symbol.iterator;
+      function Ka(a) {
+        if (null === a || "object" !== typeof a) return null;
+        a = Ja && a[Ja] || a["@@iterator"];
+        return "function" === typeof a ? a : null;
+      }
+      var A = Object.assign;
+      var La;
+      function Ma(a) {
+        if (void 0 === La) try {
+          throw Error();
+        } catch (c) {
+          var b = c.stack.trim().match(/\n( *(at )?)/);
+          La = b && b[1] || "";
+        }
+        return "\n" + La + a;
+      }
+      var Na = false;
+      function Oa(a, b) {
+        if (!a || Na) return "";
+        Na = true;
+        var c = Error.prepareStackTrace;
+        Error.prepareStackTrace = void 0;
+        try {
+          if (b) if (b = function() {
+            throw Error();
+          }, Object.defineProperty(b.prototype, "props", { set: function() {
+            throw Error();
+          } }), "object" === typeof Reflect && Reflect.construct) {
+            try {
+              Reflect.construct(b, []);
+            } catch (l) {
+              var d = l;
+            }
+            Reflect.construct(a, [], b);
+          } else {
+            try {
+              b.call();
+            } catch (l) {
+              d = l;
+            }
+            a.call(b.prototype);
+          }
+          else {
+            try {
+              throw Error();
+            } catch (l) {
+              d = l;
+            }
+            a();
+          }
+        } catch (l) {
+          if (l && d && "string" === typeof l.stack) {
+            for (var e = l.stack.split("\n"), f = d.stack.split("\n"), g = e.length - 1, h = f.length - 1; 1 <= g && 0 <= h && e[g] !== f[h]; ) h--;
+            for (; 1 <= g && 0 <= h; g--, h--) if (e[g] !== f[h]) {
+              if (1 !== g || 1 !== h) {
+                do
+                  if (g--, h--, 0 > h || e[g] !== f[h]) {
+                    var k = "\n" + e[g].replace(" at new ", " at ");
+                    a.displayName && k.includes("<anonymous>") && (k = k.replace("<anonymous>", a.displayName));
+                    return k;
+                  }
+                while (1 <= g && 0 <= h);
+              }
+              break;
+            }
+          }
+        } finally {
+          Na = false, Error.prepareStackTrace = c;
+        }
+        return (a = a ? a.displayName || a.name : "") ? Ma(a) : "";
+      }
+      function Pa(a) {
+        switch (a.tag) {
+          case 5:
+            return Ma(a.type);
+          case 16:
+            return Ma("Lazy");
+          case 13:
+            return Ma("Suspense");
+          case 19:
+            return Ma("SuspenseList");
+          case 0:
+          case 2:
+          case 15:
+            return a = Oa(a.type, false), a;
+          case 11:
+            return a = Oa(a.type.render, false), a;
+          case 1:
+            return a = Oa(a.type, true), a;
+          default:
+            return "";
+        }
+      }
+      function Qa(a) {
+        if (null == a) return null;
+        if ("function" === typeof a) return a.displayName || a.name || null;
+        if ("string" === typeof a) return a;
+        switch (a) {
+          case ya:
+            return "Fragment";
+          case wa:
+            return "Portal";
+          case Aa:
+            return "Profiler";
+          case za:
+            return "StrictMode";
+          case Ea:
+            return "Suspense";
+          case Fa:
+            return "SuspenseList";
+        }
+        if ("object" === typeof a) switch (a.$$typeof) {
+          case Ca:
+            return (a.displayName || "Context") + ".Consumer";
+          case Ba:
+            return (a._context.displayName || "Context") + ".Provider";
+          case Da:
+            var b = a.render;
+            a = a.displayName;
+            a || (a = b.displayName || b.name || "", a = "" !== a ? "ForwardRef(" + a + ")" : "ForwardRef");
+            return a;
+          case Ga:
+            return b = a.displayName || null, null !== b ? b : Qa(a.type) || "Memo";
+          case Ha:
+            b = a._payload;
+            a = a._init;
+            try {
+              return Qa(a(b));
+            } catch (c) {
+            }
+        }
+        return null;
+      }
+      function Ra(a) {
+        var b = a.type;
+        switch (a.tag) {
+          case 24:
+            return "Cache";
+          case 9:
+            return (b.displayName || "Context") + ".Consumer";
+          case 10:
+            return (b._context.displayName || "Context") + ".Provider";
+          case 18:
+            return "DehydratedFragment";
+          case 11:
+            return a = b.render, a = a.displayName || a.name || "", b.displayName || ("" !== a ? "ForwardRef(" + a + ")" : "ForwardRef");
+          case 7:
+            return "Fragment";
+          case 5:
+            return b;
+          case 4:
+            return "Portal";
+          case 3:
+            return "Root";
+          case 6:
+            return "Text";
+          case 16:
+            return Qa(b);
+          case 8:
+            return b === za ? "StrictMode" : "Mode";
+          case 22:
+            return "Offscreen";
+          case 12:
+            return "Profiler";
+          case 21:
+            return "Scope";
+          case 13:
+            return "Suspense";
+          case 19:
+            return "SuspenseList";
+          case 25:
+            return "TracingMarker";
+          case 1:
+          case 0:
+          case 17:
+          case 2:
+          case 14:
+          case 15:
+            if ("function" === typeof b) return b.displayName || b.name || null;
+            if ("string" === typeof b) return b;
+        }
+        return null;
+      }
+      function Sa(a) {
+        switch (typeof a) {
+          case "boolean":
+          case "number":
+          case "string":
+          case "undefined":
+            return a;
+          case "object":
+            return a;
+          default:
+            return "";
+        }
+      }
+      function Ta(a) {
+        var b = a.type;
+        return (a = a.nodeName) && "input" === a.toLowerCase() && ("checkbox" === b || "radio" === b);
+      }
+      function Ua(a) {
+        var b = Ta(a) ? "checked" : "value", c = Object.getOwnPropertyDescriptor(a.constructor.prototype, b), d = "" + a[b];
+        if (!a.hasOwnProperty(b) && "undefined" !== typeof c && "function" === typeof c.get && "function" === typeof c.set) {
+          var e = c.get, f = c.set;
+          Object.defineProperty(a, b, { configurable: true, get: function() {
+            return e.call(this);
+          }, set: function(a2) {
+            d = "" + a2;
+            f.call(this, a2);
+          } });
+          Object.defineProperty(a, b, { enumerable: c.enumerable });
+          return { getValue: function() {
+            return d;
+          }, setValue: function(a2) {
+            d = "" + a2;
+          }, stopTracking: function() {
+            a._valueTracker = null;
+            delete a[b];
+          } };
+        }
+      }
+      function Va(a) {
+        a._valueTracker || (a._valueTracker = Ua(a));
+      }
+      function Wa(a) {
+        if (!a) return false;
+        var b = a._valueTracker;
+        if (!b) return true;
+        var c = b.getValue();
+        var d = "";
+        a && (d = Ta(a) ? a.checked ? "true" : "false" : a.value);
+        a = d;
+        return a !== c ? (b.setValue(a), true) : false;
+      }
+      function Xa(a) {
+        a = a || ("undefined" !== typeof document ? document : void 0);
+        if ("undefined" === typeof a) return null;
+        try {
+          return a.activeElement || a.body;
+        } catch (b) {
+          return a.body;
+        }
+      }
+      function Ya(a, b) {
+        var c = b.checked;
+        return A({}, b, { defaultChecked: void 0, defaultValue: void 0, value: void 0, checked: null != c ? c : a._wrapperState.initialChecked });
+      }
+      function Za(a, b) {
+        var c = null == b.defaultValue ? "" : b.defaultValue, d = null != b.checked ? b.checked : b.defaultChecked;
+        c = Sa(null != b.value ? b.value : c);
+        a._wrapperState = { initialChecked: d, initialValue: c, controlled: "checkbox" === b.type || "radio" === b.type ? null != b.checked : null != b.value };
+      }
+      function ab(a, b) {
+        b = b.checked;
+        null != b && ta(a, "checked", b, false);
+      }
+      function bb(a, b) {
+        ab(a, b);
+        var c = Sa(b.value), d = b.type;
+        if (null != c) if ("number" === d) {
+          if (0 === c && "" === a.value || a.value != c) a.value = "" + c;
+        } else a.value !== "" + c && (a.value = "" + c);
+        else if ("submit" === d || "reset" === d) {
+          a.removeAttribute("value");
+          return;
+        }
+        b.hasOwnProperty("value") ? cb(a, b.type, c) : b.hasOwnProperty("defaultValue") && cb(a, b.type, Sa(b.defaultValue));
+        null == b.checked && null != b.defaultChecked && (a.defaultChecked = !!b.defaultChecked);
+      }
+      function db(a, b, c) {
+        if (b.hasOwnProperty("value") || b.hasOwnProperty("defaultValue")) {
+          var d = b.type;
+          if (!("submit" !== d && "reset" !== d || void 0 !== b.value && null !== b.value)) return;
+          b = "" + a._wrapperState.initialValue;
+          c || b === a.value || (a.value = b);
+          a.defaultValue = b;
+        }
+        c = a.name;
+        "" !== c && (a.name = "");
+        a.defaultChecked = !!a._wrapperState.initialChecked;
+        "" !== c && (a.name = c);
+      }
+      function cb(a, b, c) {
+        if ("number" !== b || Xa(a.ownerDocument) !== a) null == c ? a.defaultValue = "" + a._wrapperState.initialValue : a.defaultValue !== "" + c && (a.defaultValue = "" + c);
+      }
+      var eb = Array.isArray;
+      function fb(a, b, c, d) {
+        a = a.options;
+        if (b) {
+          b = {};
+          for (var e = 0; e < c.length; e++) b["$" + c[e]] = true;
+          for (c = 0; c < a.length; c++) e = b.hasOwnProperty("$" + a[c].value), a[c].selected !== e && (a[c].selected = e), e && d && (a[c].defaultSelected = true);
+        } else {
+          c = "" + Sa(c);
+          b = null;
+          for (e = 0; e < a.length; e++) {
+            if (a[e].value === c) {
+              a[e].selected = true;
+              d && (a[e].defaultSelected = true);
+              return;
+            }
+            null !== b || a[e].disabled || (b = a[e]);
+          }
+          null !== b && (b.selected = true);
+        }
+      }
+      function gb(a, b) {
+        if (null != b.dangerouslySetInnerHTML) throw Error(p(91));
+        return A({}, b, { value: void 0, defaultValue: void 0, children: "" + a._wrapperState.initialValue });
+      }
+      function hb(a, b) {
+        var c = b.value;
+        if (null == c) {
+          c = b.children;
+          b = b.defaultValue;
+          if (null != c) {
+            if (null != b) throw Error(p(92));
+            if (eb(c)) {
+              if (1 < c.length) throw Error(p(93));
+              c = c[0];
+            }
+            b = c;
+          }
+          null == b && (b = "");
+          c = b;
+        }
+        a._wrapperState = { initialValue: Sa(c) };
+      }
+      function ib(a, b) {
+        var c = Sa(b.value), d = Sa(b.defaultValue);
+        null != c && (c = "" + c, c !== a.value && (a.value = c), null == b.defaultValue && a.defaultValue !== c && (a.defaultValue = c));
+        null != d && (a.defaultValue = "" + d);
+      }
+      function jb(a) {
+        var b = a.textContent;
+        b === a._wrapperState.initialValue && "" !== b && null !== b && (a.value = b);
+      }
+      function kb(a) {
+        switch (a) {
+          case "svg":
+            return "http://www.w3.org/2000/svg";
+          case "math":
+            return "http://www.w3.org/1998/Math/MathML";
+          default:
+            return "http://www.w3.org/1999/xhtml";
+        }
+      }
+      function lb(a, b) {
+        return null == a || "http://www.w3.org/1999/xhtml" === a ? kb(b) : "http://www.w3.org/2000/svg" === a && "foreignObject" === b ? "http://www.w3.org/1999/xhtml" : a;
+      }
+      var mb;
+      var nb = function(a) {
+        return "undefined" !== typeof MSApp && MSApp.execUnsafeLocalFunction ? function(b, c, d, e) {
+          MSApp.execUnsafeLocalFunction(function() {
+            return a(b, c, d, e);
+          });
+        } : a;
+      }(function(a, b) {
+        if ("http://www.w3.org/2000/svg" !== a.namespaceURI || "innerHTML" in a) a.innerHTML = b;
+        else {
+          mb = mb || document.createElement("div");
+          mb.innerHTML = "<svg>" + b.valueOf().toString() + "</svg>";
+          for (b = mb.firstChild; a.firstChild; ) a.removeChild(a.firstChild);
+          for (; b.firstChild; ) a.appendChild(b.firstChild);
+        }
+      });
+      function ob(a, b) {
+        if (b) {
+          var c = a.firstChild;
+          if (c && c === a.lastChild && 3 === c.nodeType) {
+            c.nodeValue = b;
+            return;
+          }
+        }
+        a.textContent = b;
+      }
+      var pb = {
+        animationIterationCount: true,
+        aspectRatio: true,
+        borderImageOutset: true,
+        borderImageSlice: true,
+        borderImageWidth: true,
+        boxFlex: true,
+        boxFlexGroup: true,
+        boxOrdinalGroup: true,
+        columnCount: true,
+        columns: true,
+        flex: true,
+        flexGrow: true,
+        flexPositive: true,
+        flexShrink: true,
+        flexNegative: true,
+        flexOrder: true,
+        gridArea: true,
+        gridRow: true,
+        gridRowEnd: true,
+        gridRowSpan: true,
+        gridRowStart: true,
+        gridColumn: true,
+        gridColumnEnd: true,
+        gridColumnSpan: true,
+        gridColumnStart: true,
+        fontWeight: true,
+        lineClamp: true,
+        lineHeight: true,
+        opacity: true,
+        order: true,
+        orphans: true,
+        tabSize: true,
+        widows: true,
+        zIndex: true,
+        zoom: true,
+        fillOpacity: true,
+        floodOpacity: true,
+        stopOpacity: true,
+        strokeDasharray: true,
+        strokeDashoffset: true,
+        strokeMiterlimit: true,
+        strokeOpacity: true,
+        strokeWidth: true
+      };
+      var qb = ["Webkit", "ms", "Moz", "O"];
+      Object.keys(pb).forEach(function(a) {
+        qb.forEach(function(b) {
+          b = b + a.charAt(0).toUpperCase() + a.substring(1);
+          pb[b] = pb[a];
+        });
+      });
+      function rb(a, b, c) {
+        return null == b || "boolean" === typeof b || "" === b ? "" : c || "number" !== typeof b || 0 === b || pb.hasOwnProperty(a) && pb[a] ? ("" + b).trim() : b + "px";
+      }
+      function sb(a, b) {
+        a = a.style;
+        for (var c in b) if (b.hasOwnProperty(c)) {
+          var d = 0 === c.indexOf("--"), e = rb(c, b[c], d);
+          "float" === c && (c = "cssFloat");
+          d ? a.setProperty(c, e) : a[c] = e;
+        }
+      }
+      var tb = A({ menuitem: true }, { area: true, base: true, br: true, col: true, embed: true, hr: true, img: true, input: true, keygen: true, link: true, meta: true, param: true, source: true, track: true, wbr: true });
+      function ub(a, b) {
+        if (b) {
+          if (tb[a] && (null != b.children || null != b.dangerouslySetInnerHTML)) throw Error(p(137, a));
+          if (null != b.dangerouslySetInnerHTML) {
+            if (null != b.children) throw Error(p(60));
+            if ("object" !== typeof b.dangerouslySetInnerHTML || !("__html" in b.dangerouslySetInnerHTML)) throw Error(p(61));
+          }
+          if (null != b.style && "object" !== typeof b.style) throw Error(p(62));
+        }
+      }
+      function vb(a, b) {
+        if (-1 === a.indexOf("-")) return "string" === typeof b.is;
+        switch (a) {
+          case "annotation-xml":
+          case "color-profile":
+          case "font-face":
+          case "font-face-src":
+          case "font-face-uri":
+          case "font-face-format":
+          case "font-face-name":
+          case "missing-glyph":
+            return false;
+          default:
+            return true;
+        }
+      }
+      var wb = null;
+      function xb(a) {
+        a = a.target || a.srcElement || window;
+        a.correspondingUseElement && (a = a.correspondingUseElement);
+        return 3 === a.nodeType ? a.parentNode : a;
+      }
+      var yb = null;
+      var zb = null;
+      var Ab = null;
+      function Bb(a) {
+        if (a = Cb(a)) {
+          if ("function" !== typeof yb) throw Error(p(280));
+          var b = a.stateNode;
+          b && (b = Db(b), yb(a.stateNode, a.type, b));
+        }
+      }
+      function Eb(a) {
+        zb ? Ab ? Ab.push(a) : Ab = [a] : zb = a;
+      }
+      function Fb() {
+        if (zb) {
+          var a = zb, b = Ab;
+          Ab = zb = null;
+          Bb(a);
+          if (b) for (a = 0; a < b.length; a++) Bb(b[a]);
+        }
+      }
+      function Gb(a, b) {
+        return a(b);
+      }
+      function Hb() {
+      }
+      var Ib = false;
+      function Jb(a, b, c) {
+        if (Ib) return a(b, c);
+        Ib = true;
+        try {
+          return Gb(a, b, c);
+        } finally {
+          if (Ib = false, null !== zb || null !== Ab) Hb(), Fb();
+        }
+      }
+      function Kb(a, b) {
+        var c = a.stateNode;
+        if (null === c) return null;
+        var d = Db(c);
+        if (null === d) return null;
+        c = d[b];
+        a: switch (b) {
+          case "onClick":
+          case "onClickCapture":
+          case "onDoubleClick":
+          case "onDoubleClickCapture":
+          case "onMouseDown":
+          case "onMouseDownCapture":
+          case "onMouseMove":
+          case "onMouseMoveCapture":
+          case "onMouseUp":
+          case "onMouseUpCapture":
+          case "onMouseEnter":
+            (d = !d.disabled) || (a = a.type, d = !("button" === a || "input" === a || "select" === a || "textarea" === a));
+            a = !d;
+            break a;
+          default:
+            a = false;
+        }
+        if (a) return null;
+        if (c && "function" !== typeof c) throw Error(p(231, b, typeof c));
+        return c;
+      }
+      var Lb = false;
+      if (ia) try {
+        Mb = {};
+        Object.defineProperty(Mb, "passive", { get: function() {
+          Lb = true;
+        } });
+        window.addEventListener("test", Mb, Mb);
+        window.removeEventListener("test", Mb, Mb);
+      } catch (a) {
+        Lb = false;
+      }
+      var Mb;
+      function Nb(a, b, c, d, e, f, g, h, k) {
+        var l = Array.prototype.slice.call(arguments, 3);
+        try {
+          b.apply(c, l);
+        } catch (m) {
+          this.onError(m);
+        }
+      }
+      var Ob = false;
+      var Pb = null;
+      var Qb = false;
+      var Rb = null;
+      var Sb = { onError: function(a) {
+        Ob = true;
+        Pb = a;
+      } };
+      function Tb(a, b, c, d, e, f, g, h, k) {
+        Ob = false;
+        Pb = null;
+        Nb.apply(Sb, arguments);
+      }
+      function Ub(a, b, c, d, e, f, g, h, k) {
+        Tb.apply(this, arguments);
+        if (Ob) {
+          if (Ob) {
+            var l = Pb;
+            Ob = false;
+            Pb = null;
+          } else throw Error(p(198));
+          Qb || (Qb = true, Rb = l);
+        }
+      }
+      function Vb(a) {
+        var b = a, c = a;
+        if (a.alternate) for (; b.return; ) b = b.return;
+        else {
+          a = b;
+          do
+            b = a, 0 !== (b.flags & 4098) && (c = b.return), a = b.return;
+          while (a);
+        }
+        return 3 === b.tag ? c : null;
+      }
+      function Wb(a) {
+        if (13 === a.tag) {
+          var b = a.memoizedState;
+          null === b && (a = a.alternate, null !== a && (b = a.memoizedState));
+          if (null !== b) return b.dehydrated;
+        }
+        return null;
+      }
+      function Xb(a) {
+        if (Vb(a) !== a) throw Error(p(188));
+      }
+      function Yb(a) {
+        var b = a.alternate;
+        if (!b) {
+          b = Vb(a);
+          if (null === b) throw Error(p(188));
+          return b !== a ? null : a;
+        }
+        for (var c = a, d = b; ; ) {
+          var e = c.return;
+          if (null === e) break;
+          var f = e.alternate;
+          if (null === f) {
+            d = e.return;
+            if (null !== d) {
+              c = d;
+              continue;
+            }
+            break;
+          }
+          if (e.child === f.child) {
+            for (f = e.child; f; ) {
+              if (f === c) return Xb(e), a;
+              if (f === d) return Xb(e), b;
+              f = f.sibling;
+            }
+            throw Error(p(188));
+          }
+          if (c.return !== d.return) c = e, d = f;
+          else {
+            for (var g = false, h = e.child; h; ) {
+              if (h === c) {
+                g = true;
+                c = e;
+                d = f;
+                break;
+              }
+              if (h === d) {
+                g = true;
+                d = e;
+                c = f;
+                break;
+              }
+              h = h.sibling;
+            }
+            if (!g) {
+              for (h = f.child; h; ) {
+                if (h === c) {
+                  g = true;
+                  c = f;
+                  d = e;
+                  break;
+                }
+                if (h === d) {
+                  g = true;
+                  d = f;
+                  c = e;
+                  break;
+                }
+                h = h.sibling;
+              }
+              if (!g) throw Error(p(189));
+            }
+          }
+          if (c.alternate !== d) throw Error(p(190));
+        }
+        if (3 !== c.tag) throw Error(p(188));
+        return c.stateNode.current === c ? a : b;
+      }
+      function Zb(a) {
+        a = Yb(a);
+        return null !== a ? $b(a) : null;
+      }
+      function $b(a) {
+        if (5 === a.tag || 6 === a.tag) return a;
+        for (a = a.child; null !== a; ) {
+          var b = $b(a);
+          if (null !== b) return b;
+          a = a.sibling;
+        }
+        return null;
+      }
+      var ac = ca.unstable_scheduleCallback;
+      var bc = ca.unstable_cancelCallback;
+      var cc = ca.unstable_shouldYield;
+      var dc = ca.unstable_requestPaint;
+      var B = ca.unstable_now;
+      var ec = ca.unstable_getCurrentPriorityLevel;
+      var fc = ca.unstable_ImmediatePriority;
+      var gc = ca.unstable_UserBlockingPriority;
+      var hc = ca.unstable_NormalPriority;
+      var ic = ca.unstable_LowPriority;
+      var jc = ca.unstable_IdlePriority;
+      var kc = null;
+      var lc = null;
+      function mc(a) {
+        if (lc && "function" === typeof lc.onCommitFiberRoot) try {
+          lc.onCommitFiberRoot(kc, a, void 0, 128 === (a.current.flags & 128));
+        } catch (b) {
+        }
+      }
+      var oc = Math.clz32 ? Math.clz32 : nc;
+      var pc = Math.log;
+      var qc = Math.LN2;
+      function nc(a) {
+        a >>>= 0;
+        return 0 === a ? 32 : 31 - (pc(a) / qc | 0) | 0;
+      }
+      var rc = 64;
+      var sc = 4194304;
+      function tc(a) {
+        switch (a & -a) {
+          case 1:
+            return 1;
+          case 2:
+            return 2;
+          case 4:
+            return 4;
+          case 8:
+            return 8;
+          case 16:
+            return 16;
+          case 32:
+            return 32;
+          case 64:
+          case 128:
+          case 256:
+          case 512:
+          case 1024:
+          case 2048:
+          case 4096:
+          case 8192:
+          case 16384:
+          case 32768:
+          case 65536:
+          case 131072:
+          case 262144:
+          case 524288:
+          case 1048576:
+          case 2097152:
+            return a & 4194240;
+          case 4194304:
+          case 8388608:
+          case 16777216:
+          case 33554432:
+          case 67108864:
+            return a & 130023424;
+          case 134217728:
+            return 134217728;
+          case 268435456:
+            return 268435456;
+          case 536870912:
+            return 536870912;
+          case 1073741824:
+            return 1073741824;
+          default:
+            return a;
+        }
+      }
+      function uc(a, b) {
+        var c = a.pendingLanes;
+        if (0 === c) return 0;
+        var d = 0, e = a.suspendedLanes, f = a.pingedLanes, g = c & 268435455;
+        if (0 !== g) {
+          var h = g & ~e;
+          0 !== h ? d = tc(h) : (f &= g, 0 !== f && (d = tc(f)));
+        } else g = c & ~e, 0 !== g ? d = tc(g) : 0 !== f && (d = tc(f));
+        if (0 === d) return 0;
+        if (0 !== b && b !== d && 0 === (b & e) && (e = d & -d, f = b & -b, e >= f || 16 === e && 0 !== (f & 4194240))) return b;
+        0 !== (d & 4) && (d |= c & 16);
+        b = a.entangledLanes;
+        if (0 !== b) for (a = a.entanglements, b &= d; 0 < b; ) c = 31 - oc(b), e = 1 << c, d |= a[c], b &= ~e;
+        return d;
+      }
+      function vc(a, b) {
+        switch (a) {
+          case 1:
+          case 2:
+          case 4:
+            return b + 250;
+          case 8:
+          case 16:
+          case 32:
+          case 64:
+          case 128:
+          case 256:
+          case 512:
+          case 1024:
+          case 2048:
+          case 4096:
+          case 8192:
+          case 16384:
+          case 32768:
+          case 65536:
+          case 131072:
+          case 262144:
+          case 524288:
+          case 1048576:
+          case 2097152:
+            return b + 5e3;
+          case 4194304:
+          case 8388608:
+          case 16777216:
+          case 33554432:
+          case 67108864:
+            return -1;
+          case 134217728:
+          case 268435456:
+          case 536870912:
+          case 1073741824:
+            return -1;
+          default:
+            return -1;
+        }
+      }
+      function wc(a, b) {
+        for (var c = a.suspendedLanes, d = a.pingedLanes, e = a.expirationTimes, f = a.pendingLanes; 0 < f; ) {
+          var g = 31 - oc(f), h = 1 << g, k = e[g];
+          if (-1 === k) {
+            if (0 === (h & c) || 0 !== (h & d)) e[g] = vc(h, b);
+          } else k <= b && (a.expiredLanes |= h);
+          f &= ~h;
+        }
+      }
+      function xc(a) {
+        a = a.pendingLanes & -1073741825;
+        return 0 !== a ? a : a & 1073741824 ? 1073741824 : 0;
+      }
+      function yc() {
+        var a = rc;
+        rc <<= 1;
+        0 === (rc & 4194240) && (rc = 64);
+        return a;
+      }
+      function zc(a) {
+        for (var b = [], c = 0; 31 > c; c++) b.push(a);
+        return b;
+      }
+      function Ac(a, b, c) {
+        a.pendingLanes |= b;
+        536870912 !== b && (a.suspendedLanes = 0, a.pingedLanes = 0);
+        a = a.eventTimes;
+        b = 31 - oc(b);
+        a[b] = c;
+      }
+      function Bc(a, b) {
+        var c = a.pendingLanes & ~b;
+        a.pendingLanes = b;
+        a.suspendedLanes = 0;
+        a.pingedLanes = 0;
+        a.expiredLanes &= b;
+        a.mutableReadLanes &= b;
+        a.entangledLanes &= b;
+        b = a.entanglements;
+        var d = a.eventTimes;
+        for (a = a.expirationTimes; 0 < c; ) {
+          var e = 31 - oc(c), f = 1 << e;
+          b[e] = 0;
+          d[e] = -1;
+          a[e] = -1;
+          c &= ~f;
+        }
+      }
+      function Cc(a, b) {
+        var c = a.entangledLanes |= b;
+        for (a = a.entanglements; c; ) {
+          var d = 31 - oc(c), e = 1 << d;
+          e & b | a[d] & b && (a[d] |= b);
+          c &= ~e;
+        }
+      }
+      var C = 0;
+      function Dc(a) {
+        a &= -a;
+        return 1 < a ? 4 < a ? 0 !== (a & 268435455) ? 16 : 536870912 : 4 : 1;
+      }
+      var Ec;
+      var Fc;
+      var Gc;
+      var Hc;
+      var Ic;
+      var Jc = false;
+      var Kc = [];
+      var Lc = null;
+      var Mc = null;
+      var Nc = null;
+      var Oc = /* @__PURE__ */ new Map();
+      var Pc = /* @__PURE__ */ new Map();
+      var Qc = [];
+      var Rc = "mousedown mouseup touchcancel touchend touchstart auxclick dblclick pointercancel pointerdown pointerup dragend dragstart drop compositionend compositionstart keydown keypress keyup input textInput copy cut paste click change contextmenu reset submit".split(" ");
+      function Sc(a, b) {
+        switch (a) {
+          case "focusin":
+          case "focusout":
+            Lc = null;
+            break;
+          case "dragenter":
+          case "dragleave":
+            Mc = null;
+            break;
+          case "mouseover":
+          case "mouseout":
+            Nc = null;
+            break;
+          case "pointerover":
+          case "pointerout":
+            Oc.delete(b.pointerId);
+            break;
+          case "gotpointercapture":
+          case "lostpointercapture":
+            Pc.delete(b.pointerId);
+        }
+      }
+      function Tc(a, b, c, d, e, f) {
+        if (null === a || a.nativeEvent !== f) return a = { blockedOn: b, domEventName: c, eventSystemFlags: d, nativeEvent: f, targetContainers: [e] }, null !== b && (b = Cb(b), null !== b && Fc(b)), a;
+        a.eventSystemFlags |= d;
+        b = a.targetContainers;
+        null !== e && -1 === b.indexOf(e) && b.push(e);
+        return a;
+      }
+      function Uc(a, b, c, d, e) {
+        switch (b) {
+          case "focusin":
+            return Lc = Tc(Lc, a, b, c, d, e), true;
+          case "dragenter":
+            return Mc = Tc(Mc, a, b, c, d, e), true;
+          case "mouseover":
+            return Nc = Tc(Nc, a, b, c, d, e), true;
+          case "pointerover":
+            var f = e.pointerId;
+            Oc.set(f, Tc(Oc.get(f) || null, a, b, c, d, e));
+            return true;
+          case "gotpointercapture":
+            return f = e.pointerId, Pc.set(f, Tc(Pc.get(f) || null, a, b, c, d, e)), true;
+        }
+        return false;
+      }
+      function Vc(a) {
+        var b = Wc(a.target);
+        if (null !== b) {
+          var c = Vb(b);
+          if (null !== c) {
+            if (b = c.tag, 13 === b) {
+              if (b = Wb(c), null !== b) {
+                a.blockedOn = b;
+                Ic(a.priority, function() {
+                  Gc(c);
+                });
+                return;
+              }
+            } else if (3 === b && c.stateNode.current.memoizedState.isDehydrated) {
+              a.blockedOn = 3 === c.tag ? c.stateNode.containerInfo : null;
+              return;
+            }
+          }
+        }
+        a.blockedOn = null;
+      }
+      function Xc(a) {
+        if (null !== a.blockedOn) return false;
+        for (var b = a.targetContainers; 0 < b.length; ) {
+          var c = Yc(a.domEventName, a.eventSystemFlags, b[0], a.nativeEvent);
+          if (null === c) {
+            c = a.nativeEvent;
+            var d = new c.constructor(c.type, c);
+            wb = d;
+            c.target.dispatchEvent(d);
+            wb = null;
+          } else return b = Cb(c), null !== b && Fc(b), a.blockedOn = c, false;
+          b.shift();
+        }
+        return true;
+      }
+      function Zc(a, b, c) {
+        Xc(a) && c.delete(b);
+      }
+      function $c() {
+        Jc = false;
+        null !== Lc && Xc(Lc) && (Lc = null);
+        null !== Mc && Xc(Mc) && (Mc = null);
+        null !== Nc && Xc(Nc) && (Nc = null);
+        Oc.forEach(Zc);
+        Pc.forEach(Zc);
+      }
+      function ad(a, b) {
+        a.blockedOn === b && (a.blockedOn = null, Jc || (Jc = true, ca.unstable_scheduleCallback(ca.unstable_NormalPriority, $c)));
+      }
+      function bd(a) {
+        function b(b2) {
+          return ad(b2, a);
+        }
+        if (0 < Kc.length) {
+          ad(Kc[0], a);
+          for (var c = 1; c < Kc.length; c++) {
+            var d = Kc[c];
+            d.blockedOn === a && (d.blockedOn = null);
+          }
+        }
+        null !== Lc && ad(Lc, a);
+        null !== Mc && ad(Mc, a);
+        null !== Nc && ad(Nc, a);
+        Oc.forEach(b);
+        Pc.forEach(b);
+        for (c = 0; c < Qc.length; c++) d = Qc[c], d.blockedOn === a && (d.blockedOn = null);
+        for (; 0 < Qc.length && (c = Qc[0], null === c.blockedOn); ) Vc(c), null === c.blockedOn && Qc.shift();
+      }
+      var cd = ua.ReactCurrentBatchConfig;
+      var dd = true;
+      function ed(a, b, c, d) {
+        var e = C, f = cd.transition;
+        cd.transition = null;
+        try {
+          C = 1, fd(a, b, c, d);
+        } finally {
+          C = e, cd.transition = f;
+        }
+      }
+      function gd(a, b, c, d) {
+        var e = C, f = cd.transition;
+        cd.transition = null;
+        try {
+          C = 4, fd(a, b, c, d);
+        } finally {
+          C = e, cd.transition = f;
+        }
+      }
+      function fd(a, b, c, d) {
+        if (dd) {
+          var e = Yc(a, b, c, d);
+          if (null === e) hd(a, b, d, id, c), Sc(a, d);
+          else if (Uc(e, a, b, c, d)) d.stopPropagation();
+          else if (Sc(a, d), b & 4 && -1 < Rc.indexOf(a)) {
+            for (; null !== e; ) {
+              var f = Cb(e);
+              null !== f && Ec(f);
+              f = Yc(a, b, c, d);
+              null === f && hd(a, b, d, id, c);
+              if (f === e) break;
+              e = f;
+            }
+            null !== e && d.stopPropagation();
+          } else hd(a, b, d, null, c);
+        }
+      }
+      var id = null;
+      function Yc(a, b, c, d) {
+        id = null;
+        a = xb(d);
+        a = Wc(a);
+        if (null !== a) if (b = Vb(a), null === b) a = null;
+        else if (c = b.tag, 13 === c) {
+          a = Wb(b);
+          if (null !== a) return a;
+          a = null;
+        } else if (3 === c) {
+          if (b.stateNode.current.memoizedState.isDehydrated) return 3 === b.tag ? b.stateNode.containerInfo : null;
+          a = null;
+        } else b !== a && (a = null);
+        id = a;
+        return null;
+      }
+      function jd(a) {
+        switch (a) {
+          case "cancel":
+          case "click":
+          case "close":
+          case "contextmenu":
+          case "copy":
+          case "cut":
+          case "auxclick":
+          case "dblclick":
+          case "dragend":
+          case "dragstart":
+          case "drop":
+          case "focusin":
+          case "focusout":
+          case "input":
+          case "invalid":
+          case "keydown":
+          case "keypress":
+          case "keyup":
+          case "mousedown":
+          case "mouseup":
+          case "paste":
+          case "pause":
+          case "play":
+          case "pointercancel":
+          case "pointerdown":
+          case "pointerup":
+          case "ratechange":
+          case "reset":
+          case "resize":
+          case "seeked":
+          case "submit":
+          case "touchcancel":
+          case "touchend":
+          case "touchstart":
+          case "volumechange":
+          case "change":
+          case "selectionchange":
+          case "textInput":
+          case "compositionstart":
+          case "compositionend":
+          case "compositionupdate":
+          case "beforeblur":
+          case "afterblur":
+          case "beforeinput":
+          case "blur":
+          case "fullscreenchange":
+          case "focus":
+          case "hashchange":
+          case "popstate":
+          case "select":
+          case "selectstart":
+            return 1;
+          case "drag":
+          case "dragenter":
+          case "dragexit":
+          case "dragleave":
+          case "dragover":
+          case "mousemove":
+          case "mouseout":
+          case "mouseover":
+          case "pointermove":
+          case "pointerout":
+          case "pointerover":
+          case "scroll":
+          case "toggle":
+          case "touchmove":
+          case "wheel":
+          case "mouseenter":
+          case "mouseleave":
+          case "pointerenter":
+          case "pointerleave":
+            return 4;
+          case "message":
+            switch (ec()) {
+              case fc:
+                return 1;
+              case gc:
+                return 4;
+              case hc:
+              case ic:
+                return 16;
+              case jc:
+                return 536870912;
+              default:
+                return 16;
+            }
+          default:
+            return 16;
+        }
+      }
+      var kd = null;
+      var ld = null;
+      var md = null;
+      function nd() {
+        if (md) return md;
+        var a, b = ld, c = b.length, d, e = "value" in kd ? kd.value : kd.textContent, f = e.length;
+        for (a = 0; a < c && b[a] === e[a]; a++) ;
+        var g = c - a;
+        for (d = 1; d <= g && b[c - d] === e[f - d]; d++) ;
+        return md = e.slice(a, 1 < d ? 1 - d : void 0);
+      }
+      function od(a) {
+        var b = a.keyCode;
+        "charCode" in a ? (a = a.charCode, 0 === a && 13 === b && (a = 13)) : a = b;
+        10 === a && (a = 13);
+        return 32 <= a || 13 === a ? a : 0;
+      }
+      function pd() {
+        return true;
+      }
+      function qd() {
+        return false;
+      }
+      function rd(a) {
+        function b(b2, d, e, f, g) {
+          this._reactName = b2;
+          this._targetInst = e;
+          this.type = d;
+          this.nativeEvent = f;
+          this.target = g;
+          this.currentTarget = null;
+          for (var c in a) a.hasOwnProperty(c) && (b2 = a[c], this[c] = b2 ? b2(f) : f[c]);
+          this.isDefaultPrevented = (null != f.defaultPrevented ? f.defaultPrevented : false === f.returnValue) ? pd : qd;
+          this.isPropagationStopped = qd;
+          return this;
+        }
+        A(b.prototype, { preventDefault: function() {
+          this.defaultPrevented = true;
+          var a2 = this.nativeEvent;
+          a2 && (a2.preventDefault ? a2.preventDefault() : "unknown" !== typeof a2.returnValue && (a2.returnValue = false), this.isDefaultPrevented = pd);
+        }, stopPropagation: function() {
+          var a2 = this.nativeEvent;
+          a2 && (a2.stopPropagation ? a2.stopPropagation() : "unknown" !== typeof a2.cancelBubble && (a2.cancelBubble = true), this.isPropagationStopped = pd);
+        }, persist: function() {
+        }, isPersistent: pd });
+        return b;
+      }
+      var sd = { eventPhase: 0, bubbles: 0, cancelable: 0, timeStamp: function(a) {
+        return a.timeStamp || Date.now();
+      }, defaultPrevented: 0, isTrusted: 0 };
+      var td = rd(sd);
+      var ud = A({}, sd, { view: 0, detail: 0 });
+      var vd = rd(ud);
+      var wd;
+      var xd;
+      var yd;
+      var Ad = A({}, ud, { screenX: 0, screenY: 0, clientX: 0, clientY: 0, pageX: 0, pageY: 0, ctrlKey: 0, shiftKey: 0, altKey: 0, metaKey: 0, getModifierState: zd, button: 0, buttons: 0, relatedTarget: function(a) {
+        return void 0 === a.relatedTarget ? a.fromElement === a.srcElement ? a.toElement : a.fromElement : a.relatedTarget;
+      }, movementX: function(a) {
+        if ("movementX" in a) return a.movementX;
+        a !== yd && (yd && "mousemove" === a.type ? (wd = a.screenX - yd.screenX, xd = a.screenY - yd.screenY) : xd = wd = 0, yd = a);
+        return wd;
+      }, movementY: function(a) {
+        return "movementY" in a ? a.movementY : xd;
+      } });
+      var Bd = rd(Ad);
+      var Cd = A({}, Ad, { dataTransfer: 0 });
+      var Dd = rd(Cd);
+      var Ed = A({}, ud, { relatedTarget: 0 });
+      var Fd = rd(Ed);
+      var Gd = A({}, sd, { animationName: 0, elapsedTime: 0, pseudoElement: 0 });
+      var Hd = rd(Gd);
+      var Id = A({}, sd, { clipboardData: function(a) {
+        return "clipboardData" in a ? a.clipboardData : window.clipboardData;
+      } });
+      var Jd = rd(Id);
+      var Kd = A({}, sd, { data: 0 });
+      var Ld = rd(Kd);
+      var Md = {
+        Esc: "Escape",
+        Spacebar: " ",
+        Left: "ArrowLeft",
+        Up: "ArrowUp",
+        Right: "ArrowRight",
+        Down: "ArrowDown",
+        Del: "Delete",
+        Win: "OS",
+        Menu: "ContextMenu",
+        Apps: "ContextMenu",
+        Scroll: "ScrollLock",
+        MozPrintableKey: "Unidentified"
+      };
+      var Nd = {
+        8: "Backspace",
+        9: "Tab",
+        12: "Clear",
+        13: "Enter",
+        16: "Shift",
+        17: "Control",
+        18: "Alt",
+        19: "Pause",
+        20: "CapsLock",
+        27: "Escape",
+        32: " ",
+        33: "PageUp",
+        34: "PageDown",
+        35: "End",
+        36: "Home",
+        37: "ArrowLeft",
+        38: "ArrowUp",
+        39: "ArrowRight",
+        40: "ArrowDown",
+        45: "Insert",
+        46: "Delete",
+        112: "F1",
+        113: "F2",
+        114: "F3",
+        115: "F4",
+        116: "F5",
+        117: "F6",
+        118: "F7",
+        119: "F8",
+        120: "F9",
+        121: "F10",
+        122: "F11",
+        123: "F12",
+        144: "NumLock",
+        145: "ScrollLock",
+        224: "Meta"
+      };
+      var Od = { Alt: "altKey", Control: "ctrlKey", Meta: "metaKey", Shift: "shiftKey" };
+      function Pd(a) {
+        var b = this.nativeEvent;
+        return b.getModifierState ? b.getModifierState(a) : (a = Od[a]) ? !!b[a] : false;
+      }
+      function zd() {
+        return Pd;
+      }
+      var Qd = A({}, ud, { key: function(a) {
+        if (a.key) {
+          var b = Md[a.key] || a.key;
+          if ("Unidentified" !== b) return b;
+        }
+        return "keypress" === a.type ? (a = od(a), 13 === a ? "Enter" : String.fromCharCode(a)) : "keydown" === a.type || "keyup" === a.type ? Nd[a.keyCode] || "Unidentified" : "";
+      }, code: 0, location: 0, ctrlKey: 0, shiftKey: 0, altKey: 0, metaKey: 0, repeat: 0, locale: 0, getModifierState: zd, charCode: function(a) {
+        return "keypress" === a.type ? od(a) : 0;
+      }, keyCode: function(a) {
+        return "keydown" === a.type || "keyup" === a.type ? a.keyCode : 0;
+      }, which: function(a) {
+        return "keypress" === a.type ? od(a) : "keydown" === a.type || "keyup" === a.type ? a.keyCode : 0;
+      } });
+      var Rd = rd(Qd);
+      var Sd = A({}, Ad, { pointerId: 0, width: 0, height: 0, pressure: 0, tangentialPressure: 0, tiltX: 0, tiltY: 0, twist: 0, pointerType: 0, isPrimary: 0 });
+      var Td = rd(Sd);
+      var Ud = A({}, ud, { touches: 0, targetTouches: 0, changedTouches: 0, altKey: 0, metaKey: 0, ctrlKey: 0, shiftKey: 0, getModifierState: zd });
+      var Vd = rd(Ud);
+      var Wd = A({}, sd, { propertyName: 0, elapsedTime: 0, pseudoElement: 0 });
+      var Xd = rd(Wd);
+      var Yd = A({}, Ad, {
+        deltaX: function(a) {
+          return "deltaX" in a ? a.deltaX : "wheelDeltaX" in a ? -a.wheelDeltaX : 0;
+        },
+        deltaY: function(a) {
+          return "deltaY" in a ? a.deltaY : "wheelDeltaY" in a ? -a.wheelDeltaY : "wheelDelta" in a ? -a.wheelDelta : 0;
+        },
+        deltaZ: 0,
+        deltaMode: 0
+      });
+      var Zd = rd(Yd);
+      var $d = [9, 13, 27, 32];
+      var ae = ia && "CompositionEvent" in window;
+      var be = null;
+      ia && "documentMode" in document && (be = document.documentMode);
+      var ce = ia && "TextEvent" in window && !be;
+      var de = ia && (!ae || be && 8 < be && 11 >= be);
+      var ee = String.fromCharCode(32);
+      var fe = false;
+      function ge(a, b) {
+        switch (a) {
+          case "keyup":
+            return -1 !== $d.indexOf(b.keyCode);
+          case "keydown":
+            return 229 !== b.keyCode;
+          case "keypress":
+          case "mousedown":
+          case "focusout":
+            return true;
+          default:
+            return false;
+        }
+      }
+      function he(a) {
+        a = a.detail;
+        return "object" === typeof a && "data" in a ? a.data : null;
+      }
+      var ie = false;
+      function je(a, b) {
+        switch (a) {
+          case "compositionend":
+            return he(b);
+          case "keypress":
+            if (32 !== b.which) return null;
+            fe = true;
+            return ee;
+          case "textInput":
+            return a = b.data, a === ee && fe ? null : a;
+          default:
+            return null;
+        }
+      }
+      function ke(a, b) {
+        if (ie) return "compositionend" === a || !ae && ge(a, b) ? (a = nd(), md = ld = kd = null, ie = false, a) : null;
+        switch (a) {
+          case "paste":
+            return null;
+          case "keypress":
+            if (!(b.ctrlKey || b.altKey || b.metaKey) || b.ctrlKey && b.altKey) {
+              if (b.char && 1 < b.char.length) return b.char;
+              if (b.which) return String.fromCharCode(b.which);
+            }
+            return null;
+          case "compositionend":
+            return de && "ko" !== b.locale ? null : b.data;
+          default:
+            return null;
+        }
+      }
+      var le = { color: true, date: true, datetime: true, "datetime-local": true, email: true, month: true, number: true, password: true, range: true, search: true, tel: true, text: true, time: true, url: true, week: true };
+      function me(a) {
+        var b = a && a.nodeName && a.nodeName.toLowerCase();
+        return "input" === b ? !!le[a.type] : "textarea" === b ? true : false;
+      }
+      function ne(a, b, c, d) {
+        Eb(d);
+        b = oe(b, "onChange");
+        0 < b.length && (c = new td("onChange", "change", null, c, d), a.push({ event: c, listeners: b }));
+      }
+      var pe = null;
+      var qe = null;
+      function re2(a) {
+        se(a, 0);
+      }
+      function te(a) {
+        var b = ue(a);
+        if (Wa(b)) return a;
+      }
+      function ve(a, b) {
+        if ("change" === a) return b;
+      }
+      var we = false;
+      if (ia) {
+        if (ia) {
+          ye = "oninput" in document;
+          if (!ye) {
+            ze = document.createElement("div");
+            ze.setAttribute("oninput", "return;");
+            ye = "function" === typeof ze.oninput;
+          }
+          xe = ye;
+        } else xe = false;
+        we = xe && (!document.documentMode || 9 < document.documentMode);
+      }
+      var xe;
+      var ye;
+      var ze;
+      function Ae() {
+        pe && (pe.detachEvent("onpropertychange", Be), qe = pe = null);
+      }
+      function Be(a) {
+        if ("value" === a.propertyName && te(qe)) {
+          var b = [];
+          ne(b, qe, a, xb(a));
+          Jb(re2, b);
+        }
+      }
+      function Ce(a, b, c) {
+        "focusin" === a ? (Ae(), pe = b, qe = c, pe.attachEvent("onpropertychange", Be)) : "focusout" === a && Ae();
+      }
+      function De(a) {
+        if ("selectionchange" === a || "keyup" === a || "keydown" === a) return te(qe);
+      }
+      function Ee(a, b) {
+        if ("click" === a) return te(b);
+      }
+      function Fe(a, b) {
+        if ("input" === a || "change" === a) return te(b);
+      }
+      function Ge(a, b) {
+        return a === b && (0 !== a || 1 / a === 1 / b) || a !== a && b !== b;
+      }
+      var He = "function" === typeof Object.is ? Object.is : Ge;
+      function Ie(a, b) {
+        if (He(a, b)) return true;
+        if ("object" !== typeof a || null === a || "object" !== typeof b || null === b) return false;
+        var c = Object.keys(a), d = Object.keys(b);
+        if (c.length !== d.length) return false;
+        for (d = 0; d < c.length; d++) {
+          var e = c[d];
+          if (!ja.call(b, e) || !He(a[e], b[e])) return false;
+        }
+        return true;
+      }
+      function Je(a) {
+        for (; a && a.firstChild; ) a = a.firstChild;
+        return a;
+      }
+      function Ke(a, b) {
+        var c = Je(a);
+        a = 0;
+        for (var d; c; ) {
+          if (3 === c.nodeType) {
+            d = a + c.textContent.length;
+            if (a <= b && d >= b) return { node: c, offset: b - a };
+            a = d;
+          }
+          a: {
+            for (; c; ) {
+              if (c.nextSibling) {
+                c = c.nextSibling;
+                break a;
+              }
+              c = c.parentNode;
+            }
+            c = void 0;
+          }
+          c = Je(c);
+        }
+      }
+      function Le(a, b) {
+        return a && b ? a === b ? true : a && 3 === a.nodeType ? false : b && 3 === b.nodeType ? Le(a, b.parentNode) : "contains" in a ? a.contains(b) : a.compareDocumentPosition ? !!(a.compareDocumentPosition(b) & 16) : false : false;
+      }
+      function Me() {
+        for (var a = window, b = Xa(); b instanceof a.HTMLIFrameElement; ) {
+          try {
+            var c = "string" === typeof b.contentWindow.location.href;
+          } catch (d) {
+            c = false;
+          }
+          if (c) a = b.contentWindow;
+          else break;
+          b = Xa(a.document);
+        }
+        return b;
+      }
+      function Ne(a) {
+        var b = a && a.nodeName && a.nodeName.toLowerCase();
+        return b && ("input" === b && ("text" === a.type || "search" === a.type || "tel" === a.type || "url" === a.type || "password" === a.type) || "textarea" === b || "true" === a.contentEditable);
+      }
+      function Oe(a) {
+        var b = Me(), c = a.focusedElem, d = a.selectionRange;
+        if (b !== c && c && c.ownerDocument && Le(c.ownerDocument.documentElement, c)) {
+          if (null !== d && Ne(c)) {
+            if (b = d.start, a = d.end, void 0 === a && (a = b), "selectionStart" in c) c.selectionStart = b, c.selectionEnd = Math.min(a, c.value.length);
+            else if (a = (b = c.ownerDocument || document) && b.defaultView || window, a.getSelection) {
+              a = a.getSelection();
+              var e = c.textContent.length, f = Math.min(d.start, e);
+              d = void 0 === d.end ? f : Math.min(d.end, e);
+              !a.extend && f > d && (e = d, d = f, f = e);
+              e = Ke(c, f);
+              var g = Ke(
+                c,
+                d
+              );
+              e && g && (1 !== a.rangeCount || a.anchorNode !== e.node || a.anchorOffset !== e.offset || a.focusNode !== g.node || a.focusOffset !== g.offset) && (b = b.createRange(), b.setStart(e.node, e.offset), a.removeAllRanges(), f > d ? (a.addRange(b), a.extend(g.node, g.offset)) : (b.setEnd(g.node, g.offset), a.addRange(b)));
+            }
+          }
+          b = [];
+          for (a = c; a = a.parentNode; ) 1 === a.nodeType && b.push({ element: a, left: a.scrollLeft, top: a.scrollTop });
+          "function" === typeof c.focus && c.focus();
+          for (c = 0; c < b.length; c++) a = b[c], a.element.scrollLeft = a.left, a.element.scrollTop = a.top;
+        }
+      }
+      var Pe = ia && "documentMode" in document && 11 >= document.documentMode;
+      var Qe = null;
+      var Re = null;
+      var Se = null;
+      var Te = false;
+      function Ue(a, b, c) {
+        var d = c.window === c ? c.document : 9 === c.nodeType ? c : c.ownerDocument;
+        Te || null == Qe || Qe !== Xa(d) || (d = Qe, "selectionStart" in d && Ne(d) ? d = { start: d.selectionStart, end: d.selectionEnd } : (d = (d.ownerDocument && d.ownerDocument.defaultView || window).getSelection(), d = { anchorNode: d.anchorNode, anchorOffset: d.anchorOffset, focusNode: d.focusNode, focusOffset: d.focusOffset }), Se && Ie(Se, d) || (Se = d, d = oe(Re, "onSelect"), 0 < d.length && (b = new td("onSelect", "select", null, b, c), a.push({ event: b, listeners: d }), b.target = Qe)));
+      }
+      function Ve(a, b) {
+        var c = {};
+        c[a.toLowerCase()] = b.toLowerCase();
+        c["Webkit" + a] = "webkit" + b;
+        c["Moz" + a] = "moz" + b;
+        return c;
+      }
+      var We = { animationend: Ve("Animation", "AnimationEnd"), animationiteration: Ve("Animation", "AnimationIteration"), animationstart: Ve("Animation", "AnimationStart"), transitionend: Ve("Transition", "TransitionEnd") };
+      var Xe = {};
+      var Ye = {};
+      ia && (Ye = document.createElement("div").style, "AnimationEvent" in window || (delete We.animationend.animation, delete We.animationiteration.animation, delete We.animationstart.animation), "TransitionEvent" in window || delete We.transitionend.transition);
+      function Ze(a) {
+        if (Xe[a]) return Xe[a];
+        if (!We[a]) return a;
+        var b = We[a], c;
+        for (c in b) if (b.hasOwnProperty(c) && c in Ye) return Xe[a] = b[c];
+        return a;
+      }
+      var $e = Ze("animationend");
+      var af = Ze("animationiteration");
+      var bf = Ze("animationstart");
+      var cf = Ze("transitionend");
+      var df = /* @__PURE__ */ new Map();
+      var ef = "abort auxClick cancel canPlay canPlayThrough click close contextMenu copy cut drag dragEnd dragEnter dragExit dragLeave dragOver dragStart drop durationChange emptied encrypted ended error gotPointerCapture input invalid keyDown keyPress keyUp load loadedData loadedMetadata loadStart lostPointerCapture mouseDown mouseMove mouseOut mouseOver mouseUp paste pause play playing pointerCancel pointerDown pointerMove pointerOut pointerOver pointerUp progress rateChange reset resize seeked seeking stalled submit suspend timeUpdate touchCancel touchEnd touchStart volumeChange scroll toggle touchMove waiting wheel".split(" ");
+      function ff(a, b) {
+        df.set(a, b);
+        fa(b, [a]);
+      }
+      for (gf = 0; gf < ef.length; gf++) {
+        hf = ef[gf], jf = hf.toLowerCase(), kf = hf[0].toUpperCase() + hf.slice(1);
+        ff(jf, "on" + kf);
+      }
+      var hf;
+      var jf;
+      var kf;
+      var gf;
+      ff($e, "onAnimationEnd");
+      ff(af, "onAnimationIteration");
+      ff(bf, "onAnimationStart");
+      ff("dblclick", "onDoubleClick");
+      ff("focusin", "onFocus");
+      ff("focusout", "onBlur");
+      ff(cf, "onTransitionEnd");
+      ha("onMouseEnter", ["mouseout", "mouseover"]);
+      ha("onMouseLeave", ["mouseout", "mouseover"]);
+      ha("onPointerEnter", ["pointerout", "pointerover"]);
+      ha("onPointerLeave", ["pointerout", "pointerover"]);
+      fa("onChange", "change click focusin focusout input keydown keyup selectionchange".split(" "));
+      fa("onSelect", "focusout contextmenu dragend focusin keydown keyup mousedown mouseup selectionchange".split(" "));
+      fa("onBeforeInput", ["compositionend", "keypress", "textInput", "paste"]);
+      fa("onCompositionEnd", "compositionend focusout keydown keypress keyup mousedown".split(" "));
+      fa("onCompositionStart", "compositionstart focusout keydown keypress keyup mousedown".split(" "));
+      fa("onCompositionUpdate", "compositionupdate focusout keydown keypress keyup mousedown".split(" "));
+      var lf = "abort canplay canplaythrough durationchange emptied encrypted ended error loadeddata loadedmetadata loadstart pause play playing progress ratechange resize seeked seeking stalled suspend timeupdate volumechange waiting".split(" ");
+      var mf = new Set("cancel close invalid load scroll toggle".split(" ").concat(lf));
+      function nf(a, b, c) {
+        var d = a.type || "unknown-event";
+        a.currentTarget = c;
+        Ub(d, b, void 0, a);
+        a.currentTarget = null;
+      }
+      function se(a, b) {
+        b = 0 !== (b & 4);
+        for (var c = 0; c < a.length; c++) {
+          var d = a[c], e = d.event;
+          d = d.listeners;
+          a: {
+            var f = void 0;
+            if (b) for (var g = d.length - 1; 0 <= g; g--) {
+              var h = d[g], k = h.instance, l = h.currentTarget;
+              h = h.listener;
+              if (k !== f && e.isPropagationStopped()) break a;
+              nf(e, h, l);
+              f = k;
+            }
+            else for (g = 0; g < d.length; g++) {
+              h = d[g];
+              k = h.instance;
+              l = h.currentTarget;
+              h = h.listener;
+              if (k !== f && e.isPropagationStopped()) break a;
+              nf(e, h, l);
+              f = k;
+            }
+          }
+        }
+        if (Qb) throw a = Rb, Qb = false, Rb = null, a;
+      }
+      function D(a, b) {
+        var c = b[of];
+        void 0 === c && (c = b[of] = /* @__PURE__ */ new Set());
+        var d = a + "__bubble";
+        c.has(d) || (pf(b, a, 2, false), c.add(d));
+      }
+      function qf(a, b, c) {
+        var d = 0;
+        b && (d |= 4);
+        pf(c, a, d, b);
+      }
+      var rf = "_reactListening" + Math.random().toString(36).slice(2);
+      function sf(a) {
+        if (!a[rf]) {
+          a[rf] = true;
+          da.forEach(function(b2) {
+            "selectionchange" !== b2 && (mf.has(b2) || qf(b2, false, a), qf(b2, true, a));
+          });
+          var b = 9 === a.nodeType ? a : a.ownerDocument;
+          null === b || b[rf] || (b[rf] = true, qf("selectionchange", false, b));
+        }
+      }
+      function pf(a, b, c, d) {
+        switch (jd(b)) {
+          case 1:
+            var e = ed;
+            break;
+          case 4:
+            e = gd;
+            break;
+          default:
+            e = fd;
+        }
+        c = e.bind(null, b, c, a);
+        e = void 0;
+        !Lb || "touchstart" !== b && "touchmove" !== b && "wheel" !== b || (e = true);
+        d ? void 0 !== e ? a.addEventListener(b, c, { capture: true, passive: e }) : a.addEventListener(b, c, true) : void 0 !== e ? a.addEventListener(b, c, { passive: e }) : a.addEventListener(b, c, false);
+      }
+      function hd(a, b, c, d, e) {
+        var f = d;
+        if (0 === (b & 1) && 0 === (b & 2) && null !== d) a: for (; ; ) {
+          if (null === d) return;
+          var g = d.tag;
+          if (3 === g || 4 === g) {
+            var h = d.stateNode.containerInfo;
+            if (h === e || 8 === h.nodeType && h.parentNode === e) break;
+            if (4 === g) for (g = d.return; null !== g; ) {
+              var k = g.tag;
+              if (3 === k || 4 === k) {
+                if (k = g.stateNode.containerInfo, k === e || 8 === k.nodeType && k.parentNode === e) return;
+              }
+              g = g.return;
+            }
+            for (; null !== h; ) {
+              g = Wc(h);
+              if (null === g) return;
+              k = g.tag;
+              if (5 === k || 6 === k) {
+                d = f = g;
+                continue a;
+              }
+              h = h.parentNode;
+            }
+          }
+          d = d.return;
+        }
+        Jb(function() {
+          var d2 = f, e2 = xb(c), g2 = [];
+          a: {
+            var h2 = df.get(a);
+            if (void 0 !== h2) {
+              var k2 = td, n = a;
+              switch (a) {
+                case "keypress":
+                  if (0 === od(c)) break a;
+                case "keydown":
+                case "keyup":
+                  k2 = Rd;
+                  break;
+                case "focusin":
+                  n = "focus";
+                  k2 = Fd;
+                  break;
+                case "focusout":
+                  n = "blur";
+                  k2 = Fd;
+                  break;
+                case "beforeblur":
+                case "afterblur":
+                  k2 = Fd;
+                  break;
+                case "click":
+                  if (2 === c.button) break a;
+                case "auxclick":
+                case "dblclick":
+                case "mousedown":
+                case "mousemove":
+                case "mouseup":
+                case "mouseout":
+                case "mouseover":
+                case "contextmenu":
+                  k2 = Bd;
+                  break;
+                case "drag":
+                case "dragend":
+                case "dragenter":
+                case "dragexit":
+                case "dragleave":
+                case "dragover":
+                case "dragstart":
+                case "drop":
+                  k2 = Dd;
+                  break;
+                case "touchcancel":
+                case "touchend":
+                case "touchmove":
+                case "touchstart":
+                  k2 = Vd;
+                  break;
+                case $e:
+                case af:
+                case bf:
+                  k2 = Hd;
+                  break;
+                case cf:
+                  k2 = Xd;
+                  break;
+                case "scroll":
+                  k2 = vd;
+                  break;
+                case "wheel":
+                  k2 = Zd;
+                  break;
+                case "copy":
+                case "cut":
+                case "paste":
+                  k2 = Jd;
+                  break;
+                case "gotpointercapture":
+                case "lostpointercapture":
+                case "pointercancel":
+                case "pointerdown":
+                case "pointermove":
+                case "pointerout":
+                case "pointerover":
+                case "pointerup":
+                  k2 = Td;
+              }
+              var t = 0 !== (b & 4), J = !t && "scroll" === a, x = t ? null !== h2 ? h2 + "Capture" : null : h2;
+              t = [];
+              for (var w = d2, u; null !== w; ) {
+                u = w;
+                var F = u.stateNode;
+                5 === u.tag && null !== F && (u = F, null !== x && (F = Kb(w, x), null != F && t.push(tf(w, F, u))));
+                if (J) break;
+                w = w.return;
+              }
+              0 < t.length && (h2 = new k2(h2, n, null, c, e2), g2.push({ event: h2, listeners: t }));
+            }
+          }
+          if (0 === (b & 7)) {
+            a: {
+              h2 = "mouseover" === a || "pointerover" === a;
+              k2 = "mouseout" === a || "pointerout" === a;
+              if (h2 && c !== wb && (n = c.relatedTarget || c.fromElement) && (Wc(n) || n[uf])) break a;
+              if (k2 || h2) {
+                h2 = e2.window === e2 ? e2 : (h2 = e2.ownerDocument) ? h2.defaultView || h2.parentWindow : window;
+                if (k2) {
+                  if (n = c.relatedTarget || c.toElement, k2 = d2, n = n ? Wc(n) : null, null !== n && (J = Vb(n), n !== J || 5 !== n.tag && 6 !== n.tag)) n = null;
+                } else k2 = null, n = d2;
+                if (k2 !== n) {
+                  t = Bd;
+                  F = "onMouseLeave";
+                  x = "onMouseEnter";
+                  w = "mouse";
+                  if ("pointerout" === a || "pointerover" === a) t = Td, F = "onPointerLeave", x = "onPointerEnter", w = "pointer";
+                  J = null == k2 ? h2 : ue(k2);
+                  u = null == n ? h2 : ue(n);
+                  h2 = new t(F, w + "leave", k2, c, e2);
+                  h2.target = J;
+                  h2.relatedTarget = u;
+                  F = null;
+                  Wc(e2) === d2 && (t = new t(x, w + "enter", n, c, e2), t.target = u, t.relatedTarget = J, F = t);
+                  J = F;
+                  if (k2 && n) b: {
+                    t = k2;
+                    x = n;
+                    w = 0;
+                    for (u = t; u; u = vf(u)) w++;
+                    u = 0;
+                    for (F = x; F; F = vf(F)) u++;
+                    for (; 0 < w - u; ) t = vf(t), w--;
+                    for (; 0 < u - w; ) x = vf(x), u--;
+                    for (; w--; ) {
+                      if (t === x || null !== x && t === x.alternate) break b;
+                      t = vf(t);
+                      x = vf(x);
+                    }
+                    t = null;
+                  }
+                  else t = null;
+                  null !== k2 && wf(g2, h2, k2, t, false);
+                  null !== n && null !== J && wf(g2, J, n, t, true);
+                }
+              }
+            }
+            a: {
+              h2 = d2 ? ue(d2) : window;
+              k2 = h2.nodeName && h2.nodeName.toLowerCase();
+              if ("select" === k2 || "input" === k2 && "file" === h2.type) var na = ve;
+              else if (me(h2)) if (we) na = Fe;
+              else {
+                na = De;
+                var xa = Ce;
+              }
+              else (k2 = h2.nodeName) && "input" === k2.toLowerCase() && ("checkbox" === h2.type || "radio" === h2.type) && (na = Ee);
+              if (na && (na = na(a, d2))) {
+                ne(g2, na, c, e2);
+                break a;
+              }
+              xa && xa(a, h2, d2);
+              "focusout" === a && (xa = h2._wrapperState) && xa.controlled && "number" === h2.type && cb(h2, "number", h2.value);
+            }
+            xa = d2 ? ue(d2) : window;
+            switch (a) {
+              case "focusin":
+                if (me(xa) || "true" === xa.contentEditable) Qe = xa, Re = d2, Se = null;
+                break;
+              case "focusout":
+                Se = Re = Qe = null;
+                break;
+              case "mousedown":
+                Te = true;
+                break;
+              case "contextmenu":
+              case "mouseup":
+              case "dragend":
+                Te = false;
+                Ue(g2, c, e2);
+                break;
+              case "selectionchange":
+                if (Pe) break;
+              case "keydown":
+              case "keyup":
+                Ue(g2, c, e2);
+            }
+            var $a;
+            if (ae) b: {
+              switch (a) {
+                case "compositionstart":
+                  var ba = "onCompositionStart";
+                  break b;
+                case "compositionend":
+                  ba = "onCompositionEnd";
+                  break b;
+                case "compositionupdate":
+                  ba = "onCompositionUpdate";
+                  break b;
+              }
+              ba = void 0;
+            }
+            else ie ? ge(a, c) && (ba = "onCompositionEnd") : "keydown" === a && 229 === c.keyCode && (ba = "onCompositionStart");
+            ba && (de && "ko" !== c.locale && (ie || "onCompositionStart" !== ba ? "onCompositionEnd" === ba && ie && ($a = nd()) : (kd = e2, ld = "value" in kd ? kd.value : kd.textContent, ie = true)), xa = oe(d2, ba), 0 < xa.length && (ba = new Ld(ba, a, null, c, e2), g2.push({ event: ba, listeners: xa }), $a ? ba.data = $a : ($a = he(c), null !== $a && (ba.data = $a))));
+            if ($a = ce ? je(a, c) : ke(a, c)) d2 = oe(d2, "onBeforeInput"), 0 < d2.length && (e2 = new Ld("onBeforeInput", "beforeinput", null, c, e2), g2.push({ event: e2, listeners: d2 }), e2.data = $a);
+          }
+          se(g2, b);
+        });
+      }
+      function tf(a, b, c) {
+        return { instance: a, listener: b, currentTarget: c };
+      }
+      function oe(a, b) {
+        for (var c = b + "Capture", d = []; null !== a; ) {
+          var e = a, f = e.stateNode;
+          5 === e.tag && null !== f && (e = f, f = Kb(a, c), null != f && d.unshift(tf(a, f, e)), f = Kb(a, b), null != f && d.push(tf(a, f, e)));
+          a = a.return;
+        }
+        return d;
+      }
+      function vf(a) {
+        if (null === a) return null;
+        do
+          a = a.return;
+        while (a && 5 !== a.tag);
+        return a ? a : null;
+      }
+      function wf(a, b, c, d, e) {
+        for (var f = b._reactName, g = []; null !== c && c !== d; ) {
+          var h = c, k = h.alternate, l = h.stateNode;
+          if (null !== k && k === d) break;
+          5 === h.tag && null !== l && (h = l, e ? (k = Kb(c, f), null != k && g.unshift(tf(c, k, h))) : e || (k = Kb(c, f), null != k && g.push(tf(c, k, h))));
+          c = c.return;
+        }
+        0 !== g.length && a.push({ event: b, listeners: g });
+      }
+      var xf = /\r\n?/g;
+      var yf = /\u0000|\uFFFD/g;
+      function zf(a) {
+        return ("string" === typeof a ? a : "" + a).replace(xf, "\n").replace(yf, "");
+      }
+      function Af(a, b, c) {
+        b = zf(b);
+        if (zf(a) !== b && c) throw Error(p(425));
+      }
+      function Bf() {
+      }
+      var Cf = null;
+      var Df = null;
+      function Ef(a, b) {
+        return "textarea" === a || "noscript" === a || "string" === typeof b.children || "number" === typeof b.children || "object" === typeof b.dangerouslySetInnerHTML && null !== b.dangerouslySetInnerHTML && null != b.dangerouslySetInnerHTML.__html;
+      }
+      var Ff = "function" === typeof setTimeout ? setTimeout : void 0;
+      var Gf = "function" === typeof clearTimeout ? clearTimeout : void 0;
+      var Hf = "function" === typeof Promise ? Promise : void 0;
+      var Jf = "function" === typeof queueMicrotask ? queueMicrotask : "undefined" !== typeof Hf ? function(a) {
+        return Hf.resolve(null).then(a).catch(If);
+      } : Ff;
+      function If(a) {
+        setTimeout(function() {
+          throw a;
+        });
+      }
+      function Kf(a, b) {
+        var c = b, d = 0;
+        do {
+          var e = c.nextSibling;
+          a.removeChild(c);
+          if (e && 8 === e.nodeType) if (c = e.data, "/$" === c) {
+            if (0 === d) {
+              a.removeChild(e);
+              bd(b);
+              return;
+            }
+            d--;
+          } else "$" !== c && "$?" !== c && "$!" !== c || d++;
+          c = e;
+        } while (c);
+        bd(b);
+      }
+      function Lf(a) {
+        for (; null != a; a = a.nextSibling) {
+          var b = a.nodeType;
+          if (1 === b || 3 === b) break;
+          if (8 === b) {
+            b = a.data;
+            if ("$" === b || "$!" === b || "$?" === b) break;
+            if ("/$" === b) return null;
+          }
+        }
+        return a;
+      }
+      function Mf(a) {
+        a = a.previousSibling;
+        for (var b = 0; a; ) {
+          if (8 === a.nodeType) {
+            var c = a.data;
+            if ("$" === c || "$!" === c || "$?" === c) {
+              if (0 === b) return a;
+              b--;
+            } else "/$" === c && b++;
+          }
+          a = a.previousSibling;
+        }
+        return null;
+      }
+      var Nf = Math.random().toString(36).slice(2);
+      var Of = "__reactFiber$" + Nf;
+      var Pf = "__reactProps$" + Nf;
+      var uf = "__reactContainer$" + Nf;
+      var of = "__reactEvents$" + Nf;
+      var Qf = "__reactListeners$" + Nf;
+      var Rf = "__reactHandles$" + Nf;
+      function Wc(a) {
+        var b = a[Of];
+        if (b) return b;
+        for (var c = a.parentNode; c; ) {
+          if (b = c[uf] || c[Of]) {
+            c = b.alternate;
+            if (null !== b.child || null !== c && null !== c.child) for (a = Mf(a); null !== a; ) {
+              if (c = a[Of]) return c;
+              a = Mf(a);
+            }
+            return b;
+          }
+          a = c;
+          c = a.parentNode;
+        }
+        return null;
+      }
+      function Cb(a) {
+        a = a[Of] || a[uf];
+        return !a || 5 !== a.tag && 6 !== a.tag && 13 !== a.tag && 3 !== a.tag ? null : a;
+      }
+      function ue(a) {
+        if (5 === a.tag || 6 === a.tag) return a.stateNode;
+        throw Error(p(33));
+      }
+      function Db(a) {
+        return a[Pf] || null;
+      }
+      var Sf = [];
+      var Tf = -1;
+      function Uf(a) {
+        return { current: a };
+      }
+      function E(a) {
+        0 > Tf || (a.current = Sf[Tf], Sf[Tf] = null, Tf--);
+      }
+      function G(a, b) {
+        Tf++;
+        Sf[Tf] = a.current;
+        a.current = b;
+      }
+      var Vf = {};
+      var H = Uf(Vf);
+      var Wf = Uf(false);
+      var Xf = Vf;
+      function Yf(a, b) {
+        var c = a.type.contextTypes;
+        if (!c) return Vf;
+        var d = a.stateNode;
+        if (d && d.__reactInternalMemoizedUnmaskedChildContext === b) return d.__reactInternalMemoizedMaskedChildContext;
+        var e = {}, f;
+        for (f in c) e[f] = b[f];
+        d && (a = a.stateNode, a.__reactInternalMemoizedUnmaskedChildContext = b, a.__reactInternalMemoizedMaskedChildContext = e);
+        return e;
+      }
+      function Zf(a) {
+        a = a.childContextTypes;
+        return null !== a && void 0 !== a;
+      }
+      function $f() {
+        E(Wf);
+        E(H);
+      }
+      function ag(a, b, c) {
+        if (H.current !== Vf) throw Error(p(168));
+        G(H, b);
+        G(Wf, c);
+      }
+      function bg(a, b, c) {
+        var d = a.stateNode;
+        b = b.childContextTypes;
+        if ("function" !== typeof d.getChildContext) return c;
+        d = d.getChildContext();
+        for (var e in d) if (!(e in b)) throw Error(p(108, Ra(a) || "Unknown", e));
+        return A({}, c, d);
+      }
+      function cg(a) {
+        a = (a = a.stateNode) && a.__reactInternalMemoizedMergedChildContext || Vf;
+        Xf = H.current;
+        G(H, a);
+        G(Wf, Wf.current);
+        return true;
+      }
+      function dg(a, b, c) {
+        var d = a.stateNode;
+        if (!d) throw Error(p(169));
+        c ? (a = bg(a, b, Xf), d.__reactInternalMemoizedMergedChildContext = a, E(Wf), E(H), G(H, a)) : E(Wf);
+        G(Wf, c);
+      }
+      var eg = null;
+      var fg = false;
+      var gg = false;
+      function hg(a) {
+        null === eg ? eg = [a] : eg.push(a);
+      }
+      function ig(a) {
+        fg = true;
+        hg(a);
+      }
+      function jg() {
+        if (!gg && null !== eg) {
+          gg = true;
+          var a = 0, b = C;
+          try {
+            var c = eg;
+            for (C = 1; a < c.length; a++) {
+              var d = c[a];
+              do
+                d = d(true);
+              while (null !== d);
+            }
+            eg = null;
+            fg = false;
+          } catch (e) {
+            throw null !== eg && (eg = eg.slice(a + 1)), ac(fc, jg), e;
+          } finally {
+            C = b, gg = false;
+          }
+        }
+        return null;
+      }
+      var kg = [];
+      var lg = 0;
+      var mg = null;
+      var ng = 0;
+      var og = [];
+      var pg = 0;
+      var qg = null;
+      var rg = 1;
+      var sg = "";
+      function tg(a, b) {
+        kg[lg++] = ng;
+        kg[lg++] = mg;
+        mg = a;
+        ng = b;
+      }
+      function ug(a, b, c) {
+        og[pg++] = rg;
+        og[pg++] = sg;
+        og[pg++] = qg;
+        qg = a;
+        var d = rg;
+        a = sg;
+        var e = 32 - oc(d) - 1;
+        d &= ~(1 << e);
+        c += 1;
+        var f = 32 - oc(b) + e;
+        if (30 < f) {
+          var g = e - e % 5;
+          f = (d & (1 << g) - 1).toString(32);
+          d >>= g;
+          e -= g;
+          rg = 1 << 32 - oc(b) + e | c << e | d;
+          sg = f + a;
+        } else rg = 1 << f | c << e | d, sg = a;
+      }
+      function vg(a) {
+        null !== a.return && (tg(a, 1), ug(a, 1, 0));
+      }
+      function wg(a) {
+        for (; a === mg; ) mg = kg[--lg], kg[lg] = null, ng = kg[--lg], kg[lg] = null;
+        for (; a === qg; ) qg = og[--pg], og[pg] = null, sg = og[--pg], og[pg] = null, rg = og[--pg], og[pg] = null;
+      }
+      var xg = null;
+      var yg = null;
+      var I = false;
+      var zg = null;
+      function Ag(a, b) {
+        var c = Bg(5, null, null, 0);
+        c.elementType = "DELETED";
+        c.stateNode = b;
+        c.return = a;
+        b = a.deletions;
+        null === b ? (a.deletions = [c], a.flags |= 16) : b.push(c);
+      }
+      function Cg(a, b) {
+        switch (a.tag) {
+          case 5:
+            var c = a.type;
+            b = 1 !== b.nodeType || c.toLowerCase() !== b.nodeName.toLowerCase() ? null : b;
+            return null !== b ? (a.stateNode = b, xg = a, yg = Lf(b.firstChild), true) : false;
+          case 6:
+            return b = "" === a.pendingProps || 3 !== b.nodeType ? null : b, null !== b ? (a.stateNode = b, xg = a, yg = null, true) : false;
+          case 13:
+            return b = 8 !== b.nodeType ? null : b, null !== b ? (c = null !== qg ? { id: rg, overflow: sg } : null, a.memoizedState = { dehydrated: b, treeContext: c, retryLane: 1073741824 }, c = Bg(18, null, null, 0), c.stateNode = b, c.return = a, a.child = c, xg = a, yg = null, true) : false;
+          default:
+            return false;
+        }
+      }
+      function Dg(a) {
+        return 0 !== (a.mode & 1) && 0 === (a.flags & 128);
+      }
+      function Eg(a) {
+        if (I) {
+          var b = yg;
+          if (b) {
+            var c = b;
+            if (!Cg(a, b)) {
+              if (Dg(a)) throw Error(p(418));
+              b = Lf(c.nextSibling);
+              var d = xg;
+              b && Cg(a, b) ? Ag(d, c) : (a.flags = a.flags & -4097 | 2, I = false, xg = a);
+            }
+          } else {
+            if (Dg(a)) throw Error(p(418));
+            a.flags = a.flags & -4097 | 2;
+            I = false;
+            xg = a;
+          }
+        }
+      }
+      function Fg(a) {
+        for (a = a.return; null !== a && 5 !== a.tag && 3 !== a.tag && 13 !== a.tag; ) a = a.return;
+        xg = a;
+      }
+      function Gg(a) {
+        if (a !== xg) return false;
+        if (!I) return Fg(a), I = true, false;
+        var b;
+        (b = 3 !== a.tag) && !(b = 5 !== a.tag) && (b = a.type, b = "head" !== b && "body" !== b && !Ef(a.type, a.memoizedProps));
+        if (b && (b = yg)) {
+          if (Dg(a)) throw Hg(), Error(p(418));
+          for (; b; ) Ag(a, b), b = Lf(b.nextSibling);
+        }
+        Fg(a);
+        if (13 === a.tag) {
+          a = a.memoizedState;
+          a = null !== a ? a.dehydrated : null;
+          if (!a) throw Error(p(317));
+          a: {
+            a = a.nextSibling;
+            for (b = 0; a; ) {
+              if (8 === a.nodeType) {
+                var c = a.data;
+                if ("/$" === c) {
+                  if (0 === b) {
+                    yg = Lf(a.nextSibling);
+                    break a;
+                  }
+                  b--;
+                } else "$" !== c && "$!" !== c && "$?" !== c || b++;
+              }
+              a = a.nextSibling;
+            }
+            yg = null;
+          }
+        } else yg = xg ? Lf(a.stateNode.nextSibling) : null;
+        return true;
+      }
+      function Hg() {
+        for (var a = yg; a; ) a = Lf(a.nextSibling);
+      }
+      function Ig() {
+        yg = xg = null;
+        I = false;
+      }
+      function Jg(a) {
+        null === zg ? zg = [a] : zg.push(a);
+      }
+      var Kg = ua.ReactCurrentBatchConfig;
+      function Lg(a, b, c) {
+        a = c.ref;
+        if (null !== a && "function" !== typeof a && "object" !== typeof a) {
+          if (c._owner) {
+            c = c._owner;
+            if (c) {
+              if (1 !== c.tag) throw Error(p(309));
+              var d = c.stateNode;
+            }
+            if (!d) throw Error(p(147, a));
+            var e = d, f = "" + a;
+            if (null !== b && null !== b.ref && "function" === typeof b.ref && b.ref._stringRef === f) return b.ref;
+            b = function(a2) {
+              var b2 = e.refs;
+              null === a2 ? delete b2[f] : b2[f] = a2;
+            };
+            b._stringRef = f;
+            return b;
+          }
+          if ("string" !== typeof a) throw Error(p(284));
+          if (!c._owner) throw Error(p(290, a));
+        }
+        return a;
+      }
+      function Mg(a, b) {
+        a = Object.prototype.toString.call(b);
+        throw Error(p(31, "[object Object]" === a ? "object with keys {" + Object.keys(b).join(", ") + "}" : a));
+      }
+      function Ng(a) {
+        var b = a._init;
+        return b(a._payload);
+      }
+      function Og(a) {
+        function b(b2, c2) {
+          if (a) {
+            var d2 = b2.deletions;
+            null === d2 ? (b2.deletions = [c2], b2.flags |= 16) : d2.push(c2);
+          }
+        }
+        function c(c2, d2) {
+          if (!a) return null;
+          for (; null !== d2; ) b(c2, d2), d2 = d2.sibling;
+          return null;
+        }
+        function d(a2, b2) {
+          for (a2 = /* @__PURE__ */ new Map(); null !== b2; ) null !== b2.key ? a2.set(b2.key, b2) : a2.set(b2.index, b2), b2 = b2.sibling;
+          return a2;
+        }
+        function e(a2, b2) {
+          a2 = Pg(a2, b2);
+          a2.index = 0;
+          a2.sibling = null;
+          return a2;
+        }
+        function f(b2, c2, d2) {
+          b2.index = d2;
+          if (!a) return b2.flags |= 1048576, c2;
+          d2 = b2.alternate;
+          if (null !== d2) return d2 = d2.index, d2 < c2 ? (b2.flags |= 2, c2) : d2;
+          b2.flags |= 2;
+          return c2;
+        }
+        function g(b2) {
+          a && null === b2.alternate && (b2.flags |= 2);
+          return b2;
+        }
+        function h(a2, b2, c2, d2) {
+          if (null === b2 || 6 !== b2.tag) return b2 = Qg(c2, a2.mode, d2), b2.return = a2, b2;
+          b2 = e(b2, c2);
+          b2.return = a2;
+          return b2;
+        }
+        function k(a2, b2, c2, d2) {
+          var f2 = c2.type;
+          if (f2 === ya) return m(a2, b2, c2.props.children, d2, c2.key);
+          if (null !== b2 && (b2.elementType === f2 || "object" === typeof f2 && null !== f2 && f2.$$typeof === Ha && Ng(f2) === b2.type)) return d2 = e(b2, c2.props), d2.ref = Lg(a2, b2, c2), d2.return = a2, d2;
+          d2 = Rg(c2.type, c2.key, c2.props, null, a2.mode, d2);
+          d2.ref = Lg(a2, b2, c2);
+          d2.return = a2;
+          return d2;
+        }
+        function l(a2, b2, c2, d2) {
+          if (null === b2 || 4 !== b2.tag || b2.stateNode.containerInfo !== c2.containerInfo || b2.stateNode.implementation !== c2.implementation) return b2 = Sg(c2, a2.mode, d2), b2.return = a2, b2;
+          b2 = e(b2, c2.children || []);
+          b2.return = a2;
+          return b2;
+        }
+        function m(a2, b2, c2, d2, f2) {
+          if (null === b2 || 7 !== b2.tag) return b2 = Tg(c2, a2.mode, d2, f2), b2.return = a2, b2;
+          b2 = e(b2, c2);
+          b2.return = a2;
+          return b2;
+        }
+        function q(a2, b2, c2) {
+          if ("string" === typeof b2 && "" !== b2 || "number" === typeof b2) return b2 = Qg("" + b2, a2.mode, c2), b2.return = a2, b2;
+          if ("object" === typeof b2 && null !== b2) {
+            switch (b2.$$typeof) {
+              case va:
+                return c2 = Rg(b2.type, b2.key, b2.props, null, a2.mode, c2), c2.ref = Lg(a2, null, b2), c2.return = a2, c2;
+              case wa:
+                return b2 = Sg(b2, a2.mode, c2), b2.return = a2, b2;
+              case Ha:
+                var d2 = b2._init;
+                return q(a2, d2(b2._payload), c2);
+            }
+            if (eb(b2) || Ka(b2)) return b2 = Tg(b2, a2.mode, c2, null), b2.return = a2, b2;
+            Mg(a2, b2);
+          }
+          return null;
+        }
+        function r2(a2, b2, c2, d2) {
+          var e2 = null !== b2 ? b2.key : null;
+          if ("string" === typeof c2 && "" !== c2 || "number" === typeof c2) return null !== e2 ? null : h(a2, b2, "" + c2, d2);
+          if ("object" === typeof c2 && null !== c2) {
+            switch (c2.$$typeof) {
+              case va:
+                return c2.key === e2 ? k(a2, b2, c2, d2) : null;
+              case wa:
+                return c2.key === e2 ? l(a2, b2, c2, d2) : null;
+              case Ha:
+                return e2 = c2._init, r2(
+                  a2,
+                  b2,
+                  e2(c2._payload),
+                  d2
+                );
+            }
+            if (eb(c2) || Ka(c2)) return null !== e2 ? null : m(a2, b2, c2, d2, null);
+            Mg(a2, c2);
+          }
+          return null;
+        }
+        function y(a2, b2, c2, d2, e2) {
+          if ("string" === typeof d2 && "" !== d2 || "number" === typeof d2) return a2 = a2.get(c2) || null, h(b2, a2, "" + d2, e2);
+          if ("object" === typeof d2 && null !== d2) {
+            switch (d2.$$typeof) {
+              case va:
+                return a2 = a2.get(null === d2.key ? c2 : d2.key) || null, k(b2, a2, d2, e2);
+              case wa:
+                return a2 = a2.get(null === d2.key ? c2 : d2.key) || null, l(b2, a2, d2, e2);
+              case Ha:
+                var f2 = d2._init;
+                return y(a2, b2, c2, f2(d2._payload), e2);
+            }
+            if (eb(d2) || Ka(d2)) return a2 = a2.get(c2) || null, m(b2, a2, d2, e2, null);
+            Mg(b2, d2);
+          }
+          return null;
+        }
+        function n(e2, g2, h2, k2) {
+          for (var l2 = null, m2 = null, u = g2, w = g2 = 0, x = null; null !== u && w < h2.length; w++) {
+            u.index > w ? (x = u, u = null) : x = u.sibling;
+            var n2 = r2(e2, u, h2[w], k2);
+            if (null === n2) {
+              null === u && (u = x);
+              break;
+            }
+            a && u && null === n2.alternate && b(e2, u);
+            g2 = f(n2, g2, w);
+            null === m2 ? l2 = n2 : m2.sibling = n2;
+            m2 = n2;
+            u = x;
+          }
+          if (w === h2.length) return c(e2, u), I && tg(e2, w), l2;
+          if (null === u) {
+            for (; w < h2.length; w++) u = q(e2, h2[w], k2), null !== u && (g2 = f(u, g2, w), null === m2 ? l2 = u : m2.sibling = u, m2 = u);
+            I && tg(e2, w);
+            return l2;
+          }
+          for (u = d(e2, u); w < h2.length; w++) x = y(u, e2, w, h2[w], k2), null !== x && (a && null !== x.alternate && u.delete(null === x.key ? w : x.key), g2 = f(x, g2, w), null === m2 ? l2 = x : m2.sibling = x, m2 = x);
+          a && u.forEach(function(a2) {
+            return b(e2, a2);
+          });
+          I && tg(e2, w);
+          return l2;
+        }
+        function t(e2, g2, h2, k2) {
+          var l2 = Ka(h2);
+          if ("function" !== typeof l2) throw Error(p(150));
+          h2 = l2.call(h2);
+          if (null == h2) throw Error(p(151));
+          for (var u = l2 = null, m2 = g2, w = g2 = 0, x = null, n2 = h2.next(); null !== m2 && !n2.done; w++, n2 = h2.next()) {
+            m2.index > w ? (x = m2, m2 = null) : x = m2.sibling;
+            var t2 = r2(e2, m2, n2.value, k2);
+            if (null === t2) {
+              null === m2 && (m2 = x);
+              break;
+            }
+            a && m2 && null === t2.alternate && b(e2, m2);
+            g2 = f(t2, g2, w);
+            null === u ? l2 = t2 : u.sibling = t2;
+            u = t2;
+            m2 = x;
+          }
+          if (n2.done) return c(
+            e2,
+            m2
+          ), I && tg(e2, w), l2;
+          if (null === m2) {
+            for (; !n2.done; w++, n2 = h2.next()) n2 = q(e2, n2.value, k2), null !== n2 && (g2 = f(n2, g2, w), null === u ? l2 = n2 : u.sibling = n2, u = n2);
+            I && tg(e2, w);
+            return l2;
+          }
+          for (m2 = d(e2, m2); !n2.done; w++, n2 = h2.next()) n2 = y(m2, e2, w, n2.value, k2), null !== n2 && (a && null !== n2.alternate && m2.delete(null === n2.key ? w : n2.key), g2 = f(n2, g2, w), null === u ? l2 = n2 : u.sibling = n2, u = n2);
+          a && m2.forEach(function(a2) {
+            return b(e2, a2);
+          });
+          I && tg(e2, w);
+          return l2;
+        }
+        function J(a2, d2, f2, h2) {
+          "object" === typeof f2 && null !== f2 && f2.type === ya && null === f2.key && (f2 = f2.props.children);
+          if ("object" === typeof f2 && null !== f2) {
+            switch (f2.$$typeof) {
+              case va:
+                a: {
+                  for (var k2 = f2.key, l2 = d2; null !== l2; ) {
+                    if (l2.key === k2) {
+                      k2 = f2.type;
+                      if (k2 === ya) {
+                        if (7 === l2.tag) {
+                          c(a2, l2.sibling);
+                          d2 = e(l2, f2.props.children);
+                          d2.return = a2;
+                          a2 = d2;
+                          break a;
+                        }
+                      } else if (l2.elementType === k2 || "object" === typeof k2 && null !== k2 && k2.$$typeof === Ha && Ng(k2) === l2.type) {
+                        c(a2, l2.sibling);
+                        d2 = e(l2, f2.props);
+                        d2.ref = Lg(a2, l2, f2);
+                        d2.return = a2;
+                        a2 = d2;
+                        break a;
+                      }
+                      c(a2, l2);
+                      break;
+                    } else b(a2, l2);
+                    l2 = l2.sibling;
+                  }
+                  f2.type === ya ? (d2 = Tg(f2.props.children, a2.mode, h2, f2.key), d2.return = a2, a2 = d2) : (h2 = Rg(f2.type, f2.key, f2.props, null, a2.mode, h2), h2.ref = Lg(a2, d2, f2), h2.return = a2, a2 = h2);
+                }
+                return g(a2);
+              case wa:
+                a: {
+                  for (l2 = f2.key; null !== d2; ) {
+                    if (d2.key === l2) if (4 === d2.tag && d2.stateNode.containerInfo === f2.containerInfo && d2.stateNode.implementation === f2.implementation) {
+                      c(a2, d2.sibling);
+                      d2 = e(d2, f2.children || []);
+                      d2.return = a2;
+                      a2 = d2;
+                      break a;
+                    } else {
+                      c(a2, d2);
+                      break;
+                    }
+                    else b(a2, d2);
+                    d2 = d2.sibling;
+                  }
+                  d2 = Sg(f2, a2.mode, h2);
+                  d2.return = a2;
+                  a2 = d2;
+                }
+                return g(a2);
+              case Ha:
+                return l2 = f2._init, J(a2, d2, l2(f2._payload), h2);
+            }
+            if (eb(f2)) return n(a2, d2, f2, h2);
+            if (Ka(f2)) return t(a2, d2, f2, h2);
+            Mg(a2, f2);
+          }
+          return "string" === typeof f2 && "" !== f2 || "number" === typeof f2 ? (f2 = "" + f2, null !== d2 && 6 === d2.tag ? (c(a2, d2.sibling), d2 = e(d2, f2), d2.return = a2, a2 = d2) : (c(a2, d2), d2 = Qg(f2, a2.mode, h2), d2.return = a2, a2 = d2), g(a2)) : c(a2, d2);
+        }
+        return J;
+      }
+      var Ug = Og(true);
+      var Vg = Og(false);
+      var Wg = Uf(null);
+      var Xg = null;
+      var Yg = null;
+      var Zg = null;
+      function $g() {
+        Zg = Yg = Xg = null;
+      }
+      function ah(a) {
+        var b = Wg.current;
+        E(Wg);
+        a._currentValue = b;
+      }
+      function bh(a, b, c) {
+        for (; null !== a; ) {
+          var d = a.alternate;
+          (a.childLanes & b) !== b ? (a.childLanes |= b, null !== d && (d.childLanes |= b)) : null !== d && (d.childLanes & b) !== b && (d.childLanes |= b);
+          if (a === c) break;
+          a = a.return;
+        }
+      }
+      function ch(a, b) {
+        Xg = a;
+        Zg = Yg = null;
+        a = a.dependencies;
+        null !== a && null !== a.firstContext && (0 !== (a.lanes & b) && (dh = true), a.firstContext = null);
+      }
+      function eh(a) {
+        var b = a._currentValue;
+        if (Zg !== a) if (a = { context: a, memoizedValue: b, next: null }, null === Yg) {
+          if (null === Xg) throw Error(p(308));
+          Yg = a;
+          Xg.dependencies = { lanes: 0, firstContext: a };
+        } else Yg = Yg.next = a;
+        return b;
+      }
+      var fh = null;
+      function gh(a) {
+        null === fh ? fh = [a] : fh.push(a);
+      }
+      function hh(a, b, c, d) {
+        var e = b.interleaved;
+        null === e ? (c.next = c, gh(b)) : (c.next = e.next, e.next = c);
+        b.interleaved = c;
+        return ih(a, d);
+      }
+      function ih(a, b) {
+        a.lanes |= b;
+        var c = a.alternate;
+        null !== c && (c.lanes |= b);
+        c = a;
+        for (a = a.return; null !== a; ) a.childLanes |= b, c = a.alternate, null !== c && (c.childLanes |= b), c = a, a = a.return;
+        return 3 === c.tag ? c.stateNode : null;
+      }
+      var jh = false;
+      function kh(a) {
+        a.updateQueue = { baseState: a.memoizedState, firstBaseUpdate: null, lastBaseUpdate: null, shared: { pending: null, interleaved: null, lanes: 0 }, effects: null };
+      }
+      function lh(a, b) {
+        a = a.updateQueue;
+        b.updateQueue === a && (b.updateQueue = { baseState: a.baseState, firstBaseUpdate: a.firstBaseUpdate, lastBaseUpdate: a.lastBaseUpdate, shared: a.shared, effects: a.effects });
+      }
+      function mh(a, b) {
+        return { eventTime: a, lane: b, tag: 0, payload: null, callback: null, next: null };
+      }
+      function nh(a, b, c) {
+        var d = a.updateQueue;
+        if (null === d) return null;
+        d = d.shared;
+        if (0 !== (K & 2)) {
+          var e = d.pending;
+          null === e ? b.next = b : (b.next = e.next, e.next = b);
+          d.pending = b;
+          return ih(a, c);
+        }
+        e = d.interleaved;
+        null === e ? (b.next = b, gh(d)) : (b.next = e.next, e.next = b);
+        d.interleaved = b;
+        return ih(a, c);
+      }
+      function oh(a, b, c) {
+        b = b.updateQueue;
+        if (null !== b && (b = b.shared, 0 !== (c & 4194240))) {
+          var d = b.lanes;
+          d &= a.pendingLanes;
+          c |= d;
+          b.lanes = c;
+          Cc(a, c);
+        }
+      }
+      function ph(a, b) {
+        var c = a.updateQueue, d = a.alternate;
+        if (null !== d && (d = d.updateQueue, c === d)) {
+          var e = null, f = null;
+          c = c.firstBaseUpdate;
+          if (null !== c) {
+            do {
+              var g = { eventTime: c.eventTime, lane: c.lane, tag: c.tag, payload: c.payload, callback: c.callback, next: null };
+              null === f ? e = f = g : f = f.next = g;
+              c = c.next;
+            } while (null !== c);
+            null === f ? e = f = b : f = f.next = b;
+          } else e = f = b;
+          c = { baseState: d.baseState, firstBaseUpdate: e, lastBaseUpdate: f, shared: d.shared, effects: d.effects };
+          a.updateQueue = c;
+          return;
+        }
+        a = c.lastBaseUpdate;
+        null === a ? c.firstBaseUpdate = b : a.next = b;
+        c.lastBaseUpdate = b;
+      }
+      function qh(a, b, c, d) {
+        var e = a.updateQueue;
+        jh = false;
+        var f = e.firstBaseUpdate, g = e.lastBaseUpdate, h = e.shared.pending;
+        if (null !== h) {
+          e.shared.pending = null;
+          var k = h, l = k.next;
+          k.next = null;
+          null === g ? f = l : g.next = l;
+          g = k;
+          var m = a.alternate;
+          null !== m && (m = m.updateQueue, h = m.lastBaseUpdate, h !== g && (null === h ? m.firstBaseUpdate = l : h.next = l, m.lastBaseUpdate = k));
+        }
+        if (null !== f) {
+          var q = e.baseState;
+          g = 0;
+          m = l = k = null;
+          h = f;
+          do {
+            var r2 = h.lane, y = h.eventTime;
+            if ((d & r2) === r2) {
+              null !== m && (m = m.next = {
+                eventTime: y,
+                lane: 0,
+                tag: h.tag,
+                payload: h.payload,
+                callback: h.callback,
+                next: null
+              });
+              a: {
+                var n = a, t = h;
+                r2 = b;
+                y = c;
+                switch (t.tag) {
+                  case 1:
+                    n = t.payload;
+                    if ("function" === typeof n) {
+                      q = n.call(y, q, r2);
+                      break a;
+                    }
+                    q = n;
+                    break a;
+                  case 3:
+                    n.flags = n.flags & -65537 | 128;
+                  case 0:
+                    n = t.payload;
+                    r2 = "function" === typeof n ? n.call(y, q, r2) : n;
+                    if (null === r2 || void 0 === r2) break a;
+                    q = A({}, q, r2);
+                    break a;
+                  case 2:
+                    jh = true;
+                }
+              }
+              null !== h.callback && 0 !== h.lane && (a.flags |= 64, r2 = e.effects, null === r2 ? e.effects = [h] : r2.push(h));
+            } else y = { eventTime: y, lane: r2, tag: h.tag, payload: h.payload, callback: h.callback, next: null }, null === m ? (l = m = y, k = q) : m = m.next = y, g |= r2;
+            h = h.next;
+            if (null === h) if (h = e.shared.pending, null === h) break;
+            else r2 = h, h = r2.next, r2.next = null, e.lastBaseUpdate = r2, e.shared.pending = null;
+          } while (1);
+          null === m && (k = q);
+          e.baseState = k;
+          e.firstBaseUpdate = l;
+          e.lastBaseUpdate = m;
+          b = e.shared.interleaved;
+          if (null !== b) {
+            e = b;
+            do
+              g |= e.lane, e = e.next;
+            while (e !== b);
+          } else null === f && (e.shared.lanes = 0);
+          rh |= g;
+          a.lanes = g;
+          a.memoizedState = q;
+        }
+      }
+      function sh(a, b, c) {
+        a = b.effects;
+        b.effects = null;
+        if (null !== a) for (b = 0; b < a.length; b++) {
+          var d = a[b], e = d.callback;
+          if (null !== e) {
+            d.callback = null;
+            d = c;
+            if ("function" !== typeof e) throw Error(p(191, e));
+            e.call(d);
+          }
+        }
+      }
+      var th = {};
+      var uh = Uf(th);
+      var vh = Uf(th);
+      var wh = Uf(th);
+      function xh(a) {
+        if (a === th) throw Error(p(174));
+        return a;
+      }
+      function yh(a, b) {
+        G(wh, b);
+        G(vh, a);
+        G(uh, th);
+        a = b.nodeType;
+        switch (a) {
+          case 9:
+          case 11:
+            b = (b = b.documentElement) ? b.namespaceURI : lb(null, "");
+            break;
+          default:
+            a = 8 === a ? b.parentNode : b, b = a.namespaceURI || null, a = a.tagName, b = lb(b, a);
+        }
+        E(uh);
+        G(uh, b);
+      }
+      function zh() {
+        E(uh);
+        E(vh);
+        E(wh);
+      }
+      function Ah(a) {
+        xh(wh.current);
+        var b = xh(uh.current);
+        var c = lb(b, a.type);
+        b !== c && (G(vh, a), G(uh, c));
+      }
+      function Bh(a) {
+        vh.current === a && (E(uh), E(vh));
+      }
+      var L = Uf(0);
+      function Ch(a) {
+        for (var b = a; null !== b; ) {
+          if (13 === b.tag) {
+            var c = b.memoizedState;
+            if (null !== c && (c = c.dehydrated, null === c || "$?" === c.data || "$!" === c.data)) return b;
+          } else if (19 === b.tag && void 0 !== b.memoizedProps.revealOrder) {
+            if (0 !== (b.flags & 128)) return b;
+          } else if (null !== b.child) {
+            b.child.return = b;
+            b = b.child;
+            continue;
+          }
+          if (b === a) break;
+          for (; null === b.sibling; ) {
+            if (null === b.return || b.return === a) return null;
+            b = b.return;
+          }
+          b.sibling.return = b.return;
+          b = b.sibling;
+        }
+        return null;
+      }
+      var Dh = [];
+      function Eh() {
+        for (var a = 0; a < Dh.length; a++) Dh[a]._workInProgressVersionPrimary = null;
+        Dh.length = 0;
+      }
+      var Fh = ua.ReactCurrentDispatcher;
+      var Gh = ua.ReactCurrentBatchConfig;
+      var Hh = 0;
+      var M = null;
+      var N = null;
+      var O = null;
+      var Ih = false;
+      var Jh = false;
+      var Kh = 0;
+      var Lh = 0;
+      function P() {
+        throw Error(p(321));
+      }
+      function Mh(a, b) {
+        if (null === b) return false;
+        for (var c = 0; c < b.length && c < a.length; c++) if (!He(a[c], b[c])) return false;
+        return true;
+      }
+      function Nh(a, b, c, d, e, f) {
+        Hh = f;
+        M = b;
+        b.memoizedState = null;
+        b.updateQueue = null;
+        b.lanes = 0;
+        Fh.current = null === a || null === a.memoizedState ? Oh : Ph;
+        a = c(d, e);
+        if (Jh) {
+          f = 0;
+          do {
+            Jh = false;
+            Kh = 0;
+            if (25 <= f) throw Error(p(301));
+            f += 1;
+            O = N = null;
+            b.updateQueue = null;
+            Fh.current = Qh;
+            a = c(d, e);
+          } while (Jh);
+        }
+        Fh.current = Rh;
+        b = null !== N && null !== N.next;
+        Hh = 0;
+        O = N = M = null;
+        Ih = false;
+        if (b) throw Error(p(300));
+        return a;
+      }
+      function Sh() {
+        var a = 0 !== Kh;
+        Kh = 0;
+        return a;
+      }
+      function Th() {
+        var a = { memoizedState: null, baseState: null, baseQueue: null, queue: null, next: null };
+        null === O ? M.memoizedState = O = a : O = O.next = a;
+        return O;
+      }
+      function Uh() {
+        if (null === N) {
+          var a = M.alternate;
+          a = null !== a ? a.memoizedState : null;
+        } else a = N.next;
+        var b = null === O ? M.memoizedState : O.next;
+        if (null !== b) O = b, N = a;
+        else {
+          if (null === a) throw Error(p(310));
+          N = a;
+          a = { memoizedState: N.memoizedState, baseState: N.baseState, baseQueue: N.baseQueue, queue: N.queue, next: null };
+          null === O ? M.memoizedState = O = a : O = O.next = a;
+        }
+        return O;
+      }
+      function Vh(a, b) {
+        return "function" === typeof b ? b(a) : b;
+      }
+      function Wh(a) {
+        var b = Uh(), c = b.queue;
+        if (null === c) throw Error(p(311));
+        c.lastRenderedReducer = a;
+        var d = N, e = d.baseQueue, f = c.pending;
+        if (null !== f) {
+          if (null !== e) {
+            var g = e.next;
+            e.next = f.next;
+            f.next = g;
+          }
+          d.baseQueue = e = f;
+          c.pending = null;
+        }
+        if (null !== e) {
+          f = e.next;
+          d = d.baseState;
+          var h = g = null, k = null, l = f;
+          do {
+            var m = l.lane;
+            if ((Hh & m) === m) null !== k && (k = k.next = { lane: 0, action: l.action, hasEagerState: l.hasEagerState, eagerState: l.eagerState, next: null }), d = l.hasEagerState ? l.eagerState : a(d, l.action);
+            else {
+              var q = {
+                lane: m,
+                action: l.action,
+                hasEagerState: l.hasEagerState,
+                eagerState: l.eagerState,
+                next: null
+              };
+              null === k ? (h = k = q, g = d) : k = k.next = q;
+              M.lanes |= m;
+              rh |= m;
+            }
+            l = l.next;
+          } while (null !== l && l !== f);
+          null === k ? g = d : k.next = h;
+          He(d, b.memoizedState) || (dh = true);
+          b.memoizedState = d;
+          b.baseState = g;
+          b.baseQueue = k;
+          c.lastRenderedState = d;
+        }
+        a = c.interleaved;
+        if (null !== a) {
+          e = a;
+          do
+            f = e.lane, M.lanes |= f, rh |= f, e = e.next;
+          while (e !== a);
+        } else null === e && (c.lanes = 0);
+        return [b.memoizedState, c.dispatch];
+      }
+      function Xh(a) {
+        var b = Uh(), c = b.queue;
+        if (null === c) throw Error(p(311));
+        c.lastRenderedReducer = a;
+        var d = c.dispatch, e = c.pending, f = b.memoizedState;
+        if (null !== e) {
+          c.pending = null;
+          var g = e = e.next;
+          do
+            f = a(f, g.action), g = g.next;
+          while (g !== e);
+          He(f, b.memoizedState) || (dh = true);
+          b.memoizedState = f;
+          null === b.baseQueue && (b.baseState = f);
+          c.lastRenderedState = f;
+        }
+        return [f, d];
+      }
+      function Yh() {
+      }
+      function Zh(a, b) {
+        var c = M, d = Uh(), e = b(), f = !He(d.memoizedState, e);
+        f && (d.memoizedState = e, dh = true);
+        d = d.queue;
+        $h(ai.bind(null, c, d, a), [a]);
+        if (d.getSnapshot !== b || f || null !== O && O.memoizedState.tag & 1) {
+          c.flags |= 2048;
+          bi(9, ci.bind(null, c, d, e, b), void 0, null);
+          if (null === Q) throw Error(p(349));
+          0 !== (Hh & 30) || di(c, b, e);
+        }
+        return e;
+      }
+      function di(a, b, c) {
+        a.flags |= 16384;
+        a = { getSnapshot: b, value: c };
+        b = M.updateQueue;
+        null === b ? (b = { lastEffect: null, stores: null }, M.updateQueue = b, b.stores = [a]) : (c = b.stores, null === c ? b.stores = [a] : c.push(a));
+      }
+      function ci(a, b, c, d) {
+        b.value = c;
+        b.getSnapshot = d;
+        ei(b) && fi(a);
+      }
+      function ai(a, b, c) {
+        return c(function() {
+          ei(b) && fi(a);
+        });
+      }
+      function ei(a) {
+        var b = a.getSnapshot;
+        a = a.value;
+        try {
+          var c = b();
+          return !He(a, c);
+        } catch (d) {
+          return true;
+        }
+      }
+      function fi(a) {
+        var b = ih(a, 1);
+        null !== b && gi(b, a, 1, -1);
+      }
+      function hi(a) {
+        var b = Th();
+        "function" === typeof a && (a = a());
+        b.memoizedState = b.baseState = a;
+        a = { pending: null, interleaved: null, lanes: 0, dispatch: null, lastRenderedReducer: Vh, lastRenderedState: a };
+        b.queue = a;
+        a = a.dispatch = ii.bind(null, M, a);
+        return [b.memoizedState, a];
+      }
+      function bi(a, b, c, d) {
+        a = { tag: a, create: b, destroy: c, deps: d, next: null };
+        b = M.updateQueue;
+        null === b ? (b = { lastEffect: null, stores: null }, M.updateQueue = b, b.lastEffect = a.next = a) : (c = b.lastEffect, null === c ? b.lastEffect = a.next = a : (d = c.next, c.next = a, a.next = d, b.lastEffect = a));
+        return a;
+      }
+      function ji() {
+        return Uh().memoizedState;
+      }
+      function ki(a, b, c, d) {
+        var e = Th();
+        M.flags |= a;
+        e.memoizedState = bi(1 | b, c, void 0, void 0 === d ? null : d);
+      }
+      function li(a, b, c, d) {
+        var e = Uh();
+        d = void 0 === d ? null : d;
+        var f = void 0;
+        if (null !== N) {
+          var g = N.memoizedState;
+          f = g.destroy;
+          if (null !== d && Mh(d, g.deps)) {
+            e.memoizedState = bi(b, c, f, d);
+            return;
+          }
+        }
+        M.flags |= a;
+        e.memoizedState = bi(1 | b, c, f, d);
+      }
+      function mi(a, b) {
+        return ki(8390656, 8, a, b);
+      }
+      function $h(a, b) {
+        return li(2048, 8, a, b);
+      }
+      function ni(a, b) {
+        return li(4, 2, a, b);
+      }
+      function oi(a, b) {
+        return li(4, 4, a, b);
+      }
+      function pi(a, b) {
+        if ("function" === typeof b) return a = a(), b(a), function() {
+          b(null);
+        };
+        if (null !== b && void 0 !== b) return a = a(), b.current = a, function() {
+          b.current = null;
+        };
+      }
+      function qi(a, b, c) {
+        c = null !== c && void 0 !== c ? c.concat([a]) : null;
+        return li(4, 4, pi.bind(null, b, a), c);
+      }
+      function ri() {
+      }
+      function si(a, b) {
+        var c = Uh();
+        b = void 0 === b ? null : b;
+        var d = c.memoizedState;
+        if (null !== d && null !== b && Mh(b, d[1])) return d[0];
+        c.memoizedState = [a, b];
+        return a;
+      }
+      function ti(a, b) {
+        var c = Uh();
+        b = void 0 === b ? null : b;
+        var d = c.memoizedState;
+        if (null !== d && null !== b && Mh(b, d[1])) return d[0];
+        a = a();
+        c.memoizedState = [a, b];
+        return a;
+      }
+      function ui(a, b, c) {
+        if (0 === (Hh & 21)) return a.baseState && (a.baseState = false, dh = true), a.memoizedState = c;
+        He(c, b) || (c = yc(), M.lanes |= c, rh |= c, a.baseState = true);
+        return b;
+      }
+      function vi(a, b) {
+        var c = C;
+        C = 0 !== c && 4 > c ? c : 4;
+        a(true);
+        var d = Gh.transition;
+        Gh.transition = {};
+        try {
+          a(false), b();
+        } finally {
+          C = c, Gh.transition = d;
+        }
+      }
+      function wi() {
+        return Uh().memoizedState;
+      }
+      function xi(a, b, c) {
+        var d = yi(a);
+        c = { lane: d, action: c, hasEagerState: false, eagerState: null, next: null };
+        if (zi(a)) Ai(b, c);
+        else if (c = hh(a, b, c, d), null !== c) {
+          var e = R();
+          gi(c, a, d, e);
+          Bi(c, b, d);
+        }
+      }
+      function ii(a, b, c) {
+        var d = yi(a), e = { lane: d, action: c, hasEagerState: false, eagerState: null, next: null };
+        if (zi(a)) Ai(b, e);
+        else {
+          var f = a.alternate;
+          if (0 === a.lanes && (null === f || 0 === f.lanes) && (f = b.lastRenderedReducer, null !== f)) try {
+            var g = b.lastRenderedState, h = f(g, c);
+            e.hasEagerState = true;
+            e.eagerState = h;
+            if (He(h, g)) {
+              var k = b.interleaved;
+              null === k ? (e.next = e, gh(b)) : (e.next = k.next, k.next = e);
+              b.interleaved = e;
+              return;
+            }
+          } catch (l) {
+          } finally {
+          }
+          c = hh(a, b, e, d);
+          null !== c && (e = R(), gi(c, a, d, e), Bi(c, b, d));
+        }
+      }
+      function zi(a) {
+        var b = a.alternate;
+        return a === M || null !== b && b === M;
+      }
+      function Ai(a, b) {
+        Jh = Ih = true;
+        var c = a.pending;
+        null === c ? b.next = b : (b.next = c.next, c.next = b);
+        a.pending = b;
+      }
+      function Bi(a, b, c) {
+        if (0 !== (c & 4194240)) {
+          var d = b.lanes;
+          d &= a.pendingLanes;
+          c |= d;
+          b.lanes = c;
+          Cc(a, c);
+        }
+      }
+      var Rh = { readContext: eh, useCallback: P, useContext: P, useEffect: P, useImperativeHandle: P, useInsertionEffect: P, useLayoutEffect: P, useMemo: P, useReducer: P, useRef: P, useState: P, useDebugValue: P, useDeferredValue: P, useTransition: P, useMutableSource: P, useSyncExternalStore: P, useId: P, unstable_isNewReconciler: false };
+      var Oh = { readContext: eh, useCallback: function(a, b) {
+        Th().memoizedState = [a, void 0 === b ? null : b];
+        return a;
+      }, useContext: eh, useEffect: mi, useImperativeHandle: function(a, b, c) {
+        c = null !== c && void 0 !== c ? c.concat([a]) : null;
+        return ki(
+          4194308,
+          4,
+          pi.bind(null, b, a),
+          c
+        );
+      }, useLayoutEffect: function(a, b) {
+        return ki(4194308, 4, a, b);
+      }, useInsertionEffect: function(a, b) {
+        return ki(4, 2, a, b);
+      }, useMemo: function(a, b) {
+        var c = Th();
+        b = void 0 === b ? null : b;
+        a = a();
+        c.memoizedState = [a, b];
+        return a;
+      }, useReducer: function(a, b, c) {
+        var d = Th();
+        b = void 0 !== c ? c(b) : b;
+        d.memoizedState = d.baseState = b;
+        a = { pending: null, interleaved: null, lanes: 0, dispatch: null, lastRenderedReducer: a, lastRenderedState: b };
+        d.queue = a;
+        a = a.dispatch = xi.bind(null, M, a);
+        return [d.memoizedState, a];
+      }, useRef: function(a) {
+        var b = Th();
+        a = { current: a };
+        return b.memoizedState = a;
+      }, useState: hi, useDebugValue: ri, useDeferredValue: function(a) {
+        return Th().memoizedState = a;
+      }, useTransition: function() {
+        var a = hi(false), b = a[0];
+        a = vi.bind(null, a[1]);
+        Th().memoizedState = a;
+        return [b, a];
+      }, useMutableSource: function() {
+      }, useSyncExternalStore: function(a, b, c) {
+        var d = M, e = Th();
+        if (I) {
+          if (void 0 === c) throw Error(p(407));
+          c = c();
+        } else {
+          c = b();
+          if (null === Q) throw Error(p(349));
+          0 !== (Hh & 30) || di(d, b, c);
+        }
+        e.memoizedState = c;
+        var f = { value: c, getSnapshot: b };
+        e.queue = f;
+        mi(ai.bind(
+          null,
+          d,
+          f,
+          a
+        ), [a]);
+        d.flags |= 2048;
+        bi(9, ci.bind(null, d, f, c, b), void 0, null);
+        return c;
+      }, useId: function() {
+        var a = Th(), b = Q.identifierPrefix;
+        if (I) {
+          var c = sg;
+          var d = rg;
+          c = (d & ~(1 << 32 - oc(d) - 1)).toString(32) + c;
+          b = ":" + b + "R" + c;
+          c = Kh++;
+          0 < c && (b += "H" + c.toString(32));
+          b += ":";
+        } else c = Lh++, b = ":" + b + "r" + c.toString(32) + ":";
+        return a.memoizedState = b;
+      }, unstable_isNewReconciler: false };
+      var Ph = {
+        readContext: eh,
+        useCallback: si,
+        useContext: eh,
+        useEffect: $h,
+        useImperativeHandle: qi,
+        useInsertionEffect: ni,
+        useLayoutEffect: oi,
+        useMemo: ti,
+        useReducer: Wh,
+        useRef: ji,
+        useState: function() {
+          return Wh(Vh);
+        },
+        useDebugValue: ri,
+        useDeferredValue: function(a) {
+          var b = Uh();
+          return ui(b, N.memoizedState, a);
+        },
+        useTransition: function() {
+          var a = Wh(Vh)[0], b = Uh().memoizedState;
+          return [a, b];
+        },
+        useMutableSource: Yh,
+        useSyncExternalStore: Zh,
+        useId: wi,
+        unstable_isNewReconciler: false
+      };
+      var Qh = { readContext: eh, useCallback: si, useContext: eh, useEffect: $h, useImperativeHandle: qi, useInsertionEffect: ni, useLayoutEffect: oi, useMemo: ti, useReducer: Xh, useRef: ji, useState: function() {
+        return Xh(Vh);
+      }, useDebugValue: ri, useDeferredValue: function(a) {
+        var b = Uh();
+        return null === N ? b.memoizedState = a : ui(b, N.memoizedState, a);
+      }, useTransition: function() {
+        var a = Xh(Vh)[0], b = Uh().memoizedState;
+        return [a, b];
+      }, useMutableSource: Yh, useSyncExternalStore: Zh, useId: wi, unstable_isNewReconciler: false };
+      function Ci(a, b) {
+        if (a && a.defaultProps) {
+          b = A({}, b);
+          a = a.defaultProps;
+          for (var c in a) void 0 === b[c] && (b[c] = a[c]);
+          return b;
+        }
+        return b;
+      }
+      function Di(a, b, c, d) {
+        b = a.memoizedState;
+        c = c(d, b);
+        c = null === c || void 0 === c ? b : A({}, b, c);
+        a.memoizedState = c;
+        0 === a.lanes && (a.updateQueue.baseState = c);
+      }
+      var Ei = { isMounted: function(a) {
+        return (a = a._reactInternals) ? Vb(a) === a : false;
+      }, enqueueSetState: function(a, b, c) {
+        a = a._reactInternals;
+        var d = R(), e = yi(a), f = mh(d, e);
+        f.payload = b;
+        void 0 !== c && null !== c && (f.callback = c);
+        b = nh(a, f, e);
+        null !== b && (gi(b, a, e, d), oh(b, a, e));
+      }, enqueueReplaceState: function(a, b, c) {
+        a = a._reactInternals;
+        var d = R(), e = yi(a), f = mh(d, e);
+        f.tag = 1;
+        f.payload = b;
+        void 0 !== c && null !== c && (f.callback = c);
+        b = nh(a, f, e);
+        null !== b && (gi(b, a, e, d), oh(b, a, e));
+      }, enqueueForceUpdate: function(a, b) {
+        a = a._reactInternals;
+        var c = R(), d = yi(a), e = mh(c, d);
+        e.tag = 2;
+        void 0 !== b && null !== b && (e.callback = b);
+        b = nh(a, e, d);
+        null !== b && (gi(b, a, d, c), oh(b, a, d));
+      } };
+      function Fi(a, b, c, d, e, f, g) {
+        a = a.stateNode;
+        return "function" === typeof a.shouldComponentUpdate ? a.shouldComponentUpdate(d, f, g) : b.prototype && b.prototype.isPureReactComponent ? !Ie(c, d) || !Ie(e, f) : true;
+      }
+      function Gi(a, b, c) {
+        var d = false, e = Vf;
+        var f = b.contextType;
+        "object" === typeof f && null !== f ? f = eh(f) : (e = Zf(b) ? Xf : H.current, d = b.contextTypes, f = (d = null !== d && void 0 !== d) ? Yf(a, e) : Vf);
+        b = new b(c, f);
+        a.memoizedState = null !== b.state && void 0 !== b.state ? b.state : null;
+        b.updater = Ei;
+        a.stateNode = b;
+        b._reactInternals = a;
+        d && (a = a.stateNode, a.__reactInternalMemoizedUnmaskedChildContext = e, a.__reactInternalMemoizedMaskedChildContext = f);
+        return b;
+      }
+      function Hi(a, b, c, d) {
+        a = b.state;
+        "function" === typeof b.componentWillReceiveProps && b.componentWillReceiveProps(c, d);
+        "function" === typeof b.UNSAFE_componentWillReceiveProps && b.UNSAFE_componentWillReceiveProps(c, d);
+        b.state !== a && Ei.enqueueReplaceState(b, b.state, null);
+      }
+      function Ii(a, b, c, d) {
+        var e = a.stateNode;
+        e.props = c;
+        e.state = a.memoizedState;
+        e.refs = {};
+        kh(a);
+        var f = b.contextType;
+        "object" === typeof f && null !== f ? e.context = eh(f) : (f = Zf(b) ? Xf : H.current, e.context = Yf(a, f));
+        e.state = a.memoizedState;
+        f = b.getDerivedStateFromProps;
+        "function" === typeof f && (Di(a, b, f, c), e.state = a.memoizedState);
+        "function" === typeof b.getDerivedStateFromProps || "function" === typeof e.getSnapshotBeforeUpdate || "function" !== typeof e.UNSAFE_componentWillMount && "function" !== typeof e.componentWillMount || (b = e.state, "function" === typeof e.componentWillMount && e.componentWillMount(), "function" === typeof e.UNSAFE_componentWillMount && e.UNSAFE_componentWillMount(), b !== e.state && Ei.enqueueReplaceState(e, e.state, null), qh(a, c, e, d), e.state = a.memoizedState);
+        "function" === typeof e.componentDidMount && (a.flags |= 4194308);
+      }
+      function Ji(a, b) {
+        try {
+          var c = "", d = b;
+          do
+            c += Pa(d), d = d.return;
+          while (d);
+          var e = c;
+        } catch (f) {
+          e = "\nError generating stack: " + f.message + "\n" + f.stack;
+        }
+        return { value: a, source: b, stack: e, digest: null };
+      }
+      function Ki(a, b, c) {
+        return { value: a, source: null, stack: null != c ? c : null, digest: null != b ? b : null };
+      }
+      function Li(a, b) {
+        try {
+          console.error(b.value);
+        } catch (c) {
+          setTimeout(function() {
+            throw c;
+          });
+        }
+      }
+      var Mi = "function" === typeof WeakMap ? WeakMap : Map;
+      function Ni(a, b, c) {
+        c = mh(-1, c);
+        c.tag = 3;
+        c.payload = { element: null };
+        var d = b.value;
+        c.callback = function() {
+          Oi || (Oi = true, Pi = d);
+          Li(a, b);
+        };
+        return c;
+      }
+      function Qi(a, b, c) {
+        c = mh(-1, c);
+        c.tag = 3;
+        var d = a.type.getDerivedStateFromError;
+        if ("function" === typeof d) {
+          var e = b.value;
+          c.payload = function() {
+            return d(e);
+          };
+          c.callback = function() {
+            Li(a, b);
+          };
+        }
+        var f = a.stateNode;
+        null !== f && "function" === typeof f.componentDidCatch && (c.callback = function() {
+          Li(a, b);
+          "function" !== typeof d && (null === Ri ? Ri = /* @__PURE__ */ new Set([this]) : Ri.add(this));
+          var c2 = b.stack;
+          this.componentDidCatch(b.value, { componentStack: null !== c2 ? c2 : "" });
+        });
+        return c;
+      }
+      function Si(a, b, c) {
+        var d = a.pingCache;
+        if (null === d) {
+          d = a.pingCache = new Mi();
+          var e = /* @__PURE__ */ new Set();
+          d.set(b, e);
+        } else e = d.get(b), void 0 === e && (e = /* @__PURE__ */ new Set(), d.set(b, e));
+        e.has(c) || (e.add(c), a = Ti.bind(null, a, b, c), b.then(a, a));
+      }
+      function Ui(a) {
+        do {
+          var b;
+          if (b = 13 === a.tag) b = a.memoizedState, b = null !== b ? null !== b.dehydrated ? true : false : true;
+          if (b) return a;
+          a = a.return;
+        } while (null !== a);
+        return null;
+      }
+      function Vi(a, b, c, d, e) {
+        if (0 === (a.mode & 1)) return a === b ? a.flags |= 65536 : (a.flags |= 128, c.flags |= 131072, c.flags &= -52805, 1 === c.tag && (null === c.alternate ? c.tag = 17 : (b = mh(-1, 1), b.tag = 2, nh(c, b, 1))), c.lanes |= 1), a;
+        a.flags |= 65536;
+        a.lanes = e;
+        return a;
+      }
+      var Wi = ua.ReactCurrentOwner;
+      var dh = false;
+      function Xi(a, b, c, d) {
+        b.child = null === a ? Vg(b, null, c, d) : Ug(b, a.child, c, d);
+      }
+      function Yi(a, b, c, d, e) {
+        c = c.render;
+        var f = b.ref;
+        ch(b, e);
+        d = Nh(a, b, c, d, f, e);
+        c = Sh();
+        if (null !== a && !dh) return b.updateQueue = a.updateQueue, b.flags &= -2053, a.lanes &= ~e, Zi(a, b, e);
+        I && c && vg(b);
+        b.flags |= 1;
+        Xi(a, b, d, e);
+        return b.child;
+      }
+      function $i(a, b, c, d, e) {
+        if (null === a) {
+          var f = c.type;
+          if ("function" === typeof f && !aj(f) && void 0 === f.defaultProps && null === c.compare && void 0 === c.defaultProps) return b.tag = 15, b.type = f, bj(a, b, f, d, e);
+          a = Rg(c.type, null, d, b, b.mode, e);
+          a.ref = b.ref;
+          a.return = b;
+          return b.child = a;
+        }
+        f = a.child;
+        if (0 === (a.lanes & e)) {
+          var g = f.memoizedProps;
+          c = c.compare;
+          c = null !== c ? c : Ie;
+          if (c(g, d) && a.ref === b.ref) return Zi(a, b, e);
+        }
+        b.flags |= 1;
+        a = Pg(f, d);
+        a.ref = b.ref;
+        a.return = b;
+        return b.child = a;
+      }
+      function bj(a, b, c, d, e) {
+        if (null !== a) {
+          var f = a.memoizedProps;
+          if (Ie(f, d) && a.ref === b.ref) if (dh = false, b.pendingProps = d = f, 0 !== (a.lanes & e)) 0 !== (a.flags & 131072) && (dh = true);
+          else return b.lanes = a.lanes, Zi(a, b, e);
+        }
+        return cj(a, b, c, d, e);
+      }
+      function dj(a, b, c) {
+        var d = b.pendingProps, e = d.children, f = null !== a ? a.memoizedState : null;
+        if ("hidden" === d.mode) if (0 === (b.mode & 1)) b.memoizedState = { baseLanes: 0, cachePool: null, transitions: null }, G(ej, fj), fj |= c;
+        else {
+          if (0 === (c & 1073741824)) return a = null !== f ? f.baseLanes | c : c, b.lanes = b.childLanes = 1073741824, b.memoizedState = { baseLanes: a, cachePool: null, transitions: null }, b.updateQueue = null, G(ej, fj), fj |= a, null;
+          b.memoizedState = { baseLanes: 0, cachePool: null, transitions: null };
+          d = null !== f ? f.baseLanes : c;
+          G(ej, fj);
+          fj |= d;
+        }
+        else null !== f ? (d = f.baseLanes | c, b.memoizedState = null) : d = c, G(ej, fj), fj |= d;
+        Xi(a, b, e, c);
+        return b.child;
+      }
+      function gj(a, b) {
+        var c = b.ref;
+        if (null === a && null !== c || null !== a && a.ref !== c) b.flags |= 512, b.flags |= 2097152;
+      }
+      function cj(a, b, c, d, e) {
+        var f = Zf(c) ? Xf : H.current;
+        f = Yf(b, f);
+        ch(b, e);
+        c = Nh(a, b, c, d, f, e);
+        d = Sh();
+        if (null !== a && !dh) return b.updateQueue = a.updateQueue, b.flags &= -2053, a.lanes &= ~e, Zi(a, b, e);
+        I && d && vg(b);
+        b.flags |= 1;
+        Xi(a, b, c, e);
+        return b.child;
+      }
+      function hj(a, b, c, d, e) {
+        if (Zf(c)) {
+          var f = true;
+          cg(b);
+        } else f = false;
+        ch(b, e);
+        if (null === b.stateNode) ij(a, b), Gi(b, c, d), Ii(b, c, d, e), d = true;
+        else if (null === a) {
+          var g = b.stateNode, h = b.memoizedProps;
+          g.props = h;
+          var k = g.context, l = c.contextType;
+          "object" === typeof l && null !== l ? l = eh(l) : (l = Zf(c) ? Xf : H.current, l = Yf(b, l));
+          var m = c.getDerivedStateFromProps, q = "function" === typeof m || "function" === typeof g.getSnapshotBeforeUpdate;
+          q || "function" !== typeof g.UNSAFE_componentWillReceiveProps && "function" !== typeof g.componentWillReceiveProps || (h !== d || k !== l) && Hi(b, g, d, l);
+          jh = false;
+          var r2 = b.memoizedState;
+          g.state = r2;
+          qh(b, d, g, e);
+          k = b.memoizedState;
+          h !== d || r2 !== k || Wf.current || jh ? ("function" === typeof m && (Di(b, c, m, d), k = b.memoizedState), (h = jh || Fi(b, c, h, d, r2, k, l)) ? (q || "function" !== typeof g.UNSAFE_componentWillMount && "function" !== typeof g.componentWillMount || ("function" === typeof g.componentWillMount && g.componentWillMount(), "function" === typeof g.UNSAFE_componentWillMount && g.UNSAFE_componentWillMount()), "function" === typeof g.componentDidMount && (b.flags |= 4194308)) : ("function" === typeof g.componentDidMount && (b.flags |= 4194308), b.memoizedProps = d, b.memoizedState = k), g.props = d, g.state = k, g.context = l, d = h) : ("function" === typeof g.componentDidMount && (b.flags |= 4194308), d = false);
+        } else {
+          g = b.stateNode;
+          lh(a, b);
+          h = b.memoizedProps;
+          l = b.type === b.elementType ? h : Ci(b.type, h);
+          g.props = l;
+          q = b.pendingProps;
+          r2 = g.context;
+          k = c.contextType;
+          "object" === typeof k && null !== k ? k = eh(k) : (k = Zf(c) ? Xf : H.current, k = Yf(b, k));
+          var y = c.getDerivedStateFromProps;
+          (m = "function" === typeof y || "function" === typeof g.getSnapshotBeforeUpdate) || "function" !== typeof g.UNSAFE_componentWillReceiveProps && "function" !== typeof g.componentWillReceiveProps || (h !== q || r2 !== k) && Hi(b, g, d, k);
+          jh = false;
+          r2 = b.memoizedState;
+          g.state = r2;
+          qh(b, d, g, e);
+          var n = b.memoizedState;
+          h !== q || r2 !== n || Wf.current || jh ? ("function" === typeof y && (Di(b, c, y, d), n = b.memoizedState), (l = jh || Fi(b, c, l, d, r2, n, k) || false) ? (m || "function" !== typeof g.UNSAFE_componentWillUpdate && "function" !== typeof g.componentWillUpdate || ("function" === typeof g.componentWillUpdate && g.componentWillUpdate(d, n, k), "function" === typeof g.UNSAFE_componentWillUpdate && g.UNSAFE_componentWillUpdate(d, n, k)), "function" === typeof g.componentDidUpdate && (b.flags |= 4), "function" === typeof g.getSnapshotBeforeUpdate && (b.flags |= 1024)) : ("function" !== typeof g.componentDidUpdate || h === a.memoizedProps && r2 === a.memoizedState || (b.flags |= 4), "function" !== typeof g.getSnapshotBeforeUpdate || h === a.memoizedProps && r2 === a.memoizedState || (b.flags |= 1024), b.memoizedProps = d, b.memoizedState = n), g.props = d, g.state = n, g.context = k, d = l) : ("function" !== typeof g.componentDidUpdate || h === a.memoizedProps && r2 === a.memoizedState || (b.flags |= 4), "function" !== typeof g.getSnapshotBeforeUpdate || h === a.memoizedProps && r2 === a.memoizedState || (b.flags |= 1024), d = false);
+        }
+        return jj(a, b, c, d, f, e);
+      }
+      function jj(a, b, c, d, e, f) {
+        gj(a, b);
+        var g = 0 !== (b.flags & 128);
+        if (!d && !g) return e && dg(b, c, false), Zi(a, b, f);
+        d = b.stateNode;
+        Wi.current = b;
+        var h = g && "function" !== typeof c.getDerivedStateFromError ? null : d.render();
+        b.flags |= 1;
+        null !== a && g ? (b.child = Ug(b, a.child, null, f), b.child = Ug(b, null, h, f)) : Xi(a, b, h, f);
+        b.memoizedState = d.state;
+        e && dg(b, c, true);
+        return b.child;
+      }
+      function kj(a) {
+        var b = a.stateNode;
+        b.pendingContext ? ag(a, b.pendingContext, b.pendingContext !== b.context) : b.context && ag(a, b.context, false);
+        yh(a, b.containerInfo);
+      }
+      function lj(a, b, c, d, e) {
+        Ig();
+        Jg(e);
+        b.flags |= 256;
+        Xi(a, b, c, d);
+        return b.child;
+      }
+      var mj = { dehydrated: null, treeContext: null, retryLane: 0 };
+      function nj(a) {
+        return { baseLanes: a, cachePool: null, transitions: null };
+      }
+      function oj(a, b, c) {
+        var d = b.pendingProps, e = L.current, f = false, g = 0 !== (b.flags & 128), h;
+        (h = g) || (h = null !== a && null === a.memoizedState ? false : 0 !== (e & 2));
+        if (h) f = true, b.flags &= -129;
+        else if (null === a || null !== a.memoizedState) e |= 1;
+        G(L, e & 1);
+        if (null === a) {
+          Eg(b);
+          a = b.memoizedState;
+          if (null !== a && (a = a.dehydrated, null !== a)) return 0 === (b.mode & 1) ? b.lanes = 1 : "$!" === a.data ? b.lanes = 8 : b.lanes = 1073741824, null;
+          g = d.children;
+          a = d.fallback;
+          return f ? (d = b.mode, f = b.child, g = { mode: "hidden", children: g }, 0 === (d & 1) && null !== f ? (f.childLanes = 0, f.pendingProps = g) : f = pj(g, d, 0, null), a = Tg(a, d, c, null), f.return = b, a.return = b, f.sibling = a, b.child = f, b.child.memoizedState = nj(c), b.memoizedState = mj, a) : qj(b, g);
+        }
+        e = a.memoizedState;
+        if (null !== e && (h = e.dehydrated, null !== h)) return rj(a, b, g, d, h, e, c);
+        if (f) {
+          f = d.fallback;
+          g = b.mode;
+          e = a.child;
+          h = e.sibling;
+          var k = { mode: "hidden", children: d.children };
+          0 === (g & 1) && b.child !== e ? (d = b.child, d.childLanes = 0, d.pendingProps = k, b.deletions = null) : (d = Pg(e, k), d.subtreeFlags = e.subtreeFlags & 14680064);
+          null !== h ? f = Pg(h, f) : (f = Tg(f, g, c, null), f.flags |= 2);
+          f.return = b;
+          d.return = b;
+          d.sibling = f;
+          b.child = d;
+          d = f;
+          f = b.child;
+          g = a.child.memoizedState;
+          g = null === g ? nj(c) : { baseLanes: g.baseLanes | c, cachePool: null, transitions: g.transitions };
+          f.memoizedState = g;
+          f.childLanes = a.childLanes & ~c;
+          b.memoizedState = mj;
+          return d;
+        }
+        f = a.child;
+        a = f.sibling;
+        d = Pg(f, { mode: "visible", children: d.children });
+        0 === (b.mode & 1) && (d.lanes = c);
+        d.return = b;
+        d.sibling = null;
+        null !== a && (c = b.deletions, null === c ? (b.deletions = [a], b.flags |= 16) : c.push(a));
+        b.child = d;
+        b.memoizedState = null;
+        return d;
+      }
+      function qj(a, b) {
+        b = pj({ mode: "visible", children: b }, a.mode, 0, null);
+        b.return = a;
+        return a.child = b;
+      }
+      function sj(a, b, c, d) {
+        null !== d && Jg(d);
+        Ug(b, a.child, null, c);
+        a = qj(b, b.pendingProps.children);
+        a.flags |= 2;
+        b.memoizedState = null;
+        return a;
+      }
+      function rj(a, b, c, d, e, f, g) {
+        if (c) {
+          if (b.flags & 256) return b.flags &= -257, d = Ki(Error(p(422))), sj(a, b, g, d);
+          if (null !== b.memoizedState) return b.child = a.child, b.flags |= 128, null;
+          f = d.fallback;
+          e = b.mode;
+          d = pj({ mode: "visible", children: d.children }, e, 0, null);
+          f = Tg(f, e, g, null);
+          f.flags |= 2;
+          d.return = b;
+          f.return = b;
+          d.sibling = f;
+          b.child = d;
+          0 !== (b.mode & 1) && Ug(b, a.child, null, g);
+          b.child.memoizedState = nj(g);
+          b.memoizedState = mj;
+          return f;
+        }
+        if (0 === (b.mode & 1)) return sj(a, b, g, null);
+        if ("$!" === e.data) {
+          d = e.nextSibling && e.nextSibling.dataset;
+          if (d) var h = d.dgst;
+          d = h;
+          f = Error(p(419));
+          d = Ki(f, d, void 0);
+          return sj(a, b, g, d);
+        }
+        h = 0 !== (g & a.childLanes);
+        if (dh || h) {
+          d = Q;
+          if (null !== d) {
+            switch (g & -g) {
+              case 4:
+                e = 2;
+                break;
+              case 16:
+                e = 8;
+                break;
+              case 64:
+              case 128:
+              case 256:
+              case 512:
+              case 1024:
+              case 2048:
+              case 4096:
+              case 8192:
+              case 16384:
+              case 32768:
+              case 65536:
+              case 131072:
+              case 262144:
+              case 524288:
+              case 1048576:
+              case 2097152:
+              case 4194304:
+              case 8388608:
+              case 16777216:
+              case 33554432:
+              case 67108864:
+                e = 32;
+                break;
+              case 536870912:
+                e = 268435456;
+                break;
+              default:
+                e = 0;
+            }
+            e = 0 !== (e & (d.suspendedLanes | g)) ? 0 : e;
+            0 !== e && e !== f.retryLane && (f.retryLane = e, ih(a, e), gi(d, a, e, -1));
+          }
+          tj();
+          d = Ki(Error(p(421)));
+          return sj(a, b, g, d);
+        }
+        if ("$?" === e.data) return b.flags |= 128, b.child = a.child, b = uj.bind(null, a), e._reactRetry = b, null;
+        a = f.treeContext;
+        yg = Lf(e.nextSibling);
+        xg = b;
+        I = true;
+        zg = null;
+        null !== a && (og[pg++] = rg, og[pg++] = sg, og[pg++] = qg, rg = a.id, sg = a.overflow, qg = b);
+        b = qj(b, d.children);
+        b.flags |= 4096;
+        return b;
+      }
+      function vj(a, b, c) {
+        a.lanes |= b;
+        var d = a.alternate;
+        null !== d && (d.lanes |= b);
+        bh(a.return, b, c);
+      }
+      function wj(a, b, c, d, e) {
+        var f = a.memoizedState;
+        null === f ? a.memoizedState = { isBackwards: b, rendering: null, renderingStartTime: 0, last: d, tail: c, tailMode: e } : (f.isBackwards = b, f.rendering = null, f.renderingStartTime = 0, f.last = d, f.tail = c, f.tailMode = e);
+      }
+      function xj(a, b, c) {
+        var d = b.pendingProps, e = d.revealOrder, f = d.tail;
+        Xi(a, b, d.children, c);
+        d = L.current;
+        if (0 !== (d & 2)) d = d & 1 | 2, b.flags |= 128;
+        else {
+          if (null !== a && 0 !== (a.flags & 128)) a: for (a = b.child; null !== a; ) {
+            if (13 === a.tag) null !== a.memoizedState && vj(a, c, b);
+            else if (19 === a.tag) vj(a, c, b);
+            else if (null !== a.child) {
+              a.child.return = a;
+              a = a.child;
+              continue;
+            }
+            if (a === b) break a;
+            for (; null === a.sibling; ) {
+              if (null === a.return || a.return === b) break a;
+              a = a.return;
+            }
+            a.sibling.return = a.return;
+            a = a.sibling;
+          }
+          d &= 1;
+        }
+        G(L, d);
+        if (0 === (b.mode & 1)) b.memoizedState = null;
+        else switch (e) {
+          case "forwards":
+            c = b.child;
+            for (e = null; null !== c; ) a = c.alternate, null !== a && null === Ch(a) && (e = c), c = c.sibling;
+            c = e;
+            null === c ? (e = b.child, b.child = null) : (e = c.sibling, c.sibling = null);
+            wj(b, false, e, c, f);
+            break;
+          case "backwards":
+            c = null;
+            e = b.child;
+            for (b.child = null; null !== e; ) {
+              a = e.alternate;
+              if (null !== a && null === Ch(a)) {
+                b.child = e;
+                break;
+              }
+              a = e.sibling;
+              e.sibling = c;
+              c = e;
+              e = a;
+            }
+            wj(b, true, c, null, f);
+            break;
+          case "together":
+            wj(b, false, null, null, void 0);
+            break;
+          default:
+            b.memoizedState = null;
+        }
+        return b.child;
+      }
+      function ij(a, b) {
+        0 === (b.mode & 1) && null !== a && (a.alternate = null, b.alternate = null, b.flags |= 2);
+      }
+      function Zi(a, b, c) {
+        null !== a && (b.dependencies = a.dependencies);
+        rh |= b.lanes;
+        if (0 === (c & b.childLanes)) return null;
+        if (null !== a && b.child !== a.child) throw Error(p(153));
+        if (null !== b.child) {
+          a = b.child;
+          c = Pg(a, a.pendingProps);
+          b.child = c;
+          for (c.return = b; null !== a.sibling; ) a = a.sibling, c = c.sibling = Pg(a, a.pendingProps), c.return = b;
+          c.sibling = null;
+        }
+        return b.child;
+      }
+      function yj(a, b, c) {
+        switch (b.tag) {
+          case 3:
+            kj(b);
+            Ig();
+            break;
+          case 5:
+            Ah(b);
+            break;
+          case 1:
+            Zf(b.type) && cg(b);
+            break;
+          case 4:
+            yh(b, b.stateNode.containerInfo);
+            break;
+          case 10:
+            var d = b.type._context, e = b.memoizedProps.value;
+            G(Wg, d._currentValue);
+            d._currentValue = e;
+            break;
+          case 13:
+            d = b.memoizedState;
+            if (null !== d) {
+              if (null !== d.dehydrated) return G(L, L.current & 1), b.flags |= 128, null;
+              if (0 !== (c & b.child.childLanes)) return oj(a, b, c);
+              G(L, L.current & 1);
+              a = Zi(a, b, c);
+              return null !== a ? a.sibling : null;
+            }
+            G(L, L.current & 1);
+            break;
+          case 19:
+            d = 0 !== (c & b.childLanes);
+            if (0 !== (a.flags & 128)) {
+              if (d) return xj(a, b, c);
+              b.flags |= 128;
+            }
+            e = b.memoizedState;
+            null !== e && (e.rendering = null, e.tail = null, e.lastEffect = null);
+            G(L, L.current);
+            if (d) break;
+            else return null;
+          case 22:
+          case 23:
+            return b.lanes = 0, dj(a, b, c);
+        }
+        return Zi(a, b, c);
+      }
+      var zj;
+      var Aj;
+      var Bj;
+      var Cj;
+      zj = function(a, b) {
+        for (var c = b.child; null !== c; ) {
+          if (5 === c.tag || 6 === c.tag) a.appendChild(c.stateNode);
+          else if (4 !== c.tag && null !== c.child) {
+            c.child.return = c;
+            c = c.child;
+            continue;
+          }
+          if (c === b) break;
+          for (; null === c.sibling; ) {
+            if (null === c.return || c.return === b) return;
+            c = c.return;
+          }
+          c.sibling.return = c.return;
+          c = c.sibling;
+        }
+      };
+      Aj = function() {
+      };
+      Bj = function(a, b, c, d) {
+        var e = a.memoizedProps;
+        if (e !== d) {
+          a = b.stateNode;
+          xh(uh.current);
+          var f = null;
+          switch (c) {
+            case "input":
+              e = Ya(a, e);
+              d = Ya(a, d);
+              f = [];
+              break;
+            case "select":
+              e = A({}, e, { value: void 0 });
+              d = A({}, d, { value: void 0 });
+              f = [];
+              break;
+            case "textarea":
+              e = gb(a, e);
+              d = gb(a, d);
+              f = [];
+              break;
+            default:
+              "function" !== typeof e.onClick && "function" === typeof d.onClick && (a.onclick = Bf);
+          }
+          ub(c, d);
+          var g;
+          c = null;
+          for (l in e) if (!d.hasOwnProperty(l) && e.hasOwnProperty(l) && null != e[l]) if ("style" === l) {
+            var h = e[l];
+            for (g in h) h.hasOwnProperty(g) && (c || (c = {}), c[g] = "");
+          } else "dangerouslySetInnerHTML" !== l && "children" !== l && "suppressContentEditableWarning" !== l && "suppressHydrationWarning" !== l && "autoFocus" !== l && (ea.hasOwnProperty(l) ? f || (f = []) : (f = f || []).push(l, null));
+          for (l in d) {
+            var k = d[l];
+            h = null != e ? e[l] : void 0;
+            if (d.hasOwnProperty(l) && k !== h && (null != k || null != h)) if ("style" === l) if (h) {
+              for (g in h) !h.hasOwnProperty(g) || k && k.hasOwnProperty(g) || (c || (c = {}), c[g] = "");
+              for (g in k) k.hasOwnProperty(g) && h[g] !== k[g] && (c || (c = {}), c[g] = k[g]);
+            } else c || (f || (f = []), f.push(
+              l,
+              c
+            )), c = k;
+            else "dangerouslySetInnerHTML" === l ? (k = k ? k.__html : void 0, h = h ? h.__html : void 0, null != k && h !== k && (f = f || []).push(l, k)) : "children" === l ? "string" !== typeof k && "number" !== typeof k || (f = f || []).push(l, "" + k) : "suppressContentEditableWarning" !== l && "suppressHydrationWarning" !== l && (ea.hasOwnProperty(l) ? (null != k && "onScroll" === l && D("scroll", a), f || h === k || (f = [])) : (f = f || []).push(l, k));
+          }
+          c && (f = f || []).push("style", c);
+          var l = f;
+          if (b.updateQueue = l) b.flags |= 4;
+        }
+      };
+      Cj = function(a, b, c, d) {
+        c !== d && (b.flags |= 4);
+      };
+      function Dj(a, b) {
+        if (!I) switch (a.tailMode) {
+          case "hidden":
+            b = a.tail;
+            for (var c = null; null !== b; ) null !== b.alternate && (c = b), b = b.sibling;
+            null === c ? a.tail = null : c.sibling = null;
+            break;
+          case "collapsed":
+            c = a.tail;
+            for (var d = null; null !== c; ) null !== c.alternate && (d = c), c = c.sibling;
+            null === d ? b || null === a.tail ? a.tail = null : a.tail.sibling = null : d.sibling = null;
+        }
+      }
+      function S(a) {
+        var b = null !== a.alternate && a.alternate.child === a.child, c = 0, d = 0;
+        if (b) for (var e = a.child; null !== e; ) c |= e.lanes | e.childLanes, d |= e.subtreeFlags & 14680064, d |= e.flags & 14680064, e.return = a, e = e.sibling;
+        else for (e = a.child; null !== e; ) c |= e.lanes | e.childLanes, d |= e.subtreeFlags, d |= e.flags, e.return = a, e = e.sibling;
+        a.subtreeFlags |= d;
+        a.childLanes = c;
+        return b;
+      }
+      function Ej(a, b, c) {
+        var d = b.pendingProps;
+        wg(b);
+        switch (b.tag) {
+          case 2:
+          case 16:
+          case 15:
+          case 0:
+          case 11:
+          case 7:
+          case 8:
+          case 12:
+          case 9:
+          case 14:
+            return S(b), null;
+          case 1:
+            return Zf(b.type) && $f(), S(b), null;
+          case 3:
+            d = b.stateNode;
+            zh();
+            E(Wf);
+            E(H);
+            Eh();
+            d.pendingContext && (d.context = d.pendingContext, d.pendingContext = null);
+            if (null === a || null === a.child) Gg(b) ? b.flags |= 4 : null === a || a.memoizedState.isDehydrated && 0 === (b.flags & 256) || (b.flags |= 1024, null !== zg && (Fj(zg), zg = null));
+            Aj(a, b);
+            S(b);
+            return null;
+          case 5:
+            Bh(b);
+            var e = xh(wh.current);
+            c = b.type;
+            if (null !== a && null != b.stateNode) Bj(a, b, c, d, e), a.ref !== b.ref && (b.flags |= 512, b.flags |= 2097152);
+            else {
+              if (!d) {
+                if (null === b.stateNode) throw Error(p(166));
+                S(b);
+                return null;
+              }
+              a = xh(uh.current);
+              if (Gg(b)) {
+                d = b.stateNode;
+                c = b.type;
+                var f = b.memoizedProps;
+                d[Of] = b;
+                d[Pf] = f;
+                a = 0 !== (b.mode & 1);
+                switch (c) {
+                  case "dialog":
+                    D("cancel", d);
+                    D("close", d);
+                    break;
+                  case "iframe":
+                  case "object":
+                  case "embed":
+                    D("load", d);
+                    break;
+                  case "video":
+                  case "audio":
+                    for (e = 0; e < lf.length; e++) D(lf[e], d);
+                    break;
+                  case "source":
+                    D("error", d);
+                    break;
+                  case "img":
+                  case "image":
+                  case "link":
+                    D(
+                      "error",
+                      d
+                    );
+                    D("load", d);
+                    break;
+                  case "details":
+                    D("toggle", d);
+                    break;
+                  case "input":
+                    Za(d, f);
+                    D("invalid", d);
+                    break;
+                  case "select":
+                    d._wrapperState = { wasMultiple: !!f.multiple };
+                    D("invalid", d);
+                    break;
+                  case "textarea":
+                    hb(d, f), D("invalid", d);
+                }
+                ub(c, f);
+                e = null;
+                for (var g in f) if (f.hasOwnProperty(g)) {
+                  var h = f[g];
+                  "children" === g ? "string" === typeof h ? d.textContent !== h && (true !== f.suppressHydrationWarning && Af(d.textContent, h, a), e = ["children", h]) : "number" === typeof h && d.textContent !== "" + h && (true !== f.suppressHydrationWarning && Af(
+                    d.textContent,
+                    h,
+                    a
+                  ), e = ["children", "" + h]) : ea.hasOwnProperty(g) && null != h && "onScroll" === g && D("scroll", d);
+                }
+                switch (c) {
+                  case "input":
+                    Va(d);
+                    db(d, f, true);
+                    break;
+                  case "textarea":
+                    Va(d);
+                    jb(d);
+                    break;
+                  case "select":
+                  case "option":
+                    break;
+                  default:
+                    "function" === typeof f.onClick && (d.onclick = Bf);
+                }
+                d = e;
+                b.updateQueue = d;
+                null !== d && (b.flags |= 4);
+              } else {
+                g = 9 === e.nodeType ? e : e.ownerDocument;
+                "http://www.w3.org/1999/xhtml" === a && (a = kb(c));
+                "http://www.w3.org/1999/xhtml" === a ? "script" === c ? (a = g.createElement("div"), a.innerHTML = "<script><\/script>", a = a.removeChild(a.firstChild)) : "string" === typeof d.is ? a = g.createElement(c, { is: d.is }) : (a = g.createElement(c), "select" === c && (g = a, d.multiple ? g.multiple = true : d.size && (g.size = d.size))) : a = g.createElementNS(a, c);
+                a[Of] = b;
+                a[Pf] = d;
+                zj(a, b, false, false);
+                b.stateNode = a;
+                a: {
+                  g = vb(c, d);
+                  switch (c) {
+                    case "dialog":
+                      D("cancel", a);
+                      D("close", a);
+                      e = d;
+                      break;
+                    case "iframe":
+                    case "object":
+                    case "embed":
+                      D("load", a);
+                      e = d;
+                      break;
+                    case "video":
+                    case "audio":
+                      for (e = 0; e < lf.length; e++) D(lf[e], a);
+                      e = d;
+                      break;
+                    case "source":
+                      D("error", a);
+                      e = d;
+                      break;
+                    case "img":
+                    case "image":
+                    case "link":
+                      D(
+                        "error",
+                        a
+                      );
+                      D("load", a);
+                      e = d;
+                      break;
+                    case "details":
+                      D("toggle", a);
+                      e = d;
+                      break;
+                    case "input":
+                      Za(a, d);
+                      e = Ya(a, d);
+                      D("invalid", a);
+                      break;
+                    case "option":
+                      e = d;
+                      break;
+                    case "select":
+                      a._wrapperState = { wasMultiple: !!d.multiple };
+                      e = A({}, d, { value: void 0 });
+                      D("invalid", a);
+                      break;
+                    case "textarea":
+                      hb(a, d);
+                      e = gb(a, d);
+                      D("invalid", a);
+                      break;
+                    default:
+                      e = d;
+                  }
+                  ub(c, e);
+                  h = e;
+                  for (f in h) if (h.hasOwnProperty(f)) {
+                    var k = h[f];
+                    "style" === f ? sb(a, k) : "dangerouslySetInnerHTML" === f ? (k = k ? k.__html : void 0, null != k && nb(a, k)) : "children" === f ? "string" === typeof k ? ("textarea" !== c || "" !== k) && ob(a, k) : "number" === typeof k && ob(a, "" + k) : "suppressContentEditableWarning" !== f && "suppressHydrationWarning" !== f && "autoFocus" !== f && (ea.hasOwnProperty(f) ? null != k && "onScroll" === f && D("scroll", a) : null != k && ta(a, f, k, g));
+                  }
+                  switch (c) {
+                    case "input":
+                      Va(a);
+                      db(a, d, false);
+                      break;
+                    case "textarea":
+                      Va(a);
+                      jb(a);
+                      break;
+                    case "option":
+                      null != d.value && a.setAttribute("value", "" + Sa(d.value));
+                      break;
+                    case "select":
+                      a.multiple = !!d.multiple;
+                      f = d.value;
+                      null != f ? fb(a, !!d.multiple, f, false) : null != d.defaultValue && fb(
+                        a,
+                        !!d.multiple,
+                        d.defaultValue,
+                        true
+                      );
+                      break;
+                    default:
+                      "function" === typeof e.onClick && (a.onclick = Bf);
+                  }
+                  switch (c) {
+                    case "button":
+                    case "input":
+                    case "select":
+                    case "textarea":
+                      d = !!d.autoFocus;
+                      break a;
+                    case "img":
+                      d = true;
+                      break a;
+                    default:
+                      d = false;
+                  }
+                }
+                d && (b.flags |= 4);
+              }
+              null !== b.ref && (b.flags |= 512, b.flags |= 2097152);
+            }
+            S(b);
+            return null;
+          case 6:
+            if (a && null != b.stateNode) Cj(a, b, a.memoizedProps, d);
+            else {
+              if ("string" !== typeof d && null === b.stateNode) throw Error(p(166));
+              c = xh(wh.current);
+              xh(uh.current);
+              if (Gg(b)) {
+                d = b.stateNode;
+                c = b.memoizedProps;
+                d[Of] = b;
+                if (f = d.nodeValue !== c) {
+                  if (a = xg, null !== a) switch (a.tag) {
+                    case 3:
+                      Af(d.nodeValue, c, 0 !== (a.mode & 1));
+                      break;
+                    case 5:
+                      true !== a.memoizedProps.suppressHydrationWarning && Af(d.nodeValue, c, 0 !== (a.mode & 1));
+                  }
+                }
+                f && (b.flags |= 4);
+              } else d = (9 === c.nodeType ? c : c.ownerDocument).createTextNode(d), d[Of] = b, b.stateNode = d;
+            }
+            S(b);
+            return null;
+          case 13:
+            E(L);
+            d = b.memoizedState;
+            if (null === a || null !== a.memoizedState && null !== a.memoizedState.dehydrated) {
+              if (I && null !== yg && 0 !== (b.mode & 1) && 0 === (b.flags & 128)) Hg(), Ig(), b.flags |= 98560, f = false;
+              else if (f = Gg(b), null !== d && null !== d.dehydrated) {
+                if (null === a) {
+                  if (!f) throw Error(p(318));
+                  f = b.memoizedState;
+                  f = null !== f ? f.dehydrated : null;
+                  if (!f) throw Error(p(317));
+                  f[Of] = b;
+                } else Ig(), 0 === (b.flags & 128) && (b.memoizedState = null), b.flags |= 4;
+                S(b);
+                f = false;
+              } else null !== zg && (Fj(zg), zg = null), f = true;
+              if (!f) return b.flags & 65536 ? b : null;
+            }
+            if (0 !== (b.flags & 128)) return b.lanes = c, b;
+            d = null !== d;
+            d !== (null !== a && null !== a.memoizedState) && d && (b.child.flags |= 8192, 0 !== (b.mode & 1) && (null === a || 0 !== (L.current & 1) ? 0 === T && (T = 3) : tj()));
+            null !== b.updateQueue && (b.flags |= 4);
+            S(b);
+            return null;
+          case 4:
+            return zh(), Aj(a, b), null === a && sf(b.stateNode.containerInfo), S(b), null;
+          case 10:
+            return ah(b.type._context), S(b), null;
+          case 17:
+            return Zf(b.type) && $f(), S(b), null;
+          case 19:
+            E(L);
+            f = b.memoizedState;
+            if (null === f) return S(b), null;
+            d = 0 !== (b.flags & 128);
+            g = f.rendering;
+            if (null === g) if (d) Dj(f, false);
+            else {
+              if (0 !== T || null !== a && 0 !== (a.flags & 128)) for (a = b.child; null !== a; ) {
+                g = Ch(a);
+                if (null !== g) {
+                  b.flags |= 128;
+                  Dj(f, false);
+                  d = g.updateQueue;
+                  null !== d && (b.updateQueue = d, b.flags |= 4);
+                  b.subtreeFlags = 0;
+                  d = c;
+                  for (c = b.child; null !== c; ) f = c, a = d, f.flags &= 14680066, g = f.alternate, null === g ? (f.childLanes = 0, f.lanes = a, f.child = null, f.subtreeFlags = 0, f.memoizedProps = null, f.memoizedState = null, f.updateQueue = null, f.dependencies = null, f.stateNode = null) : (f.childLanes = g.childLanes, f.lanes = g.lanes, f.child = g.child, f.subtreeFlags = 0, f.deletions = null, f.memoizedProps = g.memoizedProps, f.memoizedState = g.memoizedState, f.updateQueue = g.updateQueue, f.type = g.type, a = g.dependencies, f.dependencies = null === a ? null : { lanes: a.lanes, firstContext: a.firstContext }), c = c.sibling;
+                  G(L, L.current & 1 | 2);
+                  return b.child;
+                }
+                a = a.sibling;
+              }
+              null !== f.tail && B() > Gj && (b.flags |= 128, d = true, Dj(f, false), b.lanes = 4194304);
+            }
+            else {
+              if (!d) if (a = Ch(g), null !== a) {
+                if (b.flags |= 128, d = true, c = a.updateQueue, null !== c && (b.updateQueue = c, b.flags |= 4), Dj(f, true), null === f.tail && "hidden" === f.tailMode && !g.alternate && !I) return S(b), null;
+              } else 2 * B() - f.renderingStartTime > Gj && 1073741824 !== c && (b.flags |= 128, d = true, Dj(f, false), b.lanes = 4194304);
+              f.isBackwards ? (g.sibling = b.child, b.child = g) : (c = f.last, null !== c ? c.sibling = g : b.child = g, f.last = g);
+            }
+            if (null !== f.tail) return b = f.tail, f.rendering = b, f.tail = b.sibling, f.renderingStartTime = B(), b.sibling = null, c = L.current, G(L, d ? c & 1 | 2 : c & 1), b;
+            S(b);
+            return null;
+          case 22:
+          case 23:
+            return Hj(), d = null !== b.memoizedState, null !== a && null !== a.memoizedState !== d && (b.flags |= 8192), d && 0 !== (b.mode & 1) ? 0 !== (fj & 1073741824) && (S(b), b.subtreeFlags & 6 && (b.flags |= 8192)) : S(b), null;
+          case 24:
+            return null;
+          case 25:
+            return null;
+        }
+        throw Error(p(156, b.tag));
+      }
+      function Ij(a, b) {
+        wg(b);
+        switch (b.tag) {
+          case 1:
+            return Zf(b.type) && $f(), a = b.flags, a & 65536 ? (b.flags = a & -65537 | 128, b) : null;
+          case 3:
+            return zh(), E(Wf), E(H), Eh(), a = b.flags, 0 !== (a & 65536) && 0 === (a & 128) ? (b.flags = a & -65537 | 128, b) : null;
+          case 5:
+            return Bh(b), null;
+          case 13:
+            E(L);
+            a = b.memoizedState;
+            if (null !== a && null !== a.dehydrated) {
+              if (null === b.alternate) throw Error(p(340));
+              Ig();
+            }
+            a = b.flags;
+            return a & 65536 ? (b.flags = a & -65537 | 128, b) : null;
+          case 19:
+            return E(L), null;
+          case 4:
+            return zh(), null;
+          case 10:
+            return ah(b.type._context), null;
+          case 22:
+          case 23:
+            return Hj(), null;
+          case 24:
+            return null;
+          default:
+            return null;
+        }
+      }
+      var Jj = false;
+      var U = false;
+      var Kj = "function" === typeof WeakSet ? WeakSet : Set;
+      var V = null;
+      function Lj(a, b) {
+        var c = a.ref;
+        if (null !== c) if ("function" === typeof c) try {
+          c(null);
+        } catch (d) {
+          W(a, b, d);
+        }
+        else c.current = null;
+      }
+      function Mj(a, b, c) {
+        try {
+          c();
+        } catch (d) {
+          W(a, b, d);
+        }
+      }
+      var Nj = false;
+      function Oj(a, b) {
+        Cf = dd;
+        a = Me();
+        if (Ne(a)) {
+          if ("selectionStart" in a) var c = { start: a.selectionStart, end: a.selectionEnd };
+          else a: {
+            c = (c = a.ownerDocument) && c.defaultView || window;
+            var d = c.getSelection && c.getSelection();
+            if (d && 0 !== d.rangeCount) {
+              c = d.anchorNode;
+              var e = d.anchorOffset, f = d.focusNode;
+              d = d.focusOffset;
+              try {
+                c.nodeType, f.nodeType;
+              } catch (F) {
+                c = null;
+                break a;
+              }
+              var g = 0, h = -1, k = -1, l = 0, m = 0, q = a, r2 = null;
+              b: for (; ; ) {
+                for (var y; ; ) {
+                  q !== c || 0 !== e && 3 !== q.nodeType || (h = g + e);
+                  q !== f || 0 !== d && 3 !== q.nodeType || (k = g + d);
+                  3 === q.nodeType && (g += q.nodeValue.length);
+                  if (null === (y = q.firstChild)) break;
+                  r2 = q;
+                  q = y;
+                }
+                for (; ; ) {
+                  if (q === a) break b;
+                  r2 === c && ++l === e && (h = g);
+                  r2 === f && ++m === d && (k = g);
+                  if (null !== (y = q.nextSibling)) break;
+                  q = r2;
+                  r2 = q.parentNode;
+                }
+                q = y;
+              }
+              c = -1 === h || -1 === k ? null : { start: h, end: k };
+            } else c = null;
+          }
+          c = c || { start: 0, end: 0 };
+        } else c = null;
+        Df = { focusedElem: a, selectionRange: c };
+        dd = false;
+        for (V = b; null !== V; ) if (b = V, a = b.child, 0 !== (b.subtreeFlags & 1028) && null !== a) a.return = b, V = a;
+        else for (; null !== V; ) {
+          b = V;
+          try {
+            var n = b.alternate;
+            if (0 !== (b.flags & 1024)) switch (b.tag) {
+              case 0:
+              case 11:
+              case 15:
+                break;
+              case 1:
+                if (null !== n) {
+                  var t = n.memoizedProps, J = n.memoizedState, x = b.stateNode, w = x.getSnapshotBeforeUpdate(b.elementType === b.type ? t : Ci(b.type, t), J);
+                  x.__reactInternalSnapshotBeforeUpdate = w;
+                }
+                break;
+              case 3:
+                var u = b.stateNode.containerInfo;
+                1 === u.nodeType ? u.textContent = "" : 9 === u.nodeType && u.documentElement && u.removeChild(u.documentElement);
+                break;
+              case 5:
+              case 6:
+              case 4:
+              case 17:
+                break;
+              default:
+                throw Error(p(163));
+            }
+          } catch (F) {
+            W(b, b.return, F);
+          }
+          a = b.sibling;
+          if (null !== a) {
+            a.return = b.return;
+            V = a;
+            break;
+          }
+          V = b.return;
+        }
+        n = Nj;
+        Nj = false;
+        return n;
+      }
+      function Pj(a, b, c) {
+        var d = b.updateQueue;
+        d = null !== d ? d.lastEffect : null;
+        if (null !== d) {
+          var e = d = d.next;
+          do {
+            if ((e.tag & a) === a) {
+              var f = e.destroy;
+              e.destroy = void 0;
+              void 0 !== f && Mj(b, c, f);
+            }
+            e = e.next;
+          } while (e !== d);
+        }
+      }
+      function Qj(a, b) {
+        b = b.updateQueue;
+        b = null !== b ? b.lastEffect : null;
+        if (null !== b) {
+          var c = b = b.next;
+          do {
+            if ((c.tag & a) === a) {
+              var d = c.create;
+              c.destroy = d();
+            }
+            c = c.next;
+          } while (c !== b);
+        }
+      }
+      function Rj(a) {
+        var b = a.ref;
+        if (null !== b) {
+          var c = a.stateNode;
+          switch (a.tag) {
+            case 5:
+              a = c;
+              break;
+            default:
+              a = c;
+          }
+          "function" === typeof b ? b(a) : b.current = a;
+        }
+      }
+      function Sj(a) {
+        var b = a.alternate;
+        null !== b && (a.alternate = null, Sj(b));
+        a.child = null;
+        a.deletions = null;
+        a.sibling = null;
+        5 === a.tag && (b = a.stateNode, null !== b && (delete b[Of], delete b[Pf], delete b[of], delete b[Qf], delete b[Rf]));
+        a.stateNode = null;
+        a.return = null;
+        a.dependencies = null;
+        a.memoizedProps = null;
+        a.memoizedState = null;
+        a.pendingProps = null;
+        a.stateNode = null;
+        a.updateQueue = null;
+      }
+      function Tj(a) {
+        return 5 === a.tag || 3 === a.tag || 4 === a.tag;
+      }
+      function Uj(a) {
+        a: for (; ; ) {
+          for (; null === a.sibling; ) {
+            if (null === a.return || Tj(a.return)) return null;
+            a = a.return;
+          }
+          a.sibling.return = a.return;
+          for (a = a.sibling; 5 !== a.tag && 6 !== a.tag && 18 !== a.tag; ) {
+            if (a.flags & 2) continue a;
+            if (null === a.child || 4 === a.tag) continue a;
+            else a.child.return = a, a = a.child;
+          }
+          if (!(a.flags & 2)) return a.stateNode;
+        }
+      }
+      function Vj(a, b, c) {
+        var d = a.tag;
+        if (5 === d || 6 === d) a = a.stateNode, b ? 8 === c.nodeType ? c.parentNode.insertBefore(a, b) : c.insertBefore(a, b) : (8 === c.nodeType ? (b = c.parentNode, b.insertBefore(a, c)) : (b = c, b.appendChild(a)), c = c._reactRootContainer, null !== c && void 0 !== c || null !== b.onclick || (b.onclick = Bf));
+        else if (4 !== d && (a = a.child, null !== a)) for (Vj(a, b, c), a = a.sibling; null !== a; ) Vj(a, b, c), a = a.sibling;
+      }
+      function Wj(a, b, c) {
+        var d = a.tag;
+        if (5 === d || 6 === d) a = a.stateNode, b ? c.insertBefore(a, b) : c.appendChild(a);
+        else if (4 !== d && (a = a.child, null !== a)) for (Wj(a, b, c), a = a.sibling; null !== a; ) Wj(a, b, c), a = a.sibling;
+      }
+      var X = null;
+      var Xj = false;
+      function Yj(a, b, c) {
+        for (c = c.child; null !== c; ) Zj(a, b, c), c = c.sibling;
+      }
+      function Zj(a, b, c) {
+        if (lc && "function" === typeof lc.onCommitFiberUnmount) try {
+          lc.onCommitFiberUnmount(kc, c);
+        } catch (h) {
+        }
+        switch (c.tag) {
+          case 5:
+            U || Lj(c, b);
+          case 6:
+            var d = X, e = Xj;
+            X = null;
+            Yj(a, b, c);
+            X = d;
+            Xj = e;
+            null !== X && (Xj ? (a = X, c = c.stateNode, 8 === a.nodeType ? a.parentNode.removeChild(c) : a.removeChild(c)) : X.removeChild(c.stateNode));
+            break;
+          case 18:
+            null !== X && (Xj ? (a = X, c = c.stateNode, 8 === a.nodeType ? Kf(a.parentNode, c) : 1 === a.nodeType && Kf(a, c), bd(a)) : Kf(X, c.stateNode));
+            break;
+          case 4:
+            d = X;
+            e = Xj;
+            X = c.stateNode.containerInfo;
+            Xj = true;
+            Yj(a, b, c);
+            X = d;
+            Xj = e;
+            break;
+          case 0:
+          case 11:
+          case 14:
+          case 15:
+            if (!U && (d = c.updateQueue, null !== d && (d = d.lastEffect, null !== d))) {
+              e = d = d.next;
+              do {
+                var f = e, g = f.destroy;
+                f = f.tag;
+                void 0 !== g && (0 !== (f & 2) ? Mj(c, b, g) : 0 !== (f & 4) && Mj(c, b, g));
+                e = e.next;
+              } while (e !== d);
+            }
+            Yj(a, b, c);
+            break;
+          case 1:
+            if (!U && (Lj(c, b), d = c.stateNode, "function" === typeof d.componentWillUnmount)) try {
+              d.props = c.memoizedProps, d.state = c.memoizedState, d.componentWillUnmount();
+            } catch (h) {
+              W(c, b, h);
+            }
+            Yj(a, b, c);
+            break;
+          case 21:
+            Yj(a, b, c);
+            break;
+          case 22:
+            c.mode & 1 ? (U = (d = U) || null !== c.memoizedState, Yj(a, b, c), U = d) : Yj(a, b, c);
+            break;
+          default:
+            Yj(a, b, c);
+        }
+      }
+      function ak(a) {
+        var b = a.updateQueue;
+        if (null !== b) {
+          a.updateQueue = null;
+          var c = a.stateNode;
+          null === c && (c = a.stateNode = new Kj());
+          b.forEach(function(b2) {
+            var d = bk.bind(null, a, b2);
+            c.has(b2) || (c.add(b2), b2.then(d, d));
+          });
+        }
+      }
+      function ck(a, b) {
+        var c = b.deletions;
+        if (null !== c) for (var d = 0; d < c.length; d++) {
+          var e = c[d];
+          try {
+            var f = a, g = b, h = g;
+            a: for (; null !== h; ) {
+              switch (h.tag) {
+                case 5:
+                  X = h.stateNode;
+                  Xj = false;
+                  break a;
+                case 3:
+                  X = h.stateNode.containerInfo;
+                  Xj = true;
+                  break a;
+                case 4:
+                  X = h.stateNode.containerInfo;
+                  Xj = true;
+                  break a;
+              }
+              h = h.return;
+            }
+            if (null === X) throw Error(p(160));
+            Zj(f, g, e);
+            X = null;
+            Xj = false;
+            var k = e.alternate;
+            null !== k && (k.return = null);
+            e.return = null;
+          } catch (l) {
+            W(e, b, l);
+          }
+        }
+        if (b.subtreeFlags & 12854) for (b = b.child; null !== b; ) dk(b, a), b = b.sibling;
+      }
+      function dk(a, b) {
+        var c = a.alternate, d = a.flags;
+        switch (a.tag) {
+          case 0:
+          case 11:
+          case 14:
+          case 15:
+            ck(b, a);
+            ek(a);
+            if (d & 4) {
+              try {
+                Pj(3, a, a.return), Qj(3, a);
+              } catch (t) {
+                W(a, a.return, t);
+              }
+              try {
+                Pj(5, a, a.return);
+              } catch (t) {
+                W(a, a.return, t);
+              }
+            }
+            break;
+          case 1:
+            ck(b, a);
+            ek(a);
+            d & 512 && null !== c && Lj(c, c.return);
+            break;
+          case 5:
+            ck(b, a);
+            ek(a);
+            d & 512 && null !== c && Lj(c, c.return);
+            if (a.flags & 32) {
+              var e = a.stateNode;
+              try {
+                ob(e, "");
+              } catch (t) {
+                W(a, a.return, t);
+              }
+            }
+            if (d & 4 && (e = a.stateNode, null != e)) {
+              var f = a.memoizedProps, g = null !== c ? c.memoizedProps : f, h = a.type, k = a.updateQueue;
+              a.updateQueue = null;
+              if (null !== k) try {
+                "input" === h && "radio" === f.type && null != f.name && ab(e, f);
+                vb(h, g);
+                var l = vb(h, f);
+                for (g = 0; g < k.length; g += 2) {
+                  var m = k[g], q = k[g + 1];
+                  "style" === m ? sb(e, q) : "dangerouslySetInnerHTML" === m ? nb(e, q) : "children" === m ? ob(e, q) : ta(e, m, q, l);
+                }
+                switch (h) {
+                  case "input":
+                    bb(e, f);
+                    break;
+                  case "textarea":
+                    ib(e, f);
+                    break;
+                  case "select":
+                    var r2 = e._wrapperState.wasMultiple;
+                    e._wrapperState.wasMultiple = !!f.multiple;
+                    var y = f.value;
+                    null != y ? fb(e, !!f.multiple, y, false) : r2 !== !!f.multiple && (null != f.defaultValue ? fb(
+                      e,
+                      !!f.multiple,
+                      f.defaultValue,
+                      true
+                    ) : fb(e, !!f.multiple, f.multiple ? [] : "", false));
+                }
+                e[Pf] = f;
+              } catch (t) {
+                W(a, a.return, t);
+              }
+            }
+            break;
+          case 6:
+            ck(b, a);
+            ek(a);
+            if (d & 4) {
+              if (null === a.stateNode) throw Error(p(162));
+              e = a.stateNode;
+              f = a.memoizedProps;
+              try {
+                e.nodeValue = f;
+              } catch (t) {
+                W(a, a.return, t);
+              }
+            }
+            break;
+          case 3:
+            ck(b, a);
+            ek(a);
+            if (d & 4 && null !== c && c.memoizedState.isDehydrated) try {
+              bd(b.containerInfo);
+            } catch (t) {
+              W(a, a.return, t);
+            }
+            break;
+          case 4:
+            ck(b, a);
+            ek(a);
+            break;
+          case 13:
+            ck(b, a);
+            ek(a);
+            e = a.child;
+            e.flags & 8192 && (f = null !== e.memoizedState, e.stateNode.isHidden = f, !f || null !== e.alternate && null !== e.alternate.memoizedState || (fk = B()));
+            d & 4 && ak(a);
+            break;
+          case 22:
+            m = null !== c && null !== c.memoizedState;
+            a.mode & 1 ? (U = (l = U) || m, ck(b, a), U = l) : ck(b, a);
+            ek(a);
+            if (d & 8192) {
+              l = null !== a.memoizedState;
+              if ((a.stateNode.isHidden = l) && !m && 0 !== (a.mode & 1)) for (V = a, m = a.child; null !== m; ) {
+                for (q = V = m; null !== V; ) {
+                  r2 = V;
+                  y = r2.child;
+                  switch (r2.tag) {
+                    case 0:
+                    case 11:
+                    case 14:
+                    case 15:
+                      Pj(4, r2, r2.return);
+                      break;
+                    case 1:
+                      Lj(r2, r2.return);
+                      var n = r2.stateNode;
+                      if ("function" === typeof n.componentWillUnmount) {
+                        d = r2;
+                        c = r2.return;
+                        try {
+                          b = d, n.props = b.memoizedProps, n.state = b.memoizedState, n.componentWillUnmount();
+                        } catch (t) {
+                          W(d, c, t);
+                        }
+                      }
+                      break;
+                    case 5:
+                      Lj(r2, r2.return);
+                      break;
+                    case 22:
+                      if (null !== r2.memoizedState) {
+                        gk(q);
+                        continue;
+                      }
+                  }
+                  null !== y ? (y.return = r2, V = y) : gk(q);
+                }
+                m = m.sibling;
+              }
+              a: for (m = null, q = a; ; ) {
+                if (5 === q.tag) {
+                  if (null === m) {
+                    m = q;
+                    try {
+                      e = q.stateNode, l ? (f = e.style, "function" === typeof f.setProperty ? f.setProperty("display", "none", "important") : f.display = "none") : (h = q.stateNode, k = q.memoizedProps.style, g = void 0 !== k && null !== k && k.hasOwnProperty("display") ? k.display : null, h.style.display = rb("display", g));
+                    } catch (t) {
+                      W(a, a.return, t);
+                    }
+                  }
+                } else if (6 === q.tag) {
+                  if (null === m) try {
+                    q.stateNode.nodeValue = l ? "" : q.memoizedProps;
+                  } catch (t) {
+                    W(a, a.return, t);
+                  }
+                } else if ((22 !== q.tag && 23 !== q.tag || null === q.memoizedState || q === a) && null !== q.child) {
+                  q.child.return = q;
+                  q = q.child;
+                  continue;
+                }
+                if (q === a) break a;
+                for (; null === q.sibling; ) {
+                  if (null === q.return || q.return === a) break a;
+                  m === q && (m = null);
+                  q = q.return;
+                }
+                m === q && (m = null);
+                q.sibling.return = q.return;
+                q = q.sibling;
+              }
+            }
+            break;
+          case 19:
+            ck(b, a);
+            ek(a);
+            d & 4 && ak(a);
+            break;
+          case 21:
+            break;
+          default:
+            ck(
+              b,
+              a
+            ), ek(a);
+        }
+      }
+      function ek(a) {
+        var b = a.flags;
+        if (b & 2) {
+          try {
+            a: {
+              for (var c = a.return; null !== c; ) {
+                if (Tj(c)) {
+                  var d = c;
+                  break a;
+                }
+                c = c.return;
+              }
+              throw Error(p(160));
+            }
+            switch (d.tag) {
+              case 5:
+                var e = d.stateNode;
+                d.flags & 32 && (ob(e, ""), d.flags &= -33);
+                var f = Uj(a);
+                Wj(a, f, e);
+                break;
+              case 3:
+              case 4:
+                var g = d.stateNode.containerInfo, h = Uj(a);
+                Vj(a, h, g);
+                break;
+              default:
+                throw Error(p(161));
+            }
+          } catch (k) {
+            W(a, a.return, k);
+          }
+          a.flags &= -3;
+        }
+        b & 4096 && (a.flags &= -4097);
+      }
+      function hk(a, b, c) {
+        V = a;
+        ik(a, b, c);
+      }
+      function ik(a, b, c) {
+        for (var d = 0 !== (a.mode & 1); null !== V; ) {
+          var e = V, f = e.child;
+          if (22 === e.tag && d) {
+            var g = null !== e.memoizedState || Jj;
+            if (!g) {
+              var h = e.alternate, k = null !== h && null !== h.memoizedState || U;
+              h = Jj;
+              var l = U;
+              Jj = g;
+              if ((U = k) && !l) for (V = e; null !== V; ) g = V, k = g.child, 22 === g.tag && null !== g.memoizedState ? jk(e) : null !== k ? (k.return = g, V = k) : jk(e);
+              for (; null !== f; ) V = f, ik(f, b, c), f = f.sibling;
+              V = e;
+              Jj = h;
+              U = l;
+            }
+            kk(a, b, c);
+          } else 0 !== (e.subtreeFlags & 8772) && null !== f ? (f.return = e, V = f) : kk(a, b, c);
+        }
+      }
+      function kk(a) {
+        for (; null !== V; ) {
+          var b = V;
+          if (0 !== (b.flags & 8772)) {
+            var c = b.alternate;
+            try {
+              if (0 !== (b.flags & 8772)) switch (b.tag) {
+                case 0:
+                case 11:
+                case 15:
+                  U || Qj(5, b);
+                  break;
+                case 1:
+                  var d = b.stateNode;
+                  if (b.flags & 4 && !U) if (null === c) d.componentDidMount();
+                  else {
+                    var e = b.elementType === b.type ? c.memoizedProps : Ci(b.type, c.memoizedProps);
+                    d.componentDidUpdate(e, c.memoizedState, d.__reactInternalSnapshotBeforeUpdate);
+                  }
+                  var f = b.updateQueue;
+                  null !== f && sh(b, f, d);
+                  break;
+                case 3:
+                  var g = b.updateQueue;
+                  if (null !== g) {
+                    c = null;
+                    if (null !== b.child) switch (b.child.tag) {
+                      case 5:
+                        c = b.child.stateNode;
+                        break;
+                      case 1:
+                        c = b.child.stateNode;
+                    }
+                    sh(b, g, c);
+                  }
+                  break;
+                case 5:
+                  var h = b.stateNode;
+                  if (null === c && b.flags & 4) {
+                    c = h;
+                    var k = b.memoizedProps;
+                    switch (b.type) {
+                      case "button":
+                      case "input":
+                      case "select":
+                      case "textarea":
+                        k.autoFocus && c.focus();
+                        break;
+                      case "img":
+                        k.src && (c.src = k.src);
+                    }
+                  }
+                  break;
+                case 6:
+                  break;
+                case 4:
+                  break;
+                case 12:
+                  break;
+                case 13:
+                  if (null === b.memoizedState) {
+                    var l = b.alternate;
+                    if (null !== l) {
+                      var m = l.memoizedState;
+                      if (null !== m) {
+                        var q = m.dehydrated;
+                        null !== q && bd(q);
+                      }
+                    }
+                  }
+                  break;
+                case 19:
+                case 17:
+                case 21:
+                case 22:
+                case 23:
+                case 25:
+                  break;
+                default:
+                  throw Error(p(163));
+              }
+              U || b.flags & 512 && Rj(b);
+            } catch (r2) {
+              W(b, b.return, r2);
+            }
+          }
+          if (b === a) {
+            V = null;
+            break;
+          }
+          c = b.sibling;
+          if (null !== c) {
+            c.return = b.return;
+            V = c;
+            break;
+          }
+          V = b.return;
+        }
+      }
+      function gk(a) {
+        for (; null !== V; ) {
+          var b = V;
+          if (b === a) {
+            V = null;
+            break;
+          }
+          var c = b.sibling;
+          if (null !== c) {
+            c.return = b.return;
+            V = c;
+            break;
+          }
+          V = b.return;
+        }
+      }
+      function jk(a) {
+        for (; null !== V; ) {
+          var b = V;
+          try {
+            switch (b.tag) {
+              case 0:
+              case 11:
+              case 15:
+                var c = b.return;
+                try {
+                  Qj(4, b);
+                } catch (k) {
+                  W(b, c, k);
+                }
+                break;
+              case 1:
+                var d = b.stateNode;
+                if ("function" === typeof d.componentDidMount) {
+                  var e = b.return;
+                  try {
+                    d.componentDidMount();
+                  } catch (k) {
+                    W(b, e, k);
+                  }
+                }
+                var f = b.return;
+                try {
+                  Rj(b);
+                } catch (k) {
+                  W(b, f, k);
+                }
+                break;
+              case 5:
+                var g = b.return;
+                try {
+                  Rj(b);
+                } catch (k) {
+                  W(b, g, k);
+                }
+            }
+          } catch (k) {
+            W(b, b.return, k);
+          }
+          if (b === a) {
+            V = null;
+            break;
+          }
+          var h = b.sibling;
+          if (null !== h) {
+            h.return = b.return;
+            V = h;
+            break;
+          }
+          V = b.return;
+        }
+      }
+      var lk = Math.ceil;
+      var mk = ua.ReactCurrentDispatcher;
+      var nk = ua.ReactCurrentOwner;
+      var ok = ua.ReactCurrentBatchConfig;
+      var K = 0;
+      var Q = null;
+      var Y = null;
+      var Z = 0;
+      var fj = 0;
+      var ej = Uf(0);
+      var T = 0;
+      var pk = null;
+      var rh = 0;
+      var qk = 0;
+      var rk = 0;
+      var sk = null;
+      var tk = null;
+      var fk = 0;
+      var Gj = Infinity;
+      var uk = null;
+      var Oi = false;
+      var Pi = null;
+      var Ri = null;
+      var vk = false;
+      var wk = null;
+      var xk = 0;
+      var yk = 0;
+      var zk = null;
+      var Ak = -1;
+      var Bk = 0;
+      function R() {
+        return 0 !== (K & 6) ? B() : -1 !== Ak ? Ak : Ak = B();
+      }
+      function yi(a) {
+        if (0 === (a.mode & 1)) return 1;
+        if (0 !== (K & 2) && 0 !== Z) return Z & -Z;
+        if (null !== Kg.transition) return 0 === Bk && (Bk = yc()), Bk;
+        a = C;
+        if (0 !== a) return a;
+        a = window.event;
+        a = void 0 === a ? 16 : jd(a.type);
+        return a;
+      }
+      function gi(a, b, c, d) {
+        if (50 < yk) throw yk = 0, zk = null, Error(p(185));
+        Ac(a, c, d);
+        if (0 === (K & 2) || a !== Q) a === Q && (0 === (K & 2) && (qk |= c), 4 === T && Ck(a, Z)), Dk(a, d), 1 === c && 0 === K && 0 === (b.mode & 1) && (Gj = B() + 500, fg && jg());
+      }
+      function Dk(a, b) {
+        var c = a.callbackNode;
+        wc(a, b);
+        var d = uc(a, a === Q ? Z : 0);
+        if (0 === d) null !== c && bc(c), a.callbackNode = null, a.callbackPriority = 0;
+        else if (b = d & -d, a.callbackPriority !== b) {
+          null != c && bc(c);
+          if (1 === b) 0 === a.tag ? ig(Ek.bind(null, a)) : hg(Ek.bind(null, a)), Jf(function() {
+            0 === (K & 6) && jg();
+          }), c = null;
+          else {
+            switch (Dc(d)) {
+              case 1:
+                c = fc;
+                break;
+              case 4:
+                c = gc;
+                break;
+              case 16:
+                c = hc;
+                break;
+              case 536870912:
+                c = jc;
+                break;
+              default:
+                c = hc;
+            }
+            c = Fk(c, Gk.bind(null, a));
+          }
+          a.callbackPriority = b;
+          a.callbackNode = c;
+        }
+      }
+      function Gk(a, b) {
+        Ak = -1;
+        Bk = 0;
+        if (0 !== (K & 6)) throw Error(p(327));
+        var c = a.callbackNode;
+        if (Hk() && a.callbackNode !== c) return null;
+        var d = uc(a, a === Q ? Z : 0);
+        if (0 === d) return null;
+        if (0 !== (d & 30) || 0 !== (d & a.expiredLanes) || b) b = Ik(a, d);
+        else {
+          b = d;
+          var e = K;
+          K |= 2;
+          var f = Jk();
+          if (Q !== a || Z !== b) uk = null, Gj = B() + 500, Kk(a, b);
+          do
+            try {
+              Lk();
+              break;
+            } catch (h) {
+              Mk(a, h);
+            }
+          while (1);
+          $g();
+          mk.current = f;
+          K = e;
+          null !== Y ? b = 0 : (Q = null, Z = 0, b = T);
+        }
+        if (0 !== b) {
+          2 === b && (e = xc(a), 0 !== e && (d = e, b = Nk(a, e)));
+          if (1 === b) throw c = pk, Kk(a, 0), Ck(a, d), Dk(a, B()), c;
+          if (6 === b) Ck(a, d);
+          else {
+            e = a.current.alternate;
+            if (0 === (d & 30) && !Ok(e) && (b = Ik(a, d), 2 === b && (f = xc(a), 0 !== f && (d = f, b = Nk(a, f))), 1 === b)) throw c = pk, Kk(a, 0), Ck(a, d), Dk(a, B()), c;
+            a.finishedWork = e;
+            a.finishedLanes = d;
+            switch (b) {
+              case 0:
+              case 1:
+                throw Error(p(345));
+              case 2:
+                Pk(a, tk, uk);
+                break;
+              case 3:
+                Ck(a, d);
+                if ((d & 130023424) === d && (b = fk + 500 - B(), 10 < b)) {
+                  if (0 !== uc(a, 0)) break;
+                  e = a.suspendedLanes;
+                  if ((e & d) !== d) {
+                    R();
+                    a.pingedLanes |= a.suspendedLanes & e;
+                    break;
+                  }
+                  a.timeoutHandle = Ff(Pk.bind(null, a, tk, uk), b);
+                  break;
+                }
+                Pk(a, tk, uk);
+                break;
+              case 4:
+                Ck(a, d);
+                if ((d & 4194240) === d) break;
+                b = a.eventTimes;
+                for (e = -1; 0 < d; ) {
+                  var g = 31 - oc(d);
+                  f = 1 << g;
+                  g = b[g];
+                  g > e && (e = g);
+                  d &= ~f;
+                }
+                d = e;
+                d = B() - d;
+                d = (120 > d ? 120 : 480 > d ? 480 : 1080 > d ? 1080 : 1920 > d ? 1920 : 3e3 > d ? 3e3 : 4320 > d ? 4320 : 1960 * lk(d / 1960)) - d;
+                if (10 < d) {
+                  a.timeoutHandle = Ff(Pk.bind(null, a, tk, uk), d);
+                  break;
+                }
+                Pk(a, tk, uk);
+                break;
+              case 5:
+                Pk(a, tk, uk);
+                break;
+              default:
+                throw Error(p(329));
+            }
+          }
+        }
+        Dk(a, B());
+        return a.callbackNode === c ? Gk.bind(null, a) : null;
+      }
+      function Nk(a, b) {
+        var c = sk;
+        a.current.memoizedState.isDehydrated && (Kk(a, b).flags |= 256);
+        a = Ik(a, b);
+        2 !== a && (b = tk, tk = c, null !== b && Fj(b));
+        return a;
+      }
+      function Fj(a) {
+        null === tk ? tk = a : tk.push.apply(tk, a);
+      }
+      function Ok(a) {
+        for (var b = a; ; ) {
+          if (b.flags & 16384) {
+            var c = b.updateQueue;
+            if (null !== c && (c = c.stores, null !== c)) for (var d = 0; d < c.length; d++) {
+              var e = c[d], f = e.getSnapshot;
+              e = e.value;
+              try {
+                if (!He(f(), e)) return false;
+              } catch (g) {
+                return false;
+              }
+            }
+          }
+          c = b.child;
+          if (b.subtreeFlags & 16384 && null !== c) c.return = b, b = c;
+          else {
+            if (b === a) break;
+            for (; null === b.sibling; ) {
+              if (null === b.return || b.return === a) return true;
+              b = b.return;
+            }
+            b.sibling.return = b.return;
+            b = b.sibling;
+          }
+        }
+        return true;
+      }
+      function Ck(a, b) {
+        b &= ~rk;
+        b &= ~qk;
+        a.suspendedLanes |= b;
+        a.pingedLanes &= ~b;
+        for (a = a.expirationTimes; 0 < b; ) {
+          var c = 31 - oc(b), d = 1 << c;
+          a[c] = -1;
+          b &= ~d;
+        }
+      }
+      function Ek(a) {
+        if (0 !== (K & 6)) throw Error(p(327));
+        Hk();
+        var b = uc(a, 0);
+        if (0 === (b & 1)) return Dk(a, B()), null;
+        var c = Ik(a, b);
+        if (0 !== a.tag && 2 === c) {
+          var d = xc(a);
+          0 !== d && (b = d, c = Nk(a, d));
+        }
+        if (1 === c) throw c = pk, Kk(a, 0), Ck(a, b), Dk(a, B()), c;
+        if (6 === c) throw Error(p(345));
+        a.finishedWork = a.current.alternate;
+        a.finishedLanes = b;
+        Pk(a, tk, uk);
+        Dk(a, B());
+        return null;
+      }
+      function Qk(a, b) {
+        var c = K;
+        K |= 1;
+        try {
+          return a(b);
+        } finally {
+          K = c, 0 === K && (Gj = B() + 500, fg && jg());
+        }
+      }
+      function Rk(a) {
+        null !== wk && 0 === wk.tag && 0 === (K & 6) && Hk();
+        var b = K;
+        K |= 1;
+        var c = ok.transition, d = C;
+        try {
+          if (ok.transition = null, C = 1, a) return a();
+        } finally {
+          C = d, ok.transition = c, K = b, 0 === (K & 6) && jg();
+        }
+      }
+      function Hj() {
+        fj = ej.current;
+        E(ej);
+      }
+      function Kk(a, b) {
+        a.finishedWork = null;
+        a.finishedLanes = 0;
+        var c = a.timeoutHandle;
+        -1 !== c && (a.timeoutHandle = -1, Gf(c));
+        if (null !== Y) for (c = Y.return; null !== c; ) {
+          var d = c;
+          wg(d);
+          switch (d.tag) {
+            case 1:
+              d = d.type.childContextTypes;
+              null !== d && void 0 !== d && $f();
+              break;
+            case 3:
+              zh();
+              E(Wf);
+              E(H);
+              Eh();
+              break;
+            case 5:
+              Bh(d);
+              break;
+            case 4:
+              zh();
+              break;
+            case 13:
+              E(L);
+              break;
+            case 19:
+              E(L);
+              break;
+            case 10:
+              ah(d.type._context);
+              break;
+            case 22:
+            case 23:
+              Hj();
+          }
+          c = c.return;
+        }
+        Q = a;
+        Y = a = Pg(a.current, null);
+        Z = fj = b;
+        T = 0;
+        pk = null;
+        rk = qk = rh = 0;
+        tk = sk = null;
+        if (null !== fh) {
+          for (b = 0; b < fh.length; b++) if (c = fh[b], d = c.interleaved, null !== d) {
+            c.interleaved = null;
+            var e = d.next, f = c.pending;
+            if (null !== f) {
+              var g = f.next;
+              f.next = e;
+              d.next = g;
+            }
+            c.pending = d;
+          }
+          fh = null;
+        }
+        return a;
+      }
+      function Mk(a, b) {
+        do {
+          var c = Y;
+          try {
+            $g();
+            Fh.current = Rh;
+            if (Ih) {
+              for (var d = M.memoizedState; null !== d; ) {
+                var e = d.queue;
+                null !== e && (e.pending = null);
+                d = d.next;
+              }
+              Ih = false;
+            }
+            Hh = 0;
+            O = N = M = null;
+            Jh = false;
+            Kh = 0;
+            nk.current = null;
+            if (null === c || null === c.return) {
+              T = 1;
+              pk = b;
+              Y = null;
+              break;
+            }
+            a: {
+              var f = a, g = c.return, h = c, k = b;
+              b = Z;
+              h.flags |= 32768;
+              if (null !== k && "object" === typeof k && "function" === typeof k.then) {
+                var l = k, m = h, q = m.tag;
+                if (0 === (m.mode & 1) && (0 === q || 11 === q || 15 === q)) {
+                  var r2 = m.alternate;
+                  r2 ? (m.updateQueue = r2.updateQueue, m.memoizedState = r2.memoizedState, m.lanes = r2.lanes) : (m.updateQueue = null, m.memoizedState = null);
+                }
+                var y = Ui(g);
+                if (null !== y) {
+                  y.flags &= -257;
+                  Vi(y, g, h, f, b);
+                  y.mode & 1 && Si(f, l, b);
+                  b = y;
+                  k = l;
+                  var n = b.updateQueue;
+                  if (null === n) {
+                    var t = /* @__PURE__ */ new Set();
+                    t.add(k);
+                    b.updateQueue = t;
+                  } else n.add(k);
+                  break a;
+                } else {
+                  if (0 === (b & 1)) {
+                    Si(f, l, b);
+                    tj();
+                    break a;
+                  }
+                  k = Error(p(426));
+                }
+              } else if (I && h.mode & 1) {
+                var J = Ui(g);
+                if (null !== J) {
+                  0 === (J.flags & 65536) && (J.flags |= 256);
+                  Vi(J, g, h, f, b);
+                  Jg(Ji(k, h));
+                  break a;
+                }
+              }
+              f = k = Ji(k, h);
+              4 !== T && (T = 2);
+              null === sk ? sk = [f] : sk.push(f);
+              f = g;
+              do {
+                switch (f.tag) {
+                  case 3:
+                    f.flags |= 65536;
+                    b &= -b;
+                    f.lanes |= b;
+                    var x = Ni(f, k, b);
+                    ph(f, x);
+                    break a;
+                  case 1:
+                    h = k;
+                    var w = f.type, u = f.stateNode;
+                    if (0 === (f.flags & 128) && ("function" === typeof w.getDerivedStateFromError || null !== u && "function" === typeof u.componentDidCatch && (null === Ri || !Ri.has(u)))) {
+                      f.flags |= 65536;
+                      b &= -b;
+                      f.lanes |= b;
+                      var F = Qi(f, h, b);
+                      ph(f, F);
+                      break a;
+                    }
+                }
+                f = f.return;
+              } while (null !== f);
+            }
+            Sk(c);
+          } catch (na) {
+            b = na;
+            Y === c && null !== c && (Y = c = c.return);
+            continue;
+          }
+          break;
+        } while (1);
+      }
+      function Jk() {
+        var a = mk.current;
+        mk.current = Rh;
+        return null === a ? Rh : a;
+      }
+      function tj() {
+        if (0 === T || 3 === T || 2 === T) T = 4;
+        null === Q || 0 === (rh & 268435455) && 0 === (qk & 268435455) || Ck(Q, Z);
+      }
+      function Ik(a, b) {
+        var c = K;
+        K |= 2;
+        var d = Jk();
+        if (Q !== a || Z !== b) uk = null, Kk(a, b);
+        do
+          try {
+            Tk();
+            break;
+          } catch (e) {
+            Mk(a, e);
+          }
+        while (1);
+        $g();
+        K = c;
+        mk.current = d;
+        if (null !== Y) throw Error(p(261));
+        Q = null;
+        Z = 0;
+        return T;
+      }
+      function Tk() {
+        for (; null !== Y; ) Uk(Y);
+      }
+      function Lk() {
+        for (; null !== Y && !cc(); ) Uk(Y);
+      }
+      function Uk(a) {
+        var b = Vk(a.alternate, a, fj);
+        a.memoizedProps = a.pendingProps;
+        null === b ? Sk(a) : Y = b;
+        nk.current = null;
+      }
+      function Sk(a) {
+        var b = a;
+        do {
+          var c = b.alternate;
+          a = b.return;
+          if (0 === (b.flags & 32768)) {
+            if (c = Ej(c, b, fj), null !== c) {
+              Y = c;
+              return;
+            }
+          } else {
+            c = Ij(c, b);
+            if (null !== c) {
+              c.flags &= 32767;
+              Y = c;
+              return;
+            }
+            if (null !== a) a.flags |= 32768, a.subtreeFlags = 0, a.deletions = null;
+            else {
+              T = 6;
+              Y = null;
+              return;
+            }
+          }
+          b = b.sibling;
+          if (null !== b) {
+            Y = b;
+            return;
+          }
+          Y = b = a;
+        } while (null !== b);
+        0 === T && (T = 5);
+      }
+      function Pk(a, b, c) {
+        var d = C, e = ok.transition;
+        try {
+          ok.transition = null, C = 1, Wk(a, b, c, d);
+        } finally {
+          ok.transition = e, C = d;
+        }
+        return null;
+      }
+      function Wk(a, b, c, d) {
+        do
+          Hk();
+        while (null !== wk);
+        if (0 !== (K & 6)) throw Error(p(327));
+        c = a.finishedWork;
+        var e = a.finishedLanes;
+        if (null === c) return null;
+        a.finishedWork = null;
+        a.finishedLanes = 0;
+        if (c === a.current) throw Error(p(177));
+        a.callbackNode = null;
+        a.callbackPriority = 0;
+        var f = c.lanes | c.childLanes;
+        Bc(a, f);
+        a === Q && (Y = Q = null, Z = 0);
+        0 === (c.subtreeFlags & 2064) && 0 === (c.flags & 2064) || vk || (vk = true, Fk(hc, function() {
+          Hk();
+          return null;
+        }));
+        f = 0 !== (c.flags & 15990);
+        if (0 !== (c.subtreeFlags & 15990) || f) {
+          f = ok.transition;
+          ok.transition = null;
+          var g = C;
+          C = 1;
+          var h = K;
+          K |= 4;
+          nk.current = null;
+          Oj(a, c);
+          dk(c, a);
+          Oe(Df);
+          dd = !!Cf;
+          Df = Cf = null;
+          a.current = c;
+          hk(c, a, e);
+          dc();
+          K = h;
+          C = g;
+          ok.transition = f;
+        } else a.current = c;
+        vk && (vk = false, wk = a, xk = e);
+        f = a.pendingLanes;
+        0 === f && (Ri = null);
+        mc(c.stateNode, d);
+        Dk(a, B());
+        if (null !== b) for (d = a.onRecoverableError, c = 0; c < b.length; c++) e = b[c], d(e.value, { componentStack: e.stack, digest: e.digest });
+        if (Oi) throw Oi = false, a = Pi, Pi = null, a;
+        0 !== (xk & 1) && 0 !== a.tag && Hk();
+        f = a.pendingLanes;
+        0 !== (f & 1) ? a === zk ? yk++ : (yk = 0, zk = a) : yk = 0;
+        jg();
+        return null;
+      }
+      function Hk() {
+        if (null !== wk) {
+          var a = Dc(xk), b = ok.transition, c = C;
+          try {
+            ok.transition = null;
+            C = 16 > a ? 16 : a;
+            if (null === wk) var d = false;
+            else {
+              a = wk;
+              wk = null;
+              xk = 0;
+              if (0 !== (K & 6)) throw Error(p(331));
+              var e = K;
+              K |= 4;
+              for (V = a.current; null !== V; ) {
+                var f = V, g = f.child;
+                if (0 !== (V.flags & 16)) {
+                  var h = f.deletions;
+                  if (null !== h) {
+                    for (var k = 0; k < h.length; k++) {
+                      var l = h[k];
+                      for (V = l; null !== V; ) {
+                        var m = V;
+                        switch (m.tag) {
+                          case 0:
+                          case 11:
+                          case 15:
+                            Pj(8, m, f);
+                        }
+                        var q = m.child;
+                        if (null !== q) q.return = m, V = q;
+                        else for (; null !== V; ) {
+                          m = V;
+                          var r2 = m.sibling, y = m.return;
+                          Sj(m);
+                          if (m === l) {
+                            V = null;
+                            break;
+                          }
+                          if (null !== r2) {
+                            r2.return = y;
+                            V = r2;
+                            break;
+                          }
+                          V = y;
+                        }
+                      }
+                    }
+                    var n = f.alternate;
+                    if (null !== n) {
+                      var t = n.child;
+                      if (null !== t) {
+                        n.child = null;
+                        do {
+                          var J = t.sibling;
+                          t.sibling = null;
+                          t = J;
+                        } while (null !== t);
+                      }
+                    }
+                    V = f;
+                  }
+                }
+                if (0 !== (f.subtreeFlags & 2064) && null !== g) g.return = f, V = g;
+                else b: for (; null !== V; ) {
+                  f = V;
+                  if (0 !== (f.flags & 2048)) switch (f.tag) {
+                    case 0:
+                    case 11:
+                    case 15:
+                      Pj(9, f, f.return);
+                  }
+                  var x = f.sibling;
+                  if (null !== x) {
+                    x.return = f.return;
+                    V = x;
+                    break b;
+                  }
+                  V = f.return;
+                }
+              }
+              var w = a.current;
+              for (V = w; null !== V; ) {
+                g = V;
+                var u = g.child;
+                if (0 !== (g.subtreeFlags & 2064) && null !== u) u.return = g, V = u;
+                else b: for (g = w; null !== V; ) {
+                  h = V;
+                  if (0 !== (h.flags & 2048)) try {
+                    switch (h.tag) {
+                      case 0:
+                      case 11:
+                      case 15:
+                        Qj(9, h);
+                    }
+                  } catch (na) {
+                    W(h, h.return, na);
+                  }
+                  if (h === g) {
+                    V = null;
+                    break b;
+                  }
+                  var F = h.sibling;
+                  if (null !== F) {
+                    F.return = h.return;
+                    V = F;
+                    break b;
+                  }
+                  V = h.return;
+                }
+              }
+              K = e;
+              jg();
+              if (lc && "function" === typeof lc.onPostCommitFiberRoot) try {
+                lc.onPostCommitFiberRoot(kc, a);
+              } catch (na) {
+              }
+              d = true;
+            }
+            return d;
+          } finally {
+            C = c, ok.transition = b;
+          }
+        }
+        return false;
+      }
+      function Xk(a, b, c) {
+        b = Ji(c, b);
+        b = Ni(a, b, 1);
+        a = nh(a, b, 1);
+        b = R();
+        null !== a && (Ac(a, 1, b), Dk(a, b));
+      }
+      function W(a, b, c) {
+        if (3 === a.tag) Xk(a, a, c);
+        else for (; null !== b; ) {
+          if (3 === b.tag) {
+            Xk(b, a, c);
+            break;
+          } else if (1 === b.tag) {
+            var d = b.stateNode;
+            if ("function" === typeof b.type.getDerivedStateFromError || "function" === typeof d.componentDidCatch && (null === Ri || !Ri.has(d))) {
+              a = Ji(c, a);
+              a = Qi(b, a, 1);
+              b = nh(b, a, 1);
+              a = R();
+              null !== b && (Ac(b, 1, a), Dk(b, a));
+              break;
+            }
+          }
+          b = b.return;
+        }
+      }
+      function Ti(a, b, c) {
+        var d = a.pingCache;
+        null !== d && d.delete(b);
+        b = R();
+        a.pingedLanes |= a.suspendedLanes & c;
+        Q === a && (Z & c) === c && (4 === T || 3 === T && (Z & 130023424) === Z && 500 > B() - fk ? Kk(a, 0) : rk |= c);
+        Dk(a, b);
+      }
+      function Yk(a, b) {
+        0 === b && (0 === (a.mode & 1) ? b = 1 : (b = sc, sc <<= 1, 0 === (sc & 130023424) && (sc = 4194304)));
+        var c = R();
+        a = ih(a, b);
+        null !== a && (Ac(a, b, c), Dk(a, c));
+      }
+      function uj(a) {
+        var b = a.memoizedState, c = 0;
+        null !== b && (c = b.retryLane);
+        Yk(a, c);
+      }
+      function bk(a, b) {
+        var c = 0;
+        switch (a.tag) {
+          case 13:
+            var d = a.stateNode;
+            var e = a.memoizedState;
+            null !== e && (c = e.retryLane);
+            break;
+          case 19:
+            d = a.stateNode;
+            break;
+          default:
+            throw Error(p(314));
+        }
+        null !== d && d.delete(b);
+        Yk(a, c);
+      }
+      var Vk;
+      Vk = function(a, b, c) {
+        if (null !== a) if (a.memoizedProps !== b.pendingProps || Wf.current) dh = true;
+        else {
+          if (0 === (a.lanes & c) && 0 === (b.flags & 128)) return dh = false, yj(a, b, c);
+          dh = 0 !== (a.flags & 131072) ? true : false;
+        }
+        else dh = false, I && 0 !== (b.flags & 1048576) && ug(b, ng, b.index);
+        b.lanes = 0;
+        switch (b.tag) {
+          case 2:
+            var d = b.type;
+            ij(a, b);
+            a = b.pendingProps;
+            var e = Yf(b, H.current);
+            ch(b, c);
+            e = Nh(null, b, d, a, e, c);
+            var f = Sh();
+            b.flags |= 1;
+            "object" === typeof e && null !== e && "function" === typeof e.render && void 0 === e.$$typeof ? (b.tag = 1, b.memoizedState = null, b.updateQueue = null, Zf(d) ? (f = true, cg(b)) : f = false, b.memoizedState = null !== e.state && void 0 !== e.state ? e.state : null, kh(b), e.updater = Ei, b.stateNode = e, e._reactInternals = b, Ii(b, d, a, c), b = jj(null, b, d, true, f, c)) : (b.tag = 0, I && f && vg(b), Xi(null, b, e, c), b = b.child);
+            return b;
+          case 16:
+            d = b.elementType;
+            a: {
+              ij(a, b);
+              a = b.pendingProps;
+              e = d._init;
+              d = e(d._payload);
+              b.type = d;
+              e = b.tag = Zk(d);
+              a = Ci(d, a);
+              switch (e) {
+                case 0:
+                  b = cj(null, b, d, a, c);
+                  break a;
+                case 1:
+                  b = hj(null, b, d, a, c);
+                  break a;
+                case 11:
+                  b = Yi(null, b, d, a, c);
+                  break a;
+                case 14:
+                  b = $i(null, b, d, Ci(d.type, a), c);
+                  break a;
+              }
+              throw Error(p(
+                306,
+                d,
+                ""
+              ));
+            }
+            return b;
+          case 0:
+            return d = b.type, e = b.pendingProps, e = b.elementType === d ? e : Ci(d, e), cj(a, b, d, e, c);
+          case 1:
+            return d = b.type, e = b.pendingProps, e = b.elementType === d ? e : Ci(d, e), hj(a, b, d, e, c);
+          case 3:
+            a: {
+              kj(b);
+              if (null === a) throw Error(p(387));
+              d = b.pendingProps;
+              f = b.memoizedState;
+              e = f.element;
+              lh(a, b);
+              qh(b, d, null, c);
+              var g = b.memoizedState;
+              d = g.element;
+              if (f.isDehydrated) if (f = { element: d, isDehydrated: false, cache: g.cache, pendingSuspenseBoundaries: g.pendingSuspenseBoundaries, transitions: g.transitions }, b.updateQueue.baseState = f, b.memoizedState = f, b.flags & 256) {
+                e = Ji(Error(p(423)), b);
+                b = lj(a, b, d, c, e);
+                break a;
+              } else if (d !== e) {
+                e = Ji(Error(p(424)), b);
+                b = lj(a, b, d, c, e);
+                break a;
+              } else for (yg = Lf(b.stateNode.containerInfo.firstChild), xg = b, I = true, zg = null, c = Vg(b, null, d, c), b.child = c; c; ) c.flags = c.flags & -3 | 4096, c = c.sibling;
+              else {
+                Ig();
+                if (d === e) {
+                  b = Zi(a, b, c);
+                  break a;
+                }
+                Xi(a, b, d, c);
+              }
+              b = b.child;
+            }
+            return b;
+          case 5:
+            return Ah(b), null === a && Eg(b), d = b.type, e = b.pendingProps, f = null !== a ? a.memoizedProps : null, g = e.children, Ef(d, e) ? g = null : null !== f && Ef(d, f) && (b.flags |= 32), gj(a, b), Xi(a, b, g, c), b.child;
+          case 6:
+            return null === a && Eg(b), null;
+          case 13:
+            return oj(a, b, c);
+          case 4:
+            return yh(b, b.stateNode.containerInfo), d = b.pendingProps, null === a ? b.child = Ug(b, null, d, c) : Xi(a, b, d, c), b.child;
+          case 11:
+            return d = b.type, e = b.pendingProps, e = b.elementType === d ? e : Ci(d, e), Yi(a, b, d, e, c);
+          case 7:
+            return Xi(a, b, b.pendingProps, c), b.child;
+          case 8:
+            return Xi(a, b, b.pendingProps.children, c), b.child;
+          case 12:
+            return Xi(a, b, b.pendingProps.children, c), b.child;
+          case 10:
+            a: {
+              d = b.type._context;
+              e = b.pendingProps;
+              f = b.memoizedProps;
+              g = e.value;
+              G(Wg, d._currentValue);
+              d._currentValue = g;
+              if (null !== f) if (He(f.value, g)) {
+                if (f.children === e.children && !Wf.current) {
+                  b = Zi(a, b, c);
+                  break a;
+                }
+              } else for (f = b.child, null !== f && (f.return = b); null !== f; ) {
+                var h = f.dependencies;
+                if (null !== h) {
+                  g = f.child;
+                  for (var k = h.firstContext; null !== k; ) {
+                    if (k.context === d) {
+                      if (1 === f.tag) {
+                        k = mh(-1, c & -c);
+                        k.tag = 2;
+                        var l = f.updateQueue;
+                        if (null !== l) {
+                          l = l.shared;
+                          var m = l.pending;
+                          null === m ? k.next = k : (k.next = m.next, m.next = k);
+                          l.pending = k;
+                        }
+                      }
+                      f.lanes |= c;
+                      k = f.alternate;
+                      null !== k && (k.lanes |= c);
+                      bh(
+                        f.return,
+                        c,
+                        b
+                      );
+                      h.lanes |= c;
+                      break;
+                    }
+                    k = k.next;
+                  }
+                } else if (10 === f.tag) g = f.type === b.type ? null : f.child;
+                else if (18 === f.tag) {
+                  g = f.return;
+                  if (null === g) throw Error(p(341));
+                  g.lanes |= c;
+                  h = g.alternate;
+                  null !== h && (h.lanes |= c);
+                  bh(g, c, b);
+                  g = f.sibling;
+                } else g = f.child;
+                if (null !== g) g.return = f;
+                else for (g = f; null !== g; ) {
+                  if (g === b) {
+                    g = null;
+                    break;
+                  }
+                  f = g.sibling;
+                  if (null !== f) {
+                    f.return = g.return;
+                    g = f;
+                    break;
+                  }
+                  g = g.return;
+                }
+                f = g;
+              }
+              Xi(a, b, e.children, c);
+              b = b.child;
+            }
+            return b;
+          case 9:
+            return e = b.type, d = b.pendingProps.children, ch(b, c), e = eh(e), d = d(e), b.flags |= 1, Xi(a, b, d, c), b.child;
+          case 14:
+            return d = b.type, e = Ci(d, b.pendingProps), e = Ci(d.type, e), $i(a, b, d, e, c);
+          case 15:
+            return bj(a, b, b.type, b.pendingProps, c);
+          case 17:
+            return d = b.type, e = b.pendingProps, e = b.elementType === d ? e : Ci(d, e), ij(a, b), b.tag = 1, Zf(d) ? (a = true, cg(b)) : a = false, ch(b, c), Gi(b, d, e), Ii(b, d, e, c), jj(null, b, d, true, a, c);
+          case 19:
+            return xj(a, b, c);
+          case 22:
+            return dj(a, b, c);
+        }
+        throw Error(p(156, b.tag));
+      };
+      function Fk(a, b) {
+        return ac(a, b);
+      }
+      function $k(a, b, c, d) {
+        this.tag = a;
+        this.key = c;
+        this.sibling = this.child = this.return = this.stateNode = this.type = this.elementType = null;
+        this.index = 0;
+        this.ref = null;
+        this.pendingProps = b;
+        this.dependencies = this.memoizedState = this.updateQueue = this.memoizedProps = null;
+        this.mode = d;
+        this.subtreeFlags = this.flags = 0;
+        this.deletions = null;
+        this.childLanes = this.lanes = 0;
+        this.alternate = null;
+      }
+      function Bg(a, b, c, d) {
+        return new $k(a, b, c, d);
+      }
+      function aj(a) {
+        a = a.prototype;
+        return !(!a || !a.isReactComponent);
+      }
+      function Zk(a) {
+        if ("function" === typeof a) return aj(a) ? 1 : 0;
+        if (void 0 !== a && null !== a) {
+          a = a.$$typeof;
+          if (a === Da) return 11;
+          if (a === Ga) return 14;
+        }
+        return 2;
+      }
+      function Pg(a, b) {
+        var c = a.alternate;
+        null === c ? (c = Bg(a.tag, b, a.key, a.mode), c.elementType = a.elementType, c.type = a.type, c.stateNode = a.stateNode, c.alternate = a, a.alternate = c) : (c.pendingProps = b, c.type = a.type, c.flags = 0, c.subtreeFlags = 0, c.deletions = null);
+        c.flags = a.flags & 14680064;
+        c.childLanes = a.childLanes;
+        c.lanes = a.lanes;
+        c.child = a.child;
+        c.memoizedProps = a.memoizedProps;
+        c.memoizedState = a.memoizedState;
+        c.updateQueue = a.updateQueue;
+        b = a.dependencies;
+        c.dependencies = null === b ? null : { lanes: b.lanes, firstContext: b.firstContext };
+        c.sibling = a.sibling;
+        c.index = a.index;
+        c.ref = a.ref;
+        return c;
+      }
+      function Rg(a, b, c, d, e, f) {
+        var g = 2;
+        d = a;
+        if ("function" === typeof a) aj(a) && (g = 1);
+        else if ("string" === typeof a) g = 5;
+        else a: switch (a) {
+          case ya:
+            return Tg(c.children, e, f, b);
+          case za:
+            g = 8;
+            e |= 8;
+            break;
+          case Aa:
+            return a = Bg(12, c, b, e | 2), a.elementType = Aa, a.lanes = f, a;
+          case Ea:
+            return a = Bg(13, c, b, e), a.elementType = Ea, a.lanes = f, a;
+          case Fa:
+            return a = Bg(19, c, b, e), a.elementType = Fa, a.lanes = f, a;
+          case Ia:
+            return pj(c, e, f, b);
+          default:
+            if ("object" === typeof a && null !== a) switch (a.$$typeof) {
+              case Ba:
+                g = 10;
+                break a;
+              case Ca:
+                g = 9;
+                break a;
+              case Da:
+                g = 11;
+                break a;
+              case Ga:
+                g = 14;
+                break a;
+              case Ha:
+                g = 16;
+                d = null;
+                break a;
+            }
+            throw Error(p(130, null == a ? a : typeof a, ""));
+        }
+        b = Bg(g, c, b, e);
+        b.elementType = a;
+        b.type = d;
+        b.lanes = f;
+        return b;
+      }
+      function Tg(a, b, c, d) {
+        a = Bg(7, a, d, b);
+        a.lanes = c;
+        return a;
+      }
+      function pj(a, b, c, d) {
+        a = Bg(22, a, d, b);
+        a.elementType = Ia;
+        a.lanes = c;
+        a.stateNode = { isHidden: false };
+        return a;
+      }
+      function Qg(a, b, c) {
+        a = Bg(6, a, null, b);
+        a.lanes = c;
+        return a;
+      }
+      function Sg(a, b, c) {
+        b = Bg(4, null !== a.children ? a.children : [], a.key, b);
+        b.lanes = c;
+        b.stateNode = { containerInfo: a.containerInfo, pendingChildren: null, implementation: a.implementation };
+        return b;
+      }
+      function al(a, b, c, d, e) {
+        this.tag = b;
+        this.containerInfo = a;
+        this.finishedWork = this.pingCache = this.current = this.pendingChildren = null;
+        this.timeoutHandle = -1;
+        this.callbackNode = this.pendingContext = this.context = null;
+        this.callbackPriority = 0;
+        this.eventTimes = zc(0);
+        this.expirationTimes = zc(-1);
+        this.entangledLanes = this.finishedLanes = this.mutableReadLanes = this.expiredLanes = this.pingedLanes = this.suspendedLanes = this.pendingLanes = 0;
+        this.entanglements = zc(0);
+        this.identifierPrefix = d;
+        this.onRecoverableError = e;
+        this.mutableSourceEagerHydrationData = null;
+      }
+      function bl(a, b, c, d, e, f, g, h, k) {
+        a = new al(a, b, c, h, k);
+        1 === b ? (b = 1, true === f && (b |= 8)) : b = 0;
+        f = Bg(3, null, null, b);
+        a.current = f;
+        f.stateNode = a;
+        f.memoizedState = { element: d, isDehydrated: c, cache: null, transitions: null, pendingSuspenseBoundaries: null };
+        kh(f);
+        return a;
+      }
+      function cl(a, b, c) {
+        var d = 3 < arguments.length && void 0 !== arguments[3] ? arguments[3] : null;
+        return { $$typeof: wa, key: null == d ? null : "" + d, children: a, containerInfo: b, implementation: c };
+      }
+      function dl(a) {
+        if (!a) return Vf;
+        a = a._reactInternals;
+        a: {
+          if (Vb(a) !== a || 1 !== a.tag) throw Error(p(170));
+          var b = a;
+          do {
+            switch (b.tag) {
+              case 3:
+                b = b.stateNode.context;
+                break a;
+              case 1:
+                if (Zf(b.type)) {
+                  b = b.stateNode.__reactInternalMemoizedMergedChildContext;
+                  break a;
+                }
+            }
+            b = b.return;
+          } while (null !== b);
+          throw Error(p(171));
+        }
+        if (1 === a.tag) {
+          var c = a.type;
+          if (Zf(c)) return bg(a, c, b);
+        }
+        return b;
+      }
+      function el(a, b, c, d, e, f, g, h, k) {
+        a = bl(c, d, true, a, e, f, g, h, k);
+        a.context = dl(null);
+        c = a.current;
+        d = R();
+        e = yi(c);
+        f = mh(d, e);
+        f.callback = void 0 !== b && null !== b ? b : null;
+        nh(c, f, e);
+        a.current.lanes = e;
+        Ac(a, e, d);
+        Dk(a, d);
+        return a;
+      }
+      function fl(a, b, c, d) {
+        var e = b.current, f = R(), g = yi(e);
+        c = dl(c);
+        null === b.context ? b.context = c : b.pendingContext = c;
+        b = mh(f, g);
+        b.payload = { element: a };
+        d = void 0 === d ? null : d;
+        null !== d && (b.callback = d);
+        a = nh(e, b, g);
+        null !== a && (gi(a, e, g, f), oh(a, e, g));
+        return g;
+      }
+      function gl(a) {
+        a = a.current;
+        if (!a.child) return null;
+        switch (a.child.tag) {
+          case 5:
+            return a.child.stateNode;
+          default:
+            return a.child.stateNode;
+        }
+      }
+      function hl(a, b) {
+        a = a.memoizedState;
+        if (null !== a && null !== a.dehydrated) {
+          var c = a.retryLane;
+          a.retryLane = 0 !== c && c < b ? c : b;
+        }
+      }
+      function il(a, b) {
+        hl(a, b);
+        (a = a.alternate) && hl(a, b);
+      }
+      function jl() {
+        return null;
+      }
+      var kl = "function" === typeof reportError ? reportError : function(a) {
+        console.error(a);
+      };
+      function ll(a) {
+        this._internalRoot = a;
+      }
+      ml.prototype.render = ll.prototype.render = function(a) {
+        var b = this._internalRoot;
+        if (null === b) throw Error(p(409));
+        fl(a, b, null, null);
+      };
+      ml.prototype.unmount = ll.prototype.unmount = function() {
+        var a = this._internalRoot;
+        if (null !== a) {
+          this._internalRoot = null;
+          var b = a.containerInfo;
+          Rk(function() {
+            fl(null, a, null, null);
+          });
+          b[uf] = null;
+        }
+      };
+      function ml(a) {
+        this._internalRoot = a;
+      }
+      ml.prototype.unstable_scheduleHydration = function(a) {
+        if (a) {
+          var b = Hc();
+          a = { blockedOn: null, target: a, priority: b };
+          for (var c = 0; c < Qc.length && 0 !== b && b < Qc[c].priority; c++) ;
+          Qc.splice(c, 0, a);
+          0 === c && Vc(a);
+        }
+      };
+      function nl(a) {
+        return !(!a || 1 !== a.nodeType && 9 !== a.nodeType && 11 !== a.nodeType);
+      }
+      function ol(a) {
+        return !(!a || 1 !== a.nodeType && 9 !== a.nodeType && 11 !== a.nodeType && (8 !== a.nodeType || " react-mount-point-unstable " !== a.nodeValue));
+      }
+      function pl() {
+      }
+      function ql(a, b, c, d, e) {
+        if (e) {
+          if ("function" === typeof d) {
+            var f = d;
+            d = function() {
+              var a2 = gl(g);
+              f.call(a2);
+            };
+          }
+          var g = el(b, d, a, 0, null, false, false, "", pl);
+          a._reactRootContainer = g;
+          a[uf] = g.current;
+          sf(8 === a.nodeType ? a.parentNode : a);
+          Rk();
+          return g;
+        }
+        for (; e = a.lastChild; ) a.removeChild(e);
+        if ("function" === typeof d) {
+          var h = d;
+          d = function() {
+            var a2 = gl(k);
+            h.call(a2);
+          };
+        }
+        var k = bl(a, 0, false, null, null, false, false, "", pl);
+        a._reactRootContainer = k;
+        a[uf] = k.current;
+        sf(8 === a.nodeType ? a.parentNode : a);
+        Rk(function() {
+          fl(b, k, c, d);
+        });
+        return k;
+      }
+      function rl(a, b, c, d, e) {
+        var f = c._reactRootContainer;
+        if (f) {
+          var g = f;
+          if ("function" === typeof e) {
+            var h = e;
+            e = function() {
+              var a2 = gl(g);
+              h.call(a2);
+            };
+          }
+          fl(b, g, a, e);
+        } else g = ql(c, b, a, e, d);
+        return gl(g);
+      }
+      Ec = function(a) {
+        switch (a.tag) {
+          case 3:
+            var b = a.stateNode;
+            if (b.current.memoizedState.isDehydrated) {
+              var c = tc(b.pendingLanes);
+              0 !== c && (Cc(b, c | 1), Dk(b, B()), 0 === (K & 6) && (Gj = B() + 500, jg()));
+            }
+            break;
+          case 13:
+            Rk(function() {
+              var b2 = ih(a, 1);
+              if (null !== b2) {
+                var c2 = R();
+                gi(b2, a, 1, c2);
+              }
+            }), il(a, 1);
+        }
+      };
+      Fc = function(a) {
+        if (13 === a.tag) {
+          var b = ih(a, 134217728);
+          if (null !== b) {
+            var c = R();
+            gi(b, a, 134217728, c);
+          }
+          il(a, 134217728);
+        }
+      };
+      Gc = function(a) {
+        if (13 === a.tag) {
+          var b = yi(a), c = ih(a, b);
+          if (null !== c) {
+            var d = R();
+            gi(c, a, b, d);
+          }
+          il(a, b);
+        }
+      };
+      Hc = function() {
+        return C;
+      };
+      Ic = function(a, b) {
+        var c = C;
+        try {
+          return C = a, b();
+        } finally {
+          C = c;
+        }
+      };
+      yb = function(a, b, c) {
+        switch (b) {
+          case "input":
+            bb(a, c);
+            b = c.name;
+            if ("radio" === c.type && null != b) {
+              for (c = a; c.parentNode; ) c = c.parentNode;
+              c = c.querySelectorAll("input[name=" + JSON.stringify("" + b) + '][type="radio"]');
+              for (b = 0; b < c.length; b++) {
+                var d = c[b];
+                if (d !== a && d.form === a.form) {
+                  var e = Db(d);
+                  if (!e) throw Error(p(90));
+                  Wa(d);
+                  bb(d, e);
+                }
+              }
+            }
+            break;
+          case "textarea":
+            ib(a, c);
+            break;
+          case "select":
+            b = c.value, null != b && fb(a, !!c.multiple, b, false);
+        }
+      };
+      Gb = Qk;
+      Hb = Rk;
+      var sl = { usingClientEntryPoint: false, Events: [Cb, ue, Db, Eb, Fb, Qk] };
+      var tl = { findFiberByHostInstance: Wc, bundleType: 0, version: "18.3.1", rendererPackageName: "react-dom" };
+      var ul = { bundleType: tl.bundleType, version: tl.version, rendererPackageName: tl.rendererPackageName, rendererConfig: tl.rendererConfig, overrideHookState: null, overrideHookStateDeletePath: null, overrideHookStateRenamePath: null, overrideProps: null, overridePropsDeletePath: null, overridePropsRenamePath: null, setErrorHandler: null, setSuspenseHandler: null, scheduleUpdate: null, currentDispatcherRef: ua.ReactCurrentDispatcher, findHostInstanceByFiber: function(a) {
+        a = Zb(a);
+        return null === a ? null : a.stateNode;
+      }, findFiberByHostInstance: tl.findFiberByHostInstance || jl, findHostInstancesForRefresh: null, scheduleRefresh: null, scheduleRoot: null, setRefreshHandler: null, getCurrentFiber: null, reconcilerVersion: "18.3.1-next-f1338f8080-20240426" };
+      if ("undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__) {
+        vl = __REACT_DEVTOOLS_GLOBAL_HOOK__;
+        if (!vl.isDisabled && vl.supportsFiber) try {
+          kc = vl.inject(ul), lc = vl;
+        } catch (a) {
+        }
+      }
+      var vl;
+      exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = sl;
+      exports.createPortal = function(a, b) {
+        var c = 2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : null;
+        if (!nl(b)) throw Error(p(200));
+        return cl(a, b, null, c);
+      };
+      exports.createRoot = function(a, b) {
+        if (!nl(a)) throw Error(p(299));
+        var c = false, d = "", e = kl;
+        null !== b && void 0 !== b && (true === b.unstable_strictMode && (c = true), void 0 !== b.identifierPrefix && (d = b.identifierPrefix), void 0 !== b.onRecoverableError && (e = b.onRecoverableError));
+        b = bl(a, 1, false, null, null, c, false, d, e);
+        a[uf] = b.current;
+        sf(8 === a.nodeType ? a.parentNode : a);
+        return new ll(b);
+      };
+      exports.findDOMNode = function(a) {
+        if (null == a) return null;
+        if (1 === a.nodeType) return a;
+        var b = a._reactInternals;
+        if (void 0 === b) {
+          if ("function" === typeof a.render) throw Error(p(188));
+          a = Object.keys(a).join(",");
+          throw Error(p(268, a));
+        }
+        a = Zb(b);
+        a = null === a ? null : a.stateNode;
+        return a;
+      };
+      exports.flushSync = function(a) {
+        return Rk(a);
+      };
+      exports.hydrate = function(a, b, c) {
+        if (!ol(b)) throw Error(p(200));
+        return rl(null, a, b, true, c);
+      };
+      exports.hydrateRoot = function(a, b, c) {
+        if (!nl(a)) throw Error(p(405));
+        var d = null != c && c.hydratedSources || null, e = false, f = "", g = kl;
+        null !== c && void 0 !== c && (true === c.unstable_strictMode && (e = true), void 0 !== c.identifierPrefix && (f = c.identifierPrefix), void 0 !== c.onRecoverableError && (g = c.onRecoverableError));
+        b = el(b, null, a, 1, null != c ? c : null, e, false, f, g);
+        a[uf] = b.current;
+        sf(a);
+        if (d) for (a = 0; a < d.length; a++) c = d[a], e = c._getVersion, e = e(c._source), null == b.mutableSourceEagerHydrationData ? b.mutableSourceEagerHydrationData = [c, e] : b.mutableSourceEagerHydrationData.push(
+          c,
+          e
+        );
+        return new ml(b);
+      };
+      exports.render = function(a, b, c) {
+        if (!ol(b)) throw Error(p(200));
+        return rl(null, a, b, false, c);
+      };
+      exports.unmountComponentAtNode = function(a) {
+        if (!ol(a)) throw Error(p(40));
+        return a._reactRootContainer ? (Rk(function() {
+          rl(null, null, a, false, function() {
+            a._reactRootContainer = null;
+            a[uf] = null;
+          });
+        }), true) : false;
+      };
+      exports.unstable_batchedUpdates = Qk;
+      exports.unstable_renderSubtreeIntoContainer = function(a, b, c, d) {
+        if (!ol(c)) throw Error(p(200));
+        if (null == a || void 0 === a._reactInternals) throw Error(p(38));
+        return rl(a, b, c, false, d);
+      };
+      exports.version = "18.3.1-next-f1338f8080-20240426";
+    }
+  });
+
+  // node_modules/react-dom/index.js
+  var require_react_dom = __commonJS({
+    "node_modules/react-dom/index.js"(exports, module) {
+      "use strict";
+      function checkDCE() {
+        if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined" || typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE !== "function") {
+          return;
+        }
+        if (false) {
+          throw new Error("^_^");
+        }
+        try {
+          __REACT_DEVTOOLS_GLOBAL_HOOK__.checkDCE(checkDCE);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      if (true) {
+        checkDCE();
+        module.exports = require_react_dom_production_min();
+      } else {
+        module.exports = null;
+      }
+    }
+  });
+
+  // node_modules/react-dom/client.js
+  var require_client = __commonJS({
+    "node_modules/react-dom/client.js"(exports) {
+      "use strict";
+      var m = require_react_dom();
+      if (true) {
+        exports.createRoot = m.createRoot;
+        exports.hydrateRoot = m.hydrateRoot;
+      } else {
+        i = m.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        exports.createRoot = function(c, o) {
+          i.usingClientEntryPoint = true;
+          try {
+            return m.createRoot(c, o);
+          } finally {
+            i.usingClientEntryPoint = false;
+          }
+        };
+        exports.hydrateRoot = function(c, h, o) {
+          i.usingClientEntryPoint = true;
+          try {
+            return m.hydrateRoot(c, h, o);
+          } finally {
+            i.usingClientEntryPoint = false;
+          }
+        };
+      }
+      var i;
+    }
+  });
+
+  // node_modules/react/cjs/react-jsx-runtime.production.min.js
+  var require_react_jsx_runtime_production_min = __commonJS({
+    "node_modules/react/cjs/react-jsx-runtime.production.min.js"(exports) {
+      "use strict";
+      var f = require_react();
+      var k = Symbol.for("react.element");
+      var l = Symbol.for("react.fragment");
+      var m = Object.prototype.hasOwnProperty;
+      var n = f.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner;
+      var p = { key: true, ref: true, __self: true, __source: true };
+      function q(c, a, g) {
+        var b, d = {}, e = null, h = null;
+        void 0 !== g && (e = "" + g);
+        void 0 !== a.key && (e = "" + a.key);
+        void 0 !== a.ref && (h = a.ref);
+        for (b in a) m.call(a, b) && !p.hasOwnProperty(b) && (d[b] = a[b]);
+        if (c && c.defaultProps) for (b in a = c.defaultProps, a) void 0 === d[b] && (d[b] = a[b]);
+        return { $$typeof: k, type: c, key: e, ref: h, props: d, _owner: n.current };
+      }
+      exports.Fragment = l;
+      exports.jsx = q;
+      exports.jsxs = q;
+    }
+  });
+
+  // node_modules/react/jsx-runtime.js
+  var require_jsx_runtime = __commonJS({
+    "node_modules/react/jsx-runtime.js"(exports, module) {
+      "use strict";
+      if (true) {
+        module.exports = require_react_jsx_runtime_production_min();
+      } else {
+        module.exports = null;
+      }
+    }
+  });
+
+  // src/entry-umd.tsx
+  var entry_umd_exports = {};
+  __export(entry_umd_exports, {
+    default: () => entry_umd_default
+  });
+  var import_react52 = __toESM(require_react(), 1);
+  var import_client = __toESM(require_client(), 1);
+
+  // node_modules/react-router-dom/dist/index.js
+  var React2 = __toESM(require_react());
+  var ReactDOM = __toESM(require_react_dom());
+
+  // node_modules/react-router/dist/index.js
+  var React = __toESM(require_react());
+
+  // node_modules/@remix-run/router/dist/router.js
+  function _extends() {
+    _extends = Object.assign ? Object.assign.bind() : function(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+      return target;
+    };
+    return _extends.apply(this, arguments);
+  }
+  var Action;
+  (function(Action2) {
+    Action2["Pop"] = "POP";
+    Action2["Push"] = "PUSH";
+    Action2["Replace"] = "REPLACE";
+  })(Action || (Action = {}));
+  var PopStateEventType = "popstate";
+  function createBrowserHistory(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    function createBrowserLocation(window2, globalHistory) {
+      let {
+        pathname,
+        search,
+        hash
+      } = window2.location;
+      return createLocation(
+        "",
+        {
+          pathname,
+          search,
+          hash
+        },
+        // state defaults to `null` because `window.history.state` does
+        globalHistory.state && globalHistory.state.usr || null,
+        globalHistory.state && globalHistory.state.key || "default"
+      );
+    }
+    function createBrowserHref(window2, to) {
+      return typeof to === "string" ? to : createPath(to);
+    }
+    return getUrlBasedHistory(createBrowserLocation, createBrowserHref, null, options);
+  }
+  function invariant(value, message2) {
+    if (value === false || value === null || typeof value === "undefined") {
+      throw new Error(message2);
+    }
+  }
+  function warning(cond, message2) {
+    if (!cond) {
+      if (typeof console !== "undefined") console.warn(message2);
+      try {
+        throw new Error(message2);
+      } catch (e) {
+      }
+    }
+  }
+  function createKey() {
+    return Math.random().toString(36).substr(2, 8);
+  }
+  function getHistoryState(location, index) {
+    return {
+      usr: location.state,
+      key: location.key,
+      idx: index
+    };
+  }
+  function createLocation(current, to, state, key) {
+    if (state === void 0) {
+      state = null;
+    }
+    let location = _extends({
+      pathname: typeof current === "string" ? current : current.pathname,
+      search: "",
+      hash: ""
+    }, typeof to === "string" ? parsePath(to) : to, {
+      state,
+      // TODO: This could be cleaned up.  push/replace should probably just take
+      // full Locations now and avoid the need to run through this flow at all
+      // But that's a pretty big refactor to the current test suite so going to
+      // keep as is for the time being and just let any incoming keys take precedence
+      key: to && to.key || key || createKey()
+    });
+    return location;
+  }
+  function createPath(_ref) {
+    let {
+      pathname = "/",
+      search = "",
+      hash = ""
+    } = _ref;
+    if (search && search !== "?") pathname += search.charAt(0) === "?" ? search : "?" + search;
+    if (hash && hash !== "#") pathname += hash.charAt(0) === "#" ? hash : "#" + hash;
+    return pathname;
+  }
+  function parsePath(path) {
+    let parsedPath = {};
+    if (path) {
+      let hashIndex = path.indexOf("#");
+      if (hashIndex >= 0) {
+        parsedPath.hash = path.substr(hashIndex);
+        path = path.substr(0, hashIndex);
+      }
+      let searchIndex = path.indexOf("?");
+      if (searchIndex >= 0) {
+        parsedPath.search = path.substr(searchIndex);
+        path = path.substr(0, searchIndex);
+      }
+      if (path) {
+        parsedPath.pathname = path;
+      }
+    }
+    return parsedPath;
+  }
+  function getUrlBasedHistory(getLocation, createHref, validateLocation, options) {
+    if (options === void 0) {
+      options = {};
+    }
+    let {
+      window: window2 = document.defaultView,
+      v5Compat = false
+    } = options;
+    let globalHistory = window2.history;
+    let action = Action.Pop;
+    let listener = null;
+    let index = getIndex();
+    if (index == null) {
+      index = 0;
+      globalHistory.replaceState(_extends({}, globalHistory.state, {
+        idx: index
+      }), "");
+    }
+    function getIndex() {
+      let state = globalHistory.state || {
+        idx: null
+      };
+      return state.idx;
+    }
+    function handlePop() {
+      action = Action.Pop;
+      let nextIndex = getIndex();
+      let delta = nextIndex == null ? null : nextIndex - index;
+      index = nextIndex;
+      if (listener) {
+        listener({
+          action,
+          location: history.location,
+          delta
+        });
+      }
+    }
+    function push(to, state) {
+      action = Action.Push;
+      let location = createLocation(history.location, to, state);
+      if (validateLocation) validateLocation(location, to);
+      index = getIndex() + 1;
+      let historyState = getHistoryState(location, index);
+      let url = history.createHref(location);
+      try {
+        globalHistory.pushState(historyState, "", url);
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "DataCloneError") {
+          throw error;
+        }
+        window2.location.assign(url);
+      }
+      if (v5Compat && listener) {
+        listener({
+          action,
+          location: history.location,
+          delta: 1
+        });
+      }
+    }
+    function replace2(to, state) {
+      action = Action.Replace;
+      let location = createLocation(history.location, to, state);
+      if (validateLocation) validateLocation(location, to);
+      index = getIndex();
+      let historyState = getHistoryState(location, index);
+      let url = history.createHref(location);
+      globalHistory.replaceState(historyState, "", url);
+      if (v5Compat && listener) {
+        listener({
+          action,
+          location: history.location,
+          delta: 0
+        });
+      }
+    }
+    function createURL(to) {
+      let base = window2.location.origin !== "null" ? window2.location.origin : window2.location.href;
+      let href = typeof to === "string" ? to : createPath(to);
+      href = href.replace(/ $/, "%20");
+      invariant(base, "No window.location.(origin|href) available to create URL for href: " + href);
+      return new URL(href, base);
+    }
+    let history = {
+      get action() {
+        return action;
+      },
+      get location() {
+        return getLocation(window2, globalHistory);
+      },
+      listen(fn) {
+        if (listener) {
+          throw new Error("A history only accepts one active listener");
+        }
+        window2.addEventListener(PopStateEventType, handlePop);
+        listener = fn;
+        return () => {
+          window2.removeEventListener(PopStateEventType, handlePop);
+          listener = null;
+        };
+      },
+      createHref(to) {
+        return createHref(window2, to);
+      },
+      createURL,
+      encodeLocation(to) {
+        let url = createURL(to);
+        return {
+          pathname: url.pathname,
+          search: url.search,
+          hash: url.hash
+        };
+      },
+      push,
+      replace: replace2,
+      go(n) {
+        return globalHistory.go(n);
+      }
+    };
+    return history;
+  }
+  var ResultType;
+  (function(ResultType2) {
+    ResultType2["data"] = "data";
+    ResultType2["deferred"] = "deferred";
+    ResultType2["redirect"] = "redirect";
+    ResultType2["error"] = "error";
+  })(ResultType || (ResultType = {}));
+  function matchRoutes(routes, locationArg, basename) {
+    if (basename === void 0) {
+      basename = "/";
+    }
+    return matchRoutesImpl(routes, locationArg, basename, false);
+  }
+  function matchRoutesImpl(routes, locationArg, basename, allowPartial) {
+    let location = typeof locationArg === "string" ? parsePath(locationArg) : locationArg;
+    let pathname = stripBasename(location.pathname || "/", basename);
+    if (pathname == null) {
+      return null;
+    }
+    let branches = flattenRoutes(routes);
+    rankRouteBranches(branches);
+    let matches = null;
+    for (let i = 0; matches == null && i < branches.length; ++i) {
+      let decoded = decodePath(pathname);
+      matches = matchRouteBranch(branches[i], decoded, allowPartial);
+    }
+    return matches;
+  }
+  function flattenRoutes(routes, branches, parentsMeta, parentPath) {
+    if (branches === void 0) {
+      branches = [];
+    }
+    if (parentsMeta === void 0) {
+      parentsMeta = [];
+    }
+    if (parentPath === void 0) {
+      parentPath = "";
+    }
+    let flattenRoute = (route, index, relativePath) => {
+      let meta = {
+        relativePath: relativePath === void 0 ? route.path || "" : relativePath,
+        caseSensitive: route.caseSensitive === true,
+        childrenIndex: index,
+        route
+      };
+      if (meta.relativePath.startsWith("/")) {
+        invariant(meta.relativePath.startsWith(parentPath), 'Absolute route path "' + meta.relativePath + '" nested under path ' + ('"' + parentPath + '" is not valid. An absolute child route path ') + "must start with the combined path of all its parent routes.");
+        meta.relativePath = meta.relativePath.slice(parentPath.length);
+      }
+      let path = joinPaths([parentPath, meta.relativePath]);
+      let routesMeta = parentsMeta.concat(meta);
+      if (route.children && route.children.length > 0) {
+        invariant(
+          // Our types know better, but runtime JS may not!
+          // @ts-expect-error
+          route.index !== true,
+          "Index routes must not have child routes. Please remove " + ('all child routes from route path "' + path + '".')
+        );
+        flattenRoutes(route.children, branches, routesMeta, path);
+      }
+      if (route.path == null && !route.index) {
+        return;
+      }
+      branches.push({
+        path,
+        score: computeScore(path, route.index),
+        routesMeta
+      });
+    };
+    routes.forEach((route, index) => {
+      var _route$path;
+      if (route.path === "" || !((_route$path = route.path) != null && _route$path.includes("?"))) {
+        flattenRoute(route, index);
+      } else {
+        for (let exploded of explodeOptionalSegments(route.path)) {
+          flattenRoute(route, index, exploded);
+        }
+      }
+    });
+    return branches;
+  }
+  function explodeOptionalSegments(path) {
+    let segments = path.split("/");
+    if (segments.length === 0) return [];
+    let [first, ...rest] = segments;
+    let isOptional = first.endsWith("?");
+    let required = first.replace(/\?$/, "");
+    if (rest.length === 0) {
+      return isOptional ? [required, ""] : [required];
+    }
+    let restExploded = explodeOptionalSegments(rest.join("/"));
+    let result = [];
+    result.push(...restExploded.map((subpath) => subpath === "" ? required : [required, subpath].join("/")));
+    if (isOptional) {
+      result.push(...restExploded);
+    }
+    return result.map((exploded) => path.startsWith("/") && exploded === "" ? "/" : exploded);
+  }
+  function rankRouteBranches(branches) {
+    branches.sort((a, b) => a.score !== b.score ? b.score - a.score : compareIndexes(a.routesMeta.map((meta) => meta.childrenIndex), b.routesMeta.map((meta) => meta.childrenIndex)));
+  }
+  var paramRe = /^:[\w-]+$/;
+  var dynamicSegmentValue = 3;
+  var indexRouteValue = 2;
+  var emptySegmentValue = 1;
+  var staticSegmentValue = 10;
+  var splatPenalty = -2;
+  var isSplat = (s) => s === "*";
+  function computeScore(path, index) {
+    let segments = path.split("/");
+    let initialScore = segments.length;
+    if (segments.some(isSplat)) {
+      initialScore += splatPenalty;
+    }
+    if (index) {
+      initialScore += indexRouteValue;
+    }
+    return segments.filter((s) => !isSplat(s)).reduce((score, segment) => score + (paramRe.test(segment) ? dynamicSegmentValue : segment === "" ? emptySegmentValue : staticSegmentValue), initialScore);
+  }
+  function compareIndexes(a, b) {
+    let siblings = a.length === b.length && a.slice(0, -1).every((n, i) => n === b[i]);
+    return siblings ? (
+      // If two routes are siblings, we should try to match the earlier sibling
+      // first. This allows people to have fine-grained control over the matching
+      // behavior by simply putting routes with identical paths in the order they
+      // want them tried.
+      a[a.length - 1] - b[b.length - 1]
+    ) : (
+      // Otherwise, it doesn't really make sense to rank non-siblings by index,
+      // so they sort equally.
+      0
+    );
+  }
+  function matchRouteBranch(branch, pathname, allowPartial) {
+    if (allowPartial === void 0) {
+      allowPartial = false;
+    }
+    let {
+      routesMeta
+    } = branch;
+    let matchedParams = {};
+    let matchedPathname = "/";
+    let matches = [];
+    for (let i = 0; i < routesMeta.length; ++i) {
+      let meta = routesMeta[i];
+      let end = i === routesMeta.length - 1;
+      let remainingPathname = matchedPathname === "/" ? pathname : pathname.slice(matchedPathname.length) || "/";
+      let match2 = matchPath({
+        path: meta.relativePath,
+        caseSensitive: meta.caseSensitive,
+        end
+      }, remainingPathname);
+      let route = meta.route;
+      if (!match2 && end && allowPartial && !routesMeta[routesMeta.length - 1].route.index) {
+        match2 = matchPath({
+          path: meta.relativePath,
+          caseSensitive: meta.caseSensitive,
+          end: false
+        }, remainingPathname);
+      }
+      if (!match2) {
+        return null;
+      }
+      Object.assign(matchedParams, match2.params);
+      matches.push({
+        // TODO: Can this as be avoided?
+        params: matchedParams,
+        pathname: joinPaths([matchedPathname, match2.pathname]),
+        pathnameBase: normalizePathname(joinPaths([matchedPathname, match2.pathnameBase])),
+        route
+      });
+      if (match2.pathnameBase !== "/") {
+        matchedPathname = joinPaths([matchedPathname, match2.pathnameBase]);
+      }
+    }
+    return matches;
+  }
+  function matchPath(pattern, pathname) {
+    if (typeof pattern === "string") {
+      pattern = {
+        path: pattern,
+        caseSensitive: false,
+        end: true
+      };
+    }
+    let [matcher, compiledParams] = compilePath(pattern.path, pattern.caseSensitive, pattern.end);
+    let match2 = pathname.match(matcher);
+    if (!match2) return null;
+    let matchedPathname = match2[0];
+    let pathnameBase = matchedPathname.replace(/(.)\/+$/, "$1");
+    let captureGroups = match2.slice(1);
+    let params = compiledParams.reduce((memo2, _ref, index) => {
+      let {
+        paramName,
+        isOptional
+      } = _ref;
+      if (paramName === "*") {
+        let splatValue = captureGroups[index] || "";
+        pathnameBase = matchedPathname.slice(0, matchedPathname.length - splatValue.length).replace(/(.)\/+$/, "$1");
+      }
+      const value = captureGroups[index];
+      if (isOptional && !value) {
+        memo2[paramName] = void 0;
+      } else {
+        memo2[paramName] = (value || "").replace(/%2F/g, "/");
+      }
+      return memo2;
+    }, {});
+    return {
+      params,
+      pathname: matchedPathname,
+      pathnameBase,
+      pattern
+    };
+  }
+  function compilePath(path, caseSensitive, end) {
+    if (caseSensitive === void 0) {
+      caseSensitive = false;
+    }
+    if (end === void 0) {
+      end = true;
+    }
+    warning(path === "*" || !path.endsWith("*") || path.endsWith("/*"), 'Route path "' + path + '" will be treated as if it were ' + ('"' + path.replace(/\*$/, "/*") + '" because the `*` character must ') + "always follow a `/` in the pattern. To get rid of this warning, " + ('please change the route path to "' + path.replace(/\*$/, "/*") + '".'));
+    let params = [];
+    let regexpSource = "^" + path.replace(/\/*\*?$/, "").replace(/^\/*/, "/").replace(/[\\.*+^${}|()[\]]/g, "\\$&").replace(/\/:([\w-]+)(\?)?/g, (_, paramName, isOptional) => {
+      params.push({
+        paramName,
+        isOptional: isOptional != null
+      });
+      return isOptional ? "/?([^\\/]+)?" : "/([^\\/]+)";
+    });
+    if (path.endsWith("*")) {
+      params.push({
+        paramName: "*"
+      });
+      regexpSource += path === "*" || path === "/*" ? "(.*)$" : "(?:\\/(.+)|\\/*)$";
+    } else if (end) {
+      regexpSource += "\\/*$";
+    } else if (path !== "" && path !== "/") {
+      regexpSource += "(?:(?=\\/|$))";
+    } else ;
+    let matcher = new RegExp(regexpSource, caseSensitive ? void 0 : "i");
+    return [matcher, params];
+  }
+  function decodePath(value) {
+    try {
+      return value.split("/").map((v) => decodeURIComponent(v).replace(/\//g, "%2F")).join("/");
+    } catch (error) {
+      warning(false, 'The URL path "' + value + '" could not be decoded because it is is a malformed URL segment. This is probably due to a bad percent ' + ("encoding (" + error + ")."));
+      return value;
+    }
+  }
+  function stripBasename(pathname, basename) {
+    if (basename === "/") return pathname;
+    if (!pathname.toLowerCase().startsWith(basename.toLowerCase())) {
+      return null;
+    }
+    let startIndex = basename.endsWith("/") ? basename.length - 1 : basename.length;
+    let nextChar = pathname.charAt(startIndex);
+    if (nextChar && nextChar !== "/") {
+      return null;
+    }
+    return pathname.slice(startIndex) || "/";
+  }
+  function resolvePath(to, fromPathname) {
+    if (fromPathname === void 0) {
+      fromPathname = "/";
+    }
+    let {
+      pathname: toPathname,
+      search = "",
+      hash = ""
+    } = typeof to === "string" ? parsePath(to) : to;
+    let pathname = toPathname ? toPathname.startsWith("/") ? toPathname : resolvePathname(toPathname, fromPathname) : fromPathname;
+    return {
+      pathname,
+      search: normalizeSearch(search),
+      hash: normalizeHash(hash)
+    };
+  }
+  function resolvePathname(relativePath, fromPathname) {
+    let segments = fromPathname.replace(/\/+$/, "").split("/");
+    let relativeSegments = relativePath.split("/");
+    relativeSegments.forEach((segment) => {
+      if (segment === "..") {
+        if (segments.length > 1) segments.pop();
+      } else if (segment !== ".") {
+        segments.push(segment);
+      }
+    });
+    return segments.length > 1 ? segments.join("/") : "/";
+  }
+  function getInvalidPathError(char, field, dest, path) {
+    return "Cannot include a '" + char + "' character in a manually specified " + ("`to." + field + "` field [" + JSON.stringify(path) + "].  Please separate it out to the ") + ("`to." + dest + "` field. Alternatively you may provide the full path as ") + 'a string in <Link to="..."> and the router will parse it for you.';
+  }
+  function getPathContributingMatches(matches) {
+    return matches.filter((match2, index) => index === 0 || match2.route.path && match2.route.path.length > 0);
+  }
+  function getResolveToMatches(matches, v7_relativeSplatPath) {
+    let pathMatches = getPathContributingMatches(matches);
+    if (v7_relativeSplatPath) {
+      return pathMatches.map((match2, idx) => idx === pathMatches.length - 1 ? match2.pathname : match2.pathnameBase);
+    }
+    return pathMatches.map((match2) => match2.pathnameBase);
+  }
+  function resolveTo(toArg, routePathnames, locationPathname, isPathRelative) {
+    if (isPathRelative === void 0) {
+      isPathRelative = false;
+    }
+    let to;
+    if (typeof toArg === "string") {
+      to = parsePath(toArg);
+    } else {
+      to = _extends({}, toArg);
+      invariant(!to.pathname || !to.pathname.includes("?"), getInvalidPathError("?", "pathname", "search", to));
+      invariant(!to.pathname || !to.pathname.includes("#"), getInvalidPathError("#", "pathname", "hash", to));
+      invariant(!to.search || !to.search.includes("#"), getInvalidPathError("#", "search", "hash", to));
+    }
+    let isEmptyPath = toArg === "" || to.pathname === "";
+    let toPathname = isEmptyPath ? "/" : to.pathname;
+    let from;
+    if (toPathname == null) {
+      from = locationPathname;
+    } else {
+      let routePathnameIndex = routePathnames.length - 1;
+      if (!isPathRelative && toPathname.startsWith("..")) {
+        let toSegments = toPathname.split("/");
+        while (toSegments[0] === "..") {
+          toSegments.shift();
+          routePathnameIndex -= 1;
+        }
+        to.pathname = toSegments.join("/");
+      }
+      from = routePathnameIndex >= 0 ? routePathnames[routePathnameIndex] : "/";
+    }
+    let path = resolvePath(to, from);
+    let hasExplicitTrailingSlash = toPathname && toPathname !== "/" && toPathname.endsWith("/");
+    let hasCurrentTrailingSlash = (isEmptyPath || toPathname === ".") && locationPathname.endsWith("/");
+    if (!path.pathname.endsWith("/") && (hasExplicitTrailingSlash || hasCurrentTrailingSlash)) {
+      path.pathname += "/";
+    }
+    return path;
+  }
+  var joinPaths = (paths) => paths.join("/").replace(/\/\/+/g, "/");
+  var normalizePathname = (pathname) => pathname.replace(/\/+$/, "").replace(/^\/*/, "/");
+  var normalizeSearch = (search) => !search || search === "?" ? "" : search.startsWith("?") ? search : "?" + search;
+  var normalizeHash = (hash) => !hash || hash === "#" ? "" : hash.startsWith("#") ? hash : "#" + hash;
+  function isRouteErrorResponse(error) {
+    return error != null && typeof error.status === "number" && typeof error.statusText === "string" && typeof error.internal === "boolean" && "data" in error;
+  }
+  var validMutationMethodsArr = ["post", "put", "patch", "delete"];
+  var validMutationMethods = new Set(validMutationMethodsArr);
+  var validRequestMethodsArr = ["get", ...validMutationMethodsArr];
+  var validRequestMethods = new Set(validRequestMethodsArr);
+  var UNSAFE_DEFERRED_SYMBOL = Symbol("deferred");
+
+  // node_modules/react-router/dist/index.js
+  function _extends2() {
+    _extends2 = Object.assign ? Object.assign.bind() : function(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+      return target;
+    };
+    return _extends2.apply(this, arguments);
+  }
+  var DataRouterContext = /* @__PURE__ */ React.createContext(null);
+  if (false) {
+    DataRouterContext.displayName = "DataRouter";
+  }
+  var DataRouterStateContext = /* @__PURE__ */ React.createContext(null);
+  if (false) {
+    DataRouterStateContext.displayName = "DataRouterState";
+  }
+  if (false) {
+    AwaitContext.displayName = "Await";
+  }
+  var NavigationContext = /* @__PURE__ */ React.createContext(null);
+  if (false) {
+    NavigationContext.displayName = "Navigation";
+  }
+  var LocationContext = /* @__PURE__ */ React.createContext(null);
+  if (false) {
+    LocationContext.displayName = "Location";
+  }
+  var RouteContext = /* @__PURE__ */ React.createContext({
+    outlet: null,
+    matches: [],
+    isDataRoute: false
+  });
+  if (false) {
+    RouteContext.displayName = "Route";
+  }
+  var RouteErrorContext = /* @__PURE__ */ React.createContext(null);
+  if (false) {
+    RouteErrorContext.displayName = "RouteError";
+  }
+  function useHref(to, _temp) {
+    let {
+      relative
+    } = _temp === void 0 ? {} : _temp;
+    !useInRouterContext() ? false ? invariant(
+      false,
+      // TODO: This error is probably because they somehow have 2 versions of the
+      // router loaded. We can help them understand how to avoid that.
+      "useHref() may be used only in the context of a <Router> component."
+    ) : invariant(false) : void 0;
+    let {
+      basename,
+      navigator: navigator2
+    } = React.useContext(NavigationContext);
+    let {
+      hash,
+      pathname,
+      search
+    } = useResolvedPath(to, {
+      relative
+    });
+    let joinedPathname = pathname;
+    if (basename !== "/") {
+      joinedPathname = pathname === "/" ? basename : joinPaths([basename, pathname]);
+    }
+    return navigator2.createHref({
+      pathname: joinedPathname,
+      search,
+      hash
+    });
+  }
+  function useInRouterContext() {
+    return React.useContext(LocationContext) != null;
+  }
+  function useLocation() {
+    !useInRouterContext() ? false ? invariant(
+      false,
+      // TODO: This error is probably because they somehow have 2 versions of the
+      // router loaded. We can help them understand how to avoid that.
+      "useLocation() may be used only in the context of a <Router> component."
+    ) : invariant(false) : void 0;
+    return React.useContext(LocationContext).location;
+  }
+  function useIsomorphicLayoutEffect(cb) {
+    let isStatic = React.useContext(NavigationContext).static;
+    if (!isStatic) {
+      React.useLayoutEffect(cb);
+    }
+  }
+  function useNavigate() {
+    let {
+      isDataRoute
+    } = React.useContext(RouteContext);
+    return isDataRoute ? useNavigateStable() : useNavigateUnstable();
+  }
+  function useNavigateUnstable() {
+    !useInRouterContext() ? false ? invariant(
+      false,
+      // TODO: This error is probably because they somehow have 2 versions of the
+      // router loaded. We can help them understand how to avoid that.
+      "useNavigate() may be used only in the context of a <Router> component."
+    ) : invariant(false) : void 0;
+    let dataRouterContext = React.useContext(DataRouterContext);
+    let {
+      basename,
+      future,
+      navigator: navigator2
+    } = React.useContext(NavigationContext);
+    let {
+      matches
+    } = React.useContext(RouteContext);
+    let {
+      pathname: locationPathname
+    } = useLocation();
+    let routePathnamesJson = JSON.stringify(getResolveToMatches(matches, future.v7_relativeSplatPath));
+    let activeRef = React.useRef(false);
+    useIsomorphicLayoutEffect(() => {
+      activeRef.current = true;
+    });
+    let navigate = React.useCallback(function(to, options) {
+      if (options === void 0) {
+        options = {};
+      }
+      false ? warning(activeRef.current, navigateEffectWarning) : void 0;
+      if (!activeRef.current) return;
+      if (typeof to === "number") {
+        navigator2.go(to);
+        return;
+      }
+      let path = resolveTo(to, JSON.parse(routePathnamesJson), locationPathname, options.relative === "path");
+      if (dataRouterContext == null && basename !== "/") {
+        path.pathname = path.pathname === "/" ? basename : joinPaths([basename, path.pathname]);
+      }
+      (!!options.replace ? navigator2.replace : navigator2.push)(path, options.state, options);
+    }, [basename, navigator2, routePathnamesJson, locationPathname, dataRouterContext]);
+    return navigate;
+  }
+  var OutletContext = /* @__PURE__ */ React.createContext(null);
+  function useOutlet(context) {
+    let outlet = React.useContext(RouteContext).outlet;
+    if (outlet) {
+      return /* @__PURE__ */ React.createElement(OutletContext.Provider, {
+        value: context
+      }, outlet);
+    }
+    return outlet;
+  }
+  function useResolvedPath(to, _temp2) {
+    let {
+      relative
+    } = _temp2 === void 0 ? {} : _temp2;
+    let {
+      future
+    } = React.useContext(NavigationContext);
+    let {
+      matches
+    } = React.useContext(RouteContext);
+    let {
+      pathname: locationPathname
+    } = useLocation();
+    let routePathnamesJson = JSON.stringify(getResolveToMatches(matches, future.v7_relativeSplatPath));
+    return React.useMemo(() => resolveTo(to, JSON.parse(routePathnamesJson), locationPathname, relative === "path"), [to, routePathnamesJson, locationPathname, relative]);
+  }
+  function useRoutes(routes, locationArg) {
+    return useRoutesImpl(routes, locationArg);
+  }
+  function useRoutesImpl(routes, locationArg, dataRouterState, future) {
+    !useInRouterContext() ? false ? invariant(
+      false,
+      // TODO: This error is probably because they somehow have 2 versions of the
+      // router loaded. We can help them understand how to avoid that.
+      "useRoutes() may be used only in the context of a <Router> component."
+    ) : invariant(false) : void 0;
+    let {
+      navigator: navigator2
+    } = React.useContext(NavigationContext);
+    let {
+      matches: parentMatches
+    } = React.useContext(RouteContext);
+    let routeMatch = parentMatches[parentMatches.length - 1];
+    let parentParams = routeMatch ? routeMatch.params : {};
+    let parentPathname = routeMatch ? routeMatch.pathname : "/";
+    let parentPathnameBase = routeMatch ? routeMatch.pathnameBase : "/";
+    let parentRoute = routeMatch && routeMatch.route;
+    if (false) {
+      let parentPath = parentRoute && parentRoute.path || "";
+      warningOnce(parentPathname, !parentRoute || parentPath.endsWith("*"), "You rendered descendant <Routes> (or called `useRoutes()`) at " + ('"' + parentPathname + '" (under <Route path="' + parentPath + '">) but the ') + `parent route path has no trailing "*". This means if you navigate deeper, the parent won't match anymore and therefore the child routes will never render.
+
+` + ('Please change the parent <Route path="' + parentPath + '"> to <Route ') + ('path="' + (parentPath === "/" ? "*" : parentPath + "/*") + '">.'));
+    }
+    let locationFromContext = useLocation();
+    let location;
+    if (locationArg) {
+      var _parsedLocationArg$pa;
+      let parsedLocationArg = typeof locationArg === "string" ? parsePath(locationArg) : locationArg;
+      !(parentPathnameBase === "/" || ((_parsedLocationArg$pa = parsedLocationArg.pathname) == null ? void 0 : _parsedLocationArg$pa.startsWith(parentPathnameBase))) ? false ? invariant(false, "When overriding the location using `<Routes location>` or `useRoutes(routes, location)`, the location pathname must begin with the portion of the URL pathname that was " + ('matched by all parent routes. The current pathname base is "' + parentPathnameBase + '" ') + ('but pathname "' + parsedLocationArg.pathname + '" was given in the `location` prop.')) : invariant(false) : void 0;
+      location = parsedLocationArg;
+    } else {
+      location = locationFromContext;
+    }
+    let pathname = location.pathname || "/";
+    let remainingPathname = pathname;
+    if (parentPathnameBase !== "/") {
+      let parentSegments = parentPathnameBase.replace(/^\//, "").split("/");
+      let segments = pathname.replace(/^\//, "").split("/");
+      remainingPathname = "/" + segments.slice(parentSegments.length).join("/");
+    }
+    let matches = matchRoutes(routes, {
+      pathname: remainingPathname
+    });
+    if (false) {
+      false ? warning(parentRoute || matches != null, 'No routes matched location "' + location.pathname + location.search + location.hash + '" ') : void 0;
+      false ? warning(matches == null || matches[matches.length - 1].route.element !== void 0 || matches[matches.length - 1].route.Component !== void 0 || matches[matches.length - 1].route.lazy !== void 0, 'Matched leaf route at location "' + location.pathname + location.search + location.hash + '" does not have an element or Component. This means it will render an <Outlet /> with a null value by default resulting in an "empty" page.') : void 0;
+    }
+    let renderedMatches = _renderMatches(matches && matches.map((match2) => Object.assign({}, match2, {
+      params: Object.assign({}, parentParams, match2.params),
+      pathname: joinPaths([
+        parentPathnameBase,
+        // Re-encode pathnames that were decoded inside matchRoutes
+        navigator2.encodeLocation ? navigator2.encodeLocation(match2.pathname).pathname : match2.pathname
+      ]),
+      pathnameBase: match2.pathnameBase === "/" ? parentPathnameBase : joinPaths([
+        parentPathnameBase,
+        // Re-encode pathnames that were decoded inside matchRoutes
+        navigator2.encodeLocation ? navigator2.encodeLocation(match2.pathnameBase).pathname : match2.pathnameBase
+      ])
+    })), parentMatches, dataRouterState, future);
+    if (locationArg && renderedMatches) {
+      return /* @__PURE__ */ React.createElement(LocationContext.Provider, {
+        value: {
+          location: _extends2({
+            pathname: "/",
+            search: "",
+            hash: "",
+            state: null,
+            key: "default"
+          }, location),
+          navigationType: Action.Pop
+        }
+      }, renderedMatches);
+    }
+    return renderedMatches;
+  }
+  function DefaultErrorComponent() {
+    let error = useRouteError();
+    let message2 = isRouteErrorResponse(error) ? error.status + " " + error.statusText : error instanceof Error ? error.message : JSON.stringify(error);
+    let stack = error instanceof Error ? error.stack : null;
+    let lightgrey = "rgba(200,200,200, 0.5)";
+    let preStyles = {
+      padding: "0.5rem",
+      backgroundColor: lightgrey
+    };
+    let codeStyles = {
+      padding: "2px 4px",
+      backgroundColor: lightgrey
+    };
+    let devInfo = null;
+    if (false) {
+      console.error("Error handled by React Router default ErrorBoundary:", error);
+      devInfo = /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("p", null, "\u{1F4BF} Hey developer \u{1F44B}"), /* @__PURE__ */ React.createElement("p", null, "You can provide a way better UX than this when your app throws errors by providing your own ", /* @__PURE__ */ React.createElement("code", {
+        style: codeStyles
+      }, "ErrorBoundary"), " or", " ", /* @__PURE__ */ React.createElement("code", {
+        style: codeStyles
+      }, "errorElement"), " prop on your route."));
+    }
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("h2", null, "Unexpected Application Error!"), /* @__PURE__ */ React.createElement("h3", {
+      style: {
+        fontStyle: "italic"
+      }
+    }, message2), stack ? /* @__PURE__ */ React.createElement("pre", {
+      style: preStyles
+    }, stack) : null, devInfo);
+  }
+  var defaultErrorElement = /* @__PURE__ */ React.createElement(DefaultErrorComponent, null);
+  var RenderErrorBoundary = class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        location: props.location,
+        revalidation: props.revalidation,
+        error: props.error
+      };
+    }
+    static getDerivedStateFromError(error) {
+      return {
+        error
+      };
+    }
+    static getDerivedStateFromProps(props, state) {
+      if (state.location !== props.location || state.revalidation !== "idle" && props.revalidation === "idle") {
+        return {
+          error: props.error,
+          location: props.location,
+          revalidation: props.revalidation
+        };
+      }
+      return {
+        error: props.error !== void 0 ? props.error : state.error,
+        location: state.location,
+        revalidation: props.revalidation || state.revalidation
+      };
+    }
+    componentDidCatch(error, errorInfo) {
+      console.error("React Router caught the following error during render", error, errorInfo);
+    }
+    render() {
+      return this.state.error !== void 0 ? /* @__PURE__ */ React.createElement(RouteContext.Provider, {
+        value: this.props.routeContext
+      }, /* @__PURE__ */ React.createElement(RouteErrorContext.Provider, {
+        value: this.state.error,
+        children: this.props.component
+      })) : this.props.children;
+    }
+  };
+  function RenderedRoute(_ref) {
+    let {
+      routeContext,
+      match: match2,
+      children
+    } = _ref;
+    let dataRouterContext = React.useContext(DataRouterContext);
+    if (dataRouterContext && dataRouterContext.static && dataRouterContext.staticContext && (match2.route.errorElement || match2.route.ErrorBoundary)) {
+      dataRouterContext.staticContext._deepestRenderedBoundaryId = match2.route.id;
+    }
+    return /* @__PURE__ */ React.createElement(RouteContext.Provider, {
+      value: routeContext
+    }, children);
+  }
+  function _renderMatches(matches, parentMatches, dataRouterState, future) {
+    var _dataRouterState;
+    if (parentMatches === void 0) {
+      parentMatches = [];
+    }
+    if (dataRouterState === void 0) {
+      dataRouterState = null;
+    }
+    if (future === void 0) {
+      future = null;
+    }
+    if (matches == null) {
+      var _future;
+      if (!dataRouterState) {
+        return null;
+      }
+      if (dataRouterState.errors) {
+        matches = dataRouterState.matches;
+      } else if ((_future = future) != null && _future.v7_partialHydration && parentMatches.length === 0 && !dataRouterState.initialized && dataRouterState.matches.length > 0) {
+        matches = dataRouterState.matches;
+      } else {
+        return null;
+      }
+    }
+    let renderedMatches = matches;
+    let errors = (_dataRouterState = dataRouterState) == null ? void 0 : _dataRouterState.errors;
+    if (errors != null) {
+      let errorIndex = renderedMatches.findIndex((m) => m.route.id && (errors == null ? void 0 : errors[m.route.id]) !== void 0);
+      !(errorIndex >= 0) ? false ? invariant(false, "Could not find a matching route for errors on route IDs: " + Object.keys(errors).join(",")) : invariant(false) : void 0;
+      renderedMatches = renderedMatches.slice(0, Math.min(renderedMatches.length, errorIndex + 1));
+    }
+    let renderFallback = false;
+    let fallbackIndex = -1;
+    if (dataRouterState && future && future.v7_partialHydration) {
+      for (let i = 0; i < renderedMatches.length; i++) {
+        let match2 = renderedMatches[i];
+        if (match2.route.HydrateFallback || match2.route.hydrateFallbackElement) {
+          fallbackIndex = i;
+        }
+        if (match2.route.id) {
+          let {
+            loaderData,
+            errors: errors2
+          } = dataRouterState;
+          let needsToRunLoader = match2.route.loader && loaderData[match2.route.id] === void 0 && (!errors2 || errors2[match2.route.id] === void 0);
+          if (match2.route.lazy || needsToRunLoader) {
+            renderFallback = true;
+            if (fallbackIndex >= 0) {
+              renderedMatches = renderedMatches.slice(0, fallbackIndex + 1);
+            } else {
+              renderedMatches = [renderedMatches[0]];
+            }
+            break;
+          }
+        }
+      }
+    }
+    return renderedMatches.reduceRight((outlet, match2, index) => {
+      let error;
+      let shouldRenderHydrateFallback = false;
+      let errorElement = null;
+      let hydrateFallbackElement = null;
+      if (dataRouterState) {
+        error = errors && match2.route.id ? errors[match2.route.id] : void 0;
+        errorElement = match2.route.errorElement || defaultErrorElement;
+        if (renderFallback) {
+          if (fallbackIndex < 0 && index === 0) {
+            warningOnce("route-fallback", false, "No `HydrateFallback` element provided to render during initial hydration");
+            shouldRenderHydrateFallback = true;
+            hydrateFallbackElement = null;
+          } else if (fallbackIndex === index) {
+            shouldRenderHydrateFallback = true;
+            hydrateFallbackElement = match2.route.hydrateFallbackElement || null;
+          }
+        }
+      }
+      let matches2 = parentMatches.concat(renderedMatches.slice(0, index + 1));
+      let getChildren = () => {
+        let children;
+        if (error) {
+          children = errorElement;
+        } else if (shouldRenderHydrateFallback) {
+          children = hydrateFallbackElement;
+        } else if (match2.route.Component) {
+          children = /* @__PURE__ */ React.createElement(match2.route.Component, null);
+        } else if (match2.route.element) {
+          children = match2.route.element;
+        } else {
+          children = outlet;
+        }
+        return /* @__PURE__ */ React.createElement(RenderedRoute, {
+          match: match2,
+          routeContext: {
+            outlet,
+            matches: matches2,
+            isDataRoute: dataRouterState != null
+          },
+          children
+        });
+      };
+      return dataRouterState && (match2.route.ErrorBoundary || match2.route.errorElement || index === 0) ? /* @__PURE__ */ React.createElement(RenderErrorBoundary, {
+        location: dataRouterState.location,
+        revalidation: dataRouterState.revalidation,
+        component: errorElement,
+        error,
+        children: getChildren(),
+        routeContext: {
+          outlet: null,
+          matches: matches2,
+          isDataRoute: true
+        }
+      }) : getChildren();
+    }, null);
+  }
+  var DataRouterHook = /* @__PURE__ */ function(DataRouterHook3) {
+    DataRouterHook3["UseBlocker"] = "useBlocker";
+    DataRouterHook3["UseRevalidator"] = "useRevalidator";
+    DataRouterHook3["UseNavigateStable"] = "useNavigate";
+    return DataRouterHook3;
+  }(DataRouterHook || {});
+  var DataRouterStateHook = /* @__PURE__ */ function(DataRouterStateHook3) {
+    DataRouterStateHook3["UseBlocker"] = "useBlocker";
+    DataRouterStateHook3["UseLoaderData"] = "useLoaderData";
+    DataRouterStateHook3["UseActionData"] = "useActionData";
+    DataRouterStateHook3["UseRouteError"] = "useRouteError";
+    DataRouterStateHook3["UseNavigation"] = "useNavigation";
+    DataRouterStateHook3["UseRouteLoaderData"] = "useRouteLoaderData";
+    DataRouterStateHook3["UseMatches"] = "useMatches";
+    DataRouterStateHook3["UseRevalidator"] = "useRevalidator";
+    DataRouterStateHook3["UseNavigateStable"] = "useNavigate";
+    DataRouterStateHook3["UseRouteId"] = "useRouteId";
+    return DataRouterStateHook3;
+  }(DataRouterStateHook || {});
+  function useDataRouterContext(hookName) {
+    let ctx = React.useContext(DataRouterContext);
+    !ctx ? false ? invariant(false, getDataRouterConsoleError(hookName)) : invariant(false) : void 0;
+    return ctx;
+  }
+  function useDataRouterState(hookName) {
+    let state = React.useContext(DataRouterStateContext);
+    !state ? false ? invariant(false, getDataRouterConsoleError(hookName)) : invariant(false) : void 0;
+    return state;
+  }
+  function useRouteContext(hookName) {
+    let route = React.useContext(RouteContext);
+    !route ? false ? invariant(false, getDataRouterConsoleError(hookName)) : invariant(false) : void 0;
+    return route;
+  }
+  function useCurrentRouteId(hookName) {
+    let route = useRouteContext(hookName);
+    let thisRoute = route.matches[route.matches.length - 1];
+    !thisRoute.route.id ? false ? invariant(false, hookName + ' can only be used on routes that contain a unique "id"') : invariant(false) : void 0;
+    return thisRoute.route.id;
+  }
+  function useRouteError() {
+    var _state$errors;
+    let error = React.useContext(RouteErrorContext);
+    let state = useDataRouterState(DataRouterStateHook.UseRouteError);
+    let routeId = useCurrentRouteId(DataRouterStateHook.UseRouteError);
+    if (error !== void 0) {
+      return error;
+    }
+    return (_state$errors = state.errors) == null ? void 0 : _state$errors[routeId];
+  }
+  function useNavigateStable() {
+    let {
+      router
+    } = useDataRouterContext(DataRouterHook.UseNavigateStable);
+    let id = useCurrentRouteId(DataRouterStateHook.UseNavigateStable);
+    let activeRef = React.useRef(false);
+    useIsomorphicLayoutEffect(() => {
+      activeRef.current = true;
+    });
+    let navigate = React.useCallback(function(to, options) {
+      if (options === void 0) {
+        options = {};
+      }
+      false ? warning(activeRef.current, navigateEffectWarning) : void 0;
+      if (!activeRef.current) return;
+      if (typeof to === "number") {
+        router.navigate(to);
+      } else {
+        router.navigate(to, _extends2({
+          fromRouteId: id
+        }, options));
+      }
+    }, [router, id]);
+    return navigate;
+  }
+  var alreadyWarned$1 = {};
+  function warningOnce(key, cond, message2) {
+    if (!cond && !alreadyWarned$1[key]) {
+      alreadyWarned$1[key] = true;
+      false ? warning(false, message2) : void 0;
+    }
+  }
+  var alreadyWarned = {};
+  function warnOnce(key, message2) {
+    if (!alreadyWarned[message2]) {
+      alreadyWarned[message2] = true;
+      console.warn(message2);
+    }
+  }
+  var logDeprecation = (flag, msg, link) => warnOnce(flag, "\u26A0\uFE0F React Router Future Flag Warning: " + msg + ". " + ("You can use the `" + flag + "` future flag to opt-in early. ") + ("For more information, see " + link + "."));
+  function logV6DeprecationWarnings(renderFuture, routerFuture) {
+    if (!(renderFuture != null && renderFuture.v7_startTransition)) {
+      logDeprecation("v7_startTransition", "React Router will begin wrapping state updates in `React.startTransition` in v7", "https://reactrouter.com/v6/upgrading/future#v7_starttransition");
+    }
+    if (!(renderFuture != null && renderFuture.v7_relativeSplatPath) && (!routerFuture || !routerFuture.v7_relativeSplatPath)) {
+      logDeprecation("v7_relativeSplatPath", "Relative route resolution within Splat routes is changing in v7", "https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath");
+    }
+    if (routerFuture) {
+      if (!routerFuture.v7_fetcherPersist) {
+        logDeprecation("v7_fetcherPersist", "The persistence behavior of fetchers is changing in v7", "https://reactrouter.com/v6/upgrading/future#v7_fetcherpersist");
+      }
+      if (!routerFuture.v7_normalizeFormMethod) {
+        logDeprecation("v7_normalizeFormMethod", "Casing of `formMethod` fields is being normalized to uppercase in v7", "https://reactrouter.com/v6/upgrading/future#v7_normalizeformmethod");
+      }
+      if (!routerFuture.v7_partialHydration) {
+        logDeprecation("v7_partialHydration", "`RouterProvider` hydration behavior is changing in v7", "https://reactrouter.com/v6/upgrading/future#v7_partialhydration");
+      }
+      if (!routerFuture.v7_skipActionErrorRevalidation) {
+        logDeprecation("v7_skipActionErrorRevalidation", "The revalidation behavior after 4xx/5xx `action` responses is changing in v7", "https://reactrouter.com/v6/upgrading/future#v7_skipactionerrorrevalidation");
+      }
+    }
+  }
+  var START_TRANSITION = "startTransition";
+  var startTransitionImpl = React[START_TRANSITION];
+  function Outlet(props) {
+    return useOutlet(props.context);
+  }
+  function Route(_props) {
+    false ? invariant(false, "A <Route> is only ever to be used as the child of <Routes> element, never rendered directly. Please wrap your <Route> in a <Routes>.") : invariant(false);
+  }
+  function Router(_ref5) {
+    let {
+      basename: basenameProp = "/",
+      children = null,
+      location: locationProp,
+      navigationType = Action.Pop,
+      navigator: navigator2,
+      static: staticProp = false,
+      future
+    } = _ref5;
+    !!useInRouterContext() ? false ? invariant(false, "You cannot render a <Router> inside another <Router>. You should never have more than one in your app.") : invariant(false) : void 0;
+    let basename = basenameProp.replace(/^\/*/, "/");
+    let navigationContext = React.useMemo(() => ({
+      basename,
+      navigator: navigator2,
+      static: staticProp,
+      future: _extends2({
+        v7_relativeSplatPath: false
+      }, future)
+    }), [basename, future, navigator2, staticProp]);
+    if (typeof locationProp === "string") {
+      locationProp = parsePath(locationProp);
+    }
+    let {
+      pathname = "/",
+      search = "",
+      hash = "",
+      state = null,
+      key = "default"
+    } = locationProp;
+    let locationContext = React.useMemo(() => {
+      let trailingPathname = stripBasename(pathname, basename);
+      if (trailingPathname == null) {
+        return null;
+      }
+      return {
+        location: {
+          pathname: trailingPathname,
+          search,
+          hash,
+          state,
+          key
+        },
+        navigationType
+      };
+    }, [basename, pathname, search, hash, state, key, navigationType]);
+    false ? warning(locationContext != null, '<Router basename="' + basename + '"> is not able to match the URL ' + ('"' + pathname + search + hash + '" because it does not start with the ') + "basename, so the <Router> won't render anything.") : void 0;
+    if (locationContext == null) {
+      return null;
+    }
+    return /* @__PURE__ */ React.createElement(NavigationContext.Provider, {
+      value: navigationContext
+    }, /* @__PURE__ */ React.createElement(LocationContext.Provider, {
+      children,
+      value: locationContext
+    }));
+  }
+  function Routes(_ref6) {
+    let {
+      children,
+      location
+    } = _ref6;
+    return useRoutes(createRoutesFromChildren(children), location);
+  }
+  var neverSettledPromise = new Promise(() => {
+  });
+  function createRoutesFromChildren(children, parentPath) {
+    if (parentPath === void 0) {
+      parentPath = [];
+    }
+    let routes = [];
+    React.Children.forEach(children, (element, index) => {
+      if (!/* @__PURE__ */ React.isValidElement(element)) {
+        return;
+      }
+      let treePath = [...parentPath, index];
+      if (element.type === React.Fragment) {
+        routes.push.apply(routes, createRoutesFromChildren(element.props.children, treePath));
+        return;
+      }
+      !(element.type === Route) ? false ? invariant(false, "[" + (typeof element.type === "string" ? element.type : element.type.name) + "] is not a <Route> component. All component children of <Routes> must be a <Route> or <React.Fragment>") : invariant(false) : void 0;
+      !(!element.props.index || !element.props.children) ? false ? invariant(false, "An index route cannot have child routes.") : invariant(false) : void 0;
+      let route = {
+        id: element.props.id || treePath.join("-"),
+        caseSensitive: element.props.caseSensitive,
+        element: element.props.element,
+        Component: element.props.Component,
+        index: element.props.index,
+        path: element.props.path,
+        loader: element.props.loader,
+        action: element.props.action,
+        errorElement: element.props.errorElement,
+        ErrorBoundary: element.props.ErrorBoundary,
+        hasErrorBoundary: element.props.ErrorBoundary != null || element.props.errorElement != null,
+        shouldRevalidate: element.props.shouldRevalidate,
+        handle: element.props.handle,
+        lazy: element.props.lazy
+      };
+      if (element.props.children) {
+        route.children = createRoutesFromChildren(element.props.children, treePath);
+      }
+      routes.push(route);
+    });
+    return routes;
+  }
+
+  // node_modules/react-router-dom/dist/index.js
+  function _extends3() {
+    _extends3 = Object.assign ? Object.assign.bind() : function(target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+      return target;
+    };
+    return _extends3.apply(this, arguments);
+  }
+  function _objectWithoutPropertiesLoose(source, excluded) {
+    if (source == null) return {};
+    var target = {};
+    var sourceKeys = Object.keys(source);
+    var key, i;
+    for (i = 0; i < sourceKeys.length; i++) {
+      key = sourceKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      target[key] = source[key];
+    }
+    return target;
+  }
+  function isModifiedEvent(event) {
+    return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
+  }
+  function shouldProcessLinkClick(event, target) {
+    return event.button === 0 && // Ignore everything but left clicks
+    (!target || target === "_self") && // Let browser handle "target=_blank" etc.
+    !isModifiedEvent(event);
+  }
+  var _excluded = ["onClick", "relative", "reloadDocument", "replace", "state", "target", "to", "preventScrollReset", "viewTransition"];
+  var _excluded2 = ["aria-current", "caseSensitive", "className", "end", "style", "to", "viewTransition", "children"];
+  var REACT_ROUTER_VERSION = "6";
+  try {
+    window.__reactRouterVersion = REACT_ROUTER_VERSION;
+  } catch (e) {
+  }
+  var ViewTransitionContext = /* @__PURE__ */ React2.createContext({
+    isTransitioning: false
+  });
+  if (false) {
+    ViewTransitionContext.displayName = "ViewTransition";
+  }
+  if (false) {
+    FetchersContext.displayName = "Fetchers";
+  }
+  var START_TRANSITION2 = "startTransition";
+  var startTransitionImpl2 = React2[START_TRANSITION2];
+  var FLUSH_SYNC = "flushSync";
+  var flushSyncImpl = ReactDOM[FLUSH_SYNC];
+  var USE_ID = "useId";
+  var useIdImpl = React2[USE_ID];
+  function BrowserRouter(_ref4) {
+    let {
+      basename,
+      children,
+      future,
+      window: window2
+    } = _ref4;
+    let historyRef = React2.useRef();
+    if (historyRef.current == null) {
+      historyRef.current = createBrowserHistory({
+        window: window2,
+        v5Compat: true
+      });
+    }
+    let history = historyRef.current;
+    let [state, setStateImpl] = React2.useState({
+      action: history.action,
+      location: history.location
+    });
+    let {
+      v7_startTransition
+    } = future || {};
+    let setState = React2.useCallback((newState) => {
+      v7_startTransition && startTransitionImpl2 ? startTransitionImpl2(() => setStateImpl(newState)) : setStateImpl(newState);
+    }, [setStateImpl, v7_startTransition]);
+    React2.useLayoutEffect(() => history.listen(setState), [history, setState]);
+    React2.useEffect(() => logV6DeprecationWarnings(future), [future]);
+    return /* @__PURE__ */ React2.createElement(Router, {
+      basename,
+      children,
+      location: state.location,
+      navigationType: state.action,
+      navigator: history,
+      future
+    });
+  }
+  if (false) {
+    HistoryRouter.displayName = "unstable_HistoryRouter";
+  }
+  var isBrowser = typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.document.createElement !== "undefined";
+  var ABSOLUTE_URL_REGEX = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
+  var Link = /* @__PURE__ */ React2.forwardRef(function LinkWithRef(_ref7, ref) {
+    let {
+      onClick,
+      relative,
+      reloadDocument,
+      replace: replace2,
+      state,
+      target,
+      to,
+      preventScrollReset,
+      viewTransition
+    } = _ref7, rest = _objectWithoutPropertiesLoose(_ref7, _excluded);
+    let {
+      basename
+    } = React2.useContext(NavigationContext);
+    let absoluteHref;
+    let isExternal = false;
+    if (typeof to === "string" && ABSOLUTE_URL_REGEX.test(to)) {
+      absoluteHref = to;
+      if (isBrowser) {
+        try {
+          let currentUrl = new URL(window.location.href);
+          let targetUrl = to.startsWith("//") ? new URL(currentUrl.protocol + to) : new URL(to);
+          let path = stripBasename(targetUrl.pathname, basename);
+          if (targetUrl.origin === currentUrl.origin && path != null) {
+            to = path + targetUrl.search + targetUrl.hash;
+          } else {
+            isExternal = true;
+          }
+        } catch (e) {
+          false ? warning(false, '<Link to="' + to + '"> contains an invalid URL which will probably break when clicked - please update to a valid URL path.') : void 0;
+        }
+      }
+    }
+    let href = useHref(to, {
+      relative
+    });
+    let internalOnClick = useLinkClickHandler(to, {
+      replace: replace2,
+      state,
+      target,
+      preventScrollReset,
+      relative,
+      viewTransition
+    });
+    function handleClick(event) {
+      if (onClick) onClick(event);
+      if (!event.defaultPrevented) {
+        internalOnClick(event);
+      }
+    }
+    return (
+      // eslint-disable-next-line jsx-a11y/anchor-has-content
+      /* @__PURE__ */ React2.createElement("a", _extends3({}, rest, {
+        href: absoluteHref || href,
+        onClick: isExternal || reloadDocument ? onClick : handleClick,
+        ref,
+        target
+      }))
+    );
+  });
+  if (false) {
+    Link.displayName = "Link";
+  }
+  var NavLink = /* @__PURE__ */ React2.forwardRef(function NavLinkWithRef(_ref8, ref) {
+    let {
+      "aria-current": ariaCurrentProp = "page",
+      caseSensitive = false,
+      className: classNameProp = "",
+      end = false,
+      style: styleProp,
+      to,
+      viewTransition,
+      children
+    } = _ref8, rest = _objectWithoutPropertiesLoose(_ref8, _excluded2);
+    let path = useResolvedPath(to, {
+      relative: rest.relative
+    });
+    let location = useLocation();
+    let routerState = React2.useContext(DataRouterStateContext);
+    let {
+      navigator: navigator2,
+      basename
+    } = React2.useContext(NavigationContext);
+    let isTransitioning = routerState != null && // Conditional usage is OK here because the usage of a data router is static
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useViewTransitionState(path) && viewTransition === true;
+    let toPathname = navigator2.encodeLocation ? navigator2.encodeLocation(path).pathname : path.pathname;
+    let locationPathname = location.pathname;
+    let nextLocationPathname = routerState && routerState.navigation && routerState.navigation.location ? routerState.navigation.location.pathname : null;
+    if (!caseSensitive) {
+      locationPathname = locationPathname.toLowerCase();
+      nextLocationPathname = nextLocationPathname ? nextLocationPathname.toLowerCase() : null;
+      toPathname = toPathname.toLowerCase();
+    }
+    if (nextLocationPathname && basename) {
+      nextLocationPathname = stripBasename(nextLocationPathname, basename) || nextLocationPathname;
+    }
+    const endSlashPosition = toPathname !== "/" && toPathname.endsWith("/") ? toPathname.length - 1 : toPathname.length;
+    let isActive = locationPathname === toPathname || !end && locationPathname.startsWith(toPathname) && locationPathname.charAt(endSlashPosition) === "/";
+    let isPending = nextLocationPathname != null && (nextLocationPathname === toPathname || !end && nextLocationPathname.startsWith(toPathname) && nextLocationPathname.charAt(toPathname.length) === "/");
+    let renderProps = {
+      isActive,
+      isPending,
+      isTransitioning
+    };
+    let ariaCurrent = isActive ? ariaCurrentProp : void 0;
+    let className;
+    if (typeof classNameProp === "function") {
+      className = classNameProp(renderProps);
+    } else {
+      className = [classNameProp, isActive ? "active" : null, isPending ? "pending" : null, isTransitioning ? "transitioning" : null].filter(Boolean).join(" ");
+    }
+    let style = typeof styleProp === "function" ? styleProp(renderProps) : styleProp;
+    return /* @__PURE__ */ React2.createElement(Link, _extends3({}, rest, {
+      "aria-current": ariaCurrent,
+      className,
+      ref,
+      style,
+      to,
+      viewTransition
+    }), typeof children === "function" ? children(renderProps) : children);
+  });
+  if (false) {
+    NavLink.displayName = "NavLink";
+  }
+  if (false) {
+    Form.displayName = "Form";
+  }
+  if (false) {
+    ScrollRestoration.displayName = "ScrollRestoration";
+  }
+  var DataRouterHook2;
+  (function(DataRouterHook3) {
+    DataRouterHook3["UseScrollRestoration"] = "useScrollRestoration";
+    DataRouterHook3["UseSubmit"] = "useSubmit";
+    DataRouterHook3["UseSubmitFetcher"] = "useSubmitFetcher";
+    DataRouterHook3["UseFetcher"] = "useFetcher";
+    DataRouterHook3["useViewTransitionState"] = "useViewTransitionState";
+  })(DataRouterHook2 || (DataRouterHook2 = {}));
+  var DataRouterStateHook2;
+  (function(DataRouterStateHook3) {
+    DataRouterStateHook3["UseFetcher"] = "useFetcher";
+    DataRouterStateHook3["UseFetchers"] = "useFetchers";
+    DataRouterStateHook3["UseScrollRestoration"] = "useScrollRestoration";
+  })(DataRouterStateHook2 || (DataRouterStateHook2 = {}));
+  function useDataRouterContext2(hookName) {
+    let ctx = React2.useContext(DataRouterContext);
+    !ctx ? false ? invariant(false, getDataRouterConsoleError(hookName)) : invariant(false) : void 0;
+    return ctx;
+  }
+  function useLinkClickHandler(to, _temp) {
+    let {
+      target,
+      replace: replaceProp,
+      state,
+      preventScrollReset,
+      relative,
+      viewTransition
+    } = _temp === void 0 ? {} : _temp;
+    let navigate = useNavigate();
+    let location = useLocation();
+    let path = useResolvedPath(to, {
+      relative
+    });
+    return React2.useCallback((event) => {
+      if (shouldProcessLinkClick(event, target)) {
+        event.preventDefault();
+        let replace2 = replaceProp !== void 0 ? replaceProp : createPath(location) === createPath(path);
+        navigate(to, {
+          replace: replace2,
+          state,
+          preventScrollReset,
+          relative,
+          viewTransition
+        });
+      }
+    }, [location, navigate, path, replaceProp, state, target, to, preventScrollReset, relative, viewTransition]);
+  }
+  function useViewTransitionState(to, opts) {
+    if (opts === void 0) {
+      opts = {};
+    }
+    let vtContext = React2.useContext(ViewTransitionContext);
+    !(vtContext != null) ? false ? invariant(false, "`useViewTransitionState` must be used within `react-router-dom`'s `RouterProvider`.  Did you accidentally import `RouterProvider` from `react-router`?") : invariant(false) : void 0;
+    let {
+      basename
+    } = useDataRouterContext2(DataRouterHook2.useViewTransitionState);
+    let path = useResolvedPath(to, {
+      relative: opts.relative
+    });
+    if (!vtContext.isTransitioning) {
+      return false;
+    }
+    let currentPath = stripBasename(vtContext.currentLocation.pathname, basename) || vtContext.currentLocation.pathname;
+    let nextPath = stripBasename(vtContext.nextLocation.pathname, basename) || vtContext.nextLocation.pathname;
+    return matchPath(path.pathname, nextPath) != null || matchPath(path.pathname, currentPath) != null;
+  }
+
+  // node_modules/lucide-react/dist/esm/createLucideIcon.js
+  var import_react2 = __toESM(require_react());
+
+  // node_modules/lucide-react/dist/esm/shared/src/utils.js
+  var toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+  var mergeClasses = (...classes) => classes.filter((className, index, array) => {
+    return Boolean(className) && array.indexOf(className) === index;
+  }).join(" ");
+
+  // node_modules/lucide-react/dist/esm/Icon.js
+  var import_react = __toESM(require_react());
+
+  // node_modules/lucide-react/dist/esm/defaultAttributes.js
+  var defaultAttributes = {
+    xmlns: "http://www.w3.org/2000/svg",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  };
+
+  // node_modules/lucide-react/dist/esm/Icon.js
+  var Icon = (0, import_react.forwardRef)(
+    ({
+      color = "currentColor",
+      size = 24,
+      strokeWidth = 2,
+      absoluteStrokeWidth,
+      className = "",
+      children,
+      iconNode,
+      ...rest
+    }, ref) => {
+      return (0, import_react.createElement)(
+        "svg",
+        {
+          ref,
+          ...defaultAttributes,
+          width: size,
+          height: size,
+          stroke: color,
+          strokeWidth: absoluteStrokeWidth ? Number(strokeWidth) * 24 / Number(size) : strokeWidth,
+          className: mergeClasses("lucide", className),
+          ...rest
+        },
+        [
+          ...iconNode.map(([tag, attrs]) => (0, import_react.createElement)(tag, attrs)),
+          ...Array.isArray(children) ? children : [children]
+        ]
+      );
+    }
+  );
+
+  // node_modules/lucide-react/dist/esm/createLucideIcon.js
+  var createLucideIcon = (iconName, iconNode) => {
+    const Component2 = (0, import_react2.forwardRef)(
+      ({ className, ...props }, ref) => (0, import_react2.createElement)(Icon, {
+        ref,
+        iconNode,
+        className: mergeClasses(`lucide-${toKebabCase(iconName)}`, className),
+        ...props
+      })
+    );
+    Component2.displayName = `${iconName}`;
+    return Component2;
+  };
+
+  // node_modules/lucide-react/dist/esm/icons/bell.js
+  var Bell = createLucideIcon("Bell", [
+    ["path", { d: "M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9", key: "1qo2s2" }],
+    ["path", { d: "M10.3 21a1.94 1.94 0 0 0 3.4 0", key: "qgo35s" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/calendar-days.js
+  var CalendarDays = createLucideIcon("CalendarDays", [
+    ["path", { d: "M8 2v4", key: "1cmpym" }],
+    ["path", { d: "M16 2v4", key: "4m81vk" }],
+    ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
+    ["path", { d: "M3 10h18", key: "8toen8" }],
+    ["path", { d: "M8 14h.01", key: "6423bh" }],
+    ["path", { d: "M12 14h.01", key: "1etili" }],
+    ["path", { d: "M16 14h.01", key: "1gbofw" }],
+    ["path", { d: "M8 18h.01", key: "lrp35t" }],
+    ["path", { d: "M12 18h.01", key: "mhygvu" }],
+    ["path", { d: "M16 18h.01", key: "kzsmim" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/calendar.js
+  var Calendar = createLucideIcon("Calendar", [
+    ["path", { d: "M8 2v4", key: "1cmpym" }],
+    ["path", { d: "M16 2v4", key: "4m81vk" }],
+    ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
+    ["path", { d: "M3 10h18", key: "8toen8" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/chevron-down.js
+  var ChevronDown = createLucideIcon("ChevronDown", [
+    ["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/chevron-left.js
+  var ChevronLeft = createLucideIcon("ChevronLeft", [
+    ["path", { d: "m15 18-6-6 6-6", key: "1wnfg3" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/chevron-right.js
+  var ChevronRight = createLucideIcon("ChevronRight", [
+    ["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/circle-check-big.js
+  var CircleCheckBig = createLucideIcon("CircleCheckBig", [
+    ["path", { d: "M22 11.08V12a10 10 0 1 1-5.93-9.14", key: "g774vq" }],
+    ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/circle-x.js
+  var CircleX = createLucideIcon("CircleX", [
+    ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+    ["path", { d: "m15 9-6 6", key: "1uzhvr" }],
+    ["path", { d: "m9 9 6 6", key: "z0biqf" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/clipboard-check.js
+  var ClipboardCheck = createLucideIcon("ClipboardCheck", [
+    ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
+    [
+      "path",
+      {
+        d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
+        key: "116196"
+      }
+    ],
+    ["path", { d: "m9 14 2 2 4-4", key: "df797q" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/clipboard-list.js
+  var ClipboardList = createLucideIcon("ClipboardList", [
+    ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
+    [
+      "path",
+      {
+        d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
+        key: "116196"
+      }
+    ],
+    ["path", { d: "M12 11h4", key: "1jrz19" }],
+    ["path", { d: "M12 16h4", key: "n85exb" }],
+    ["path", { d: "M8 11h.01", key: "1dfujw" }],
+    ["path", { d: "M8 16h.01", key: "18s6g9" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/clock.js
+  var Clock = createLucideIcon("Clock", [
+    ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+    ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/file-text.js
+  var FileText = createLucideIcon("FileText", [
+    ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
+    ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
+    ["path", { d: "M10 9H8", key: "b1mrlr" }],
+    ["path", { d: "M16 13H8", key: "t4e002" }],
+    ["path", { d: "M16 17H8", key: "z1uh3a" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/flask-conical.js
+  var FlaskConical = createLucideIcon("FlaskConical", [
+    [
+      "path",
+      {
+        d: "M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2",
+        key: "pzvekw"
+      }
+    ],
+    ["path", { d: "M8.5 2h7", key: "csnxdl" }],
+    ["path", { d: "M7 16h10", key: "wp8him" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/home.js
+  var Home = createLucideIcon("Home", [
+    ["path", { d: "m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z", key: "y5dka4" }],
+    ["polyline", { points: "9 22 9 12 15 12 15 22", key: "e2us08" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/layout-dashboard.js
+  var LayoutDashboard = createLucideIcon("LayoutDashboard", [
+    ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
+    ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
+    ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
+    ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/log-out.js
+  var LogOut = createLucideIcon("LogOut", [
+    ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }],
+    ["polyline", { points: "16 17 21 12 16 7", key: "1gabdz" }],
+    ["line", { x1: "21", x2: "9", y1: "12", y2: "12", key: "1uyos4" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/mail.js
+  var Mail = createLucideIcon("Mail", [
+    ["rect", { width: "20", height: "16", x: "2", y: "4", rx: "2", key: "18n3k1" }],
+    ["path", { d: "m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7", key: "1ocrg3" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/pencil.js
+  var Pencil = createLucideIcon("Pencil", [
+    ["path", { d: "M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z", key: "5qss01" }],
+    ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/phone.js
+  var Phone = createLucideIcon("Phone", [
+    [
+      "path",
+      {
+        d: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z",
+        key: "foiqr5"
+      }
+    ]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/pill.js
+  var Pill = createLucideIcon("Pill", [
+    [
+      "path",
+      { d: "m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z", key: "wa1lgi" }
+    ],
+    ["path", { d: "m8.5 8.5 7 7", key: "rvfmvr" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/plus.js
+  var Plus = createLucideIcon("Plus", [
+    ["path", { d: "M5 12h14", key: "1ays0h" }],
+    ["path", { d: "M12 5v14", key: "s699le" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/search.js
+  var Search = createLucideIcon("Search", [
+    ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }],
+    ["path", { d: "m21 21-4.3-4.3", key: "1qie3q" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/settings.js
+  var Settings = createLucideIcon("Settings", [
+    [
+      "path",
+      {
+        d: "M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z",
+        key: "1qme2f"
+      }
+    ],
+    ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/stethoscope.js
+  var Stethoscope = createLucideIcon("Stethoscope", [
+    [
+      "path",
+      {
+        d: "M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3",
+        key: "1jd90r"
+      }
+    ],
+    ["path", { d: "M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4", key: "126ukv" }],
+    ["circle", { cx: "20", cy: "10", r: "2", key: "ts1r5v" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/syringe.js
+  var Syringe = createLucideIcon("Syringe", [
+    ["path", { d: "m18 2 4 4", key: "22kx64" }],
+    ["path", { d: "m17 7 3-3", key: "1w1zoj" }],
+    ["path", { d: "M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5", key: "1exhtz" }],
+    ["path", { d: "m9 11 4 4", key: "rovt3i" }],
+    ["path", { d: "m5 19-3 3", key: "59f2uf" }],
+    ["path", { d: "m14 4 6 6", key: "yqp9t2" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/trash-2.js
+  var Trash2 = createLucideIcon("Trash2", [
+    ["path", { d: "M3 6h18", key: "d0wm0j" }],
+    ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
+    ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
+    ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
+    ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/triangle-alert.js
+  var TriangleAlert = createLucideIcon("TriangleAlert", [
+    [
+      "path",
+      {
+        d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
+        key: "wmoenq"
+      }
+    ],
+    ["path", { d: "M12 9v4", key: "juzpu7" }],
+    ["path", { d: "M12 17h.01", key: "p32p05" }]
+  ]);
+
+  // node_modules/lucide-react/dist/esm/icons/user.js
+  var User = createLucideIcon("User", [
+    ["path", { d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", key: "975kel" }],
+    ["circle", { cx: "12", cy: "7", r: "4", key: "17ys0d" }]
+  ]);
+
+  // node_modules/clsx/dist/clsx.mjs
+  function r(e) {
+    var t, f, n = "";
+    if ("string" == typeof e || "number" == typeof e) n += e;
+    else if ("object" == typeof e) if (Array.isArray(e)) {
+      var o = e.length;
+      for (t = 0; t < o; t++) e[t] && (f = r(e[t])) && (n && (n += " "), n += f);
+    } else for (f in e) e[f] && (n && (n += " "), n += f);
+    return n;
+  }
+  function clsx() {
+    for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++) (e = arguments[f]) && (t = r(e)) && (n && (n += " "), n += t);
+    return n;
+  }
+
+  // node_modules/tailwind-merge/dist/bundle-mjs.mjs
+  var CLASS_PART_SEPARATOR = "-";
+  var createClassGroupUtils = (config) => {
+    const classMap = createClassMap(config);
+    const {
+      conflictingClassGroups,
+      conflictingClassGroupModifiers
+    } = config;
+    const getClassGroupId = (className) => {
+      const classParts = className.split(CLASS_PART_SEPARATOR);
+      if (classParts[0] === "" && classParts.length !== 1) {
+        classParts.shift();
+      }
+      return getGroupRecursive(classParts, classMap) || getGroupIdForArbitraryProperty(className);
+    };
+    const getConflictingClassGroupIds = (classGroupId, hasPostfixModifier) => {
+      const conflicts = conflictingClassGroups[classGroupId] || [];
+      if (hasPostfixModifier && conflictingClassGroupModifiers[classGroupId]) {
+        return [...conflicts, ...conflictingClassGroupModifiers[classGroupId]];
+      }
+      return conflicts;
+    };
+    return {
+      getClassGroupId,
+      getConflictingClassGroupIds
+    };
+  };
+  var getGroupRecursive = (classParts, classPartObject) => {
+    if (classParts.length === 0) {
+      return classPartObject.classGroupId;
+    }
+    const currentClassPart = classParts[0];
+    const nextClassPartObject = classPartObject.nextPart.get(currentClassPart);
+    const classGroupFromNextClassPart = nextClassPartObject ? getGroupRecursive(classParts.slice(1), nextClassPartObject) : void 0;
+    if (classGroupFromNextClassPart) {
+      return classGroupFromNextClassPart;
+    }
+    if (classPartObject.validators.length === 0) {
+      return void 0;
+    }
+    const classRest = classParts.join(CLASS_PART_SEPARATOR);
+    return classPartObject.validators.find(({
+      validator
+    }) => validator(classRest))?.classGroupId;
+  };
+  var arbitraryPropertyRegex = /^\[(.+)\]$/;
+  var getGroupIdForArbitraryProperty = (className) => {
+    if (arbitraryPropertyRegex.test(className)) {
+      const arbitraryPropertyClassName = arbitraryPropertyRegex.exec(className)[1];
+      const property = arbitraryPropertyClassName?.substring(0, arbitraryPropertyClassName.indexOf(":"));
+      if (property) {
+        return "arbitrary.." + property;
+      }
+    }
+  };
+  var createClassMap = (config) => {
+    const {
+      theme,
+      prefix
+    } = config;
+    const classMap = {
+      nextPart: /* @__PURE__ */ new Map(),
+      validators: []
+    };
+    const prefixedClassGroupEntries = getPrefixedClassGroupEntries(Object.entries(config.classGroups), prefix);
+    prefixedClassGroupEntries.forEach(([classGroupId, classGroup]) => {
+      processClassesRecursively(classGroup, classMap, classGroupId, theme);
+    });
+    return classMap;
+  };
+  var processClassesRecursively = (classGroup, classPartObject, classGroupId, theme) => {
+    classGroup.forEach((classDefinition) => {
+      if (typeof classDefinition === "string") {
+        const classPartObjectToEdit = classDefinition === "" ? classPartObject : getPart(classPartObject, classDefinition);
+        classPartObjectToEdit.classGroupId = classGroupId;
+        return;
+      }
+      if (typeof classDefinition === "function") {
+        if (isThemeGetter(classDefinition)) {
+          processClassesRecursively(classDefinition(theme), classPartObject, classGroupId, theme);
+          return;
+        }
+        classPartObject.validators.push({
+          validator: classDefinition,
+          classGroupId
+        });
+        return;
+      }
+      Object.entries(classDefinition).forEach(([key, classGroup2]) => {
+        processClassesRecursively(classGroup2, getPart(classPartObject, key), classGroupId, theme);
+      });
+    });
+  };
+  var getPart = (classPartObject, path) => {
+    let currentClassPartObject = classPartObject;
+    path.split(CLASS_PART_SEPARATOR).forEach((pathPart) => {
+      if (!currentClassPartObject.nextPart.has(pathPart)) {
+        currentClassPartObject.nextPart.set(pathPart, {
+          nextPart: /* @__PURE__ */ new Map(),
+          validators: []
+        });
+      }
+      currentClassPartObject = currentClassPartObject.nextPart.get(pathPart);
+    });
+    return currentClassPartObject;
+  };
+  var isThemeGetter = (func) => func.isThemeGetter;
+  var getPrefixedClassGroupEntries = (classGroupEntries, prefix) => {
+    if (!prefix) {
+      return classGroupEntries;
+    }
+    return classGroupEntries.map(([classGroupId, classGroup]) => {
+      const prefixedClassGroup = classGroup.map((classDefinition) => {
+        if (typeof classDefinition === "string") {
+          return prefix + classDefinition;
+        }
+        if (typeof classDefinition === "object") {
+          return Object.fromEntries(Object.entries(classDefinition).map(([key, value]) => [prefix + key, value]));
+        }
+        return classDefinition;
+      });
+      return [classGroupId, prefixedClassGroup];
+    });
+  };
+  var createLruCache = (maxCacheSize) => {
+    if (maxCacheSize < 1) {
+      return {
+        get: () => void 0,
+        set: () => {
+        }
+      };
+    }
+    let cacheSize = 0;
+    let cache = /* @__PURE__ */ new Map();
+    let previousCache = /* @__PURE__ */ new Map();
+    const update2 = (key, value) => {
+      cache.set(key, value);
+      cacheSize++;
+      if (cacheSize > maxCacheSize) {
+        cacheSize = 0;
+        previousCache = cache;
+        cache = /* @__PURE__ */ new Map();
+      }
+    };
+    return {
+      get(key) {
+        let value = cache.get(key);
+        if (value !== void 0) {
+          return value;
+        }
+        if ((value = previousCache.get(key)) !== void 0) {
+          update2(key, value);
+          return value;
+        }
+      },
+      set(key, value) {
+        if (cache.has(key)) {
+          cache.set(key, value);
+        } else {
+          update2(key, value);
+        }
+      }
+    };
+  };
+  var IMPORTANT_MODIFIER = "!";
+  var createParseClassName = (config) => {
+    const {
+      separator,
+      experimentalParseClassName
+    } = config;
+    const isSeparatorSingleCharacter = separator.length === 1;
+    const firstSeparatorCharacter = separator[0];
+    const separatorLength = separator.length;
+    const parseClassName = (className) => {
+      const modifiers = [];
+      let bracketDepth = 0;
+      let modifierStart = 0;
+      let postfixModifierPosition;
+      for (let index = 0; index < className.length; index++) {
+        let currentCharacter = className[index];
+        if (bracketDepth === 0) {
+          if (currentCharacter === firstSeparatorCharacter && (isSeparatorSingleCharacter || className.slice(index, index + separatorLength) === separator)) {
+            modifiers.push(className.slice(modifierStart, index));
+            modifierStart = index + separatorLength;
+            continue;
+          }
+          if (currentCharacter === "/") {
+            postfixModifierPosition = index;
+            continue;
+          }
+        }
+        if (currentCharacter === "[") {
+          bracketDepth++;
+        } else if (currentCharacter === "]") {
+          bracketDepth--;
+        }
+      }
+      const baseClassNameWithImportantModifier = modifiers.length === 0 ? className : className.substring(modifierStart);
+      const hasImportantModifier = baseClassNameWithImportantModifier.startsWith(IMPORTANT_MODIFIER);
+      const baseClassName = hasImportantModifier ? baseClassNameWithImportantModifier.substring(1) : baseClassNameWithImportantModifier;
+      const maybePostfixModifierPosition = postfixModifierPosition && postfixModifierPosition > modifierStart ? postfixModifierPosition - modifierStart : void 0;
+      return {
+        modifiers,
+        hasImportantModifier,
+        baseClassName,
+        maybePostfixModifierPosition
+      };
+    };
+    if (experimentalParseClassName) {
+      return (className) => experimentalParseClassName({
+        className,
+        parseClassName
+      });
+    }
+    return parseClassName;
+  };
+  var sortModifiers = (modifiers) => {
+    if (modifiers.length <= 1) {
+      return modifiers;
+    }
+    const sortedModifiers = [];
+    let unsortedModifiers = [];
+    modifiers.forEach((modifier) => {
+      const isArbitraryVariant = modifier[0] === "[";
+      if (isArbitraryVariant) {
+        sortedModifiers.push(...unsortedModifiers.sort(), modifier);
+        unsortedModifiers = [];
+      } else {
+        unsortedModifiers.push(modifier);
+      }
+    });
+    sortedModifiers.push(...unsortedModifiers.sort());
+    return sortedModifiers;
+  };
+  var createConfigUtils = (config) => ({
+    cache: createLruCache(config.cacheSize),
+    parseClassName: createParseClassName(config),
+    ...createClassGroupUtils(config)
+  });
+  var SPLIT_CLASSES_REGEX = /\s+/;
+  var mergeClassList = (classList, configUtils) => {
+    const {
+      parseClassName,
+      getClassGroupId,
+      getConflictingClassGroupIds
+    } = configUtils;
+    const classGroupsInConflict = [];
+    const classNames = classList.trim().split(SPLIT_CLASSES_REGEX);
+    let result = "";
+    for (let index = classNames.length - 1; index >= 0; index -= 1) {
+      const originalClassName = classNames[index];
+      const {
+        modifiers,
+        hasImportantModifier,
+        baseClassName,
+        maybePostfixModifierPosition
+      } = parseClassName(originalClassName);
+      let hasPostfixModifier = Boolean(maybePostfixModifierPosition);
+      let classGroupId = getClassGroupId(hasPostfixModifier ? baseClassName.substring(0, maybePostfixModifierPosition) : baseClassName);
+      if (!classGroupId) {
+        if (!hasPostfixModifier) {
+          result = originalClassName + (result.length > 0 ? " " + result : result);
+          continue;
+        }
+        classGroupId = getClassGroupId(baseClassName);
+        if (!classGroupId) {
+          result = originalClassName + (result.length > 0 ? " " + result : result);
+          continue;
+        }
+        hasPostfixModifier = false;
+      }
+      const variantModifier = sortModifiers(modifiers).join(":");
+      const modifierId = hasImportantModifier ? variantModifier + IMPORTANT_MODIFIER : variantModifier;
+      const classId = modifierId + classGroupId;
+      if (classGroupsInConflict.includes(classId)) {
+        continue;
+      }
+      classGroupsInConflict.push(classId);
+      const conflictGroups = getConflictingClassGroupIds(classGroupId, hasPostfixModifier);
+      for (let i = 0; i < conflictGroups.length; ++i) {
+        const group = conflictGroups[i];
+        classGroupsInConflict.push(modifierId + group);
+      }
+      result = originalClassName + (result.length > 0 ? " " + result : result);
+    }
+    return result;
+  };
+  function twJoin() {
+    let index = 0;
+    let argument;
+    let resolvedValue;
+    let string = "";
+    while (index < arguments.length) {
+      if (argument = arguments[index++]) {
+        if (resolvedValue = toValue(argument)) {
+          string && (string += " ");
+          string += resolvedValue;
+        }
+      }
+    }
+    return string;
+  }
+  var toValue = (mix) => {
+    if (typeof mix === "string") {
+      return mix;
+    }
+    let resolvedValue;
+    let string = "";
+    for (let k = 0; k < mix.length; k++) {
+      if (mix[k]) {
+        if (resolvedValue = toValue(mix[k])) {
+          string && (string += " ");
+          string += resolvedValue;
+        }
+      }
+    }
+    return string;
+  };
+  function createTailwindMerge(createConfigFirst, ...createConfigRest) {
+    let configUtils;
+    let cacheGet;
+    let cacheSet;
+    let functionToCall = initTailwindMerge;
+    function initTailwindMerge(classList) {
+      const config = createConfigRest.reduce((previousConfig, createConfigCurrent) => createConfigCurrent(previousConfig), createConfigFirst());
+      configUtils = createConfigUtils(config);
+      cacheGet = configUtils.cache.get;
+      cacheSet = configUtils.cache.set;
+      functionToCall = tailwindMerge;
+      return tailwindMerge(classList);
+    }
+    function tailwindMerge(classList) {
+      const cachedResult = cacheGet(classList);
+      if (cachedResult) {
+        return cachedResult;
+      }
+      const result = mergeClassList(classList, configUtils);
+      cacheSet(classList, result);
+      return result;
+    }
+    return function callTailwindMerge() {
+      return functionToCall(twJoin.apply(null, arguments));
+    };
+  }
+  var fromTheme = (key) => {
+    const themeGetter = (theme) => theme[key] || [];
+    themeGetter.isThemeGetter = true;
+    return themeGetter;
+  };
+  var arbitraryValueRegex = /^\[(?:([a-z-]+):)?(.+)\]$/i;
+  var fractionRegex = /^\d+\/\d+$/;
+  var stringLengths = /* @__PURE__ */ new Set(["px", "full", "screen"]);
+  var tshirtUnitRegex = /^(\d+(\.\d+)?)?(xs|sm|md|lg|xl)$/;
+  var lengthUnitRegex = /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|ch|ex|r?lh|cq(w|h|i|b|min|max))|\b(calc|min|max|clamp)\(.+\)|^0$/;
+  var colorFunctionRegex = /^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix)\(.+\)$/;
+  var shadowRegex = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/;
+  var imageRegex = /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/;
+  var isLength = (value) => isNumber(value) || stringLengths.has(value) || fractionRegex.test(value);
+  var isArbitraryLength = (value) => getIsArbitraryValue(value, "length", isLengthOnly);
+  var isNumber = (value) => Boolean(value) && !Number.isNaN(Number(value));
+  var isArbitraryNumber = (value) => getIsArbitraryValue(value, "number", isNumber);
+  var isInteger = (value) => Boolean(value) && Number.isInteger(Number(value));
+  var isPercent = (value) => value.endsWith("%") && isNumber(value.slice(0, -1));
+  var isArbitraryValue = (value) => arbitraryValueRegex.test(value);
+  var isTshirtSize = (value) => tshirtUnitRegex.test(value);
+  var sizeLabels = /* @__PURE__ */ new Set(["length", "size", "percentage"]);
+  var isArbitrarySize = (value) => getIsArbitraryValue(value, sizeLabels, isNever);
+  var isArbitraryPosition = (value) => getIsArbitraryValue(value, "position", isNever);
+  var imageLabels = /* @__PURE__ */ new Set(["image", "url"]);
+  var isArbitraryImage = (value) => getIsArbitraryValue(value, imageLabels, isImage);
+  var isArbitraryShadow = (value) => getIsArbitraryValue(value, "", isShadow);
+  var isAny = () => true;
+  var getIsArbitraryValue = (value, label, testValue) => {
+    const result = arbitraryValueRegex.exec(value);
+    if (result) {
+      if (result[1]) {
+        return typeof label === "string" ? result[1] === label : label.has(result[1]);
+      }
+      return testValue(result[2]);
+    }
+    return false;
+  };
+  var isLengthOnly = (value) => (
+    // `colorFunctionRegex` check is necessary because color functions can have percentages in them which which would be incorrectly classified as lengths.
+    // For example, `hsl(0 0% 0%)` would be classified as a length without this check.
+    // I could also use lookbehind assertion in `lengthUnitRegex` but that isn't supported widely enough.
+    lengthUnitRegex.test(value) && !colorFunctionRegex.test(value)
+  );
+  var isNever = () => false;
+  var isShadow = (value) => shadowRegex.test(value);
+  var isImage = (value) => imageRegex.test(value);
+  var getDefaultConfig = () => {
+    const colors = fromTheme("colors");
+    const spacing = fromTheme("spacing");
+    const blur = fromTheme("blur");
+    const brightness = fromTheme("brightness");
+    const borderColor = fromTheme("borderColor");
+    const borderRadius = fromTheme("borderRadius");
+    const borderSpacing = fromTheme("borderSpacing");
+    const borderWidth = fromTheme("borderWidth");
+    const contrast = fromTheme("contrast");
+    const grayscale = fromTheme("grayscale");
+    const hueRotate = fromTheme("hueRotate");
+    const invert = fromTheme("invert");
+    const gap = fromTheme("gap");
+    const gradientColorStops = fromTheme("gradientColorStops");
+    const gradientColorStopPositions = fromTheme("gradientColorStopPositions");
+    const inset = fromTheme("inset");
+    const margin = fromTheme("margin");
+    const opacity = fromTheme("opacity");
+    const padding = fromTheme("padding");
+    const saturate = fromTheme("saturate");
+    const scale = fromTheme("scale");
+    const sepia = fromTheme("sepia");
+    const skew = fromTheme("skew");
+    const space = fromTheme("space");
+    const translate = fromTheme("translate");
+    const getOverscroll = () => ["auto", "contain", "none"];
+    const getOverflow = () => ["auto", "hidden", "clip", "visible", "scroll"];
+    const getSpacingWithAutoAndArbitrary = () => ["auto", isArbitraryValue, spacing];
+    const getSpacingWithArbitrary = () => [isArbitraryValue, spacing];
+    const getLengthWithEmptyAndArbitrary = () => ["", isLength, isArbitraryLength];
+    const getNumberWithAutoAndArbitrary = () => ["auto", isNumber, isArbitraryValue];
+    const getPositions = () => ["bottom", "center", "left", "left-bottom", "left-top", "right", "right-bottom", "right-top", "top"];
+    const getLineStyles = () => ["solid", "dashed", "dotted", "double", "none"];
+    const getBlendModes = () => ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
+    const getAlign = () => ["start", "end", "center", "between", "around", "evenly", "stretch"];
+    const getZeroAndEmpty = () => ["", "0", isArbitraryValue];
+    const getBreaks = () => ["auto", "avoid", "all", "avoid-page", "page", "left", "right", "column"];
+    const getNumberAndArbitrary = () => [isNumber, isArbitraryValue];
+    return {
+      cacheSize: 500,
+      separator: ":",
+      theme: {
+        colors: [isAny],
+        spacing: [isLength, isArbitraryLength],
+        blur: ["none", "", isTshirtSize, isArbitraryValue],
+        brightness: getNumberAndArbitrary(),
+        borderColor: [colors],
+        borderRadius: ["none", "", "full", isTshirtSize, isArbitraryValue],
+        borderSpacing: getSpacingWithArbitrary(),
+        borderWidth: getLengthWithEmptyAndArbitrary(),
+        contrast: getNumberAndArbitrary(),
+        grayscale: getZeroAndEmpty(),
+        hueRotate: getNumberAndArbitrary(),
+        invert: getZeroAndEmpty(),
+        gap: getSpacingWithArbitrary(),
+        gradientColorStops: [colors],
+        gradientColorStopPositions: [isPercent, isArbitraryLength],
+        inset: getSpacingWithAutoAndArbitrary(),
+        margin: getSpacingWithAutoAndArbitrary(),
+        opacity: getNumberAndArbitrary(),
+        padding: getSpacingWithArbitrary(),
+        saturate: getNumberAndArbitrary(),
+        scale: getNumberAndArbitrary(),
+        sepia: getZeroAndEmpty(),
+        skew: getNumberAndArbitrary(),
+        space: getSpacingWithArbitrary(),
+        translate: getSpacingWithArbitrary()
+      },
+      classGroups: {
+        // Layout
+        /**
+         * Aspect Ratio
+         * @see https://tailwindcss.com/docs/aspect-ratio
+         */
+        aspect: [{
+          aspect: ["auto", "square", "video", isArbitraryValue]
+        }],
+        /**
+         * Container
+         * @see https://tailwindcss.com/docs/container
+         */
+        container: ["container"],
+        /**
+         * Columns
+         * @see https://tailwindcss.com/docs/columns
+         */
+        columns: [{
+          columns: [isTshirtSize]
+        }],
+        /**
+         * Break After
+         * @see https://tailwindcss.com/docs/break-after
+         */
+        "break-after": [{
+          "break-after": getBreaks()
+        }],
+        /**
+         * Break Before
+         * @see https://tailwindcss.com/docs/break-before
+         */
+        "break-before": [{
+          "break-before": getBreaks()
+        }],
+        /**
+         * Break Inside
+         * @see https://tailwindcss.com/docs/break-inside
+         */
+        "break-inside": [{
+          "break-inside": ["auto", "avoid", "avoid-page", "avoid-column"]
+        }],
+        /**
+         * Box Decoration Break
+         * @see https://tailwindcss.com/docs/box-decoration-break
+         */
+        "box-decoration": [{
+          "box-decoration": ["slice", "clone"]
+        }],
+        /**
+         * Box Sizing
+         * @see https://tailwindcss.com/docs/box-sizing
+         */
+        box: [{
+          box: ["border", "content"]
+        }],
+        /**
+         * Display
+         * @see https://tailwindcss.com/docs/display
+         */
+        display: ["block", "inline-block", "inline", "flex", "inline-flex", "table", "inline-table", "table-caption", "table-cell", "table-column", "table-column-group", "table-footer-group", "table-header-group", "table-row-group", "table-row", "flow-root", "grid", "inline-grid", "contents", "list-item", "hidden"],
+        /**
+         * Floats
+         * @see https://tailwindcss.com/docs/float
+         */
+        float: [{
+          float: ["right", "left", "none", "start", "end"]
+        }],
+        /**
+         * Clear
+         * @see https://tailwindcss.com/docs/clear
+         */
+        clear: [{
+          clear: ["left", "right", "both", "none", "start", "end"]
+        }],
+        /**
+         * Isolation
+         * @see https://tailwindcss.com/docs/isolation
+         */
+        isolation: ["isolate", "isolation-auto"],
+        /**
+         * Object Fit
+         * @see https://tailwindcss.com/docs/object-fit
+         */
+        "object-fit": [{
+          object: ["contain", "cover", "fill", "none", "scale-down"]
+        }],
+        /**
+         * Object Position
+         * @see https://tailwindcss.com/docs/object-position
+         */
+        "object-position": [{
+          object: [...getPositions(), isArbitraryValue]
+        }],
+        /**
+         * Overflow
+         * @see https://tailwindcss.com/docs/overflow
+         */
+        overflow: [{
+          overflow: getOverflow()
+        }],
+        /**
+         * Overflow X
+         * @see https://tailwindcss.com/docs/overflow
+         */
+        "overflow-x": [{
+          "overflow-x": getOverflow()
+        }],
+        /**
+         * Overflow Y
+         * @see https://tailwindcss.com/docs/overflow
+         */
+        "overflow-y": [{
+          "overflow-y": getOverflow()
+        }],
+        /**
+         * Overscroll Behavior
+         * @see https://tailwindcss.com/docs/overscroll-behavior
+         */
+        overscroll: [{
+          overscroll: getOverscroll()
+        }],
+        /**
+         * Overscroll Behavior X
+         * @see https://tailwindcss.com/docs/overscroll-behavior
+         */
+        "overscroll-x": [{
+          "overscroll-x": getOverscroll()
+        }],
+        /**
+         * Overscroll Behavior Y
+         * @see https://tailwindcss.com/docs/overscroll-behavior
+         */
+        "overscroll-y": [{
+          "overscroll-y": getOverscroll()
+        }],
+        /**
+         * Position
+         * @see https://tailwindcss.com/docs/position
+         */
+        position: ["static", "fixed", "absolute", "relative", "sticky"],
+        /**
+         * Top / Right / Bottom / Left
+         * @see https://tailwindcss.com/docs/top-right-bottom-left
+         */
+        inset: [{
+          inset: [inset]
+        }],
+        /**
+         * Right / Left
+         * @see https://tailwindcss.com/docs/top-right-bottom-left
+         */
+        "inset-x": [{
+          "inset-x": [inset]
+        }],
+        /**
+         * Top / Bottom
+         * @see https://tailwindcss.com/docs/top-right-bottom-left
+         */
+        "inset-y": [{
+          "inset-y": [inset]
+        }],
+        /**
+         * Start
+         * @see https://tailwindcss.com/docs/top-right-bottom-left
+         */
+        start: [{
+          start: [inset]
+        }],
+        /**
+         * End
+         * @see https://tailwindcss.com/docs/top-right-bottom-left
+         */
+        end: [{
+          end: [inset]
+        }],
+        /**
+         * Top
+         * @see https://tailwindcss.com/docs/top-right-bottom-left
+         */
+        top: [{
+          top: [inset]
+        }],
+        /**
+         * Right
+         * @see https://tailwindcss.com/docs/top-right-bottom-left
+         */
+        right: [{
+          right: [inset]
+        }],
+        /**
+         * Bottom
+         * @see https://tailwindcss.com/docs/top-right-bottom-left
+         */
+        bottom: [{
+          bottom: [inset]
+        }],
+        /**
+         * Left
+         * @see https://tailwindcss.com/docs/top-right-bottom-left
+         */
+        left: [{
+          left: [inset]
+        }],
+        /**
+         * Visibility
+         * @see https://tailwindcss.com/docs/visibility
+         */
+        visibility: ["visible", "invisible", "collapse"],
+        /**
+         * Z-Index
+         * @see https://tailwindcss.com/docs/z-index
+         */
+        z: [{
+          z: ["auto", isInteger, isArbitraryValue]
+        }],
+        // Flexbox and Grid
+        /**
+         * Flex Basis
+         * @see https://tailwindcss.com/docs/flex-basis
+         */
+        basis: [{
+          basis: getSpacingWithAutoAndArbitrary()
+        }],
+        /**
+         * Flex Direction
+         * @see https://tailwindcss.com/docs/flex-direction
+         */
+        "flex-direction": [{
+          flex: ["row", "row-reverse", "col", "col-reverse"]
+        }],
+        /**
+         * Flex Wrap
+         * @see https://tailwindcss.com/docs/flex-wrap
+         */
+        "flex-wrap": [{
+          flex: ["wrap", "wrap-reverse", "nowrap"]
+        }],
+        /**
+         * Flex
+         * @see https://tailwindcss.com/docs/flex
+         */
+        flex: [{
+          flex: ["1", "auto", "initial", "none", isArbitraryValue]
+        }],
+        /**
+         * Flex Grow
+         * @see https://tailwindcss.com/docs/flex-grow
+         */
+        grow: [{
+          grow: getZeroAndEmpty()
+        }],
+        /**
+         * Flex Shrink
+         * @see https://tailwindcss.com/docs/flex-shrink
+         */
+        shrink: [{
+          shrink: getZeroAndEmpty()
+        }],
+        /**
+         * Order
+         * @see https://tailwindcss.com/docs/order
+         */
+        order: [{
+          order: ["first", "last", "none", isInteger, isArbitraryValue]
+        }],
+        /**
+         * Grid Template Columns
+         * @see https://tailwindcss.com/docs/grid-template-columns
+         */
+        "grid-cols": [{
+          "grid-cols": [isAny]
+        }],
+        /**
+         * Grid Column Start / End
+         * @see https://tailwindcss.com/docs/grid-column
+         */
+        "col-start-end": [{
+          col: ["auto", {
+            span: ["full", isInteger, isArbitraryValue]
+          }, isArbitraryValue]
+        }],
+        /**
+         * Grid Column Start
+         * @see https://tailwindcss.com/docs/grid-column
+         */
+        "col-start": [{
+          "col-start": getNumberWithAutoAndArbitrary()
+        }],
+        /**
+         * Grid Column End
+         * @see https://tailwindcss.com/docs/grid-column
+         */
+        "col-end": [{
+          "col-end": getNumberWithAutoAndArbitrary()
+        }],
+        /**
+         * Grid Template Rows
+         * @see https://tailwindcss.com/docs/grid-template-rows
+         */
+        "grid-rows": [{
+          "grid-rows": [isAny]
+        }],
+        /**
+         * Grid Row Start / End
+         * @see https://tailwindcss.com/docs/grid-row
+         */
+        "row-start-end": [{
+          row: ["auto", {
+            span: [isInteger, isArbitraryValue]
+          }, isArbitraryValue]
+        }],
+        /**
+         * Grid Row Start
+         * @see https://tailwindcss.com/docs/grid-row
+         */
+        "row-start": [{
+          "row-start": getNumberWithAutoAndArbitrary()
+        }],
+        /**
+         * Grid Row End
+         * @see https://tailwindcss.com/docs/grid-row
+         */
+        "row-end": [{
+          "row-end": getNumberWithAutoAndArbitrary()
+        }],
+        /**
+         * Grid Auto Flow
+         * @see https://tailwindcss.com/docs/grid-auto-flow
+         */
+        "grid-flow": [{
+          "grid-flow": ["row", "col", "dense", "row-dense", "col-dense"]
+        }],
+        /**
+         * Grid Auto Columns
+         * @see https://tailwindcss.com/docs/grid-auto-columns
+         */
+        "auto-cols": [{
+          "auto-cols": ["auto", "min", "max", "fr", isArbitraryValue]
+        }],
+        /**
+         * Grid Auto Rows
+         * @see https://tailwindcss.com/docs/grid-auto-rows
+         */
+        "auto-rows": [{
+          "auto-rows": ["auto", "min", "max", "fr", isArbitraryValue]
+        }],
+        /**
+         * Gap
+         * @see https://tailwindcss.com/docs/gap
+         */
+        gap: [{
+          gap: [gap]
+        }],
+        /**
+         * Gap X
+         * @see https://tailwindcss.com/docs/gap
+         */
+        "gap-x": [{
+          "gap-x": [gap]
+        }],
+        /**
+         * Gap Y
+         * @see https://tailwindcss.com/docs/gap
+         */
+        "gap-y": [{
+          "gap-y": [gap]
+        }],
+        /**
+         * Justify Content
+         * @see https://tailwindcss.com/docs/justify-content
+         */
+        "justify-content": [{
+          justify: ["normal", ...getAlign()]
+        }],
+        /**
+         * Justify Items
+         * @see https://tailwindcss.com/docs/justify-items
+         */
+        "justify-items": [{
+          "justify-items": ["start", "end", "center", "stretch"]
+        }],
+        /**
+         * Justify Self
+         * @see https://tailwindcss.com/docs/justify-self
+         */
+        "justify-self": [{
+          "justify-self": ["auto", "start", "end", "center", "stretch"]
+        }],
+        /**
+         * Align Content
+         * @see https://tailwindcss.com/docs/align-content
+         */
+        "align-content": [{
+          content: ["normal", ...getAlign(), "baseline"]
+        }],
+        /**
+         * Align Items
+         * @see https://tailwindcss.com/docs/align-items
+         */
+        "align-items": [{
+          items: ["start", "end", "center", "baseline", "stretch"]
+        }],
+        /**
+         * Align Self
+         * @see https://tailwindcss.com/docs/align-self
+         */
+        "align-self": [{
+          self: ["auto", "start", "end", "center", "stretch", "baseline"]
+        }],
+        /**
+         * Place Content
+         * @see https://tailwindcss.com/docs/place-content
+         */
+        "place-content": [{
+          "place-content": [...getAlign(), "baseline"]
+        }],
+        /**
+         * Place Items
+         * @see https://tailwindcss.com/docs/place-items
+         */
+        "place-items": [{
+          "place-items": ["start", "end", "center", "baseline", "stretch"]
+        }],
+        /**
+         * Place Self
+         * @see https://tailwindcss.com/docs/place-self
+         */
+        "place-self": [{
+          "place-self": ["auto", "start", "end", "center", "stretch"]
+        }],
+        // Spacing
+        /**
+         * Padding
+         * @see https://tailwindcss.com/docs/padding
+         */
+        p: [{
+          p: [padding]
+        }],
+        /**
+         * Padding X
+         * @see https://tailwindcss.com/docs/padding
+         */
+        px: [{
+          px: [padding]
+        }],
+        /**
+         * Padding Y
+         * @see https://tailwindcss.com/docs/padding
+         */
+        py: [{
+          py: [padding]
+        }],
+        /**
+         * Padding Start
+         * @see https://tailwindcss.com/docs/padding
+         */
+        ps: [{
+          ps: [padding]
+        }],
+        /**
+         * Padding End
+         * @see https://tailwindcss.com/docs/padding
+         */
+        pe: [{
+          pe: [padding]
+        }],
+        /**
+         * Padding Top
+         * @see https://tailwindcss.com/docs/padding
+         */
+        pt: [{
+          pt: [padding]
+        }],
+        /**
+         * Padding Right
+         * @see https://tailwindcss.com/docs/padding
+         */
+        pr: [{
+          pr: [padding]
+        }],
+        /**
+         * Padding Bottom
+         * @see https://tailwindcss.com/docs/padding
+         */
+        pb: [{
+          pb: [padding]
+        }],
+        /**
+         * Padding Left
+         * @see https://tailwindcss.com/docs/padding
+         */
+        pl: [{
+          pl: [padding]
+        }],
+        /**
+         * Margin
+         * @see https://tailwindcss.com/docs/margin
+         */
+        m: [{
+          m: [margin]
+        }],
+        /**
+         * Margin X
+         * @see https://tailwindcss.com/docs/margin
+         */
+        mx: [{
+          mx: [margin]
+        }],
+        /**
+         * Margin Y
+         * @see https://tailwindcss.com/docs/margin
+         */
+        my: [{
+          my: [margin]
+        }],
+        /**
+         * Margin Start
+         * @see https://tailwindcss.com/docs/margin
+         */
+        ms: [{
+          ms: [margin]
+        }],
+        /**
+         * Margin End
+         * @see https://tailwindcss.com/docs/margin
+         */
+        me: [{
+          me: [margin]
+        }],
+        /**
+         * Margin Top
+         * @see https://tailwindcss.com/docs/margin
+         */
+        mt: [{
+          mt: [margin]
+        }],
+        /**
+         * Margin Right
+         * @see https://tailwindcss.com/docs/margin
+         */
+        mr: [{
+          mr: [margin]
+        }],
+        /**
+         * Margin Bottom
+         * @see https://tailwindcss.com/docs/margin
+         */
+        mb: [{
+          mb: [margin]
+        }],
+        /**
+         * Margin Left
+         * @see https://tailwindcss.com/docs/margin
+         */
+        ml: [{
+          ml: [margin]
+        }],
+        /**
+         * Space Between X
+         * @see https://tailwindcss.com/docs/space
+         */
+        "space-x": [{
+          "space-x": [space]
+        }],
+        /**
+         * Space Between X Reverse
+         * @see https://tailwindcss.com/docs/space
+         */
+        "space-x-reverse": ["space-x-reverse"],
+        /**
+         * Space Between Y
+         * @see https://tailwindcss.com/docs/space
+         */
+        "space-y": [{
+          "space-y": [space]
+        }],
+        /**
+         * Space Between Y Reverse
+         * @see https://tailwindcss.com/docs/space
+         */
+        "space-y-reverse": ["space-y-reverse"],
+        // Sizing
+        /**
+         * Width
+         * @see https://tailwindcss.com/docs/width
+         */
+        w: [{
+          w: ["auto", "min", "max", "fit", "svw", "lvw", "dvw", isArbitraryValue, spacing]
+        }],
+        /**
+         * Min-Width
+         * @see https://tailwindcss.com/docs/min-width
+         */
+        "min-w": [{
+          "min-w": [isArbitraryValue, spacing, "min", "max", "fit"]
+        }],
+        /**
+         * Max-Width
+         * @see https://tailwindcss.com/docs/max-width
+         */
+        "max-w": [{
+          "max-w": [isArbitraryValue, spacing, "none", "full", "min", "max", "fit", "prose", {
+            screen: [isTshirtSize]
+          }, isTshirtSize]
+        }],
+        /**
+         * Height
+         * @see https://tailwindcss.com/docs/height
+         */
+        h: [{
+          h: [isArbitraryValue, spacing, "auto", "min", "max", "fit", "svh", "lvh", "dvh"]
+        }],
+        /**
+         * Min-Height
+         * @see https://tailwindcss.com/docs/min-height
+         */
+        "min-h": [{
+          "min-h": [isArbitraryValue, spacing, "min", "max", "fit", "svh", "lvh", "dvh"]
+        }],
+        /**
+         * Max-Height
+         * @see https://tailwindcss.com/docs/max-height
+         */
+        "max-h": [{
+          "max-h": [isArbitraryValue, spacing, "min", "max", "fit", "svh", "lvh", "dvh"]
+        }],
+        /**
+         * Size
+         * @see https://tailwindcss.com/docs/size
+         */
+        size: [{
+          size: [isArbitraryValue, spacing, "auto", "min", "max", "fit"]
+        }],
+        // Typography
+        /**
+         * Font Size
+         * @see https://tailwindcss.com/docs/font-size
+         */
+        "font-size": [{
+          text: ["base", isTshirtSize, isArbitraryLength]
+        }],
+        /**
+         * Font Smoothing
+         * @see https://tailwindcss.com/docs/font-smoothing
+         */
+        "font-smoothing": ["antialiased", "subpixel-antialiased"],
+        /**
+         * Font Style
+         * @see https://tailwindcss.com/docs/font-style
+         */
+        "font-style": ["italic", "not-italic"],
+        /**
+         * Font Weight
+         * @see https://tailwindcss.com/docs/font-weight
+         */
+        "font-weight": [{
+          font: ["thin", "extralight", "light", "normal", "medium", "semibold", "bold", "extrabold", "black", isArbitraryNumber]
+        }],
+        /**
+         * Font Family
+         * @see https://tailwindcss.com/docs/font-family
+         */
+        "font-family": [{
+          font: [isAny]
+        }],
+        /**
+         * Font Variant Numeric
+         * @see https://tailwindcss.com/docs/font-variant-numeric
+         */
+        "fvn-normal": ["normal-nums"],
+        /**
+         * Font Variant Numeric
+         * @see https://tailwindcss.com/docs/font-variant-numeric
+         */
+        "fvn-ordinal": ["ordinal"],
+        /**
+         * Font Variant Numeric
+         * @see https://tailwindcss.com/docs/font-variant-numeric
+         */
+        "fvn-slashed-zero": ["slashed-zero"],
+        /**
+         * Font Variant Numeric
+         * @see https://tailwindcss.com/docs/font-variant-numeric
+         */
+        "fvn-figure": ["lining-nums", "oldstyle-nums"],
+        /**
+         * Font Variant Numeric
+         * @see https://tailwindcss.com/docs/font-variant-numeric
+         */
+        "fvn-spacing": ["proportional-nums", "tabular-nums"],
+        /**
+         * Font Variant Numeric
+         * @see https://tailwindcss.com/docs/font-variant-numeric
+         */
+        "fvn-fraction": ["diagonal-fractions", "stacked-fractions"],
+        /**
+         * Letter Spacing
+         * @see https://tailwindcss.com/docs/letter-spacing
+         */
+        tracking: [{
+          tracking: ["tighter", "tight", "normal", "wide", "wider", "widest", isArbitraryValue]
+        }],
+        /**
+         * Line Clamp
+         * @see https://tailwindcss.com/docs/line-clamp
+         */
+        "line-clamp": [{
+          "line-clamp": ["none", isNumber, isArbitraryNumber]
+        }],
+        /**
+         * Line Height
+         * @see https://tailwindcss.com/docs/line-height
+         */
+        leading: [{
+          leading: ["none", "tight", "snug", "normal", "relaxed", "loose", isLength, isArbitraryValue]
+        }],
+        /**
+         * List Style Image
+         * @see https://tailwindcss.com/docs/list-style-image
+         */
+        "list-image": [{
+          "list-image": ["none", isArbitraryValue]
+        }],
+        /**
+         * List Style Type
+         * @see https://tailwindcss.com/docs/list-style-type
+         */
+        "list-style-type": [{
+          list: ["none", "disc", "decimal", isArbitraryValue]
+        }],
+        /**
+         * List Style Position
+         * @see https://tailwindcss.com/docs/list-style-position
+         */
+        "list-style-position": [{
+          list: ["inside", "outside"]
+        }],
+        /**
+         * Placeholder Color
+         * @deprecated since Tailwind CSS v3.0.0
+         * @see https://tailwindcss.com/docs/placeholder-color
+         */
+        "placeholder-color": [{
+          placeholder: [colors]
+        }],
+        /**
+         * Placeholder Opacity
+         * @see https://tailwindcss.com/docs/placeholder-opacity
+         */
+        "placeholder-opacity": [{
+          "placeholder-opacity": [opacity]
+        }],
+        /**
+         * Text Alignment
+         * @see https://tailwindcss.com/docs/text-align
+         */
+        "text-alignment": [{
+          text: ["left", "center", "right", "justify", "start", "end"]
+        }],
+        /**
+         * Text Color
+         * @see https://tailwindcss.com/docs/text-color
+         */
+        "text-color": [{
+          text: [colors]
+        }],
+        /**
+         * Text Opacity
+         * @see https://tailwindcss.com/docs/text-opacity
+         */
+        "text-opacity": [{
+          "text-opacity": [opacity]
+        }],
+        /**
+         * Text Decoration
+         * @see https://tailwindcss.com/docs/text-decoration
+         */
+        "text-decoration": ["underline", "overline", "line-through", "no-underline"],
+        /**
+         * Text Decoration Style
+         * @see https://tailwindcss.com/docs/text-decoration-style
+         */
+        "text-decoration-style": [{
+          decoration: [...getLineStyles(), "wavy"]
+        }],
+        /**
+         * Text Decoration Thickness
+         * @see https://tailwindcss.com/docs/text-decoration-thickness
+         */
+        "text-decoration-thickness": [{
+          decoration: ["auto", "from-font", isLength, isArbitraryLength]
+        }],
+        /**
+         * Text Underline Offset
+         * @see https://tailwindcss.com/docs/text-underline-offset
+         */
+        "underline-offset": [{
+          "underline-offset": ["auto", isLength, isArbitraryValue]
+        }],
+        /**
+         * Text Decoration Color
+         * @see https://tailwindcss.com/docs/text-decoration-color
+         */
+        "text-decoration-color": [{
+          decoration: [colors]
+        }],
+        /**
+         * Text Transform
+         * @see https://tailwindcss.com/docs/text-transform
+         */
+        "text-transform": ["uppercase", "lowercase", "capitalize", "normal-case"],
+        /**
+         * Text Overflow
+         * @see https://tailwindcss.com/docs/text-overflow
+         */
+        "text-overflow": ["truncate", "text-ellipsis", "text-clip"],
+        /**
+         * Text Wrap
+         * @see https://tailwindcss.com/docs/text-wrap
+         */
+        "text-wrap": [{
+          text: ["wrap", "nowrap", "balance", "pretty"]
+        }],
+        /**
+         * Text Indent
+         * @see https://tailwindcss.com/docs/text-indent
+         */
+        indent: [{
+          indent: getSpacingWithArbitrary()
+        }],
+        /**
+         * Vertical Alignment
+         * @see https://tailwindcss.com/docs/vertical-align
+         */
+        "vertical-align": [{
+          align: ["baseline", "top", "middle", "bottom", "text-top", "text-bottom", "sub", "super", isArbitraryValue]
+        }],
+        /**
+         * Whitespace
+         * @see https://tailwindcss.com/docs/whitespace
+         */
+        whitespace: [{
+          whitespace: ["normal", "nowrap", "pre", "pre-line", "pre-wrap", "break-spaces"]
+        }],
+        /**
+         * Word Break
+         * @see https://tailwindcss.com/docs/word-break
+         */
+        break: [{
+          break: ["normal", "words", "all", "keep"]
+        }],
+        /**
+         * Hyphens
+         * @see https://tailwindcss.com/docs/hyphens
+         */
+        hyphens: [{
+          hyphens: ["none", "manual", "auto"]
+        }],
+        /**
+         * Content
+         * @see https://tailwindcss.com/docs/content
+         */
+        content: [{
+          content: ["none", isArbitraryValue]
+        }],
+        // Backgrounds
+        /**
+         * Background Attachment
+         * @see https://tailwindcss.com/docs/background-attachment
+         */
+        "bg-attachment": [{
+          bg: ["fixed", "local", "scroll"]
+        }],
+        /**
+         * Background Clip
+         * @see https://tailwindcss.com/docs/background-clip
+         */
+        "bg-clip": [{
+          "bg-clip": ["border", "padding", "content", "text"]
+        }],
+        /**
+         * Background Opacity
+         * @deprecated since Tailwind CSS v3.0.0
+         * @see https://tailwindcss.com/docs/background-opacity
+         */
+        "bg-opacity": [{
+          "bg-opacity": [opacity]
+        }],
+        /**
+         * Background Origin
+         * @see https://tailwindcss.com/docs/background-origin
+         */
+        "bg-origin": [{
+          "bg-origin": ["border", "padding", "content"]
+        }],
+        /**
+         * Background Position
+         * @see https://tailwindcss.com/docs/background-position
+         */
+        "bg-position": [{
+          bg: [...getPositions(), isArbitraryPosition]
+        }],
+        /**
+         * Background Repeat
+         * @see https://tailwindcss.com/docs/background-repeat
+         */
+        "bg-repeat": [{
+          bg: ["no-repeat", {
+            repeat: ["", "x", "y", "round", "space"]
+          }]
+        }],
+        /**
+         * Background Size
+         * @see https://tailwindcss.com/docs/background-size
+         */
+        "bg-size": [{
+          bg: ["auto", "cover", "contain", isArbitrarySize]
+        }],
+        /**
+         * Background Image
+         * @see https://tailwindcss.com/docs/background-image
+         */
+        "bg-image": [{
+          bg: ["none", {
+            "gradient-to": ["t", "tr", "r", "br", "b", "bl", "l", "tl"]
+          }, isArbitraryImage]
+        }],
+        /**
+         * Background Color
+         * @see https://tailwindcss.com/docs/background-color
+         */
+        "bg-color": [{
+          bg: [colors]
+        }],
+        /**
+         * Gradient Color Stops From Position
+         * @see https://tailwindcss.com/docs/gradient-color-stops
+         */
+        "gradient-from-pos": [{
+          from: [gradientColorStopPositions]
+        }],
+        /**
+         * Gradient Color Stops Via Position
+         * @see https://tailwindcss.com/docs/gradient-color-stops
+         */
+        "gradient-via-pos": [{
+          via: [gradientColorStopPositions]
+        }],
+        /**
+         * Gradient Color Stops To Position
+         * @see https://tailwindcss.com/docs/gradient-color-stops
+         */
+        "gradient-to-pos": [{
+          to: [gradientColorStopPositions]
+        }],
+        /**
+         * Gradient Color Stops From
+         * @see https://tailwindcss.com/docs/gradient-color-stops
+         */
+        "gradient-from": [{
+          from: [gradientColorStops]
+        }],
+        /**
+         * Gradient Color Stops Via
+         * @see https://tailwindcss.com/docs/gradient-color-stops
+         */
+        "gradient-via": [{
+          via: [gradientColorStops]
+        }],
+        /**
+         * Gradient Color Stops To
+         * @see https://tailwindcss.com/docs/gradient-color-stops
+         */
+        "gradient-to": [{
+          to: [gradientColorStops]
+        }],
+        // Borders
+        /**
+         * Border Radius
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        rounded: [{
+          rounded: [borderRadius]
+        }],
+        /**
+         * Border Radius Start
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-s": [{
+          "rounded-s": [borderRadius]
+        }],
+        /**
+         * Border Radius End
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-e": [{
+          "rounded-e": [borderRadius]
+        }],
+        /**
+         * Border Radius Top
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-t": [{
+          "rounded-t": [borderRadius]
+        }],
+        /**
+         * Border Radius Right
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-r": [{
+          "rounded-r": [borderRadius]
+        }],
+        /**
+         * Border Radius Bottom
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-b": [{
+          "rounded-b": [borderRadius]
+        }],
+        /**
+         * Border Radius Left
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-l": [{
+          "rounded-l": [borderRadius]
+        }],
+        /**
+         * Border Radius Start Start
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-ss": [{
+          "rounded-ss": [borderRadius]
+        }],
+        /**
+         * Border Radius Start End
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-se": [{
+          "rounded-se": [borderRadius]
+        }],
+        /**
+         * Border Radius End End
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-ee": [{
+          "rounded-ee": [borderRadius]
+        }],
+        /**
+         * Border Radius End Start
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-es": [{
+          "rounded-es": [borderRadius]
+        }],
+        /**
+         * Border Radius Top Left
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-tl": [{
+          "rounded-tl": [borderRadius]
+        }],
+        /**
+         * Border Radius Top Right
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-tr": [{
+          "rounded-tr": [borderRadius]
+        }],
+        /**
+         * Border Radius Bottom Right
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-br": [{
+          "rounded-br": [borderRadius]
+        }],
+        /**
+         * Border Radius Bottom Left
+         * @see https://tailwindcss.com/docs/border-radius
+         */
+        "rounded-bl": [{
+          "rounded-bl": [borderRadius]
+        }],
+        /**
+         * Border Width
+         * @see https://tailwindcss.com/docs/border-width
+         */
+        "border-w": [{
+          border: [borderWidth]
+        }],
+        /**
+         * Border Width X
+         * @see https://tailwindcss.com/docs/border-width
+         */
+        "border-w-x": [{
+          "border-x": [borderWidth]
+        }],
+        /**
+         * Border Width Y
+         * @see https://tailwindcss.com/docs/border-width
+         */
+        "border-w-y": [{
+          "border-y": [borderWidth]
+        }],
+        /**
+         * Border Width Start
+         * @see https://tailwindcss.com/docs/border-width
+         */
+        "border-w-s": [{
+          "border-s": [borderWidth]
+        }],
+        /**
+         * Border Width End
+         * @see https://tailwindcss.com/docs/border-width
+         */
+        "border-w-e": [{
+          "border-e": [borderWidth]
+        }],
+        /**
+         * Border Width Top
+         * @see https://tailwindcss.com/docs/border-width
+         */
+        "border-w-t": [{
+          "border-t": [borderWidth]
+        }],
+        /**
+         * Border Width Right
+         * @see https://tailwindcss.com/docs/border-width
+         */
+        "border-w-r": [{
+          "border-r": [borderWidth]
+        }],
+        /**
+         * Border Width Bottom
+         * @see https://tailwindcss.com/docs/border-width
+         */
+        "border-w-b": [{
+          "border-b": [borderWidth]
+        }],
+        /**
+         * Border Width Left
+         * @see https://tailwindcss.com/docs/border-width
+         */
+        "border-w-l": [{
+          "border-l": [borderWidth]
+        }],
+        /**
+         * Border Opacity
+         * @see https://tailwindcss.com/docs/border-opacity
+         */
+        "border-opacity": [{
+          "border-opacity": [opacity]
+        }],
+        /**
+         * Border Style
+         * @see https://tailwindcss.com/docs/border-style
+         */
+        "border-style": [{
+          border: [...getLineStyles(), "hidden"]
+        }],
+        /**
+         * Divide Width X
+         * @see https://tailwindcss.com/docs/divide-width
+         */
+        "divide-x": [{
+          "divide-x": [borderWidth]
+        }],
+        /**
+         * Divide Width X Reverse
+         * @see https://tailwindcss.com/docs/divide-width
+         */
+        "divide-x-reverse": ["divide-x-reverse"],
+        /**
+         * Divide Width Y
+         * @see https://tailwindcss.com/docs/divide-width
+         */
+        "divide-y": [{
+          "divide-y": [borderWidth]
+        }],
+        /**
+         * Divide Width Y Reverse
+         * @see https://tailwindcss.com/docs/divide-width
+         */
+        "divide-y-reverse": ["divide-y-reverse"],
+        /**
+         * Divide Opacity
+         * @see https://tailwindcss.com/docs/divide-opacity
+         */
+        "divide-opacity": [{
+          "divide-opacity": [opacity]
+        }],
+        /**
+         * Divide Style
+         * @see https://tailwindcss.com/docs/divide-style
+         */
+        "divide-style": [{
+          divide: getLineStyles()
+        }],
+        /**
+         * Border Color
+         * @see https://tailwindcss.com/docs/border-color
+         */
+        "border-color": [{
+          border: [borderColor]
+        }],
+        /**
+         * Border Color X
+         * @see https://tailwindcss.com/docs/border-color
+         */
+        "border-color-x": [{
+          "border-x": [borderColor]
+        }],
+        /**
+         * Border Color Y
+         * @see https://tailwindcss.com/docs/border-color
+         */
+        "border-color-y": [{
+          "border-y": [borderColor]
+        }],
+        /**
+         * Border Color S
+         * @see https://tailwindcss.com/docs/border-color
+         */
+        "border-color-s": [{
+          "border-s": [borderColor]
+        }],
+        /**
+         * Border Color E
+         * @see https://tailwindcss.com/docs/border-color
+         */
+        "border-color-e": [{
+          "border-e": [borderColor]
+        }],
+        /**
+         * Border Color Top
+         * @see https://tailwindcss.com/docs/border-color
+         */
+        "border-color-t": [{
+          "border-t": [borderColor]
+        }],
+        /**
+         * Border Color Right
+         * @see https://tailwindcss.com/docs/border-color
+         */
+        "border-color-r": [{
+          "border-r": [borderColor]
+        }],
+        /**
+         * Border Color Bottom
+         * @see https://tailwindcss.com/docs/border-color
+         */
+        "border-color-b": [{
+          "border-b": [borderColor]
+        }],
+        /**
+         * Border Color Left
+         * @see https://tailwindcss.com/docs/border-color
+         */
+        "border-color-l": [{
+          "border-l": [borderColor]
+        }],
+        /**
+         * Divide Color
+         * @see https://tailwindcss.com/docs/divide-color
+         */
+        "divide-color": [{
+          divide: [borderColor]
+        }],
+        /**
+         * Outline Style
+         * @see https://tailwindcss.com/docs/outline-style
+         */
+        "outline-style": [{
+          outline: ["", ...getLineStyles()]
+        }],
+        /**
+         * Outline Offset
+         * @see https://tailwindcss.com/docs/outline-offset
+         */
+        "outline-offset": [{
+          "outline-offset": [isLength, isArbitraryValue]
+        }],
+        /**
+         * Outline Width
+         * @see https://tailwindcss.com/docs/outline-width
+         */
+        "outline-w": [{
+          outline: [isLength, isArbitraryLength]
+        }],
+        /**
+         * Outline Color
+         * @see https://tailwindcss.com/docs/outline-color
+         */
+        "outline-color": [{
+          outline: [colors]
+        }],
+        /**
+         * Ring Width
+         * @see https://tailwindcss.com/docs/ring-width
+         */
+        "ring-w": [{
+          ring: getLengthWithEmptyAndArbitrary()
+        }],
+        /**
+         * Ring Width Inset
+         * @see https://tailwindcss.com/docs/ring-width
+         */
+        "ring-w-inset": ["ring-inset"],
+        /**
+         * Ring Color
+         * @see https://tailwindcss.com/docs/ring-color
+         */
+        "ring-color": [{
+          ring: [colors]
+        }],
+        /**
+         * Ring Opacity
+         * @see https://tailwindcss.com/docs/ring-opacity
+         */
+        "ring-opacity": [{
+          "ring-opacity": [opacity]
+        }],
+        /**
+         * Ring Offset Width
+         * @see https://tailwindcss.com/docs/ring-offset-width
+         */
+        "ring-offset-w": [{
+          "ring-offset": [isLength, isArbitraryLength]
+        }],
+        /**
+         * Ring Offset Color
+         * @see https://tailwindcss.com/docs/ring-offset-color
+         */
+        "ring-offset-color": [{
+          "ring-offset": [colors]
+        }],
+        // Effects
+        /**
+         * Box Shadow
+         * @see https://tailwindcss.com/docs/box-shadow
+         */
+        shadow: [{
+          shadow: ["", "inner", "none", isTshirtSize, isArbitraryShadow]
+        }],
+        /**
+         * Box Shadow Color
+         * @see https://tailwindcss.com/docs/box-shadow-color
+         */
+        "shadow-color": [{
+          shadow: [isAny]
+        }],
+        /**
+         * Opacity
+         * @see https://tailwindcss.com/docs/opacity
+         */
+        opacity: [{
+          opacity: [opacity]
+        }],
+        /**
+         * Mix Blend Mode
+         * @see https://tailwindcss.com/docs/mix-blend-mode
+         */
+        "mix-blend": [{
+          "mix-blend": [...getBlendModes(), "plus-lighter", "plus-darker"]
+        }],
+        /**
+         * Background Blend Mode
+         * @see https://tailwindcss.com/docs/background-blend-mode
+         */
+        "bg-blend": [{
+          "bg-blend": getBlendModes()
+        }],
+        // Filters
+        /**
+         * Filter
+         * @deprecated since Tailwind CSS v3.0.0
+         * @see https://tailwindcss.com/docs/filter
+         */
+        filter: [{
+          filter: ["", "none"]
+        }],
+        /**
+         * Blur
+         * @see https://tailwindcss.com/docs/blur
+         */
+        blur: [{
+          blur: [blur]
+        }],
+        /**
+         * Brightness
+         * @see https://tailwindcss.com/docs/brightness
+         */
+        brightness: [{
+          brightness: [brightness]
+        }],
+        /**
+         * Contrast
+         * @see https://tailwindcss.com/docs/contrast
+         */
+        contrast: [{
+          contrast: [contrast]
+        }],
+        /**
+         * Drop Shadow
+         * @see https://tailwindcss.com/docs/drop-shadow
+         */
+        "drop-shadow": [{
+          "drop-shadow": ["", "none", isTshirtSize, isArbitraryValue]
+        }],
+        /**
+         * Grayscale
+         * @see https://tailwindcss.com/docs/grayscale
+         */
+        grayscale: [{
+          grayscale: [grayscale]
+        }],
+        /**
+         * Hue Rotate
+         * @see https://tailwindcss.com/docs/hue-rotate
+         */
+        "hue-rotate": [{
+          "hue-rotate": [hueRotate]
+        }],
+        /**
+         * Invert
+         * @see https://tailwindcss.com/docs/invert
+         */
+        invert: [{
+          invert: [invert]
+        }],
+        /**
+         * Saturate
+         * @see https://tailwindcss.com/docs/saturate
+         */
+        saturate: [{
+          saturate: [saturate]
+        }],
+        /**
+         * Sepia
+         * @see https://tailwindcss.com/docs/sepia
+         */
+        sepia: [{
+          sepia: [sepia]
+        }],
+        /**
+         * Backdrop Filter
+         * @deprecated since Tailwind CSS v3.0.0
+         * @see https://tailwindcss.com/docs/backdrop-filter
+         */
+        "backdrop-filter": [{
+          "backdrop-filter": ["", "none"]
+        }],
+        /**
+         * Backdrop Blur
+         * @see https://tailwindcss.com/docs/backdrop-blur
+         */
+        "backdrop-blur": [{
+          "backdrop-blur": [blur]
+        }],
+        /**
+         * Backdrop Brightness
+         * @see https://tailwindcss.com/docs/backdrop-brightness
+         */
+        "backdrop-brightness": [{
+          "backdrop-brightness": [brightness]
+        }],
+        /**
+         * Backdrop Contrast
+         * @see https://tailwindcss.com/docs/backdrop-contrast
+         */
+        "backdrop-contrast": [{
+          "backdrop-contrast": [contrast]
+        }],
+        /**
+         * Backdrop Grayscale
+         * @see https://tailwindcss.com/docs/backdrop-grayscale
+         */
+        "backdrop-grayscale": [{
+          "backdrop-grayscale": [grayscale]
+        }],
+        /**
+         * Backdrop Hue Rotate
+         * @see https://tailwindcss.com/docs/backdrop-hue-rotate
+         */
+        "backdrop-hue-rotate": [{
+          "backdrop-hue-rotate": [hueRotate]
+        }],
+        /**
+         * Backdrop Invert
+         * @see https://tailwindcss.com/docs/backdrop-invert
+         */
+        "backdrop-invert": [{
+          "backdrop-invert": [invert]
+        }],
+        /**
+         * Backdrop Opacity
+         * @see https://tailwindcss.com/docs/backdrop-opacity
+         */
+        "backdrop-opacity": [{
+          "backdrop-opacity": [opacity]
+        }],
+        /**
+         * Backdrop Saturate
+         * @see https://tailwindcss.com/docs/backdrop-saturate
+         */
+        "backdrop-saturate": [{
+          "backdrop-saturate": [saturate]
+        }],
+        /**
+         * Backdrop Sepia
+         * @see https://tailwindcss.com/docs/backdrop-sepia
+         */
+        "backdrop-sepia": [{
+          "backdrop-sepia": [sepia]
+        }],
+        // Tables
+        /**
+         * Border Collapse
+         * @see https://tailwindcss.com/docs/border-collapse
+         */
+        "border-collapse": [{
+          border: ["collapse", "separate"]
+        }],
+        /**
+         * Border Spacing
+         * @see https://tailwindcss.com/docs/border-spacing
+         */
+        "border-spacing": [{
+          "border-spacing": [borderSpacing]
+        }],
+        /**
+         * Border Spacing X
+         * @see https://tailwindcss.com/docs/border-spacing
+         */
+        "border-spacing-x": [{
+          "border-spacing-x": [borderSpacing]
+        }],
+        /**
+         * Border Spacing Y
+         * @see https://tailwindcss.com/docs/border-spacing
+         */
+        "border-spacing-y": [{
+          "border-spacing-y": [borderSpacing]
+        }],
+        /**
+         * Table Layout
+         * @see https://tailwindcss.com/docs/table-layout
+         */
+        "table-layout": [{
+          table: ["auto", "fixed"]
+        }],
+        /**
+         * Caption Side
+         * @see https://tailwindcss.com/docs/caption-side
+         */
+        caption: [{
+          caption: ["top", "bottom"]
+        }],
+        // Transitions and Animation
+        /**
+         * Tranisition Property
+         * @see https://tailwindcss.com/docs/transition-property
+         */
+        transition: [{
+          transition: ["none", "all", "", "colors", "opacity", "shadow", "transform", isArbitraryValue]
+        }],
+        /**
+         * Transition Duration
+         * @see https://tailwindcss.com/docs/transition-duration
+         */
+        duration: [{
+          duration: getNumberAndArbitrary()
+        }],
+        /**
+         * Transition Timing Function
+         * @see https://tailwindcss.com/docs/transition-timing-function
+         */
+        ease: [{
+          ease: ["linear", "in", "out", "in-out", isArbitraryValue]
+        }],
+        /**
+         * Transition Delay
+         * @see https://tailwindcss.com/docs/transition-delay
+         */
+        delay: [{
+          delay: getNumberAndArbitrary()
+        }],
+        /**
+         * Animation
+         * @see https://tailwindcss.com/docs/animation
+         */
+        animate: [{
+          animate: ["none", "spin", "ping", "pulse", "bounce", isArbitraryValue]
+        }],
+        // Transforms
+        /**
+         * Transform
+         * @see https://tailwindcss.com/docs/transform
+         */
+        transform: [{
+          transform: ["", "gpu", "none"]
+        }],
+        /**
+         * Scale
+         * @see https://tailwindcss.com/docs/scale
+         */
+        scale: [{
+          scale: [scale]
+        }],
+        /**
+         * Scale X
+         * @see https://tailwindcss.com/docs/scale
+         */
+        "scale-x": [{
+          "scale-x": [scale]
+        }],
+        /**
+         * Scale Y
+         * @see https://tailwindcss.com/docs/scale
+         */
+        "scale-y": [{
+          "scale-y": [scale]
+        }],
+        /**
+         * Rotate
+         * @see https://tailwindcss.com/docs/rotate
+         */
+        rotate: [{
+          rotate: [isInteger, isArbitraryValue]
+        }],
+        /**
+         * Translate X
+         * @see https://tailwindcss.com/docs/translate
+         */
+        "translate-x": [{
+          "translate-x": [translate]
+        }],
+        /**
+         * Translate Y
+         * @see https://tailwindcss.com/docs/translate
+         */
+        "translate-y": [{
+          "translate-y": [translate]
+        }],
+        /**
+         * Skew X
+         * @see https://tailwindcss.com/docs/skew
+         */
+        "skew-x": [{
+          "skew-x": [skew]
+        }],
+        /**
+         * Skew Y
+         * @see https://tailwindcss.com/docs/skew
+         */
+        "skew-y": [{
+          "skew-y": [skew]
+        }],
+        /**
+         * Transform Origin
+         * @see https://tailwindcss.com/docs/transform-origin
+         */
+        "transform-origin": [{
+          origin: ["center", "top", "top-right", "right", "bottom-right", "bottom", "bottom-left", "left", "top-left", isArbitraryValue]
+        }],
+        // Interactivity
+        /**
+         * Accent Color
+         * @see https://tailwindcss.com/docs/accent-color
+         */
+        accent: [{
+          accent: ["auto", colors]
+        }],
+        /**
+         * Appearance
+         * @see https://tailwindcss.com/docs/appearance
+         */
+        appearance: [{
+          appearance: ["none", "auto"]
+        }],
+        /**
+         * Cursor
+         * @see https://tailwindcss.com/docs/cursor
+         */
+        cursor: [{
+          cursor: ["auto", "default", "pointer", "wait", "text", "move", "help", "not-allowed", "none", "context-menu", "progress", "cell", "crosshair", "vertical-text", "alias", "copy", "no-drop", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out", isArbitraryValue]
+        }],
+        /**
+         * Caret Color
+         * @see https://tailwindcss.com/docs/just-in-time-mode#caret-color-utilities
+         */
+        "caret-color": [{
+          caret: [colors]
+        }],
+        /**
+         * Pointer Events
+         * @see https://tailwindcss.com/docs/pointer-events
+         */
+        "pointer-events": [{
+          "pointer-events": ["none", "auto"]
+        }],
+        /**
+         * Resize
+         * @see https://tailwindcss.com/docs/resize
+         */
+        resize: [{
+          resize: ["none", "y", "x", ""]
+        }],
+        /**
+         * Scroll Behavior
+         * @see https://tailwindcss.com/docs/scroll-behavior
+         */
+        "scroll-behavior": [{
+          scroll: ["auto", "smooth"]
+        }],
+        /**
+         * Scroll Margin
+         * @see https://tailwindcss.com/docs/scroll-margin
+         */
+        "scroll-m": [{
+          "scroll-m": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Margin X
+         * @see https://tailwindcss.com/docs/scroll-margin
+         */
+        "scroll-mx": [{
+          "scroll-mx": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Margin Y
+         * @see https://tailwindcss.com/docs/scroll-margin
+         */
+        "scroll-my": [{
+          "scroll-my": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Margin Start
+         * @see https://tailwindcss.com/docs/scroll-margin
+         */
+        "scroll-ms": [{
+          "scroll-ms": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Margin End
+         * @see https://tailwindcss.com/docs/scroll-margin
+         */
+        "scroll-me": [{
+          "scroll-me": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Margin Top
+         * @see https://tailwindcss.com/docs/scroll-margin
+         */
+        "scroll-mt": [{
+          "scroll-mt": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Margin Right
+         * @see https://tailwindcss.com/docs/scroll-margin
+         */
+        "scroll-mr": [{
+          "scroll-mr": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Margin Bottom
+         * @see https://tailwindcss.com/docs/scroll-margin
+         */
+        "scroll-mb": [{
+          "scroll-mb": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Margin Left
+         * @see https://tailwindcss.com/docs/scroll-margin
+         */
+        "scroll-ml": [{
+          "scroll-ml": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Padding
+         * @see https://tailwindcss.com/docs/scroll-padding
+         */
+        "scroll-p": [{
+          "scroll-p": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Padding X
+         * @see https://tailwindcss.com/docs/scroll-padding
+         */
+        "scroll-px": [{
+          "scroll-px": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Padding Y
+         * @see https://tailwindcss.com/docs/scroll-padding
+         */
+        "scroll-py": [{
+          "scroll-py": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Padding Start
+         * @see https://tailwindcss.com/docs/scroll-padding
+         */
+        "scroll-ps": [{
+          "scroll-ps": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Padding End
+         * @see https://tailwindcss.com/docs/scroll-padding
+         */
+        "scroll-pe": [{
+          "scroll-pe": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Padding Top
+         * @see https://tailwindcss.com/docs/scroll-padding
+         */
+        "scroll-pt": [{
+          "scroll-pt": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Padding Right
+         * @see https://tailwindcss.com/docs/scroll-padding
+         */
+        "scroll-pr": [{
+          "scroll-pr": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Padding Bottom
+         * @see https://tailwindcss.com/docs/scroll-padding
+         */
+        "scroll-pb": [{
+          "scroll-pb": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Padding Left
+         * @see https://tailwindcss.com/docs/scroll-padding
+         */
+        "scroll-pl": [{
+          "scroll-pl": getSpacingWithArbitrary()
+        }],
+        /**
+         * Scroll Snap Align
+         * @see https://tailwindcss.com/docs/scroll-snap-align
+         */
+        "snap-align": [{
+          snap: ["start", "end", "center", "align-none"]
+        }],
+        /**
+         * Scroll Snap Stop
+         * @see https://tailwindcss.com/docs/scroll-snap-stop
+         */
+        "snap-stop": [{
+          snap: ["normal", "always"]
+        }],
+        /**
+         * Scroll Snap Type
+         * @see https://tailwindcss.com/docs/scroll-snap-type
+         */
+        "snap-type": [{
+          snap: ["none", "x", "y", "both"]
+        }],
+        /**
+         * Scroll Snap Type Strictness
+         * @see https://tailwindcss.com/docs/scroll-snap-type
+         */
+        "snap-strictness": [{
+          snap: ["mandatory", "proximity"]
+        }],
+        /**
+         * Touch Action
+         * @see https://tailwindcss.com/docs/touch-action
+         */
+        touch: [{
+          touch: ["auto", "none", "manipulation"]
+        }],
+        /**
+         * Touch Action X
+         * @see https://tailwindcss.com/docs/touch-action
+         */
+        "touch-x": [{
+          "touch-pan": ["x", "left", "right"]
+        }],
+        /**
+         * Touch Action Y
+         * @see https://tailwindcss.com/docs/touch-action
+         */
+        "touch-y": [{
+          "touch-pan": ["y", "up", "down"]
+        }],
+        /**
+         * Touch Action Pinch Zoom
+         * @see https://tailwindcss.com/docs/touch-action
+         */
+        "touch-pz": ["touch-pinch-zoom"],
+        /**
+         * User Select
+         * @see https://tailwindcss.com/docs/user-select
+         */
+        select: [{
+          select: ["none", "text", "all", "auto"]
+        }],
+        /**
+         * Will Change
+         * @see https://tailwindcss.com/docs/will-change
+         */
+        "will-change": [{
+          "will-change": ["auto", "scroll", "contents", "transform", isArbitraryValue]
+        }],
+        // SVG
+        /**
+         * Fill
+         * @see https://tailwindcss.com/docs/fill
+         */
+        fill: [{
+          fill: [colors, "none"]
+        }],
+        /**
+         * Stroke Width
+         * @see https://tailwindcss.com/docs/stroke-width
+         */
+        "stroke-w": [{
+          stroke: [isLength, isArbitraryLength, isArbitraryNumber]
+        }],
+        /**
+         * Stroke
+         * @see https://tailwindcss.com/docs/stroke
+         */
+        stroke: [{
+          stroke: [colors, "none"]
+        }],
+        // Accessibility
+        /**
+         * Screen Readers
+         * @see https://tailwindcss.com/docs/screen-readers
+         */
+        sr: ["sr-only", "not-sr-only"],
+        /**
+         * Forced Color Adjust
+         * @see https://tailwindcss.com/docs/forced-color-adjust
+         */
+        "forced-color-adjust": [{
+          "forced-color-adjust": ["auto", "none"]
+        }]
+      },
+      conflictingClassGroups: {
+        overflow: ["overflow-x", "overflow-y"],
+        overscroll: ["overscroll-x", "overscroll-y"],
+        inset: ["inset-x", "inset-y", "start", "end", "top", "right", "bottom", "left"],
+        "inset-x": ["right", "left"],
+        "inset-y": ["top", "bottom"],
+        flex: ["basis", "grow", "shrink"],
+        gap: ["gap-x", "gap-y"],
+        p: ["px", "py", "ps", "pe", "pt", "pr", "pb", "pl"],
+        px: ["pr", "pl"],
+        py: ["pt", "pb"],
+        m: ["mx", "my", "ms", "me", "mt", "mr", "mb", "ml"],
+        mx: ["mr", "ml"],
+        my: ["mt", "mb"],
+        size: ["w", "h"],
+        "font-size": ["leading"],
+        "fvn-normal": ["fvn-ordinal", "fvn-slashed-zero", "fvn-figure", "fvn-spacing", "fvn-fraction"],
+        "fvn-ordinal": ["fvn-normal"],
+        "fvn-slashed-zero": ["fvn-normal"],
+        "fvn-figure": ["fvn-normal"],
+        "fvn-spacing": ["fvn-normal"],
+        "fvn-fraction": ["fvn-normal"],
+        "line-clamp": ["display", "overflow"],
+        rounded: ["rounded-s", "rounded-e", "rounded-t", "rounded-r", "rounded-b", "rounded-l", "rounded-ss", "rounded-se", "rounded-ee", "rounded-es", "rounded-tl", "rounded-tr", "rounded-br", "rounded-bl"],
+        "rounded-s": ["rounded-ss", "rounded-es"],
+        "rounded-e": ["rounded-se", "rounded-ee"],
+        "rounded-t": ["rounded-tl", "rounded-tr"],
+        "rounded-r": ["rounded-tr", "rounded-br"],
+        "rounded-b": ["rounded-br", "rounded-bl"],
+        "rounded-l": ["rounded-tl", "rounded-bl"],
+        "border-spacing": ["border-spacing-x", "border-spacing-y"],
+        "border-w": ["border-w-s", "border-w-e", "border-w-t", "border-w-r", "border-w-b", "border-w-l"],
+        "border-w-x": ["border-w-r", "border-w-l"],
+        "border-w-y": ["border-w-t", "border-w-b"],
+        "border-color": ["border-color-s", "border-color-e", "border-color-t", "border-color-r", "border-color-b", "border-color-l"],
+        "border-color-x": ["border-color-r", "border-color-l"],
+        "border-color-y": ["border-color-t", "border-color-b"],
+        "scroll-m": ["scroll-mx", "scroll-my", "scroll-ms", "scroll-me", "scroll-mt", "scroll-mr", "scroll-mb", "scroll-ml"],
+        "scroll-mx": ["scroll-mr", "scroll-ml"],
+        "scroll-my": ["scroll-mt", "scroll-mb"],
+        "scroll-p": ["scroll-px", "scroll-py", "scroll-ps", "scroll-pe", "scroll-pt", "scroll-pr", "scroll-pb", "scroll-pl"],
+        "scroll-px": ["scroll-pr", "scroll-pl"],
+        "scroll-py": ["scroll-pt", "scroll-pb"],
+        touch: ["touch-x", "touch-y", "touch-pz"],
+        "touch-x": ["touch"],
+        "touch-y": ["touch"],
+        "touch-pz": ["touch"]
+      },
+      conflictingClassGroupModifiers: {
+        "font-size": ["leading"]
+      }
+    };
+  };
+  var twMerge = /* @__PURE__ */ createTailwindMerge(getDefaultConfig);
+
+  // src/lib/utils.ts
+  function cn(...inputs) {
+    return twMerge(clsx(inputs));
+  }
+  function formatDate(dateStr) {
+    if (!dateStr) return "";
+    if (dateStr.includes(".")) return dateStr;
+    const parts = dateStr.split("T")[0].split("-");
+    if (parts.length === 3) {
+      return parts[2] + "." + parts[1] + "." + parts[0];
+    }
+    return dateStr;
+  }
+
+  // src/components/layout/Sidebar.tsx
+  var import_jsx_runtime = __toESM(require_jsx_runtime(), 1);
+  var patientLinks = [
+    { to: "/patient", icon: Home, label: "\xDCbersicht" },
+    { to: "/patient/book", icon: Calendar, label: "Termin buchen" },
+    { to: "/patient/appointments", icon: ClipboardList, label: "Meine Termine" },
+    { to: "/patient/prescriptions", icon: Pill, label: "Rezepte" },
+    { to: "/patient/settings", icon: Settings, label: "Einstellungen" }
+  ];
+  var mfaLinks = [
+    { to: "/mfa", icon: LayoutDashboard, label: "Dashboard" },
+    { to: "/mfa/patients", icon: User, label: "Patienten" },
+    { to: "/mfa/appointments", icon: Calendar, label: "Termine" },
+    { to: "/mfa/prescriptions", icon: Pill, label: "Rezepte" },
+    { to: "/mfa/vaccinations", icon: FlaskConical, label: "Impfungen" },
+    { to: "/mfa/reminders", icon: Bell, label: "Erinnerungen" }
+  ];
+  var doctorLinks = [
+    { to: "/doctor", icon: LayoutDashboard, label: "Dashboard" },
+    { to: "/doctor/prescriptions", icon: ClipboardCheck, label: "Rezept-Freigabe" },
+    { to: "/doctor/absences", icon: CalendarDays, label: "Urlaub & Abwesenheit" },
+    { to: "/doctor/master-data", icon: Stethoscope, label: "Stammdaten" }
+  ];
+  function Sidebar({ role }) {
+    let links = patientLinks;
+    let portalLabel = "Patientenportal";
+    if (role === "mfa") {
+      links = mfaLinks;
+      portalLabel = "MFA-Portal";
+    } else if (role === "doctor") {
+      links = doctorLinks;
+      portalLabel = "Arzt-Portal";
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", { className: "w-64 border-r bg-card flex flex-col h-screen sticky top-0", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "p-4 border-b", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "font-semibold text-sm text-primary", children: "Praxis Demir & Kollegen" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "text-xs text-muted-foreground", children: portalLabel })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "flex-1 p-2 space-y-1 overflow-y-auto", children: links.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+        NavLink,
+        {
+          to: link.to,
+          end: link.to === "/mfa" || link.to === "/doctor",
+          className: ({ isActive }) => cn(
+            "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            isActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          ),
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(link.icon, { className: "h-4 w-4" }),
+            link.label
+          ]
+        },
+        link.to
+      )) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "p-2 border-t", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+        NavLink,
+        {
+          to: "/",
+          onClick: () => {
+            localStorage.removeItem("patient_insurance");
+            localStorage.removeItem("patient_name");
+            localStorage.removeItem("doctor_info");
+          },
+          className: "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LogOut, { className: "h-4 w-4" }),
+            "Abmelden"
+          ]
+        }
+      ) })
+    ] });
+  }
+
+  // src/components/layout/RootLayout.tsx
+  var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
+  function RootLayout({ role }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)("div", { className: "flex min-h-screen", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Sidebar, { role }),
+      /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("main", { className: "flex-1 p-6 overflow-y-auto bg-background", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(Outlet, {}) })
+    ] });
+  }
+
+  // src/pages/LandingPage.tsx
+  var import_react4 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/react/button/Button.mjs
+  var React12 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/react/internals/use-button/useButton.mjs
+  var React8 = __toESM(require_react(), 1);
+
+  // node_modules/@floating-ui/utils/dist/floating-ui.utils.dom.mjs
+  function hasWindow() {
+    return typeof window !== "undefined";
+  }
+  function getWindow(node) {
+    var _node$ownerDocument;
+    return (node == null || (_node$ownerDocument = node.ownerDocument) == null ? void 0 : _node$ownerDocument.defaultView) || window;
+  }
+  function isElement(value) {
+    if (!hasWindow()) {
+      return false;
+    }
+    return value instanceof Element || value instanceof getWindow(value).Element;
+  }
+  function isHTMLElement(value) {
+    if (!hasWindow()) {
+      return false;
+    }
+    return value instanceof HTMLElement || value instanceof getWindow(value).HTMLElement;
+  }
+
+  // node_modules/@base-ui/utils/safeReact.mjs
+  var React3 = __toESM(require_react(), 1);
+  var SafeReact = {
+    ...React3
+  };
+
+  // node_modules/@base-ui/utils/useRefWithInit.mjs
+  var React4 = __toESM(require_react(), 1);
+  var UNINITIALIZED = {};
+  function useRefWithInit(init, initArg) {
+    const ref = React4.useRef(UNINITIALIZED);
+    if (ref.current === UNINITIALIZED) {
+      ref.current = init(initArg);
+    }
+    return ref;
+  }
+
+  // node_modules/@base-ui/utils/useStableCallback.mjs
+  var useInsertionEffect = SafeReact.useInsertionEffect;
+  var useSafeInsertionEffect = (
+    // React 17 doesn't have useInsertionEffect.
+    useInsertionEffect && // Preact replaces useInsertionEffect with useLayoutEffect and fires too late.
+    useInsertionEffect !== SafeReact.useLayoutEffect ? useInsertionEffect : (fn) => fn()
+  );
+  function useStableCallback(callback) {
+    const stable = useRefWithInit(createStableCallback).current;
+    stable.next = callback;
+    useSafeInsertionEffect(stable.effect);
+    return stable.trampoline;
+  }
+  function createStableCallback() {
+    const stable = {
+      next: void 0,
+      callback: assertNotCalled,
+      trampoline: (...args) => stable.callback?.(...args),
+      effect: () => {
+        stable.callback = stable.next;
+      }
+    };
+    return stable;
+  }
+  function assertNotCalled() {
+    if (false) {
+      throw (
+        /* minify-error-disabled */
+        new Error("Base UI: Cannot call an event handler while rendering.")
+      );
+    }
+  }
+
+  // node_modules/@base-ui/utils/useIsoLayoutEffect.mjs
+  var React5 = __toESM(require_react(), 1);
+  var noop = () => {
+  };
+  var useIsoLayoutEffect = typeof document !== "undefined" ? React5.useLayoutEffect : noop;
+
+  // node_modules/@base-ui/utils/mergeObjects.mjs
+  function mergeObjects(a, b) {
+    if (a && !b) {
+      return a;
+    }
+    if (!a && b) {
+      return b;
+    }
+    if (a || b) {
+      return {
+        ...a,
+        ...b
+      };
+    }
+    return void 0;
+  }
+
+  // node_modules/@base-ui/react/merge-props/mergeProps.mjs
+  var EMPTY_PROPS = {};
+  function mergeProps(a, b, c, d, e) {
+    if (!c && !d && !e && !a) {
+      return createInitialMergedProps(b);
+    }
+    let merged = createInitialMergedProps(a);
+    if (b) {
+      merged = mergeInto(merged, b);
+    }
+    if (c) {
+      merged = mergeInto(merged, c);
+    }
+    if (d) {
+      merged = mergeInto(merged, d);
+    }
+    if (e) {
+      merged = mergeInto(merged, e);
+    }
+    return merged;
+  }
+  function mergePropsN(props) {
+    if (props.length === 0) {
+      return EMPTY_PROPS;
+    }
+    if (props.length === 1) {
+      return createInitialMergedProps(props[0]);
+    }
+    let merged = createInitialMergedProps(props[0]);
+    for (let i = 1; i < props.length; i += 1) {
+      merged = mergeInto(merged, props[i]);
+    }
+    return merged;
+  }
+  function createInitialMergedProps(inputProps) {
+    if (isPropsGetter(inputProps)) {
+      return {
+        ...resolvePropsGetter(inputProps, EMPTY_PROPS)
+      };
+    }
+    return copyInitialProps(inputProps);
+  }
+  function mergeInto(merged, inputProps) {
+    if (isPropsGetter(inputProps)) {
+      return resolvePropsGetter(inputProps, merged);
+    }
+    return mutablyMergeInto(merged, inputProps);
+  }
+  function copyInitialProps(inputProps) {
+    const copiedProps = {
+      ...inputProps
+    };
+    for (const propName in copiedProps) {
+      const propValue = copiedProps[propName];
+      if (isEventHandler(propName, propValue)) {
+        copiedProps[propName] = wrapEventHandler(propValue);
+      }
+    }
+    return copiedProps;
+  }
+  function mutablyMergeInto(mergedProps, externalProps) {
+    if (!externalProps) {
+      return mergedProps;
+    }
+    for (const propName in externalProps) {
+      const externalPropValue = externalProps[propName];
+      switch (propName) {
+        case "style": {
+          mergedProps[propName] = mergeObjects(mergedProps.style, externalPropValue);
+          break;
+        }
+        case "className": {
+          mergedProps[propName] = mergeClassNames(mergedProps.className, externalPropValue);
+          break;
+        }
+        default: {
+          if (isEventHandler(propName, externalPropValue)) {
+            mergedProps[propName] = mergeEventHandlers(mergedProps[propName], externalPropValue);
+          } else {
+            mergedProps[propName] = externalPropValue;
+          }
+        }
+      }
+    }
+    return mergedProps;
+  }
+  function isEventHandler(key, value) {
+    const code0 = key.charCodeAt(0);
+    const code1 = key.charCodeAt(1);
+    const code2 = key.charCodeAt(2);
+    return code0 === 111 && code1 === 110 && code2 >= 65 && code2 <= 90 && (typeof value === "function" || typeof value === "undefined");
+  }
+  function isPropsGetter(inputProps) {
+    return typeof inputProps === "function";
+  }
+  function resolvePropsGetter(inputProps, previousProps) {
+    if (isPropsGetter(inputProps)) {
+      return inputProps(previousProps);
+    }
+    return inputProps ?? EMPTY_PROPS;
+  }
+  function mergeEventHandlers(ourHandler, theirHandler) {
+    if (!theirHandler) {
+      return ourHandler;
+    }
+    if (!ourHandler) {
+      return wrapEventHandler(theirHandler);
+    }
+    return (...args) => {
+      const event = args[0];
+      if (isSyntheticEvent(event)) {
+        const baseUIEvent = event;
+        makeEventPreventable(baseUIEvent);
+        const result2 = theirHandler(...args);
+        if (!baseUIEvent.baseUIHandlerPrevented) {
+          ourHandler?.(...args);
+        }
+        return result2;
+      }
+      const result = theirHandler(...args);
+      ourHandler?.(...args);
+      return result;
+    };
+  }
+  function wrapEventHandler(handler) {
+    if (!handler) {
+      return handler;
+    }
+    return (...args) => {
+      const event = args[0];
+      if (isSyntheticEvent(event)) {
+        makeEventPreventable(event);
+      }
+      return handler(...args);
+    };
+  }
+  function makeEventPreventable(event) {
+    event.preventBaseUIHandler = () => {
+      event.baseUIHandlerPrevented = true;
+    };
+    return event;
+  }
+  function mergeClassNames(ourClassName, theirClassName) {
+    if (theirClassName) {
+      if (ourClassName) {
+        return theirClassName + " " + ourClassName;
+      }
+      return theirClassName;
+    }
+    return ourClassName;
+  }
+  function isSyntheticEvent(event) {
+    return event != null && typeof event === "object" && "nativeEvent" in event;
+  }
+
+  // node_modules/@base-ui/utils/formatErrorMessage.mjs
+  function createFormatErrorMessage(baseUrl, prefix) {
+    return function formatErrorMessage2(code, ...args) {
+      const url = new URL(baseUrl);
+      url.searchParams.set("code", code.toString());
+      args.forEach((arg) => url.searchParams.append("args[]", arg));
+      return `${prefix} error #${code}; visit ${url} for the full message.`;
+    };
+  }
+  var formatErrorMessage = createFormatErrorMessage("https://base-ui.com/production-error", "Base UI");
+  var formatErrorMessage_default = formatErrorMessage;
+
+  // node_modules/@base-ui/react/internals/composite/root/CompositeRootContext.mjs
+  var React6 = __toESM(require_react(), 1);
+  var CompositeRootContext = /* @__PURE__ */ React6.createContext(void 0);
+  if (false) CompositeRootContext.displayName = "CompositeRootContext";
+  function useCompositeRootContext(optional = false) {
+    const context = React6.useContext(CompositeRootContext);
+    if (context === void 0 && !optional) {
+      throw new Error(false ? "Base UI: CompositeRootContext is missing. Composite parts must be placed within <Composite.Root>." : formatErrorMessage_default(16));
+    }
+    return context;
+  }
+
+  // node_modules/@base-ui/react/utils/useFocusableWhenDisabled.mjs
+  var React7 = __toESM(require_react(), 1);
+  function useFocusableWhenDisabled(parameters) {
+    const {
+      focusableWhenDisabled,
+      disabled: disabled2,
+      composite = false,
+      tabIndex: tabIndexProp = 0,
+      isNativeButton
+    } = parameters;
+    const isFocusableComposite = composite && focusableWhenDisabled !== false;
+    const isNonFocusableComposite = composite && focusableWhenDisabled === false;
+    const props = React7.useMemo(() => {
+      const additionalProps = {
+        // allow Tabbing away from focusableWhenDisabled elements
+        onKeyDown(event) {
+          if (disabled2 && focusableWhenDisabled && event.key !== "Tab") {
+            event.preventDefault();
+          }
+        }
+      };
+      if (!composite) {
+        additionalProps.tabIndex = tabIndexProp;
+        if (!isNativeButton && disabled2) {
+          additionalProps.tabIndex = focusableWhenDisabled ? tabIndexProp : -1;
+        }
+      }
+      if (isNativeButton && (focusableWhenDisabled || isFocusableComposite) || !isNativeButton && disabled2) {
+        additionalProps["aria-disabled"] = disabled2;
+      }
+      if (isNativeButton && (!focusableWhenDisabled || isNonFocusableComposite)) {
+        additionalProps.disabled = disabled2;
+      }
+      return additionalProps;
+    }, [composite, disabled2, focusableWhenDisabled, isFocusableComposite, isNonFocusableComposite, isNativeButton, tabIndexProp]);
+    return {
+      props
+    };
+  }
+
+  // node_modules/@base-ui/react/internals/use-button/useButton.mjs
+  function useButton(parameters = {}) {
+    const {
+      disabled: disabled2 = false,
+      focusableWhenDisabled,
+      tabIndex = 0,
+      native: isNativeButton = true,
+      composite: compositeProp
+    } = parameters;
+    const elementRef = React8.useRef(null);
+    const compositeRootContext = useCompositeRootContext(true);
+    const isCompositeItem = compositeProp ?? compositeRootContext !== void 0;
+    const {
+      props: focusableWhenDisabledProps
+    } = useFocusableWhenDisabled({
+      focusableWhenDisabled,
+      disabled: disabled2,
+      composite: isCompositeItem,
+      tabIndex,
+      isNativeButton
+    });
+    if (false) {
+      React8.useEffect(() => {
+        if (!elementRef.current) {
+          return;
+        }
+        const isButtonTag = isButtonElement(elementRef.current);
+        if (isNativeButton) {
+          if (!isButtonTag) {
+            const ownerStackMessage = SafeReact.captureOwnerStack?.() || "";
+            const message2 = "A component that acts as a button expected a native <button> because the `nativeButton` prop is true. Rendering a non-<button> removes native button semantics, which can impact forms and accessibility. Use a real <button> in the `render` prop, or set `nativeButton` to `false`.";
+            error(`${message2}${ownerStackMessage}`);
+          }
+        } else if (isButtonTag) {
+          const ownerStackMessage = SafeReact.captureOwnerStack?.() || "";
+          const message2 = "A component that acts as a button expected a non-<button> because the `nativeButton` prop is false. Rendering a <button> keeps native behavior while Base UI applies non-native attributes and handlers, which can add unintended extra attributes (such as `role` or `aria-disabled`). Use a non-<button> in the `render` prop, or set `nativeButton` to `true`.";
+          error(`${message2}${ownerStackMessage}`);
+        }
+      }, [isNativeButton]);
+    }
+    const updateDisabled = React8.useCallback(() => {
+      const element = elementRef.current;
+      if (!isButtonElement(element)) {
+        return;
+      }
+      if (isCompositeItem && disabled2 && focusableWhenDisabledProps.disabled === void 0 && element.disabled) {
+        element.disabled = false;
+      }
+    }, [disabled2, focusableWhenDisabledProps.disabled, isCompositeItem]);
+    useIsoLayoutEffect(updateDisabled, [updateDisabled]);
+    const getButtonProps = React8.useCallback((externalProps = {}) => {
+      const {
+        onClick: externalOnClick,
+        onMouseDown: externalOnMouseDown,
+        onKeyUp: externalOnKeyUp,
+        onKeyDown: externalOnKeyDown,
+        onPointerDown: externalOnPointerDown,
+        ...otherExternalProps
+      } = externalProps;
+      return mergeProps({
+        onClick(event) {
+          if (disabled2) {
+            event.preventDefault();
+            return;
+          }
+          externalOnClick?.(event);
+        },
+        onMouseDown(event) {
+          if (!disabled2) {
+            externalOnMouseDown?.(event);
+          }
+        },
+        onKeyDown(event) {
+          if (disabled2) {
+            return;
+          }
+          makeEventPreventable(event);
+          externalOnKeyDown?.(event);
+          if (event.baseUIHandlerPrevented) {
+            return;
+          }
+          const isCurrentTarget = event.target === event.currentTarget;
+          const currentTarget = event.currentTarget;
+          const isButton = isButtonElement(currentTarget);
+          const isLink = !isNativeButton && isValidLinkElement(currentTarget);
+          const shouldClick = isCurrentTarget && (isNativeButton ? isButton : !isLink);
+          const isEnterKey = event.key === "Enter";
+          const isSpaceKey = event.key === " ";
+          const role = currentTarget.getAttribute("role");
+          const isTextNavigationRole = role?.startsWith("menuitem") || role === "option" || role === "gridcell";
+          if (isCurrentTarget && isCompositeItem && isSpaceKey) {
+            if (event.defaultPrevented && isTextNavigationRole) {
+              return;
+            }
+            event.preventDefault();
+            if (isLink || isNativeButton && isButton) {
+              currentTarget.click();
+              event.preventBaseUIHandler();
+            } else if (shouldClick) {
+              externalOnClick?.(event);
+              event.preventBaseUIHandler();
+            }
+            return;
+          }
+          if (shouldClick) {
+            if (!isNativeButton && (isSpaceKey || isEnterKey)) {
+              event.preventDefault();
+            }
+            if (!isNativeButton && isEnterKey) {
+              externalOnClick?.(event);
+            }
+          }
+        },
+        onKeyUp(event) {
+          if (disabled2) {
+            return;
+          }
+          makeEventPreventable(event);
+          externalOnKeyUp?.(event);
+          if (event.target === event.currentTarget && isNativeButton && isCompositeItem && isButtonElement(event.currentTarget) && event.key === " ") {
+            event.preventDefault();
+            return;
+          }
+          if (event.baseUIHandlerPrevented) {
+            return;
+          }
+          if (event.target === event.currentTarget && !isNativeButton && !isCompositeItem && event.key === " ") {
+            externalOnClick?.(event);
+          }
+        },
+        onPointerDown(event) {
+          if (disabled2) {
+            event.preventDefault();
+            return;
+          }
+          externalOnPointerDown?.(event);
+        }
+      }, isNativeButton ? {
+        type: "button"
+      } : {
+        role: "button"
+      }, focusableWhenDisabledProps, otherExternalProps);
+    }, [disabled2, focusableWhenDisabledProps, isCompositeItem, isNativeButton]);
+    const buttonRef = useStableCallback((element) => {
+      elementRef.current = element;
+      updateDisabled();
+    });
+    return {
+      getButtonProps,
+      buttonRef
+    };
+  }
+  function isButtonElement(elem) {
+    return isHTMLElement(elem) && elem.tagName === "BUTTON";
+  }
+  function isValidLinkElement(elem) {
+    return Boolean(elem?.tagName === "A" && elem?.href);
+  }
+
+  // node_modules/@base-ui/react/internals/useRenderElement.mjs
+  var React11 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/utils/useMergedRefs.mjs
+  function useMergedRefs(a, b, c, d) {
+    const forkRef = useRefWithInit(createForkRef).current;
+    if (didChange(forkRef, a, b, c, d)) {
+      update(forkRef, [a, b, c, d]);
+    }
+    return forkRef.callback;
+  }
+  function useMergedRefsN(refs) {
+    const forkRef = useRefWithInit(createForkRef).current;
+    if (didChangeN(forkRef, refs)) {
+      update(forkRef, refs);
+    }
+    return forkRef.callback;
+  }
+  function createForkRef() {
+    return {
+      callback: null,
+      cleanup: null,
+      refs: []
+    };
+  }
+  function didChange(forkRef, a, b, c, d) {
+    return forkRef.refs[0] !== a || forkRef.refs[1] !== b || forkRef.refs[2] !== c || forkRef.refs[3] !== d;
+  }
+  function didChangeN(forkRef, newRefs) {
+    return forkRef.refs.length !== newRefs.length || forkRef.refs.some((ref, index) => ref !== newRefs[index]);
+  }
+  function update(forkRef, refs) {
+    forkRef.refs = refs;
+    if (refs.every((ref) => ref == null)) {
+      forkRef.callback = null;
+      return;
+    }
+    forkRef.callback = (instance) => {
+      if (forkRef.cleanup) {
+        forkRef.cleanup();
+        forkRef.cleanup = null;
+      }
+      if (instance != null) {
+        const cleanupCallbacks = Array(refs.length).fill(null);
+        for (let i = 0; i < refs.length; i += 1) {
+          const ref = refs[i];
+          if (ref == null) {
+            continue;
+          }
+          switch (typeof ref) {
+            case "function": {
+              const refCleanup = ref(instance);
+              if (typeof refCleanup === "function") {
+                cleanupCallbacks[i] = refCleanup;
+              }
+              break;
+            }
+            case "object": {
+              ref.current = instance;
+              break;
+            }
+            default:
+          }
+        }
+        forkRef.cleanup = () => {
+          for (let i = 0; i < refs.length; i += 1) {
+            const ref = refs[i];
+            if (ref == null) {
+              continue;
+            }
+            switch (typeof ref) {
+              case "function": {
+                const cleanupCallback = cleanupCallbacks[i];
+                if (typeof cleanupCallback === "function") {
+                  cleanupCallback();
+                } else {
+                  ref(null);
+                }
+                break;
+              }
+              case "object": {
+                ref.current = null;
+                break;
+              }
+              default:
+            }
+          }
+        };
+      }
+    };
+  }
+
+  // node_modules/@base-ui/utils/getReactElementRef.mjs
+  var React10 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/utils/reactVersion.mjs
+  var React9 = __toESM(require_react(), 1);
+  var majorVersion = parseInt(React9.version, 10);
+  function isReactVersionAtLeast(reactVersionToCheck) {
+    return majorVersion >= reactVersionToCheck;
+  }
+
+  // node_modules/@base-ui/utils/getReactElementRef.mjs
+  function getReactElementRef(element) {
+    if (!/* @__PURE__ */ React10.isValidElement(element)) {
+      return null;
+    }
+    const reactElement = element;
+    const propsWithRef = reactElement.props;
+    return (isReactVersionAtLeast(19) ? propsWithRef?.ref : reactElement.ref) ?? null;
+  }
+
+  // node_modules/@base-ui/utils/empty.mjs
+  function NOOP() {
+  }
+  var EMPTY_ARRAY = Object.freeze([]);
+  var EMPTY_OBJECT = Object.freeze({});
+
+  // node_modules/@base-ui/react/internals/getStateAttributesProps.mjs
+  function getStateAttributesProps(state, customMapping) {
+    const props = {};
+    for (const key in state) {
+      const value = state[key];
+      if (customMapping?.hasOwnProperty(key)) {
+        const customProps = customMapping[key](value);
+        if (customProps != null) {
+          Object.assign(props, customProps);
+        }
+        continue;
+      }
+      if (value === true) {
+        props[`data-${key.toLowerCase()}`] = "";
+      } else if (value) {
+        props[`data-${key.toLowerCase()}`] = value.toString();
+      }
+    }
+    return props;
+  }
+
+  // node_modules/@base-ui/react/utils/resolveClassName.mjs
+  function resolveClassName(className, state) {
+    return typeof className === "function" ? className(state) : className;
+  }
+
+  // node_modules/@base-ui/react/utils/resolveStyle.mjs
+  function resolveStyle(style, state) {
+    return typeof style === "function" ? style(state) : style;
+  }
+
+  // node_modules/@base-ui/react/internals/useRenderElement.mjs
+  var import_react3 = __toESM(require_react(), 1);
+  function useRenderElement(element, componentProps, params = {}) {
+    const renderProp = componentProps.render;
+    const outProps = useRenderElementProps(componentProps, params);
+    if (params.enabled === false) {
+      return null;
+    }
+    const state = params.state ?? EMPTY_OBJECT;
+    return evaluateRenderProp(element, renderProp, outProps, state);
+  }
+  function useRenderElementProps(componentProps, params = {}) {
+    const {
+      className: classNameProp,
+      style: styleProp,
+      render: renderProp
+    } = componentProps;
+    const {
+      state = EMPTY_OBJECT,
+      ref,
+      props,
+      stateAttributesMapping: stateAttributesMapping2,
+      enabled = true
+    } = params;
+    const className = enabled ? resolveClassName(classNameProp, state) : void 0;
+    const style = enabled ? resolveStyle(styleProp, state) : void 0;
+    const stateProps = enabled ? getStateAttributesProps(state, stateAttributesMapping2) : EMPTY_OBJECT;
+    const resolvedProps = enabled && props ? resolveRenderFunctionProps(props) : void 0;
+    const outProps = enabled ? mergeObjects(stateProps, resolvedProps) ?? {} : EMPTY_OBJECT;
+    if (typeof document !== "undefined") {
+      if (!enabled) {
+        useMergedRefs(null, null);
+      } else if (Array.isArray(ref)) {
+        outProps.ref = useMergedRefsN([outProps.ref, getReactElementRef(renderProp), ...ref]);
+      } else {
+        outProps.ref = useMergedRefs(outProps.ref, getReactElementRef(renderProp), ref);
+      }
+    }
+    if (!enabled) {
+      return EMPTY_OBJECT;
+    }
+    if (className !== void 0) {
+      outProps.className = mergeClassNames(outProps.className, className);
+    }
+    if (style !== void 0) {
+      outProps.style = mergeObjects(outProps.style, style);
+    }
+    return outProps;
+  }
+  function resolveRenderFunctionProps(props) {
+    if (Array.isArray(props)) {
+      return mergePropsN(props);
+    }
+    return mergeProps(void 0, props);
+  }
+  var REACT_LAZY_TYPE = Symbol.for("react.lazy");
+  function evaluateRenderProp(element, render, props, state) {
+    if (render) {
+      if (typeof render === "function") {
+        if (false) {
+          warnIfRenderPropLooksLikeComponent(render);
+        }
+        return render(props, state);
+      }
+      const mergedProps = mergeProps(props, render.props);
+      mergedProps.ref = props.ref;
+      let newElement = render;
+      if (newElement?.$$typeof === REACT_LAZY_TYPE) {
+        const children = React11.Children.toArray(render);
+        newElement = children[0];
+      }
+      if (false) {
+        if (!/* @__PURE__ */ React11.isValidElement(newElement)) {
+          throw new Error(["Base UI: The `render` prop was provided an invalid React element as `React.isValidElement(render)` is `false`.", "A valid React element must be provided to the `render` prop because it is cloned with props to replace the default element.", "https://base-ui.com/r/invalid-render-prop"].join("\n"));
+        }
+      }
+      return /* @__PURE__ */ React11.cloneElement(newElement, mergedProps);
+    }
+    if (element) {
+      if (typeof element === "string") {
+        return renderTag(element, props);
+      }
+    }
+    throw new Error(false ? "Base UI: Render element or function are not defined." : formatErrorMessage_default(8));
+  }
+  function renderTag(Tag, props) {
+    if (Tag === "button") {
+      return /* @__PURE__ */ (0, import_react3.createElement)("button", {
+        type: "button",
+        ...props,
+        key: props.key
+      });
+    }
+    if (Tag === "img") {
+      return /* @__PURE__ */ (0, import_react3.createElement)("img", {
+        alt: "",
+        ...props,
+        key: props.key
+      });
+    }
+    return /* @__PURE__ */ React11.createElement(Tag, props);
+  }
+
+  // node_modules/@base-ui/react/button/Button.mjs
+  var Button = /* @__PURE__ */ React12.forwardRef(function Button2(componentProps, forwardedRef) {
+    const {
+      render,
+      className,
+      disabled: disabled2 = false,
+      focusableWhenDisabled = false,
+      nativeButton = true,
+      style,
+      ...elementProps
+    } = componentProps;
+    const {
+      getButtonProps,
+      buttonRef
+    } = useButton({
+      disabled: disabled2,
+      focusableWhenDisabled,
+      native: nativeButton
+    });
+    const state = {
+      disabled: disabled2
+    };
+    return useRenderElement("button", componentProps, {
+      state,
+      ref: [forwardedRef, buttonRef],
+      props: [elementProps, getButtonProps]
+    });
+  });
+  if (false) Button.displayName = "Button";
+
+  // node_modules/class-variance-authority/dist/index.mjs
+  var falsyToString = (value) => typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
+  var cx = clsx;
+  var cva = (base, config) => (props) => {
+    var _config_compoundVariants;
+    if ((config === null || config === void 0 ? void 0 : config.variants) == null) return cx(base, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+    const { variants, defaultVariants } = config;
+    const getVariantClassNames = Object.keys(variants).map((variant) => {
+      const variantProp = props === null || props === void 0 ? void 0 : props[variant];
+      const defaultVariantProp = defaultVariants === null || defaultVariants === void 0 ? void 0 : defaultVariants[variant];
+      if (variantProp === null) return null;
+      const variantKey = falsyToString(variantProp) || falsyToString(defaultVariantProp);
+      return variants[variant][variantKey];
+    });
+    const propsWithoutUndefined = props && Object.entries(props).reduce((acc, param) => {
+      let [key, value] = param;
+      if (value === void 0) {
+        return acc;
+      }
+      acc[key] = value;
+      return acc;
+    }, {});
+    const getCompoundVariantClassNames = config === null || config === void 0 ? void 0 : (_config_compoundVariants = config.compoundVariants) === null || _config_compoundVariants === void 0 ? void 0 : _config_compoundVariants.reduce((acc, param) => {
+      let { class: cvClass, className: cvClassName, ...compoundVariantOptions } = param;
+      return Object.entries(compoundVariantOptions).every((param2) => {
+        let [key, value] = param2;
+        return Array.isArray(value) ? value.includes({
+          ...defaultVariants,
+          ...propsWithoutUndefined
+        }[key]) : {
+          ...defaultVariants,
+          ...propsWithoutUndefined
+        }[key] === value;
+      }) ? [
+        ...acc,
+        cvClass,
+        cvClassName
+      ] : acc;
+    }, []);
+    return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+  };
+
+  // src/components/ui/button.tsx
+  var import_jsx_runtime3 = __toESM(require_jsx_runtime(), 1);
+  var buttonVariants = cva(
+    "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+    {
+      variants: {
+        variant: {
+          default: "bg-primary text-primary-foreground hover:bg-primary/80",
+          outline: "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          secondary: "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          ghost: "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          destructive: "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+          link: "text-primary underline-offset-4 hover:underline"
+        },
+        size: {
+          default: "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+          xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+          sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+          lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+          icon: "size-8",
+          "icon-xs": "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
+          "icon-sm": "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
+          "icon-lg": "size-9"
+        }
+      },
+      defaultVariants: {
+        variant: "default",
+        size: "default"
+      }
+    }
+  );
+  function Button3({
+    className,
+    variant = "default",
+    size = "default",
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+      Button,
+      {
+        "data-slot": "button",
+        className: cn(buttonVariants({ variant, size, className })),
+        ...props
+      }
+    );
+  }
+
+  // src/components/ui/card.tsx
+  var import_jsx_runtime4 = __toESM(require_jsx_runtime(), 1);
+  function Card({
+    className,
+    size = "default",
+    ...props
+  }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      "div",
+      {
+        "data-slot": "card",
+        "data-size": size,
+        className: cn(
+          "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground ring-1 ring-foreground/10 [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+          className
+        ),
+        ...props
+      }
+    );
+  }
+  function CardHeader({ className, ...props }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      "div",
+      {
+        "data-slot": "card-header",
+        className: cn(
+          "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-(--card-spacing) has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-(--card-spacing)",
+          className
+        ),
+        ...props
+      }
+    );
+  }
+  function CardTitle({ className, ...props }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      "div",
+      {
+        "data-slot": "card-title",
+        className: cn(
+          "font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm",
+          className
+        ),
+        ...props
+      }
+    );
+  }
+  function CardDescription({ className, ...props }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      "div",
+      {
+        "data-slot": "card-description",
+        className: cn("text-sm text-muted-foreground", className),
+        ...props
+      }
+    );
+  }
+  function CardContent({ className, ...props }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      "div",
+      {
+        "data-slot": "card-content",
+        className: cn("px-(--card-spacing)", className),
+        ...props
+      }
+    );
+  }
+
+  // node_modules/@base-ui/react/input/Input.mjs
+  var React36 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/react/field/index.parts.mjs
+  var index_parts_exports = {};
+  __export(index_parts_exports, {
+    Control: () => FieldControl,
+    Description: () => FieldDescription,
+    Error: () => FieldError,
+    Item: () => FieldItem,
+    Label: () => FieldLabel,
+    Root: () => FieldRoot,
+    Validity: () => FieldValidity
+  });
+
+  // node_modules/@base-ui/react/field/root/FieldRoot.mjs
+  var React23 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/react/internals/field-root-context/FieldRootContext.mjs
+  var React13 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/react/field/control/FieldControlDataAttributes.mjs
+  var FieldControlDataAttributes = /* @__PURE__ */ function(FieldControlDataAttributes2) {
+    FieldControlDataAttributes2["disabled"] = "data-disabled";
+    FieldControlDataAttributes2["valid"] = "data-valid";
+    FieldControlDataAttributes2["invalid"] = "data-invalid";
+    FieldControlDataAttributes2["touched"] = "data-touched";
+    FieldControlDataAttributes2["dirty"] = "data-dirty";
+    FieldControlDataAttributes2["filled"] = "data-filled";
+    FieldControlDataAttributes2["focused"] = "data-focused";
+    return FieldControlDataAttributes2;
+  }({});
+
+  // node_modules/@base-ui/react/internals/field-constants/constants.mjs
+  var DEFAULT_VALIDITY_STATE = {
+    badInput: false,
+    customError: false,
+    patternMismatch: false,
+    rangeOverflow: false,
+    rangeUnderflow: false,
+    stepMismatch: false,
+    tooLong: false,
+    tooShort: false,
+    typeMismatch: false,
+    valid: null,
+    valueMissing: false
+  };
+  var DEFAULT_FIELD_STATE_ATTRIBUTES = {
+    valid: null,
+    touched: false,
+    dirty: false,
+    filled: false,
+    focused: false
+  };
+  var DEFAULT_FIELD_ROOT_STATE = {
+    disabled: false,
+    ...DEFAULT_FIELD_STATE_ATTRIBUTES
+  };
+  var fieldValidityMapping = {
+    valid(value) {
+      if (value === null) {
+        return null;
+      }
+      if (value) {
+        return {
+          [FieldControlDataAttributes.valid]: ""
+        };
+      }
+      return {
+        [FieldControlDataAttributes.invalid]: ""
+      };
+    }
+  };
+
+  // node_modules/@base-ui/react/internals/field-root-context/FieldRootContext.mjs
+  var DEFAULT_FIELD_ROOT_CONTEXT = {
+    invalid: void 0,
+    name: void 0,
+    validityData: {
+      state: DEFAULT_VALIDITY_STATE,
+      errors: [],
+      error: "",
+      value: "",
+      initialValue: null
+    },
+    setValidityData: NOOP,
+    disabled: void 0,
+    touched: DEFAULT_FIELD_STATE_ATTRIBUTES.touched,
+    setTouched: NOOP,
+    dirty: DEFAULT_FIELD_STATE_ATTRIBUTES.dirty,
+    setDirty: NOOP,
+    filled: DEFAULT_FIELD_STATE_ATTRIBUTES.filled,
+    setFilled: NOOP,
+    focused: DEFAULT_FIELD_STATE_ATTRIBUTES.focused,
+    setFocused: NOOP,
+    validate: () => null,
+    validationMode: "onSubmit",
+    validationDebounceTime: 0,
+    shouldValidateOnChange: () => false,
+    state: DEFAULT_FIELD_ROOT_STATE,
+    markedDirtyRef: {
+      current: false
+    },
+    registerFieldControl: NOOP,
+    validation: {
+      getValidationProps: (_disabled, props = EMPTY_OBJECT) => props,
+      inputRef: {
+        current: null
+      },
+      registerInput: NOOP,
+      commit: async () => {
+      },
+      change: NOOP
+    }
+  };
+  var FieldRootContext = /* @__PURE__ */ React13.createContext(DEFAULT_FIELD_ROOT_CONTEXT);
+  if (false) FieldRootContext.displayName = "FieldRootContext";
+  function useFieldRootContext(optional = true) {
+    const context = React13.useContext(FieldRootContext);
+    if (context.setValidityData === NOOP && !optional) {
+      throw new Error(false ? "Base UI: FieldRootContext is missing. Field parts must be placed within <Field.Root>." : formatErrorMessage_default(28));
+    }
+    return context;
+  }
+
+  // node_modules/@base-ui/react/fieldset/root/FieldsetRootContext.mjs
+  var React14 = __toESM(require_react(), 1);
+  var FieldsetRootContext = /* @__PURE__ */ React14.createContext(void 0);
+  if (false) FieldsetRootContext.displayName = "FieldsetRootContext";
+  function useFieldsetRootContext(optional = false) {
+    const context = React14.useContext(FieldsetRootContext);
+    if (!context && !optional) {
+      throw new Error(false ? "Base UI: FieldsetRootContext is missing. Fieldset parts must be placed within <Fieldset.Root>." : formatErrorMessage_default(86));
+    }
+    return context;
+  }
+
+  // node_modules/@base-ui/react/internals/form-context/FormContext.mjs
+  var React15 = __toESM(require_react(), 1);
+  var FormContext = /* @__PURE__ */ React15.createContext({
+    formRef: {
+      current: {
+        fields: /* @__PURE__ */ new Map()
+      }
+    },
+    errors: {},
+    clearErrors: NOOP,
+    validationMode: "onSubmit",
+    submitAttemptedRef: {
+      current: false
+    }
+  });
+  if (false) FormContext.displayName = "FormContext";
+  function useFormContext() {
+    return React15.useContext(FormContext);
+  }
+
+  // node_modules/@base-ui/react/internals/labelable-provider/LabelableProvider.mjs
+  var React18 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/utils/useId.mjs
+  var React16 = __toESM(require_react(), 1);
+  var globalId = 0;
+  function useGlobalId(idOverride, prefix = "mui") {
+    const [defaultId, setDefaultId] = React16.useState(idOverride);
+    const id = idOverride || defaultId;
+    React16.useEffect(() => {
+      if (defaultId == null) {
+        globalId += 1;
+        setDefaultId(`${prefix}-${globalId}`);
+      }
+    }, [defaultId, prefix]);
+    return id;
+  }
+  var maybeReactUseId = SafeReact.useId;
+  function useId(idOverride, prefix) {
+    if (maybeReactUseId !== void 0) {
+      const reactId = maybeReactUseId();
+      return idOverride ?? (prefix ? `${prefix}-${reactId}` : reactId);
+    }
+    return useGlobalId(idOverride, prefix);
+  }
+
+  // node_modules/@base-ui/react/internals/useBaseUiId.mjs
+  function useBaseUiId(idOverride) {
+    return useId(idOverride, "base-ui");
+  }
+
+  // node_modules/@base-ui/react/internals/labelable-provider/LabelableContext.mjs
+  var React17 = __toESM(require_react(), 1);
+  var LabelableContext = /* @__PURE__ */ React17.createContext({
+    controlId: void 0,
+    registerControlId: NOOP,
+    labelId: void 0,
+    setLabelId: NOOP,
+    messageIds: [],
+    setMessageIds: NOOP,
+    getDescriptionProps: (externalProps) => externalProps
+  });
+  if (false) LabelableContext.displayName = "LabelableContext";
+  function useLabelableContext() {
+    return React17.useContext(LabelableContext);
+  }
+
+  // node_modules/@base-ui/react/internals/labelable-provider/LabelableProvider.mjs
+  var import_jsx_runtime5 = __toESM(require_jsx_runtime(), 1);
+  var LabelableProvider = function LabelableProvider2(props) {
+    const defaultId = useBaseUiId();
+    const initialControlId = props.controlId === void 0 ? defaultId : props.controlId;
+    const [controlId, setControlIdState] = React18.useState(initialControlId);
+    const [labelId, setLabelId] = React18.useState(props.labelId);
+    const [messageIds, setMessageIds] = React18.useState([]);
+    const registrationsRef = useRefWithInit(() => /* @__PURE__ */ new Map());
+    const {
+      messageIds: parentMessageIds
+    } = useLabelableContext();
+    const registerControlId = useStableCallback((source, nextId) => {
+      const registrations = registrationsRef.current;
+      if (nextId === void 0) {
+        registrations.delete(source);
+        return;
+      }
+      registrations.set(source, nextId);
+      setControlIdState((prev) => {
+        if (registrations.size === 0) {
+          return void 0;
+        }
+        let nextControlId;
+        for (const id of registrations.values()) {
+          if (prev !== void 0 && id === prev) {
+            return prev;
+          }
+          if (nextControlId === void 0) {
+            nextControlId = id;
+          }
+        }
+        return nextControlId;
+      });
+    });
+    const getDescriptionProps = React18.useCallback((externalProps) => {
+      const ids = externalProps["aria-describedby"] ? externalProps["aria-describedby"].split(" ") : [];
+      ids.push(...parentMessageIds, ...messageIds);
+      return {
+        ...externalProps,
+        "aria-describedby": Array.from(new Set(ids)).join(" ") || void 0
+      };
+    }, [parentMessageIds, messageIds]);
+    const contextValue = React18.useMemo(() => ({
+      controlId,
+      registerControlId,
+      labelId,
+      setLabelId,
+      messageIds,
+      setMessageIds,
+      getDescriptionProps
+    }), [controlId, registerControlId, labelId, setLabelId, messageIds, setMessageIds, getDescriptionProps]);
+    return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(LabelableContext.Provider, {
+      value: contextValue,
+      children: props.children
+    });
+  };
+  if (false) LabelableProvider.displayName = "LabelableProvider";
+
+  // node_modules/@base-ui/react/internals/labelable-provider/useLabelableId.mjs
+  var React19 = __toESM(require_react(), 1);
+  function useLabelableId(params = {}) {
+    const {
+      id,
+      implicit = false,
+      controlRef
+    } = params;
+    const {
+      controlId,
+      registerControlId
+    } = useLabelableContext();
+    const defaultId = useBaseUiId(id);
+    const controlIdForEffect = implicit ? controlId : void 0;
+    const controlSourceRef = useRefWithInit(() => Symbol("labelable-control"));
+    const hasRegisteredRef = React19.useRef(false);
+    const hadExplicitIdRef = React19.useRef(id != null);
+    const unregisterControlId = useStableCallback(() => {
+      if (!hasRegisteredRef.current || registerControlId === NOOP) {
+        return;
+      }
+      hasRegisteredRef.current = false;
+      registerControlId(controlSourceRef.current, void 0);
+    });
+    useIsoLayoutEffect(() => {
+      if (registerControlId === NOOP) {
+        return void 0;
+      }
+      let nextId;
+      if (implicit) {
+        const elem = controlRef?.current;
+        if (isElement(elem) && elem.closest("label") != null) {
+          nextId = id ?? null;
+        } else {
+          nextId = controlIdForEffect ?? defaultId;
+        }
+      } else if (id != null) {
+        hadExplicitIdRef.current = true;
+        nextId = id;
+      } else if (hadExplicitIdRef.current) {
+        nextId = defaultId;
+      } else {
+        unregisterControlId();
+        return void 0;
+      }
+      if (nextId === void 0) {
+        unregisterControlId();
+        return void 0;
+      }
+      hasRegisteredRef.current = true;
+      registerControlId(controlSourceRef.current, nextId);
+      return void 0;
+    }, [id, controlRef, controlIdForEffect, registerControlId, implicit, defaultId, controlSourceRef, unregisterControlId]);
+    React19.useEffect(() => {
+      return unregisterControlId;
+    }, [unregisterControlId]);
+    return controlId ?? defaultId;
+  }
+
+  // node_modules/@base-ui/utils/owner.mjs
+  function ownerDocument(node) {
+    return node?.ownerDocument || document;
+  }
+
+  // node_modules/@base-ui/react/internals/shadowDom.mjs
+  function activeElement(doc) {
+    let element = doc.activeElement;
+    while (element?.shadowRoot?.activeElement != null) {
+      element = element.shadowRoot.activeElement;
+    }
+    return element;
+  }
+  function getTarget(event) {
+    if ("composedPath" in event) {
+      return event.composedPath()[0];
+    }
+    return event.target;
+  }
+
+  // node_modules/@base-ui/react/utils/useRegisteredLabelId.mjs
+  function useRegisteredLabelId(idProp, setLabelId) {
+    const id = useBaseUiId(idProp);
+    useIsoLayoutEffect(() => {
+      setLabelId(id);
+      return () => {
+        setLabelId(void 0);
+      };
+    }, [id, setLabelId]);
+    return id;
+  }
+
+  // node_modules/@base-ui/react/internals/labelable-provider/useLabel.mjs
+  function useLabel(params = {}) {
+    const {
+      id: idProp,
+      fallbackControlId,
+      native = false,
+      setLabelId: setLabelIdProp,
+      focusControl: focusControlProp
+    } = params;
+    const {
+      controlId: contextControlId,
+      setLabelId: setContextLabelId
+    } = useLabelableContext();
+    const syncLabelId = useStableCallback((nextLabelId) => {
+      setContextLabelId(nextLabelId);
+      setLabelIdProp?.(nextLabelId);
+    });
+    const id = useRegisteredLabelId(idProp, syncLabelId);
+    const resolvedControlId = contextControlId ?? fallbackControlId;
+    function focusControl(event) {
+      if (focusControlProp) {
+        focusControlProp(event, resolvedControlId);
+        return;
+      }
+      if (!resolvedControlId) {
+        return;
+      }
+      const controlElement = ownerDocument(event.currentTarget).getElementById(resolvedControlId);
+      if (isHTMLElement(controlElement)) {
+        focusElementWithVisible(controlElement);
+      }
+    }
+    function handleInteraction(event) {
+      const target = getTarget(event.nativeEvent);
+      if (target?.closest("button,input,select,textarea")) {
+        return;
+      }
+      if (!event.defaultPrevented && event.detail > 1) {
+        event.preventDefault();
+      }
+      if (native) {
+        return;
+      }
+      focusControl(event);
+    }
+    return native ? {
+      id,
+      htmlFor: resolvedControlId ?? void 0,
+      onMouseDown: handleInteraction
+    } : {
+      id,
+      onClick: handleInteraction,
+      onPointerDown(event) {
+        event.preventDefault();
+      }
+    };
+  }
+  function focusElementWithVisible(element) {
+    element.focus({
+      // Available from Chrome 144+ (January 2026).
+      // Safari and Firefox already support it.
+      focusVisible: true
+    });
+  }
+
+  // node_modules/@base-ui/react/field/root/useFieldValidation.mjs
+  var React21 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/utils/useOnMount.mjs
+  var React20 = __toESM(require_react(), 1);
+  var EMPTY = [];
+  function useOnMount(fn) {
+    React20.useEffect(fn, EMPTY);
+  }
+
+  // node_modules/@base-ui/utils/useTimeout.mjs
+  var EMPTY2 = 0;
+  var Timeout = class _Timeout {
+    static create() {
+      return new _Timeout();
+    }
+    currentId = EMPTY2;
+    /**
+     * Executes `fn` after `delay`, clearing any previously scheduled call.
+     */
+    start(delay, fn) {
+      this.clear();
+      this.currentId = setTimeout(() => {
+        this.currentId = EMPTY2;
+        fn();
+      }, delay);
+    }
+    isStarted() {
+      return this.currentId !== EMPTY2;
+    }
+    clear = () => {
+      if (this.currentId !== EMPTY2) {
+        clearTimeout(this.currentId);
+        this.currentId = EMPTY2;
+      }
+    };
+    disposeEffect = () => {
+      return this.clear;
+    };
+  };
+  function useTimeout() {
+    const timeout = useRefWithInit(Timeout.create).current;
+    useOnMount(timeout.disposeEffect);
+    return timeout;
+  }
+
+  // node_modules/@base-ui/react/field/utils/getCombinedFieldValidityData.mjs
+  function getCombinedFieldValidityData(validityData, invalid) {
+    return {
+      ...validityData,
+      state: {
+        ...validityData.state,
+        valid: !invalid && validityData.state.valid
+      }
+    };
+  }
+
+  // node_modules/@base-ui/react/field/root/useFieldValidation.mjs
+  var validityKeys = Object.keys(DEFAULT_VALIDITY_STATE);
+  function isOnlyValueMissing(state) {
+    if (!state || state.valid || !state.valueMissing) {
+      return false;
+    }
+    let onlyValueMissing = false;
+    for (const key of validityKeys) {
+      if (key === "valid") {
+        continue;
+      }
+      if (key === "valueMissing") {
+        onlyValueMissing = state[key];
+      } else if (state[key]) {
+        onlyValueMissing = false;
+      }
+    }
+    return onlyValueMissing;
+  }
+  function findRepresentativeInput(inputs) {
+    let fallback = null;
+    for (const input of inputs) {
+      if (input.disabled) {
+        continue;
+      }
+      if (!input.validity.valid) {
+        return input;
+      }
+      fallback ??= input;
+    }
+    return fallback;
+  }
+  function clearCustomValidity(element, inputs) {
+    let didClearElement = false;
+    for (const input of inputs) {
+      input.setCustomValidity("");
+      didClearElement ||= input === element;
+    }
+    if (!didClearElement) {
+      element.setCustomValidity("");
+    }
+  }
+  function useFieldValidation(params) {
+    const {
+      formRef
+    } = useFormContext();
+    const {
+      setValidityData,
+      validate,
+      validityData,
+      validationDebounceTime,
+      invalid,
+      markedDirtyRef,
+      state,
+      shouldValidateOnChange,
+      getRegisteredFieldId
+    } = params;
+    const {
+      controlId,
+      getDescriptionProps
+    } = useLabelableContext();
+    const timeout = useTimeout();
+    const inputRef = React21.useRef(null);
+    const registeredInputs = useRefWithInit(() => /* @__PURE__ */ new Set()).current;
+    const validationCommitIdRef = React21.useRef(0);
+    const registerInput = React21.useCallback((element) => {
+      if (!element) {
+        return void 0;
+      }
+      registeredInputs.add(element);
+      return () => {
+        registeredInputs.delete(element);
+      };
+    }, [registeredInputs]);
+    const commit = useStableCallback(async (value, revalidate = false) => {
+      const element = findRepresentativeInput(registeredInputs) ?? inputRef.current;
+      if (!element) {
+        return;
+      }
+      validationCommitIdRef.current += 1;
+      const validationCommitId = validationCommitIdRef.current;
+      function updateRegisteredFieldValidity(nextValidityData2, externalInvalid = invalid) {
+        const fieldId = getRegisteredFieldId() ?? controlId;
+        if (fieldId == null) {
+          return;
+        }
+        const currentFieldData = formRef.current.fields.get(fieldId);
+        if (!currentFieldData) {
+          return;
+        }
+        const validityDataWithFormErrors = getCombinedFieldValidityData(nextValidityData2, externalInvalid);
+        formRef.current.fields.set(fieldId, {
+          ...currentFieldData,
+          validityData: validityDataWithFormErrors
+        });
+      }
+      if (revalidate) {
+        if (state.valid !== false) {
+          return;
+        }
+        const currentNativeValidity = element.validity;
+        if (!currentNativeValidity.valueMissing) {
+          const nextValidityData2 = {
+            value,
+            state: {
+              ...DEFAULT_VALIDITY_STATE,
+              valid: true
+            },
+            error: "",
+            errors: [],
+            initialValue: validityData.initialValue
+          };
+          clearCustomValidity(element, registeredInputs);
+          updateRegisteredFieldValidity(nextValidityData2, false);
+          setValidityData(nextValidityData2);
+          return;
+        }
+        const currentNativeValidityObject = validityKeys.reduce((acc, key) => {
+          acc[key] = currentNativeValidity[key];
+          return acc;
+        }, {});
+        if (!currentNativeValidityObject.valid && !isOnlyValueMissing(currentNativeValidityObject)) {
+          return;
+        }
+      }
+      function getState(el) {
+        const computedState = validityKeys.reduce((acc, key) => {
+          acc[key] = el.validity[key];
+          return acc;
+        }, {});
+        let hasOnlyValueMissingError = false;
+        for (const key of validityKeys) {
+          if (key === "valid") {
+            continue;
+          }
+          if (key === "valueMissing" && computedState[key]) {
+            hasOnlyValueMissingError = true;
+          } else if (computedState[key]) {
+            return computedState;
+          }
+        }
+        if (hasOnlyValueMissingError && !markedDirtyRef.current) {
+          computedState.valid = true;
+          computedState.valueMissing = false;
+        }
+        return computedState;
+      }
+      timeout.clear();
+      let result = null;
+      let validationErrors = [];
+      const nextState = getState(element);
+      let defaultValidationMessage;
+      const isValidatingOnChange = shouldValidateOnChange();
+      if (element.validationMessage && !isValidatingOnChange) {
+        defaultValidationMessage = element.validationMessage;
+        validationErrors = [element.validationMessage];
+      } else {
+        const formValues = Array.from(formRef.current.fields.values()).reduce((acc, field) => {
+          if (field.name) {
+            acc[field.name] = field.getValue();
+          }
+          return acc;
+        }, {});
+        const resultOrPromise = validate(value, formValues);
+        if (typeof resultOrPromise === "object" && resultOrPromise !== null && "then" in resultOrPromise) {
+          result = await resultOrPromise;
+          if (validationCommitId !== validationCommitIdRef.current) {
+            return;
+          }
+        } else {
+          result = resultOrPromise;
+        }
+        if (result !== null) {
+          nextState.valid = false;
+          nextState.customError = true;
+          if (Array.isArray(result)) {
+            validationErrors = result;
+            element.setCustomValidity(result.join("\n"));
+          } else if (result) {
+            validationErrors = [result];
+            element.setCustomValidity(result);
+          }
+        } else if (isValidatingOnChange) {
+          clearCustomValidity(element, registeredInputs);
+          nextState.customError = false;
+          if (element.validationMessage) {
+            defaultValidationMessage = element.validationMessage;
+            validationErrors = [element.validationMessage];
+          } else if (element.validity.valid && !nextState.valid) {
+            nextState.valid = true;
+          }
+        }
+      }
+      const nextValidityData = {
+        value,
+        state: nextState,
+        error: defaultValidationMessage ?? (Array.isArray(result) ? result[0] : result ?? ""),
+        errors: validationErrors,
+        initialValue: validityData.initialValue
+      };
+      updateRegisteredFieldValidity(nextValidityData);
+      setValidityData(nextValidityData);
+    });
+    const change = useStableCallback((value) => {
+      timeout.clear();
+      const validateOnChange = shouldValidateOnChange();
+      if (validateOnChange && value !== "" && validationDebounceTime) {
+        validationCommitIdRef.current += 1;
+        timeout.start(validationDebounceTime, () => {
+          commit(value);
+        });
+      } else {
+        commit(value, !validateOnChange);
+      }
+    });
+    const getValidationProps = React21.useCallback((disabled2, externalProps = {}) => mergeProps(getDescriptionProps(externalProps), state.valid === false && !state.disabled && !disabled2 ? {
+      "aria-invalid": true
+    } : EMPTY_OBJECT), [getDescriptionProps, state.disabled, state.valid]);
+    return React21.useMemo(() => ({
+      getValidationProps,
+      inputRef,
+      registerInput,
+      commit,
+      change
+    }), [getValidationProps, registerInput, commit, change]);
+  }
+
+  // node_modules/@base-ui/react/internals/field-register-control/useFieldControlRegistration.mjs
+  var React22 = __toESM(require_react(), 1);
+  function useFieldControlRegistration(params) {
+    const {
+      commit,
+      invalid,
+      markedDirtyRef,
+      name,
+      setRegisteredFieldName,
+      setRegisteredFieldId,
+      setValidityData,
+      validityData
+    } = params;
+    const {
+      formRef
+    } = useFormContext();
+    const activeFieldControlSourceRef = React22.useRef(null);
+    const registrationRef = React22.useRef(null);
+    const fallbackControlRef = React22.useRef(null);
+    const getValueForForm = useStableCallback(() => {
+      const registration = registrationRef.current;
+      if (!registration) {
+        return void 0;
+      }
+      if (registration.getValue) {
+        return registration.getValue();
+      }
+      return registration.value;
+    });
+    function getRegistrationValue(registration) {
+      return registration.value === void 0 ? getValueForForm() : registration.value;
+    }
+    const validate = useStableCallback(() => {
+      const registration = registrationRef.current;
+      markedDirtyRef.current = true;
+      if (!registration) {
+        commit(validityData.value);
+        return;
+      }
+      commit(getRegistrationValue(registration));
+    });
+    function refreshRegistration() {
+      const registration = registrationRef.current;
+      if (!registration || !registration.id) {
+        return;
+      }
+      formRef.current.fields.set(registration.id, {
+        getValue: getValueForForm,
+        name: name ?? registration.name,
+        controlRef: registration.controlRef ?? fallbackControlRef,
+        validityData: getCombinedFieldValidityData(validityData, invalid),
+        validate
+      });
+    }
+    function deleteRegistration(id = registrationRef.current?.id) {
+      if (id) {
+        formRef.current.fields.delete(id);
+      }
+    }
+    function syncInitialValue() {
+      const registration = registrationRef.current;
+      if (!registration) {
+        return;
+      }
+      const initialValue = getRegistrationValue(registration);
+      if (validityData.initialValue === null && initialValue !== null) {
+        setValidityData((prev) => ({
+          ...prev,
+          initialValue
+        }));
+      }
+    }
+    useIsoLayoutEffect(() => {
+      const registration = registrationRef.current;
+      if (!registration || !registration.id) {
+        return;
+      }
+      setRegisteredFieldName(name ? void 0 : registration.name);
+      formRef.current.fields.set(registration.id, {
+        getValue: getValueForForm,
+        name: name ?? registration.name,
+        controlRef: registration.controlRef ?? fallbackControlRef,
+        validityData: getCombinedFieldValidityData(validityData, invalid),
+        validate
+      });
+    }, [formRef, getValueForForm, invalid, name, setRegisteredFieldName, validate, validityData]);
+    useIsoLayoutEffect(() => {
+      const fields = formRef.current.fields;
+      return () => {
+        const id = registrationRef.current?.id;
+        if (id) {
+          fields.delete(id);
+        }
+      };
+    }, [formRef]);
+    const register = useStableCallback((source, registration) => {
+      if (!registration) {
+        if (activeFieldControlSourceRef.current === source) {
+          activeFieldControlSourceRef.current = null;
+          deleteRegistration();
+          registrationRef.current = null;
+          setRegisteredFieldName(void 0);
+          setRegisteredFieldId(void 0);
+        }
+        return;
+      }
+      const previousId = registrationRef.current?.id;
+      activeFieldControlSourceRef.current = source;
+      registrationRef.current = registration;
+      if (!name) {
+        setRegisteredFieldName(registration.name);
+      }
+      setRegisteredFieldId(registration.id);
+      if (previousId && previousId !== registration.id) {
+        deleteRegistration(previousId);
+      }
+      syncInitialValue();
+      refreshRegistration();
+    });
+    return [validate, register];
+  }
+
+  // node_modules/@base-ui/react/field/root/FieldRoot.mjs
+  var import_jsx_runtime6 = __toESM(require_jsx_runtime(), 1);
+  var FieldRootInner = /* @__PURE__ */ React23.forwardRef(function FieldRootInner2(componentProps, forwardedRef) {
+    const {
+      errors,
+      validationMode: formValidationMode,
+      submitAttemptedRef
+    } = useFormContext();
+    const {
+      render,
+      className,
+      validate: validateProp,
+      validationDebounceTime = 0,
+      validationMode = formValidationMode,
+      name,
+      disabled: disabledProp = false,
+      invalid: invalidProp,
+      dirty: dirtyProp,
+      touched: touchedProp,
+      actionsRef,
+      style,
+      ...elementProps
+    } = componentProps;
+    const disabledFieldset = useFieldsetRootContext(true)?.disabled;
+    const validate = useStableCallback(validateProp || (() => null));
+    const disabled2 = disabledFieldset || disabledProp;
+    const [touchedState, setTouchedUnwrapped] = React23.useState(false);
+    const [dirtyState, setDirtyUnwrapped] = React23.useState(false);
+    const [filled, setFilled] = React23.useState(false);
+    const [focused, setFocused] = React23.useState(false);
+    const dirty = dirtyProp ?? dirtyState;
+    const touched = touchedProp ?? touchedState;
+    const markedDirtyRef = React23.useRef(dirty);
+    const registeredFieldIdRef = React23.useRef(void 0);
+    const [registeredFieldName, setRegisteredFieldName] = React23.useState();
+    const effectiveName = name ?? registeredFieldName;
+    useIsoLayoutEffect(() => {
+      if (dirtyProp !== void 0) {
+        markedDirtyRef.current = dirtyProp;
+      }
+    }, [dirtyProp]);
+    const getRegisteredFieldId = React23.useCallback(() => registeredFieldIdRef.current, []);
+    const setRegisteredFieldId = React23.useCallback((id) => {
+      registeredFieldIdRef.current = id;
+    }, []);
+    const setDirty = useStableCallback((value) => {
+      if (dirtyProp !== void 0) {
+        return;
+      }
+      if (value) {
+        markedDirtyRef.current = true;
+      }
+      setDirtyUnwrapped(value);
+    });
+    const setTouched = useStableCallback((value) => {
+      if (touchedProp !== void 0) {
+        return;
+      }
+      setTouchedUnwrapped(value);
+    });
+    const shouldValidateOnChange = useStableCallback(() => validationMode === "onChange" || validationMode === "onSubmit" && submitAttemptedRef.current);
+    const formError = effectiveName && Object.hasOwn(errors, effectiveName) ? errors[effectiveName] : null;
+    const hasFormError = !!(Array.isArray(formError) ? formError.length : formError);
+    const invalid = invalidProp === true || hasFormError;
+    const [validityData, setValidityData] = React23.useState({
+      state: DEFAULT_VALIDITY_STATE,
+      error: "",
+      errors: [],
+      value: null,
+      initialValue: null
+    });
+    const valid = disabled2 ? null : !invalid && validityData.state.valid;
+    const state = React23.useMemo(() => ({
+      disabled: disabled2,
+      touched,
+      dirty,
+      valid,
+      filled,
+      focused
+    }), [disabled2, touched, dirty, valid, filled, focused]);
+    const validation = useFieldValidation({
+      setValidityData,
+      validate,
+      validityData,
+      validationDebounceTime,
+      invalid,
+      markedDirtyRef,
+      state,
+      shouldValidateOnChange,
+      getRegisteredFieldId
+    });
+    const [validateFieldControl, registerFieldControl] = useFieldControlRegistration({
+      commit: validation.commit,
+      invalid,
+      markedDirtyRef,
+      name,
+      setRegisteredFieldName,
+      setRegisteredFieldId,
+      setValidityData,
+      validityData
+    });
+    React23.useImperativeHandle(actionsRef, () => ({
+      validate: validateFieldControl
+    }), [validateFieldControl]);
+    const contextValue = React23.useMemo(() => ({
+      invalid,
+      name: effectiveName,
+      validityData,
+      setValidityData,
+      disabled: disabled2,
+      touched,
+      setTouched,
+      dirty,
+      setDirty,
+      filled,
+      setFilled,
+      focused,
+      setFocused,
+      validate,
+      validationMode,
+      validationDebounceTime,
+      shouldValidateOnChange,
+      state,
+      markedDirtyRef,
+      registerFieldControl,
+      validation
+    }), [invalid, effectiveName, validityData, disabled2, touched, setTouched, dirty, setDirty, filled, setFilled, focused, setFocused, validate, validationMode, validationDebounceTime, shouldValidateOnChange, state, registerFieldControl, validation]);
+    const element = useRenderElement("div", componentProps, {
+      ref: forwardedRef,
+      state,
+      props: elementProps,
+      stateAttributesMapping: fieldValidityMapping
+    });
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(FieldRootContext.Provider, {
+      value: contextValue,
+      children: element
+    });
+  });
+  if (false) FieldRootInner.displayName = "FieldRootInner";
+  var FieldRoot = /* @__PURE__ */ React23.forwardRef(function FieldRoot2(componentProps, forwardedRef) {
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(LabelableProvider, {
+      children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(FieldRootInner, {
+        ...componentProps,
+        ref: forwardedRef
+      })
+    });
+  });
+  if (false) FieldRoot.displayName = "FieldRoot";
+
+  // node_modules/@base-ui/react/field/label/FieldLabel.mjs
+  var React25 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/react/field/item/FieldItemContext.mjs
+  var React24 = __toESM(require_react(), 1);
+  var FieldItemContext = /* @__PURE__ */ React24.createContext({
+    disabled: false
+  });
+  if (false) FieldItemContext.displayName = "FieldItemContext";
+  function useFieldItemContext() {
+    const context = React24.useContext(FieldItemContext);
+    return context;
+  }
+
+  // node_modules/@base-ui/react/field/label/FieldLabel.mjs
+  var FieldLabel = /* @__PURE__ */ React25.forwardRef(function FieldLabel2(componentProps, forwardedRef) {
+    const {
+      render,
+      className,
+      style,
+      id: idProp,
+      nativeLabel = true,
+      ...elementProps
+    } = componentProps;
+    const fieldRootContext = useFieldRootContext(false);
+    const fieldItemContext = useFieldItemContext();
+    const {
+      labelId
+    } = useLabelableContext();
+    const state = {
+      ...fieldRootContext.state,
+      disabled: fieldRootContext.disabled || fieldItemContext.disabled
+    };
+    const labelRef = React25.useRef(null);
+    const labelProps = useLabel({
+      id: labelId ?? idProp,
+      native: nativeLabel
+    });
+    if (false) {
+      React25.useEffect(() => {
+        if (!labelRef.current) {
+          return;
+        }
+        const isLabelTag = labelRef.current.tagName === "LABEL";
+        if (nativeLabel) {
+          if (!isLabelTag) {
+            const ownerStackMessage = SafeReact.captureOwnerStack?.() || "";
+            const message2 = "<Field.Label> expected a <label> element because the `nativeLabel` prop is true. Rendering a non-<label> disables native label association, so `htmlFor` will not work. Use a real <label> in the `render` prop, or set `nativeLabel` to `false`.";
+            error(`${message2}${ownerStackMessage}`);
+          }
+        } else if (isLabelTag) {
+          const ownerStackMessage = SafeReact.captureOwnerStack?.() || "";
+          const message2 = "<Field.Label> expected a non-<label> element because the `nativeLabel` prop is false. Rendering a <label> assumes native label behavior while Base UI treats it as non-native, which can cause unexpected pointer behavior. Use a non-<label> in the `render` prop, or set `nativeLabel` to `true`.";
+          error(`${message2}${ownerStackMessage}`);
+        }
+      }, [nativeLabel]);
+    }
+    const element = useRenderElement("label", componentProps, {
+      ref: [forwardedRef, labelRef],
+      state,
+      props: [labelProps, elementProps],
+      stateAttributesMapping: fieldValidityMapping
+    });
+    return element;
+  });
+  if (false) FieldLabel.displayName = "FieldLabel";
+
+  // node_modules/@base-ui/react/field/error/FieldError.mjs
+  var React28 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/react/internals/useOpenChangeComplete.mjs
+  var React26 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/react/internals/useAnimationsFinished.mjs
+  var ReactDOM2 = __toESM(require_react_dom(), 1);
+
+  // node_modules/@base-ui/utils/useAnimationFrame.mjs
+  var EMPTY3 = null;
+  var LAST_RAF = globalThis.requestAnimationFrame;
+  var Scheduler = class {
+    /* This implementation uses an array as a backing data-structure for frame callbacks.
+     * It allows `O(1)` callback cancelling by inserting a `null` in the array, though it
+     * never calls the native `cancelAnimationFrame` if there are no frames left. This can
+     * be much more efficient if there is a call pattern that alterns as
+     * "request-cancel-request-cancel-…".
+     * But in the case of "request-request-…-cancel-cancel-…", it leaves the final animation
+     * frame to run anyway. We turn that frame into a `O(1)` no-op via `callbacksCount`. */
+    callbacks = [];
+    callbacksCount = 0;
+    nextId = 1;
+    startId = 1;
+    isScheduled = false;
+    tick = (timestamp) => {
+      this.isScheduled = false;
+      const currentCallbacks = this.callbacks;
+      const currentCallbacksCount = this.callbacksCount;
+      this.callbacks = [];
+      this.callbacksCount = 0;
+      this.startId = this.nextId;
+      if (currentCallbacksCount > 0) {
+        for (let i = 0; i < currentCallbacks.length; i += 1) {
+          currentCallbacks[i]?.(timestamp);
+        }
+      }
+    };
+    request(fn) {
+      const id = this.nextId;
+      this.nextId += 1;
+      this.callbacks.push(fn);
+      this.callbacksCount += 1;
+      const didRAFChange = false;
+      if (!this.isScheduled || didRAFChange) {
+        requestAnimationFrame(this.tick);
+        this.isScheduled = true;
+      }
+      return id;
+    }
+    cancel(id) {
+      const index = id - this.startId;
+      if (index < 0 || index >= this.callbacks.length) {
+        return;
+      }
+      this.callbacks[index] = null;
+      this.callbacksCount -= 1;
+    }
+  };
+  var scheduler = new Scheduler();
+  var AnimationFrame = class _AnimationFrame {
+    static create() {
+      return new _AnimationFrame();
+    }
+    static request(fn) {
+      return scheduler.request(fn);
+    }
+    static cancel(id) {
+      return scheduler.cancel(id);
+    }
+    currentId = EMPTY3;
+    /**
+     * Executes `fn` after `delay`, clearing any previously scheduled call.
+     */
+    request(fn) {
+      this.cancel();
+      this.currentId = scheduler.request(() => {
+        this.currentId = EMPTY3;
+        fn();
+      });
+    }
+    cancel = () => {
+      if (this.currentId !== EMPTY3) {
+        scheduler.cancel(this.currentId);
+        this.currentId = EMPTY3;
+      }
+    };
+    disposeEffect = () => {
+      return this.cancel;
+    };
+  };
+  function useAnimationFrame() {
+    const timeout = useRefWithInit(AnimationFrame.create).current;
+    useOnMount(timeout.disposeEffect);
+    return timeout;
+  }
+
+  // node_modules/@base-ui/react/utils/resolveRef.mjs
+  function resolveRef(maybeRef) {
+    if (maybeRef == null) {
+      return maybeRef;
+    }
+    return "current" in maybeRef ? maybeRef.current : maybeRef;
+  }
+
+  // node_modules/@base-ui/react/internals/stateAttributesMapping.mjs
+  var TransitionStatusDataAttributes = /* @__PURE__ */ function(TransitionStatusDataAttributes2) {
+    TransitionStatusDataAttributes2["startingStyle"] = "data-starting-style";
+    TransitionStatusDataAttributes2["endingStyle"] = "data-ending-style";
+    return TransitionStatusDataAttributes2;
+  }({});
+  var STARTING_HOOK = {
+    [TransitionStatusDataAttributes.startingStyle]: ""
+  };
+  var ENDING_HOOK = {
+    [TransitionStatusDataAttributes.endingStyle]: ""
+  };
+  var transitionStatusMapping = {
+    transitionStatus(value) {
+      if (value === "starting") {
+        return STARTING_HOOK;
+      }
+      if (value === "ending") {
+        return ENDING_HOOK;
+      }
+      return null;
+    }
+  };
+
+  // node_modules/@base-ui/react/internals/useAnimationsFinished.mjs
+  function useAnimationsFinished(elementOrRef, waitForStartingStyleRemoved = false, treatAbortedAsFinished = true) {
+    const frame = useAnimationFrame();
+    return useStableCallback((fnToExecute, signal = null) => {
+      frame.cancel();
+      const element = resolveRef(elementOrRef);
+      if (element == null) {
+        return;
+      }
+      const resolvedElement = element;
+      const done = () => {
+        ReactDOM2.flushSync(fnToExecute);
+      };
+      if (typeof resolvedElement.getAnimations !== "function" || globalThis.BASE_UI_ANIMATIONS_DISABLED) {
+        fnToExecute();
+        return;
+      }
+      function exec() {
+        Promise.all(resolvedElement.getAnimations().map((animation) => animation.finished)).then(() => {
+          if (!signal?.aborted) {
+            done();
+          }
+        }).catch(() => {
+          if (treatAbortedAsFinished) {
+            if (!signal?.aborted) {
+              done();
+            }
+            return;
+          }
+          const currentAnimations = resolvedElement.getAnimations();
+          if (!signal?.aborted && currentAnimations.length > 0 && currentAnimations.some((animation) => animation.pending || animation.playState !== "finished")) {
+            exec();
+          }
+        });
+      }
+      if (waitForStartingStyleRemoved) {
+        const startingStyleAttribute = TransitionStatusDataAttributes.startingStyle;
+        if (!resolvedElement.hasAttribute(startingStyleAttribute)) {
+          frame.request(exec);
+          return;
+        }
+        const attributeObserver = new MutationObserver(() => {
+          if (!resolvedElement.hasAttribute(startingStyleAttribute)) {
+            attributeObserver.disconnect();
+            exec();
+          }
+        });
+        attributeObserver.observe(resolvedElement, {
+          attributes: true,
+          attributeFilter: [startingStyleAttribute]
+        });
+        signal?.addEventListener("abort", () => attributeObserver.disconnect(), {
+          once: true
+        });
+        return;
+      }
+      frame.request(exec);
+    });
+  }
+
+  // node_modules/@base-ui/react/internals/useOpenChangeComplete.mjs
+  function useOpenChangeComplete(parameters) {
+    const {
+      enabled = true,
+      open,
+      ref,
+      onComplete: onCompleteParam
+    } = parameters;
+    const onComplete = useStableCallback(onCompleteParam);
+    const runOnceAnimationsFinish = useAnimationsFinished(ref, open, false);
+    React26.useEffect(() => {
+      if (!enabled) {
+        return void 0;
+      }
+      const abortController = new AbortController();
+      runOnceAnimationsFinish(onComplete, abortController.signal);
+      return () => {
+        abortController.abort();
+      };
+    }, [enabled, open, onComplete, runOnceAnimationsFinish]);
+  }
+
+  // node_modules/@base-ui/react/internals/useTransitionStatus.mjs
+  var React27 = __toESM(require_react(), 1);
+  function useTransitionStatus(open, enableIdleState = false, deferEndingState = false) {
+    const [transitionStatus, setTransitionStatus] = React27.useState(open && enableIdleState ? "idle" : void 0);
+    const [mounted, setMounted] = React27.useState(open);
+    if (open && !mounted) {
+      setMounted(true);
+      setTransitionStatus("starting");
+    }
+    if (!open && mounted && transitionStatus !== "ending" && !deferEndingState) {
+      setTransitionStatus("ending");
+    }
+    if (!open && !mounted && transitionStatus === "ending") {
+      setTransitionStatus(void 0);
+    }
+    useIsoLayoutEffect(() => {
+      if (!open && mounted && transitionStatus !== "ending" && deferEndingState) {
+        const frame = AnimationFrame.request(() => {
+          setTransitionStatus("ending");
+        });
+        return () => {
+          AnimationFrame.cancel(frame);
+        };
+      }
+      return void 0;
+    }, [open, mounted, transitionStatus, deferEndingState]);
+    useIsoLayoutEffect(() => {
+      if (!open || enableIdleState) {
+        return void 0;
+      }
+      const frame = AnimationFrame.request(() => {
+        setTransitionStatus(void 0);
+      });
+      return () => {
+        AnimationFrame.cancel(frame);
+      };
+    }, [enableIdleState, open]);
+    useIsoLayoutEffect(() => {
+      if (!open || !enableIdleState) {
+        return void 0;
+      }
+      if (open && mounted && transitionStatus !== "idle") {
+        setTransitionStatus("starting");
+      }
+      const frame = AnimationFrame.request(() => {
+        setTransitionStatus("idle");
+      });
+      return () => {
+        AnimationFrame.cancel(frame);
+      };
+    }, [enableIdleState, open, mounted, transitionStatus]);
+    return {
+      mounted,
+      setMounted,
+      transitionStatus
+    };
+  }
+
+  // node_modules/@base-ui/react/field/error/FieldError.mjs
+  var import_jsx_runtime7 = __toESM(require_jsx_runtime(), 1);
+  var stateAttributesMapping = {
+    ...fieldValidityMapping,
+    ...transitionStatusMapping
+  };
+  var FieldError = /* @__PURE__ */ React28.forwardRef(function FieldError2(componentProps, forwardedRef) {
+    const {
+      render,
+      id: idProp,
+      className,
+      match: match2,
+      style,
+      ...elementProps
+    } = componentProps;
+    const id = useBaseUiId(idProp);
+    const {
+      validityData,
+      state: fieldState,
+      name
+    } = useFieldRootContext(false);
+    const {
+      setMessageIds
+    } = useLabelableContext();
+    const {
+      errors
+    } = useFormContext();
+    const formError = name && Object.hasOwn(errors, name) ? errors[name] : null;
+    const hasFormError = !!(Array.isArray(formError) ? formError.length : formError);
+    const hasSpecificMatch = typeof match2 === "string";
+    let rendered = false;
+    if (match2 === true) {
+      rendered = true;
+    } else if (fieldState.disabled) {
+      rendered = false;
+    } else if (hasSpecificMatch) {
+      rendered = Boolean(validityData.state[match2]);
+    } else {
+      rendered = hasFormError || validityData.state.valid === false;
+    }
+    const {
+      mounted,
+      transitionStatus,
+      setMounted
+    } = useTransitionStatus(rendered);
+    useIsoLayoutEffect(() => {
+      if (!rendered || !id) {
+        return void 0;
+      }
+      setMessageIds((v) => v.concat(id));
+      return () => {
+        setMessageIds((v) => v.filter((item) => item !== id));
+      };
+    }, [rendered, id, setMessageIds]);
+    const errorRef = React28.useRef(null);
+    const [lastRenderedMessage, setLastRenderedMessage] = React28.useState(null);
+    const [lastRenderedMessageKey, setLastRenderedMessageKey] = React28.useState(null);
+    let error = validityData.error;
+    if (!hasSpecificMatch && hasFormError) {
+      error = formError;
+    } else if (validityData.errors.length > 1) {
+      error = validityData.errors;
+    }
+    let errorMessage = error ?? "";
+    if (Array.isArray(error)) {
+      errorMessage = error.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("ul", {
+        children: error.map((message2) => /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("li", {
+          children: message2
+        }, message2))
+      }) : error[0] ?? "";
+    }
+    const errorKey = Array.isArray(error) ? JSON.stringify(error) : error;
+    if (rendered && errorKey !== lastRenderedMessageKey) {
+      setLastRenderedMessageKey(errorKey);
+      setLastRenderedMessage(errorMessage);
+    }
+    useOpenChangeComplete({
+      open: rendered,
+      ref: errorRef,
+      onComplete() {
+        if (!rendered) {
+          setMounted(false);
+        }
+      }
+    });
+    const state = {
+      ...fieldState,
+      transitionStatus
+    };
+    const element = useRenderElement("div", componentProps, {
+      ref: [forwardedRef, errorRef],
+      state,
+      props: [{
+        id,
+        children: rendered ? errorMessage : lastRenderedMessage
+      }, elementProps],
+      stateAttributesMapping,
+      enabled: mounted
+    });
+    if (!mounted) {
+      return null;
+    }
+    return element;
+  });
+  if (false) FieldError.displayName = "FieldError";
+
+  // node_modules/@base-ui/react/field/description/FieldDescription.mjs
+  var React29 = __toESM(require_react(), 1);
+  var FieldDescription = /* @__PURE__ */ React29.forwardRef(function FieldDescription2(componentProps, forwardedRef) {
+    const {
+      render,
+      id: idProp,
+      className,
+      style,
+      ...elementProps
+    } = componentProps;
+    const id = useBaseUiId(idProp);
+    const fieldRootContext = useFieldRootContext(false);
+    const fieldItemContext = useFieldItemContext();
+    const {
+      setMessageIds
+    } = useLabelableContext();
+    const state = {
+      ...fieldRootContext.state,
+      disabled: fieldRootContext.disabled || fieldItemContext.disabled
+    };
+    useIsoLayoutEffect(() => {
+      if (!id) {
+        return void 0;
+      }
+      setMessageIds((v) => v.concat(id));
+      return () => {
+        setMessageIds((v) => v.filter((item) => item !== id));
+      };
+    }, [id, setMessageIds]);
+    const element = useRenderElement("p", componentProps, {
+      ref: forwardedRef,
+      state,
+      props: [{
+        id
+      }, elementProps],
+      stateAttributesMapping: fieldValidityMapping
+    });
+    return element;
+  });
+  if (false) FieldDescription.displayName = "FieldDescription";
+
+  // node_modules/@base-ui/react/field/control/FieldControl.mjs
+  var React32 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/utils/useControlled.mjs
+  var React30 = __toESM(require_react(), 1);
+  function useControlled({
+    controlled,
+    default: defaultProp,
+    name,
+    state = "value"
+  }) {
+    const {
+      current: isControlled
+    } = React30.useRef(controlled !== void 0);
+    const [valueState, setValue] = React30.useState(defaultProp);
+    const value = isControlled ? controlled : valueState;
+    if (false) {
+      React30.useEffect(() => {
+        if (isControlled !== (controlled !== void 0)) {
+          error([`A component is changing the ${isControlled ? "" : "un"}controlled ${state} state of ${name} to be ${isControlled ? "un" : ""}controlled.`, "Elements should not switch from uncontrolled to controlled (or vice versa).", `Decide between using a controlled or uncontrolled ${name} element for the lifetime of the component.`, "The nature of the state is determined during the first render. It's considered controlled if the value is not `undefined`.", "More info: https://fb.me/react-controlled-components"].join("\n"));
+        }
+      }, [state, name, controlled]);
+      const {
+        current: defaultValue
+      } = React30.useRef(defaultProp);
+      React30.useEffect(() => {
+        if (!isControlled && serializeToDevModeString(defaultValue) !== serializeToDevModeString(defaultProp)) {
+          error([`A component is changing the default ${state} state of an uncontrolled ${name} after being initialized. To suppress this warning opt to use a controlled ${name}.`].join("\n"));
+        }
+      }, [defaultProp]);
+    }
+    const setValueIfUncontrolled = React30.useCallback((newValue) => {
+      if (!isControlled) {
+        setValue(newValue);
+      }
+    }, []);
+    return [value, setValueIfUncontrolled];
+  }
+
+  // node_modules/@base-ui/react/internals/field-register-control/useRegisterFieldControl.mjs
+  var React31 = __toESM(require_react(), 1);
+  function useRegisterFieldControl(controlRef, id, value, getFormValueOverride, enabled = true, name) {
+    const {
+      registerFieldControl
+    } = useFieldRootContext();
+    const sourceRef = React31.useRef(null);
+    if (!sourceRef.current) {
+      sourceRef.current = Symbol();
+    }
+    useIsoLayoutEffect(() => {
+      const source = sourceRef.current;
+      if (!source || !enabled) {
+        return void 0;
+      }
+      const registration = {
+        controlRef,
+        getValue: getFormValueOverride,
+        id,
+        name,
+        value
+      };
+      registerFieldControl(source, registration);
+      return () => {
+        registerFieldControl(source, void 0);
+      };
+    }, [controlRef, enabled, getFormValueOverride, id, name, registerFieldControl, value]);
+  }
+
+  // node_modules/@base-ui/react/internals/reason-parts.mjs
+  var reason_parts_exports = {};
+  __export(reason_parts_exports, {
+    cancelOpen: () => cancelOpen,
+    chipRemovePress: () => chipRemovePress,
+    clearPress: () => clearPress,
+    closePress: () => closePress,
+    closeWatcher: () => closeWatcher,
+    decrementPress: () => decrementPress,
+    disabled: () => disabled,
+    drag: () => drag,
+    escapeKey: () => escapeKey,
+    focusOut: () => focusOut,
+    imperativeAction: () => imperativeAction,
+    incrementPress: () => incrementPress,
+    initial: () => initial,
+    inputBlur: () => inputBlur,
+    inputChange: () => inputChange,
+    inputClear: () => inputClear,
+    inputPaste: () => inputPaste,
+    inputPress: () => inputPress,
+    itemPress: () => itemPress,
+    keyboard: () => keyboard,
+    linkPress: () => linkPress,
+    listNavigation: () => listNavigation,
+    missing: () => missing,
+    none: () => none,
+    outsidePress: () => outsidePress,
+    pointer: () => pointer,
+    scrub: () => scrub,
+    siblingOpen: () => siblingOpen,
+    swipe: () => swipe,
+    trackPress: () => trackPress,
+    triggerFocus: () => triggerFocus,
+    triggerHover: () => triggerHover,
+    triggerPress: () => triggerPress,
+    wheel: () => wheel,
+    windowResize: () => windowResize
+  });
+  var none = "none";
+  var triggerPress = "trigger-press";
+  var triggerHover = "trigger-hover";
+  var triggerFocus = "trigger-focus";
+  var outsidePress = "outside-press";
+  var itemPress = "item-press";
+  var closePress = "close-press";
+  var linkPress = "link-press";
+  var clearPress = "clear-press";
+  var chipRemovePress = "chip-remove-press";
+  var trackPress = "track-press";
+  var incrementPress = "increment-press";
+  var decrementPress = "decrement-press";
+  var inputChange = "input-change";
+  var inputClear = "input-clear";
+  var inputBlur = "input-blur";
+  var inputPaste = "input-paste";
+  var inputPress = "input-press";
+  var focusOut = "focus-out";
+  var escapeKey = "escape-key";
+  var closeWatcher = "close-watcher";
+  var listNavigation = "list-navigation";
+  var keyboard = "keyboard";
+  var pointer = "pointer";
+  var drag = "drag";
+  var wheel = "wheel";
+  var scrub = "scrub";
+  var cancelOpen = "cancel-open";
+  var siblingOpen = "sibling-open";
+  var disabled = "disabled";
+  var missing = "missing";
+  var initial = "initial";
+  var imperativeAction = "imperative-action";
+  var swipe = "swipe";
+  var windowResize = "window-resize";
+
+  // node_modules/@base-ui/react/internals/createBaseUIEventDetails.mjs
+  function createChangeEventDetails(reason, event, trigger, customProperties) {
+    let canceled = false;
+    let allowPropagation = false;
+    const custom = customProperties ?? EMPTY_OBJECT;
+    const details = {
+      reason,
+      event: event ?? new Event("base-ui"),
+      cancel() {
+        canceled = true;
+      },
+      allowPropagation() {
+        allowPropagation = true;
+      },
+      get isCanceled() {
+        return canceled;
+      },
+      get isPropagationAllowed() {
+        return allowPropagation;
+      },
+      trigger,
+      ...custom
+    };
+    return details;
+  }
+
+  // node_modules/@base-ui/react/field/control/FieldControl.mjs
+  var FieldControl = /* @__PURE__ */ React32.forwardRef(function FieldControl2(componentProps, forwardedRef) {
+    const {
+      render,
+      className,
+      id: idProp,
+      name: nameProp,
+      value: valueProp,
+      disabled: disabledProp = false,
+      onValueChange,
+      defaultValue,
+      autoFocus = false,
+      style,
+      ...elementProps
+    } = componentProps;
+    const {
+      state: fieldState,
+      name: fieldName,
+      disabled: fieldDisabled,
+      setTouched,
+      setDirty,
+      validityData,
+      setFocused,
+      setFilled,
+      validationMode,
+      validation
+    } = useFieldRootContext();
+    const {
+      clearErrors
+    } = useFormContext();
+    const disabled2 = fieldDisabled || disabledProp;
+    const name = fieldName ?? nameProp;
+    const state = {
+      ...fieldState,
+      disabled: disabled2
+    };
+    const {
+      labelId
+    } = useLabelableContext();
+    const id = useLabelableId({
+      id: idProp
+    });
+    useIsoLayoutEffect(() => {
+      const hasExternalValue = valueProp != null;
+      if (validation.inputRef.current?.value || hasExternalValue && valueProp !== "") {
+        setFilled(true);
+      } else if (hasExternalValue && valueProp === "") {
+        setFilled(false);
+      }
+    }, [validation.inputRef, setFilled, valueProp]);
+    const inputRef = React32.useRef(null);
+    useIsoLayoutEffect(() => {
+      if (autoFocus && inputRef.current === activeElement(ownerDocument(inputRef.current))) {
+        setFocused(true);
+      }
+    }, [autoFocus, setFocused]);
+    const [valueUnwrapped] = useControlled({
+      controlled: valueProp,
+      default: defaultValue,
+      name: "FieldControl",
+      state: "value"
+    });
+    const isControlled = valueProp !== void 0;
+    const value = isControlled ? valueUnwrapped : void 0;
+    const getValueFromInput = useStableCallback(() => validation.inputRef.current?.value);
+    useRegisterFieldControl(validation.inputRef, id, value, getValueFromInput, !disabled2, nameProp);
+    const element = useRenderElement("input", componentProps, {
+      ref: [forwardedRef, inputRef],
+      state,
+      props: [{
+        id,
+        disabled: disabled2,
+        name,
+        ref: validation.inputRef,
+        "aria-labelledby": labelId,
+        autoFocus,
+        ...isControlled ? {
+          value
+        } : {
+          defaultValue
+        },
+        onChange(event) {
+          const inputValue = event.currentTarget.value;
+          onValueChange?.(inputValue, createChangeEventDetails(reason_parts_exports.none, event.nativeEvent));
+          setDirty(inputValue !== validityData.initialValue);
+          setFilled(inputValue !== "");
+          if (!event.nativeEvent.defaultPrevented) {
+            clearErrors(name);
+            validation.change(inputValue);
+          }
+        },
+        onFocus() {
+          setFocused(true);
+        },
+        onBlur(event) {
+          setTouched(true);
+          setFocused(false);
+          if (validationMode === "onBlur") {
+            validation.commit(event.currentTarget.value);
+          }
+        },
+        onKeyDown(event) {
+          if (event.currentTarget.tagName === "INPUT" && event.key === "Enter") {
+            setTouched(true);
+            validation.commit(event.currentTarget.value);
+          }
+        }
+      }, elementProps, (props) => validation.getValidationProps(disabled2, props)],
+      stateAttributesMapping: fieldValidityMapping
+    });
+    return element;
+  });
+  if (false) FieldControl.displayName = "FieldControl";
+
+  // node_modules/@base-ui/react/field/validity/FieldValidity.mjs
+  var React33 = __toESM(require_react(), 1);
+  var import_jsx_runtime8 = __toESM(require_jsx_runtime(), 1);
+  var FieldValidity = function FieldValidity2(props) {
+    const {
+      children
+    } = props;
+    const {
+      validityData,
+      invalid
+    } = useFieldRootContext(false);
+    const combinedFieldValidityData = React33.useMemo(() => getCombinedFieldValidityData(validityData, invalid), [validityData, invalid]);
+    const isInvalid = combinedFieldValidityData.state.valid === false;
+    const {
+      transitionStatus
+    } = useTransitionStatus(isInvalid);
+    const fieldValidityState = React33.useMemo(() => {
+      return {
+        ...combinedFieldValidityData,
+        validity: combinedFieldValidityData.state,
+        transitionStatus
+      };
+    }, [combinedFieldValidityData, transitionStatus]);
+    return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(React33.Fragment, {
+      children: children(fieldValidityState)
+    });
+  };
+  if (false) FieldValidity.displayName = "FieldValidity";
+
+  // node_modules/@base-ui/react/field/item/FieldItem.mjs
+  var React35 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/react/checkbox-group/CheckboxGroupContext.mjs
+  var React34 = __toESM(require_react(), 1);
+  var CheckboxGroupContext = /* @__PURE__ */ React34.createContext(void 0);
+  if (false) CheckboxGroupContext.displayName = "CheckboxGroupContext";
+  function useCheckboxGroupContext(optional = true) {
+    const context = React34.useContext(CheckboxGroupContext);
+    if (context === void 0 && !optional) {
+      throw new Error(false ? "Base UI: CheckboxGroupContext is missing. CheckboxGroup parts must be placed within <CheckboxGroup>." : formatErrorMessage_default(3));
+    }
+    return context;
+  }
+
+  // node_modules/@base-ui/react/field/item/FieldItem.mjs
+  var import_jsx_runtime9 = __toESM(require_jsx_runtime(), 1);
+  var FieldItem = /* @__PURE__ */ React35.forwardRef(function FieldItem2(componentProps, forwardedRef) {
+    const {
+      render,
+      className,
+      style,
+      disabled: disabledProp = false,
+      ...elementProps
+    } = componentProps;
+    const {
+      state: fieldState,
+      disabled: rootDisabled
+    } = useFieldRootContext(false);
+    const disabled2 = rootDisabled || disabledProp;
+    const state = {
+      ...fieldState,
+      disabled: disabled2
+    };
+    const checkboxGroupContext = useCheckboxGroupContext();
+    const hasParentCheckbox = checkboxGroupContext?.allValues !== void 0;
+    const controlId = hasParentCheckbox ? checkboxGroupContext?.parent.id : void 0;
+    const fieldItemContext = React35.useMemo(() => ({
+      disabled: disabled2
+    }), [disabled2]);
+    const element = useRenderElement("div", componentProps, {
+      ref: forwardedRef,
+      state,
+      props: elementProps,
+      stateAttributesMapping: fieldValidityMapping
+    });
+    return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(LabelableProvider, {
+      controlId,
+      children: /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(FieldItemContext.Provider, {
+        value: fieldItemContext,
+        children: element
+      })
+    });
+  });
+  if (false) FieldItem.displayName = "FieldItem";
+
+  // node_modules/@base-ui/react/input/Input.mjs
+  var import_jsx_runtime10 = __toESM(require_jsx_runtime(), 1);
+  var Input = /* @__PURE__ */ React36.forwardRef(function Input2(props, forwardedRef) {
+    return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(index_parts_exports.Control, {
+      ref: forwardedRef,
+      ...props
+    });
+  });
+  if (false) Input.displayName = "Input";
+
+  // src/components/ui/input.tsx
+  var import_jsx_runtime11 = __toESM(require_jsx_runtime(), 1);
+  function Input3({ className, type, ...props }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime11.jsx)(
+      Input,
+      {
+        type,
+        "data-slot": "input",
+        className: cn(
+          "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+          className
+        ),
+        ...props
+      }
+    );
+  }
+
+  // src/components/ui/label.tsx
+  var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
+  function Label({ className, ...props }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+      "label",
+      {
+        "data-slot": "label",
+        className: cn(
+          "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+          className
+        ),
+        ...props
+      }
+    );
+  }
+
+  // src/pages/LandingPage.tsx
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
+  function LandingPage() {
+    const navigate = useNavigate();
+    const [insuranceNumber, setInsuranceNumber] = (0, import_react4.useState)("A123456789");
+    const [dateOfBirth, setDateOfBirth] = (0, import_react4.useState)("");
+    const [loading, setLoading] = (0, import_react4.useState)(false);
+    const [error, setError] = (0, import_react4.useState)("");
+    const handleLogin = async (e) => {
+      e.preventDefault();
+      setError("");
+      setLoading(true);
+      try {
+        const res = await fetch("/api/patients/lookup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ insuranceNumber, dateOfBirth: dateOfBirth || void 0 })
+        }).then((r2) => r2.json());
+        if (res.success && res.data) {
+          localStorage.setItem("patient_insurance", insuranceNumber);
+          localStorage.setItem("patient_name", res.data.first_name + " " + res.data.last_name);
+          navigate("/patient");
+        } else {
+          setError(res.error || "Patient nicht gefunden");
+        }
+      } catch {
+        setError("Verbindungsfehler");
+      }
+      setLoading(false);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(Card, { className: "w-full max-w-md shadow-lg", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(CardHeader, { className: "text-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(CardTitle, { className: "text-2xl", children: "Praxis Demir & Kollegen" }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(CardDescription, { children: "Online-Terminverwaltung" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(CardContent, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("form", { onSubmit: handleLogin, className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Label, { htmlFor: "insuranceNumber", children: "Versichertennummer" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              Input3,
+              {
+                id: "insuranceNumber",
+                value: insuranceNumber,
+                onChange: (e) => setInsuranceNumber(e.target.value),
+                placeholder: "z. B. A123456789",
+                required: true
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Label, { htmlFor: "dob", children: "Geburtsdatum (optional)" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+              Input3,
+              {
+                id: "dob",
+                type: "date",
+                value: dateOfBirth,
+                onChange: (e) => setDateOfBirth(e.target.value)
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "text-xs text-muted-foreground", children: "Nur erforderlich bei mehreren Patienten mit gleicher Versichertennummer." })
+          ] }),
+          error && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive", children: error }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Button3, { type: "submit", className: "w-full", disabled: loading, children: loading ? "Wird gepr\xFCft..." : "Anmelden" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "mt-4 space-y-2 text-center text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
+            "Testzugang: ",
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("code", { className: "rounded bg-muted px-1.5 py-0.5 text-xs font-mono", children: "A123456789" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("a", { href: "/mfa", className: "text-primary underline", children: "MFA-Login" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("a", { href: "/doctor-login", className: "text-primary underline", children: "Arzt-Login" }) })
+        ] })
+      ] })
+    ] }) });
+  }
+
+  // src/pages/PatientPortal.tsx
+  var import_react36 = __toESM(require_react(), 1);
+
+  // node_modules/@base-ui/react/use-render/useRender.mjs
+  function useRender(params) {
+    return useRenderElement(params.defaultTagName ?? "div", params, params);
+  }
+
+  // src/components/ui/badge.tsx
+  var badgeVariants = cva(
+    "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
+    {
+      variants: {
+        variant: {
+          default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+          secondary: "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+          destructive: "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+          outline: "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+          ghost: "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
+          link: "text-primary underline-offset-4 hover:underline"
+        }
+      },
+      defaultVariants: {
+        variant: "default"
+      }
+    }
+  );
+  function Badge({
+    className,
+    variant = "default",
+    render,
+    ...props
+  }) {
+    return useRender({
+      defaultTagName: "span",
+      props: mergeProps(
+        {
+          className: cn(badgeVariants({ variant }), className)
+        },
+        props
+      ),
+      render,
+      state: {
+        slot: "badge",
+        variant
+      }
+    });
+  }
+
+  // src/components/ui/calendar.tsx
+  var React63 = __toESM(require_react(), 1);
+
+  // node_modules/@date-fns/tz/constants/index.js
+  var constructFromSymbol = Symbol.for("constructDateFrom");
+
+  // node_modules/@date-fns/tz/tzName/index.js
+  function tzName(timeZone, date, format2 = "long") {
+    return new Intl.DateTimeFormat("en-US", {
+      // Enforces engine to render the time. Without the option JavaScriptCore omits it.
+      hour: "numeric",
+      timeZone,
+      timeZoneName: format2
+    }).format(date).split(/\s/g).slice(2).join(" ");
+  }
+
+  // node_modules/@date-fns/tz/tzOffset/index.js
+  var offsetFormatCache = {};
+  var offsetCache = {};
+  function tzOffset(timeZone, date) {
+    try {
+      const format2 = offsetFormatCache[timeZone] ||= new Intl.DateTimeFormat("en-US", {
+        timeZone,
+        timeZoneName: "longOffset"
+      }).format;
+      const offsetStr = format2(date).split("GMT")[1];
+      if (offsetStr in offsetCache) return offsetCache[offsetStr];
+      return calcOffset(offsetStr, offsetStr.split(":"));
+    } catch {
+      if (timeZone in offsetCache) return offsetCache[timeZone];
+      const captures = timeZone?.match(offsetRe);
+      if (captures) return calcOffset(timeZone, captures.slice(1));
+      return NaN;
+    }
+  }
+  var offsetRe = /([+-]\d\d):?(\d\d)?/;
+  function calcOffset(cacheStr, values) {
+    const hours = +(values[0] || 0);
+    const minutes = +(values[1] || 0);
+    const seconds = +(values[2] || 0) / 60;
+    return offsetCache[cacheStr] = hours * 60 + minutes > 0 ? hours * 60 + minutes + seconds : hours * 60 - minutes - seconds;
+  }
+
+  // node_modules/@date-fns/tz/date/mini.js
+  var TZDateMini = class _TZDateMini extends Date {
+    //#region static
+    constructor(...args) {
+      super();
+      if (args.length > 1 && typeof args[args.length - 1] === "string") {
+        this.timeZone = args.pop();
+      }
+      this.internal = /* @__PURE__ */ new Date();
+      if (isNaN(tzOffset(this.timeZone, this))) {
+        this.setTime(NaN);
+      } else {
+        if (!args.length) {
+          this.setTime(Date.now());
+        } else if (typeof args[0] === "number" && (args.length === 1 || args.length === 2 && typeof args[1] !== "number")) {
+          this.setTime(args[0]);
+        } else if (typeof args[0] === "string") {
+          this.setTime(+new Date(args[0]));
+        } else if (args[0] instanceof Date) {
+          this.setTime(+args[0]);
+        } else {
+          this.setTime(+new Date(...args));
+          adjustToSystemTZ(this, args);
+        }
+      }
+    }
+    static tz(tz, ...args) {
+      return args.length ? new _TZDateMini(...args, tz) : new _TZDateMini(Date.now(), tz);
+    }
+    //#endregion
+    //#region time zone
+    withTimeZone(timeZone) {
+      return new _TZDateMini(+this, timeZone);
+    }
+    getTimezoneOffset() {
+      const offset = -tzOffset(this.timeZone, this);
+      return offset > 0 ? Math.floor(offset) : Math.ceil(offset);
+    }
+    //#endregion
+    //#region time
+    setTime(_time) {
+      Date.prototype.setTime.apply(this, arguments);
+      syncToInternal(this);
+      return +this;
+    }
+    //#endregion
+    //#region date-fns integration
+    [Symbol.for("constructDateFrom")](date) {
+      return new _TZDateMini(+new Date(date), this.timeZone);
+    }
+    //#endregion
+  };
+  var re = /^(get|set)(?!UTC)/;
+  Object.getOwnPropertyNames(Date.prototype).forEach((method) => {
+    if (!re.test(method)) return;
+    const utcMethod = method.replace(re, "$1UTC");
+    if (!TZDateMini.prototype[utcMethod]) return;
+    if (method.startsWith("get")) {
+      TZDateMini.prototype[method] = function() {
+        return this.internal[utcMethod]();
+      };
+    } else {
+      TZDateMini.prototype[method] = function() {
+        Date.prototype[utcMethod].apply(this.internal, arguments);
+        syncFromInternal(this);
+        return +this;
+      };
+      TZDateMini.prototype[utcMethod] = function() {
+        Date.prototype[utcMethod].apply(this, arguments);
+        syncToInternal(this);
+        return +this;
+      };
+    }
+  });
+  function syncToInternal(date) {
+    date.internal.setTime(+date);
+    date.internal.setUTCSeconds(date.internal.getUTCSeconds() - // Round after converting minutes to seconds to avoid fractional offset
+    // precision errors from historical offsets.
+    Math.round(-tzOffset(date.timeZone, date) * 60));
+  }
+  function syncFromInternal(date) {
+    Date.prototype.setFullYear.call(date, date.internal.getUTCFullYear(), date.internal.getUTCMonth(), date.internal.getUTCDate());
+    Date.prototype.setHours.call(date, date.internal.getUTCHours(), date.internal.getUTCMinutes(), date.internal.getUTCSeconds(), date.internal.getUTCMilliseconds());
+    adjustToSystemTZ(date);
+  }
+  function adjustToSystemTZ(date, constructorArgs) {
+    const expectedInternalTime = Array.isArray(constructorArgs) ? constructorArgsToInternalTime(constructorArgs) : +date.internal;
+    const offsetWithSeconds = tzOffset(date.timeZone, date);
+    const offset = offsetWithSeconds > 0 ? Math.floor(offsetWithSeconds) : Math.ceil(offsetWithSeconds);
+    const prevHour = /* @__PURE__ */ new Date(+date);
+    prevHour.setUTCHours(prevHour.getUTCHours() - 1);
+    const systemOffset = -(/* @__PURE__ */ new Date(+date)).getTimezoneOffset();
+    const prevHourSystemOffset = -(/* @__PURE__ */ new Date(+prevHour)).getTimezoneOffset();
+    const systemDSTChange = systemOffset - prevHourSystemOffset;
+    let systemOffsetForDiff = systemOffset;
+    if (systemDSTChange && systemOffset !== offset) {
+      const systemHour = Date.prototype.getHours.apply(date);
+      const expectedHour = Array.isArray(constructorArgs) ? constructorArgs[3] || 0 : date.internal.getUTCHours();
+      if (systemHour !== expectedHour) {
+        const testDate = /* @__PURE__ */ new Date(+date);
+        const testOffsetDiff = systemOffset - offset;
+        if (testOffsetDiff) testDate.setUTCMinutes(testDate.getUTCMinutes() + testOffsetDiff);
+        const testOffsetWithSeconds = tzOffset(date.timeZone, testDate);
+        const testOffset = testOffsetWithSeconds > 0 ? Math.floor(testOffsetWithSeconds) : Math.ceil(testOffsetWithSeconds);
+        if (testOffset === offset) systemOffsetForDiff = prevHourSystemOffset;
+      }
+    }
+    const offsetDiff = systemOffsetForDiff - offset;
+    if (offsetDiff)
+      Date.prototype.setUTCMinutes.call(date, Date.prototype.getUTCMinutes.call(date) + offsetDiff);
+    const systemDate = /* @__PURE__ */ new Date(+date);
+    systemDate.setUTCSeconds(0);
+    const systemSecondsOffset = systemOffset > 0 ? systemDate.getSeconds() : (systemDate.getSeconds() - 60) % 60;
+    const secondsOffset = Math.round(-(tzOffset(date.timeZone, date) * 60)) % 60;
+    if (secondsOffset || systemSecondsOffset)
+      Date.prototype.setUTCSeconds.call(date, Date.prototype.getUTCSeconds.call(date) + secondsOffset + systemSecondsOffset);
+    const postOffsetWithSeconds = tzOffset(date.timeZone, date);
+    const postOffset = postOffsetWithSeconds > 0 ? Math.floor(postOffsetWithSeconds) : Math.ceil(postOffsetWithSeconds);
+    const postSystemOffset = -(/* @__PURE__ */ new Date(+date)).getTimezoneOffset();
+    const postOffsetDiff = postSystemOffset - postOffset;
+    const offsetChanged = postOffset !== offset;
+    const postDiff = postOffsetDiff - offsetDiff;
+    const targetDSTShift = postOffset - offset;
+    const postOffsetCandidate = expectedInternalTime - postOffset * 60 * 1e3;
+    const normalizedTargetDSTGap = targetDSTShift > 0 && targetInternalTime(date) - expectedInternalTime === targetDSTShift * 60 * 1e3 && targetInternalTime(date, postOffsetCandidate) !== expectedInternalTime;
+    if (offsetChanged && postDiff && !normalizedTargetDSTGap) {
+      Date.prototype.setUTCMinutes.call(date, Date.prototype.getUTCMinutes.call(date) + postDiff);
+      const newOffsetWithSeconds = tzOffset(date.timeZone, date);
+      const newOffset = newOffsetWithSeconds > 0 ? Math.floor(newOffsetWithSeconds) : Math.ceil(newOffsetWithSeconds);
+      const offsetChange = postOffset - newOffset;
+      if (offsetChange && postDiff < 0) {
+        Date.prototype.setUTCMinutes.call(date, Date.prototype.getUTCMinutes.call(date) + offsetChange);
+      }
+    }
+    syncToInternal(date);
+    const expectedTime = constructorArgs ? expectedInternalTime : expectedInternalTime + secondsOffset * 1e3;
+    const drift = expectedTime - +date.internal;
+    if (drift && Math.abs(drift) < 30 * 60 * 1e3) {
+      Date.prototype.setTime.call(date, +date + drift);
+      syncToInternal(date);
+    }
+  }
+  function constructorArgsToInternalTime(args) {
+    return Date.UTC(args[0], args.length > 1 ? args[1] : 0, args.length > 2 ? args[2] : 1, ...args.slice(3));
+  }
+  function targetInternalTime(date, time) {
+    const internal = new Date(time ?? +date);
+    internal.setUTCSeconds(internal.getUTCSeconds() - Math.round(-tzOffset(date.timeZone, internal) * 60));
+    return +internal;
+  }
+
+  // node_modules/@date-fns/tz/date/index.js
+  var TZDate = class _TZDate extends TZDateMini {
+    //#region static
+    static tz(tz, ...args) {
+      return args.length ? new _TZDate(...args, tz) : new _TZDate(Date.now(), tz);
+    }
+    //#endregion
+    //#region representation
+    toISOString() {
+      const [sign, hours, minutes] = this.tzComponents();
+      const tz = `${sign}${hours}:${minutes}`;
+      return this.internal.toISOString().slice(0, -1) + tz;
+    }
+    toString() {
+      return `${this.toDateString()} ${this.toTimeString()}`;
+    }
+    toDateString() {
+      const [day, date, month, year] = this.internal.toUTCString().split(" ");
+      return `${day?.slice(0, -1)} ${month} ${date} ${year}`;
+    }
+    toTimeString() {
+      const time = this.internal.toUTCString().split(" ")[4];
+      const [sign, hours, minutes] = this.tzComponents();
+      return `${time} GMT${sign}${hours}${minutes} (${tzName(this.timeZone, this)})`;
+    }
+    toLocaleString(locales, options) {
+      return Date.prototype.toLocaleString.call(this, locales, {
+        ...options,
+        timeZone: options?.timeZone || this.timeZone
+      });
+    }
+    toLocaleDateString(locales, options) {
+      return Date.prototype.toLocaleDateString.call(this, locales, {
+        ...options,
+        timeZone: options?.timeZone || this.timeZone
+      });
+    }
+    toLocaleTimeString(locales, options) {
+      return Date.prototype.toLocaleTimeString.call(this, locales, {
+        ...options,
+        timeZone: options?.timeZone || this.timeZone
+      });
+    }
+    //#endregion
+    //#region private
+    tzComponents() {
+      const offset = this.getTimezoneOffset();
+      const sign = offset > 0 ? "-" : "+";
+      const hours = String(Math.floor(Math.abs(offset) / 60)).padStart(2, "0");
+      const minutes = String(Math.abs(offset) % 60).padStart(2, "0");
+      return [sign, hours, minutes];
+    }
+    //#endregion
+    withTimeZone(timeZone) {
+      return new _TZDate(+this, timeZone);
+    }
+    //#region date-fns integration
+    [Symbol.for("constructDateFrom")](date) {
+      return new _TZDate(+new Date(date), this.timeZone);
+    }
+    //#endregion
+  };
+
+  // node_modules/date-fns/constants.js
+  var daysInYear = 365.2425;
+  var maxTime = Math.pow(10, 8) * 24 * 60 * 60 * 1e3;
+  var minTime = -maxTime;
+  var millisecondsInWeek = 6048e5;
+  var millisecondsInDay = 864e5;
+  var secondsInHour = 3600;
+  var secondsInDay = secondsInHour * 24;
+  var secondsInWeek = secondsInDay * 7;
+  var secondsInYear = secondsInDay * daysInYear;
+  var secondsInMonth = secondsInYear / 12;
+  var secondsInQuarter = secondsInMonth * 3;
+  var constructFromSymbol2 = Symbol.for("constructDateFrom");
+
+  // node_modules/date-fns/constructFrom.js
+  function constructFrom(date, value) {
+    if (typeof date === "function") return date(value);
+    if (date && typeof date === "object" && constructFromSymbol2 in date)
+      return date[constructFromSymbol2](value);
+    if (date instanceof Date) return new date.constructor(value);
+    return new Date(value);
+  }
+
+  // node_modules/date-fns/toDate.js
+  function toDate(argument, context) {
+    return constructFrom(context || argument, argument);
+  }
+
+  // node_modules/date-fns/addDays.js
+  function addDays(date, amount, options) {
+    const _date = toDate(date, options?.in);
+    if (isNaN(amount)) return constructFrom(options?.in || date, NaN);
+    if (!amount) return _date;
+    _date.setDate(_date.getDate() + amount);
+    return _date;
+  }
+
+  // node_modules/date-fns/addMonths.js
+  function addMonths(date, amount, options) {
+    const _date = toDate(date, options?.in);
+    if (isNaN(amount)) return constructFrom(options?.in || date, NaN);
+    if (!amount) {
+      return _date;
+    }
+    const dayOfMonth = _date.getDate();
+    const endOfDesiredMonth = constructFrom(options?.in || date, _date.getTime());
+    endOfDesiredMonth.setMonth(_date.getMonth() + amount + 1, 0);
+    const daysInMonth = endOfDesiredMonth.getDate();
+    if (dayOfMonth >= daysInMonth) {
+      return endOfDesiredMonth;
+    } else {
+      _date.setFullYear(
+        endOfDesiredMonth.getFullYear(),
+        endOfDesiredMonth.getMonth(),
+        dayOfMonth
+      );
+      return _date;
+    }
+  }
+
+  // node_modules/date-fns/_lib/defaultOptions.js
+  var defaultOptions = {};
+  function getDefaultOptions() {
+    return defaultOptions;
+  }
+
+  // node_modules/date-fns/startOfWeek.js
+  function startOfWeek(date, options) {
+    const defaultOptions2 = getDefaultOptions();
+    const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
+    const _date = toDate(date, options?.in);
+    const day = _date.getDay();
+    const diff = (day < weekStartsOn ? 7 : 0) + day - weekStartsOn;
+    _date.setDate(_date.getDate() - diff);
+    _date.setHours(0, 0, 0, 0);
+    return _date;
+  }
+
+  // node_modules/date-fns/startOfISOWeek.js
+  function startOfISOWeek(date, options) {
+    return startOfWeek(date, { ...options, weekStartsOn: 1 });
+  }
+
+  // node_modules/date-fns/getISOWeekYear.js
+  function getISOWeekYear(date, options) {
+    const _date = toDate(date, options?.in);
+    const year = _date.getFullYear();
+    const fourthOfJanuaryOfNextYear = constructFrom(_date, 0);
+    fourthOfJanuaryOfNextYear.setFullYear(year + 1, 0, 4);
+    fourthOfJanuaryOfNextYear.setHours(0, 0, 0, 0);
+    const startOfNextYear = startOfISOWeek(fourthOfJanuaryOfNextYear);
+    const fourthOfJanuaryOfThisYear = constructFrom(_date, 0);
+    fourthOfJanuaryOfThisYear.setFullYear(year, 0, 4);
+    fourthOfJanuaryOfThisYear.setHours(0, 0, 0, 0);
+    const startOfThisYear = startOfISOWeek(fourthOfJanuaryOfThisYear);
+    if (_date.getTime() >= startOfNextYear.getTime()) {
+      return year + 1;
+    } else if (_date.getTime() >= startOfThisYear.getTime()) {
+      return year;
+    } else {
+      return year - 1;
+    }
+  }
+
+  // node_modules/date-fns/_lib/getTimezoneOffsetInMilliseconds.js
+  function getTimezoneOffsetInMilliseconds(date) {
+    const _date = toDate(date);
+    const utcDate = new Date(
+      Date.UTC(
+        _date.getFullYear(),
+        _date.getMonth(),
+        _date.getDate(),
+        _date.getHours(),
+        _date.getMinutes(),
+        _date.getSeconds(),
+        _date.getMilliseconds()
+      )
+    );
+    utcDate.setUTCFullYear(_date.getFullYear());
+    return +date - +utcDate;
+  }
+
+  // node_modules/date-fns/_lib/normalizeDates.js
+  function normalizeDates(context, ...dates) {
+    const normalize = constructFrom.bind(
+      null,
+      context || dates.find((date) => typeof date === "object")
+    );
+    return dates.map(normalize);
+  }
+
+  // node_modules/date-fns/startOfDay.js
+  function startOfDay(date, options) {
+    const _date = toDate(date, options?.in);
+    _date.setHours(0, 0, 0, 0);
+    return _date;
+  }
+
+  // node_modules/date-fns/differenceInCalendarDays.js
+  function differenceInCalendarDays(laterDate, earlierDate, options) {
+    const [laterDate_, earlierDate_] = normalizeDates(
+      options?.in,
+      laterDate,
+      earlierDate
+    );
+    const laterStartOfDay = startOfDay(laterDate_);
+    const earlierStartOfDay = startOfDay(earlierDate_);
+    const laterTimestamp = +laterStartOfDay - getTimezoneOffsetInMilliseconds(laterStartOfDay);
+    const earlierTimestamp = +earlierStartOfDay - getTimezoneOffsetInMilliseconds(earlierStartOfDay);
+    return Math.round((laterTimestamp - earlierTimestamp) / millisecondsInDay);
+  }
+
+  // node_modules/date-fns/startOfISOWeekYear.js
+  function startOfISOWeekYear(date, options) {
+    const year = getISOWeekYear(date, options);
+    const fourthOfJanuary = constructFrom(options?.in || date, 0);
+    fourthOfJanuary.setFullYear(year, 0, 4);
+    fourthOfJanuary.setHours(0, 0, 0, 0);
+    return startOfISOWeek(fourthOfJanuary);
+  }
+
+  // node_modules/date-fns/addWeeks.js
+  function addWeeks(date, amount, options) {
+    return addDays(date, amount * 7, options);
+  }
+
+  // node_modules/date-fns/addYears.js
+  function addYears(date, amount, options) {
+    return addMonths(date, amount * 12, options);
+  }
+
+  // node_modules/date-fns/max.js
+  function max(dates, options) {
+    let result;
+    let context = options?.in;
+    dates.forEach((date) => {
+      if (!context && typeof date === "object")
+        context = constructFrom.bind(null, date);
+      const date_ = toDate(date, context);
+      if (!result || result < date_ || isNaN(+date_)) result = date_;
+    });
+    return constructFrom(context, result || NaN);
+  }
+
+  // node_modules/date-fns/min.js
+  function min(dates, options) {
+    let result;
+    let context = options?.in;
+    dates.forEach((date) => {
+      if (!context && typeof date === "object")
+        context = constructFrom.bind(null, date);
+      const date_ = toDate(date, context);
+      if (!result || result > date_ || isNaN(+date_)) result = date_;
+    });
+    return constructFrom(context, result || NaN);
+  }
+
+  // node_modules/date-fns/isSameDay.js
+  function isSameDay(laterDate, earlierDate, options) {
+    const [dateLeft_, dateRight_] = normalizeDates(
+      options?.in,
+      laterDate,
+      earlierDate
+    );
+    return +startOfDay(dateLeft_) === +startOfDay(dateRight_);
+  }
+
+  // node_modules/date-fns/isDate.js
+  function isDate(value) {
+    return value instanceof Date || typeof value === "object" && Object.prototype.toString.call(value) === "[object Date]";
+  }
+
+  // node_modules/date-fns/isValid.js
+  function isValid(date) {
+    return !(!isDate(date) && typeof date !== "number" || isNaN(+toDate(date)));
+  }
+
+  // node_modules/date-fns/differenceInCalendarMonths.js
+  function differenceInCalendarMonths(laterDate, earlierDate, options) {
+    const [laterDate_, earlierDate_] = normalizeDates(
+      options?.in,
+      laterDate,
+      earlierDate
+    );
+    const yearsDiff = laterDate_.getFullYear() - earlierDate_.getFullYear();
+    const monthsDiff = laterDate_.getMonth() - earlierDate_.getMonth();
+    return yearsDiff * 12 + monthsDiff;
+  }
+
+  // node_modules/date-fns/endOfMonth.js
+  function endOfMonth(date, options) {
+    const _date = toDate(date, options?.in);
+    const month = _date.getMonth();
+    _date.setFullYear(_date.getFullYear(), month + 1, 0);
+    _date.setHours(23, 59, 59, 999);
+    return _date;
+  }
+
+  // node_modules/date-fns/_lib/normalizeInterval.js
+  function normalizeInterval(context, interval) {
+    const [start, end] = normalizeDates(context, interval.start, interval.end);
+    return { start, end };
+  }
+
+  // node_modules/date-fns/eachMonthOfInterval.js
+  function eachMonthOfInterval(interval, options) {
+    const { start, end } = normalizeInterval(options?.in, interval);
+    let reversed = +start > +end;
+    const endTime = reversed ? +start : +end;
+    const date = reversed ? end : start;
+    date.setHours(0, 0, 0, 0);
+    date.setDate(1);
+    let step = options?.step ?? 1;
+    if (!step) return [];
+    if (step < 0) {
+      step = -step;
+      reversed = !reversed;
+    }
+    const dates = [];
+    while (+date <= endTime) {
+      dates.push(constructFrom(start, date));
+      date.setMonth(date.getMonth() + step);
+    }
+    return reversed ? dates.reverse() : dates;
+  }
+
+  // node_modules/date-fns/startOfMonth.js
+  function startOfMonth(date, options) {
+    const _date = toDate(date, options?.in);
+    _date.setDate(1);
+    _date.setHours(0, 0, 0, 0);
+    return _date;
+  }
+
+  // node_modules/date-fns/endOfYear.js
+  function endOfYear(date, options) {
+    const _date = toDate(date, options?.in);
+    const year = _date.getFullYear();
+    _date.setFullYear(year + 1, 0, 0);
+    _date.setHours(23, 59, 59, 999);
+    return _date;
+  }
+
+  // node_modules/date-fns/startOfYear.js
+  function startOfYear(date, options) {
+    const date_ = toDate(date, options?.in);
+    date_.setFullYear(date_.getFullYear(), 0, 1);
+    date_.setHours(0, 0, 0, 0);
+    return date_;
+  }
+
+  // node_modules/date-fns/eachYearOfInterval.js
+  function eachYearOfInterval(interval, options) {
+    const { start, end } = normalizeInterval(options?.in, interval);
+    let reversed = +start > +end;
+    const endTime = reversed ? +start : +end;
+    const date = reversed ? end : start;
+    date.setHours(0, 0, 0, 0);
+    date.setMonth(0, 1);
+    let step = options?.step ?? 1;
+    if (!step) return [];
+    if (step < 0) {
+      step = -step;
+      reversed = !reversed;
+    }
+    const dates = [];
+    while (+date <= endTime) {
+      dates.push(constructFrom(start, date));
+      date.setFullYear(date.getFullYear() + step);
+    }
+    return reversed ? dates.reverse() : dates;
+  }
+
+  // node_modules/date-fns/endOfWeek.js
+  function endOfWeek(date, options) {
+    const defaultOptions2 = getDefaultOptions();
+    const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
+    const _date = toDate(date, options?.in);
+    const day = _date.getDay();
+    const diff = (day < weekStartsOn ? -7 : 0) + 6 - (day - weekStartsOn);
+    _date.setDate(_date.getDate() + diff);
+    _date.setHours(23, 59, 59, 999);
+    return _date;
+  }
+
+  // node_modules/date-fns/endOfISOWeek.js
+  function endOfISOWeek(date, options) {
+    return endOfWeek(date, { ...options, weekStartsOn: 1 });
+  }
+
+  // node_modules/date-fns/locale/en-US/_lib/formatDistance.js
+  var formatDistanceLocale = {
+    lessThanXSeconds: {
+      one: "less than a second",
+      other: "less than {{count}} seconds"
+    },
+    xSeconds: {
+      one: "1 second",
+      other: "{{count}} seconds"
+    },
+    halfAMinute: "half a minute",
+    lessThanXMinutes: {
+      one: "less than a minute",
+      other: "less than {{count}} minutes"
+    },
+    xMinutes: {
+      one: "1 minute",
+      other: "{{count}} minutes"
+    },
+    aboutXHours: {
+      one: "about 1 hour",
+      other: "about {{count}} hours"
+    },
+    xHours: {
+      one: "1 hour",
+      other: "{{count}} hours"
+    },
+    xDays: {
+      one: "1 day",
+      other: "{{count}} days"
+    },
+    aboutXWeeks: {
+      one: "about 1 week",
+      other: "about {{count}} weeks"
+    },
+    xWeeks: {
+      one: "1 week",
+      other: "{{count}} weeks"
+    },
+    aboutXMonths: {
+      one: "about 1 month",
+      other: "about {{count}} months"
+    },
+    xMonths: {
+      one: "1 month",
+      other: "{{count}} months"
+    },
+    aboutXYears: {
+      one: "about 1 year",
+      other: "about {{count}} years"
+    },
+    xYears: {
+      one: "1 year",
+      other: "{{count}} years"
+    },
+    overXYears: {
+      one: "over 1 year",
+      other: "over {{count}} years"
+    },
+    almostXYears: {
+      one: "almost 1 year",
+      other: "almost {{count}} years"
+    }
+  };
+  var formatDistance = (token, count, options) => {
+    let result;
+    const tokenValue = formatDistanceLocale[token];
+    if (typeof tokenValue === "string") {
+      result = tokenValue;
+    } else if (count === 1) {
+      result = tokenValue.one;
+    } else {
+      result = tokenValue.other.replace("{{count}}", count.toString());
+    }
+    if (options?.addSuffix) {
+      if (options.comparison && options.comparison > 0) {
+        return "in " + result;
+      } else {
+        return result + " ago";
+      }
+    }
+    return result;
+  };
+
+  // node_modules/date-fns/locale/_lib/buildFormatLongFn.js
+  function buildFormatLongFn(args) {
+    return (options = {}) => {
+      const width = options.width ? String(options.width) : args.defaultWidth;
+      const format2 = args.formats[width] || args.formats[args.defaultWidth];
+      return format2;
+    };
+  }
+
+  // node_modules/date-fns/locale/en-US/_lib/formatLong.js
+  var dateFormats = {
+    full: "EEEE, MMMM do, y",
+    long: "MMMM do, y",
+    medium: "MMM d, y",
+    short: "MM/dd/yyyy"
+  };
+  var timeFormats = {
+    full: "h:mm:ss a zzzz",
+    long: "h:mm:ss a z",
+    medium: "h:mm:ss a",
+    short: "h:mm a"
+  };
+  var dateTimeFormats = {
+    full: "{{date}} 'at' {{time}}",
+    long: "{{date}} 'at' {{time}}",
+    medium: "{{date}}, {{time}}",
+    short: "{{date}}, {{time}}"
+  };
+  var formatLong = {
+    date: buildFormatLongFn({
+      formats: dateFormats,
+      defaultWidth: "full"
+    }),
+    time: buildFormatLongFn({
+      formats: timeFormats,
+      defaultWidth: "full"
+    }),
+    dateTime: buildFormatLongFn({
+      formats: dateTimeFormats,
+      defaultWidth: "full"
+    })
+  };
+
+  // node_modules/date-fns/locale/en-US/_lib/formatRelative.js
+  var formatRelativeLocale = {
+    lastWeek: "'last' eeee 'at' p",
+    yesterday: "'yesterday at' p",
+    today: "'today at' p",
+    tomorrow: "'tomorrow at' p",
+    nextWeek: "eeee 'at' p",
+    other: "P"
+  };
+  var formatRelative = (token, _date, _baseDate, _options) => formatRelativeLocale[token];
+
+  // node_modules/date-fns/locale/_lib/buildLocalizeFn.js
+  function buildLocalizeFn(args) {
+    return (value, options) => {
+      const context = options?.context ? String(options.context) : "standalone";
+      let valuesArray;
+      if (context === "formatting" && args.formattingValues) {
+        const defaultWidth = args.defaultFormattingWidth || args.defaultWidth;
+        const width = options?.width ? String(options.width) : defaultWidth;
+        valuesArray = args.formattingValues[width] || args.formattingValues[defaultWidth];
+      } else {
+        const defaultWidth = args.defaultWidth;
+        const width = options?.width ? String(options.width) : args.defaultWidth;
+        valuesArray = args.values[width] || args.values[defaultWidth];
+      }
+      const index = args.argumentCallback ? args.argumentCallback(value) : value;
+      return valuesArray[index];
+    };
+  }
+
+  // node_modules/date-fns/locale/en-US/_lib/localize.js
+  var eraValues = {
+    narrow: ["B", "A"],
+    abbreviated: ["BC", "AD"],
+    wide: ["Before Christ", "Anno Domini"]
+  };
+  var quarterValues = {
+    narrow: ["1", "2", "3", "4"],
+    abbreviated: ["Q1", "Q2", "Q3", "Q4"],
+    wide: ["1st quarter", "2nd quarter", "3rd quarter", "4th quarter"]
+  };
+  var monthValues = {
+    narrow: ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
+    abbreviated: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    wide: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ]
+  };
+  var dayValues = {
+    narrow: ["S", "M", "T", "W", "T", "F", "S"],
+    short: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+    abbreviated: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    wide: [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ]
+  };
+  var dayPeriodValues = {
+    narrow: {
+      am: "a",
+      pm: "p",
+      midnight: "mi",
+      noon: "n",
+      morning: "morning",
+      afternoon: "afternoon",
+      evening: "evening",
+      night: "night"
+    },
+    abbreviated: {
+      am: "AM",
+      pm: "PM",
+      midnight: "midnight",
+      noon: "noon",
+      morning: "morning",
+      afternoon: "afternoon",
+      evening: "evening",
+      night: "night"
+    },
+    wide: {
+      am: "a.m.",
+      pm: "p.m.",
+      midnight: "midnight",
+      noon: "noon",
+      morning: "morning",
+      afternoon: "afternoon",
+      evening: "evening",
+      night: "night"
+    }
+  };
+  var formattingDayPeriodValues = {
+    narrow: {
+      am: "a",
+      pm: "p",
+      midnight: "mi",
+      noon: "n",
+      morning: "in the morning",
+      afternoon: "in the afternoon",
+      evening: "in the evening",
+      night: "at night"
+    },
+    abbreviated: {
+      am: "AM",
+      pm: "PM",
+      midnight: "midnight",
+      noon: "noon",
+      morning: "in the morning",
+      afternoon: "in the afternoon",
+      evening: "in the evening",
+      night: "at night"
+    },
+    wide: {
+      am: "a.m.",
+      pm: "p.m.",
+      midnight: "midnight",
+      noon: "noon",
+      morning: "in the morning",
+      afternoon: "in the afternoon",
+      evening: "in the evening",
+      night: "at night"
+    }
+  };
+  var ordinalNumber = (dirtyNumber, _options) => {
+    const number = Number(dirtyNumber);
+    const rem100 = number % 100;
+    if (rem100 > 20 || rem100 < 10) {
+      switch (rem100 % 10) {
+        case 1:
+          return number + "st";
+        case 2:
+          return number + "nd";
+        case 3:
+          return number + "rd";
+      }
+    }
+    return number + "th";
+  };
+  var localize = {
+    ordinalNumber,
+    era: buildLocalizeFn({
+      values: eraValues,
+      defaultWidth: "wide"
+    }),
+    quarter: buildLocalizeFn({
+      values: quarterValues,
+      defaultWidth: "wide",
+      argumentCallback: (quarter) => quarter - 1
+    }),
+    month: buildLocalizeFn({
+      values: monthValues,
+      defaultWidth: "wide"
+    }),
+    day: buildLocalizeFn({
+      values: dayValues,
+      defaultWidth: "wide"
+    }),
+    dayPeriod: buildLocalizeFn({
+      values: dayPeriodValues,
+      defaultWidth: "wide",
+      formattingValues: formattingDayPeriodValues,
+      defaultFormattingWidth: "wide"
+    })
+  };
+
+  // node_modules/date-fns/locale/_lib/buildMatchFn.js
+  function buildMatchFn(args) {
+    return (string, options = {}) => {
+      const width = options.width;
+      const matchPattern = width && args.matchPatterns[width] || args.matchPatterns[args.defaultMatchWidth];
+      const matchResult = string.match(matchPattern);
+      if (!matchResult) {
+        return null;
+      }
+      const matchedString = matchResult[0];
+      const parsePatterns = width && args.parsePatterns[width] || args.parsePatterns[args.defaultParseWidth];
+      const key = Array.isArray(parsePatterns) ? findIndex(parsePatterns, (pattern) => pattern.test(matchedString)) : (
+        // [TODO] -- I challenge you to fix the type
+        findKey(parsePatterns, (pattern) => pattern.test(matchedString))
+      );
+      let value;
+      value = args.valueCallback ? args.valueCallback(key) : key;
+      value = options.valueCallback ? (
+        // [TODO] -- I challenge you to fix the type
+        options.valueCallback(value)
+      ) : value;
+      const rest = string.slice(matchedString.length);
+      return { value, rest };
+    };
+  }
+  function findKey(object, predicate) {
+    for (const key in object) {
+      if (Object.prototype.hasOwnProperty.call(object, key) && predicate(object[key])) {
+        return key;
+      }
+    }
+    return void 0;
+  }
+  function findIndex(array, predicate) {
+    for (let key = 0; key < array.length; key++) {
+      if (predicate(array[key])) {
+        return key;
+      }
+    }
+    return void 0;
+  }
+
+  // node_modules/date-fns/locale/_lib/buildMatchPatternFn.js
+  function buildMatchPatternFn(args) {
+    return (string, options = {}) => {
+      const matchResult = string.match(args.matchPattern);
+      if (!matchResult) return null;
+      const matchedString = matchResult[0];
+      const parseResult = string.match(args.parsePattern);
+      if (!parseResult) return null;
+      let value = args.valueCallback ? args.valueCallback(parseResult[0]) : parseResult[0];
+      value = options.valueCallback ? options.valueCallback(value) : value;
+      const rest = string.slice(matchedString.length);
+      return { value, rest };
+    };
+  }
+
+  // node_modules/date-fns/locale/en-US/_lib/match.js
+  var matchOrdinalNumberPattern = /^(\d+)(th|st|nd|rd)?/i;
+  var parseOrdinalNumberPattern = /\d+/i;
+  var matchEraPatterns = {
+    narrow: /^(b|a)/i,
+    abbreviated: /^(b\.?\s?c\.?|b\.?\s?c\.?\s?e\.?|a\.?\s?d\.?|c\.?\s?e\.?)/i,
+    wide: /^(before christ|before common era|anno domini|common era)/i
+  };
+  var parseEraPatterns = {
+    any: [/^b/i, /^(a|c)/i]
+  };
+  var matchQuarterPatterns = {
+    narrow: /^[1234]/i,
+    abbreviated: /^q[1234]/i,
+    wide: /^[1234](th|st|nd|rd)? quarter/i
+  };
+  var parseQuarterPatterns = {
+    any: [/1/i, /2/i, /3/i, /4/i]
+  };
+  var matchMonthPatterns = {
+    narrow: /^[jfmasond]/i,
+    abbreviated: /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i,
+    wide: /^(january|february|march|april|may|june|july|august|september|october|november|december)/i
+  };
+  var parseMonthPatterns = {
+    narrow: [
+      /^j/i,
+      /^f/i,
+      /^m/i,
+      /^a/i,
+      /^m/i,
+      /^j/i,
+      /^j/i,
+      /^a/i,
+      /^s/i,
+      /^o/i,
+      /^n/i,
+      /^d/i
+    ],
+    any: [
+      /^ja/i,
+      /^f/i,
+      /^mar/i,
+      /^ap/i,
+      /^may/i,
+      /^jun/i,
+      /^jul/i,
+      /^au/i,
+      /^s/i,
+      /^o/i,
+      /^n/i,
+      /^d/i
+    ]
+  };
+  var matchDayPatterns = {
+    narrow: /^[smtwf]/i,
+    short: /^(su|mo|tu|we|th|fr|sa)/i,
+    abbreviated: /^(sun|mon|tue|wed|thu|fri|sat)/i,
+    wide: /^(sunday|monday|tuesday|wednesday|thursday|friday|saturday)/i
+  };
+  var parseDayPatterns = {
+    narrow: [/^s/i, /^m/i, /^t/i, /^w/i, /^t/i, /^f/i, /^s/i],
+    any: [/^su/i, /^m/i, /^tu/i, /^w/i, /^th/i, /^f/i, /^sa/i]
+  };
+  var matchDayPeriodPatterns = {
+    narrow: /^(a|p|mi|n|(in the|at) (morning|afternoon|evening|night))/i,
+    any: /^([ap]\.?\s?m\.?|midnight|noon|(in the|at) (morning|afternoon|evening|night))/i
+  };
+  var parseDayPeriodPatterns = {
+    any: {
+      am: /^a/i,
+      pm: /^p/i,
+      midnight: /^mi/i,
+      noon: /^no/i,
+      morning: /morning/i,
+      afternoon: /afternoon/i,
+      evening: /evening/i,
+      night: /night/i
+    }
+  };
+  var match = {
+    ordinalNumber: buildMatchPatternFn({
+      matchPattern: matchOrdinalNumberPattern,
+      parsePattern: parseOrdinalNumberPattern,
+      valueCallback: (value) => parseInt(value, 10)
+    }),
+    era: buildMatchFn({
+      matchPatterns: matchEraPatterns,
+      defaultMatchWidth: "wide",
+      parsePatterns: parseEraPatterns,
+      defaultParseWidth: "any"
+    }),
+    quarter: buildMatchFn({
+      matchPatterns: matchQuarterPatterns,
+      defaultMatchWidth: "wide",
+      parsePatterns: parseQuarterPatterns,
+      defaultParseWidth: "any",
+      valueCallback: (index) => index + 1
+    }),
+    month: buildMatchFn({
+      matchPatterns: matchMonthPatterns,
+      defaultMatchWidth: "wide",
+      parsePatterns: parseMonthPatterns,
+      defaultParseWidth: "any"
+    }),
+    day: buildMatchFn({
+      matchPatterns: matchDayPatterns,
+      defaultMatchWidth: "wide",
+      parsePatterns: parseDayPatterns,
+      defaultParseWidth: "any"
+    }),
+    dayPeriod: buildMatchFn({
+      matchPatterns: matchDayPeriodPatterns,
+      defaultMatchWidth: "any",
+      parsePatterns: parseDayPeriodPatterns,
+      defaultParseWidth: "any"
+    })
+  };
+
+  // node_modules/date-fns/locale/en-US.js
+  var enUS = {
+    code: "en-US",
+    formatDistance,
+    formatLong,
+    formatRelative,
+    localize,
+    match,
+    options: {
+      weekStartsOn: 0,
+      firstWeekContainsDate: 1
+    }
+  };
+
+  // node_modules/date-fns/getDayOfYear.js
+  function getDayOfYear(date, options) {
+    const _date = toDate(date, options?.in);
+    const diff = differenceInCalendarDays(_date, startOfYear(_date));
+    const dayOfYear = diff + 1;
+    return dayOfYear;
+  }
+
+  // node_modules/date-fns/getISOWeek.js
+  function getISOWeek(date, options) {
+    const _date = toDate(date, options?.in);
+    const diff = +startOfISOWeek(_date) - +startOfISOWeekYear(_date);
+    return Math.round(diff / millisecondsInWeek) + 1;
+  }
+
+  // node_modules/date-fns/getWeekYear.js
+  function getWeekYear(date, options) {
+    const _date = toDate(date, options?.in);
+    const year = _date.getFullYear();
+    const defaultOptions2 = getDefaultOptions();
+    const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
+    const firstWeekOfNextYear = constructFrom(options?.in || date, 0);
+    firstWeekOfNextYear.setFullYear(year + 1, 0, firstWeekContainsDate);
+    firstWeekOfNextYear.setHours(0, 0, 0, 0);
+    const startOfNextYear = startOfWeek(firstWeekOfNextYear, options);
+    const firstWeekOfThisYear = constructFrom(options?.in || date, 0);
+    firstWeekOfThisYear.setFullYear(year, 0, firstWeekContainsDate);
+    firstWeekOfThisYear.setHours(0, 0, 0, 0);
+    const startOfThisYear = startOfWeek(firstWeekOfThisYear, options);
+    if (+_date >= +startOfNextYear) {
+      return year + 1;
+    } else if (+_date >= +startOfThisYear) {
+      return year;
+    } else {
+      return year - 1;
+    }
+  }
+
+  // node_modules/date-fns/startOfWeekYear.js
+  function startOfWeekYear(date, options) {
+    const defaultOptions2 = getDefaultOptions();
+    const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
+    const year = getWeekYear(date, options);
+    const firstWeek = constructFrom(options?.in || date, 0);
+    firstWeek.setFullYear(year, 0, firstWeekContainsDate);
+    firstWeek.setHours(0, 0, 0, 0);
+    const _date = startOfWeek(firstWeek, options);
+    return _date;
+  }
+
+  // node_modules/date-fns/getWeek.js
+  function getWeek(date, options) {
+    const _date = toDate(date, options?.in);
+    const diff = +startOfWeek(_date, options) - +startOfWeekYear(_date, options);
+    return Math.round(diff / millisecondsInWeek) + 1;
+  }
+
+  // node_modules/date-fns/_lib/addLeadingZeros.js
+  function addLeadingZeros(number, targetLength) {
+    const sign = number < 0 ? "-" : "";
+    const output = Math.abs(number).toString().padStart(targetLength, "0");
+    return sign + output;
+  }
+
+  // node_modules/date-fns/_lib/format/lightFormatters.js
+  var lightFormatters = {
+    // Year
+    y(date, token) {
+      const signedYear = date.getFullYear();
+      const year = signedYear > 0 ? signedYear : 1 - signedYear;
+      return addLeadingZeros(token === "yy" ? year % 100 : year, token.length);
+    },
+    // Month
+    M(date, token) {
+      const month = date.getMonth();
+      return token === "M" ? String(month + 1) : addLeadingZeros(month + 1, 2);
+    },
+    // Day of the month
+    d(date, token) {
+      return addLeadingZeros(date.getDate(), token.length);
+    },
+    // AM or PM
+    a(date, token) {
+      const dayPeriodEnumValue = date.getHours() / 12 >= 1 ? "pm" : "am";
+      switch (token) {
+        case "a":
+        case "aa":
+          return dayPeriodEnumValue.toUpperCase();
+        case "aaa":
+          return dayPeriodEnumValue;
+        case "aaaaa":
+          return dayPeriodEnumValue[0];
+        case "aaaa":
+        default:
+          return dayPeriodEnumValue === "am" ? "a.m." : "p.m.";
+      }
+    },
+    // Hour [1-12]
+    h(date, token) {
+      return addLeadingZeros(date.getHours() % 12 || 12, token.length);
+    },
+    // Hour [0-23]
+    H(date, token) {
+      return addLeadingZeros(date.getHours(), token.length);
+    },
+    // Minute
+    m(date, token) {
+      return addLeadingZeros(date.getMinutes(), token.length);
+    },
+    // Second
+    s(date, token) {
+      return addLeadingZeros(date.getSeconds(), token.length);
+    },
+    // Fraction of second
+    S(date, token) {
+      const numberOfDigits = token.length;
+      const milliseconds = date.getMilliseconds();
+      const fractionalSeconds = Math.trunc(
+        milliseconds * Math.pow(10, numberOfDigits - 3)
+      );
+      return addLeadingZeros(fractionalSeconds, token.length);
+    }
+  };
+
+  // node_modules/date-fns/_lib/format/formatters.js
+  var dayPeriodEnum = {
+    am: "am",
+    pm: "pm",
+    midnight: "midnight",
+    noon: "noon",
+    morning: "morning",
+    afternoon: "afternoon",
+    evening: "evening",
+    night: "night"
+  };
+  var formatters = {
+    // Era
+    G: function(date, token, localize2) {
+      const era = date.getFullYear() > 0 ? 1 : 0;
+      switch (token) {
+        case "G":
+        case "GG":
+        case "GGG":
+          return localize2.era(era, { width: "abbreviated" });
+        case "GGGGG":
+          return localize2.era(era, { width: "narrow" });
+        case "GGGG":
+        default:
+          return localize2.era(era, { width: "wide" });
+      }
+    },
+    // Year
+    y: function(date, token, localize2) {
+      if (token === "yo") {
+        const signedYear = date.getFullYear();
+        const year = signedYear > 0 ? signedYear : 1 - signedYear;
+        return localize2.ordinalNumber(year, { unit: "year" });
+      }
+      return lightFormatters.y(date, token);
+    },
+    // Local week-numbering year
+    Y: function(date, token, localize2, options) {
+      const signedWeekYear = getWeekYear(date, options);
+      const weekYear = signedWeekYear > 0 ? signedWeekYear : 1 - signedWeekYear;
+      if (token === "YY") {
+        const twoDigitYear = weekYear % 100;
+        return addLeadingZeros(twoDigitYear, 2);
+      }
+      if (token === "Yo") {
+        return localize2.ordinalNumber(weekYear, { unit: "year" });
+      }
+      return addLeadingZeros(weekYear, token.length);
+    },
+    // ISO week-numbering year
+    R: function(date, token) {
+      const isoWeekYear = getISOWeekYear(date);
+      return addLeadingZeros(isoWeekYear, token.length);
+    },
+    // Extended year. This is a single number designating the year of this calendar system.
+    // The main difference between `y` and `u` localizers are B.C. years:
+    // | Year | `y` | `u` |
+    // |------|-----|-----|
+    // | AC 1 |   1 |   1 |
+    // | BC 1 |   1 |   0 |
+    // | BC 2 |   2 |  -1 |
+    // Also `yy` always returns the last two digits of a year,
+    // while `uu` pads single digit years to 2 characters and returns other years unchanged.
+    u: function(date, token) {
+      const year = date.getFullYear();
+      return addLeadingZeros(year, token.length);
+    },
+    // Quarter
+    Q: function(date, token, localize2) {
+      const quarter = Math.ceil((date.getMonth() + 1) / 3);
+      switch (token) {
+        case "Q":
+          return String(quarter);
+        case "QQ":
+          return addLeadingZeros(quarter, 2);
+        case "Qo":
+          return localize2.ordinalNumber(quarter, { unit: "quarter" });
+        case "QQQ":
+          return localize2.quarter(quarter, {
+            width: "abbreviated",
+            context: "formatting"
+          });
+        case "QQQQQ":
+          return localize2.quarter(quarter, {
+            width: "narrow",
+            context: "formatting"
+          });
+        case "QQQQ":
+        default:
+          return localize2.quarter(quarter, {
+            width: "wide",
+            context: "formatting"
+          });
+      }
+    },
+    // Stand-alone quarter
+    q: function(date, token, localize2) {
+      const quarter = Math.ceil((date.getMonth() + 1) / 3);
+      switch (token) {
+        case "q":
+          return String(quarter);
+        case "qq":
+          return addLeadingZeros(quarter, 2);
+        case "qo":
+          return localize2.ordinalNumber(quarter, { unit: "quarter" });
+        case "qqq":
+          return localize2.quarter(quarter, {
+            width: "abbreviated",
+            context: "standalone"
+          });
+        case "qqqqq":
+          return localize2.quarter(quarter, {
+            width: "narrow",
+            context: "standalone"
+          });
+        case "qqqq":
+        default:
+          return localize2.quarter(quarter, {
+            width: "wide",
+            context: "standalone"
+          });
+      }
+    },
+    // Month
+    M: function(date, token, localize2) {
+      const month = date.getMonth();
+      switch (token) {
+        case "M":
+        case "MM":
+          return lightFormatters.M(date, token);
+        case "Mo":
+          return localize2.ordinalNumber(month + 1, { unit: "month" });
+        case "MMM":
+          return localize2.month(month, {
+            width: "abbreviated",
+            context: "formatting"
+          });
+        case "MMMMM":
+          return localize2.month(month, {
+            width: "narrow",
+            context: "formatting"
+          });
+        case "MMMM":
+        default:
+          return localize2.month(month, { width: "wide", context: "formatting" });
+      }
+    },
+    // Stand-alone month
+    L: function(date, token, localize2) {
+      const month = date.getMonth();
+      switch (token) {
+        case "L":
+          return String(month + 1);
+        case "LL":
+          return addLeadingZeros(month + 1, 2);
+        case "Lo":
+          return localize2.ordinalNumber(month + 1, { unit: "month" });
+        case "LLL":
+          return localize2.month(month, {
+            width: "abbreviated",
+            context: "standalone"
+          });
+        case "LLLLL":
+          return localize2.month(month, {
+            width: "narrow",
+            context: "standalone"
+          });
+        case "LLLL":
+        default:
+          return localize2.month(month, { width: "wide", context: "standalone" });
+      }
+    },
+    // Local week of year
+    w: function(date, token, localize2, options) {
+      const week = getWeek(date, options);
+      if (token === "wo") {
+        return localize2.ordinalNumber(week, { unit: "week" });
+      }
+      return addLeadingZeros(week, token.length);
+    },
+    // ISO week of year
+    I: function(date, token, localize2) {
+      const isoWeek = getISOWeek(date);
+      if (token === "Io") {
+        return localize2.ordinalNumber(isoWeek, { unit: "week" });
+      }
+      return addLeadingZeros(isoWeek, token.length);
+    },
+    // Day of the month
+    d: function(date, token, localize2) {
+      if (token === "do") {
+        return localize2.ordinalNumber(date.getDate(), { unit: "date" });
+      }
+      return lightFormatters.d(date, token);
+    },
+    // Day of year
+    D: function(date, token, localize2) {
+      const dayOfYear = getDayOfYear(date);
+      if (token === "Do") {
+        return localize2.ordinalNumber(dayOfYear, { unit: "dayOfYear" });
+      }
+      return addLeadingZeros(dayOfYear, token.length);
+    },
+    // Day of week
+    E: function(date, token, localize2) {
+      const dayOfWeek = date.getDay();
+      switch (token) {
+        case "E":
+        case "EE":
+        case "EEE":
+          return localize2.day(dayOfWeek, {
+            width: "abbreviated",
+            context: "formatting"
+          });
+        case "EEEEE":
+          return localize2.day(dayOfWeek, {
+            width: "narrow",
+            context: "formatting"
+          });
+        case "EEEEEE":
+          return localize2.day(dayOfWeek, {
+            width: "short",
+            context: "formatting"
+          });
+        case "EEEE":
+        default:
+          return localize2.day(dayOfWeek, {
+            width: "wide",
+            context: "formatting"
+          });
+      }
+    },
+    // Local day of week
+    e: function(date, token, localize2, options) {
+      const dayOfWeek = date.getDay();
+      const localDayOfWeek = (dayOfWeek - options.weekStartsOn + 8) % 7 || 7;
+      switch (token) {
+        case "e":
+          return String(localDayOfWeek);
+        case "ee":
+          return addLeadingZeros(localDayOfWeek, 2);
+        case "eo":
+          return localize2.ordinalNumber(localDayOfWeek, { unit: "day" });
+        case "eee":
+          return localize2.day(dayOfWeek, {
+            width: "abbreviated",
+            context: "formatting"
+          });
+        case "eeeee":
+          return localize2.day(dayOfWeek, {
+            width: "narrow",
+            context: "formatting"
+          });
+        case "eeeeee":
+          return localize2.day(dayOfWeek, {
+            width: "short",
+            context: "formatting"
+          });
+        case "eeee":
+        default:
+          return localize2.day(dayOfWeek, {
+            width: "wide",
+            context: "formatting"
+          });
+      }
+    },
+    // Stand-alone local day of week
+    c: function(date, token, localize2, options) {
+      const dayOfWeek = date.getDay();
+      const localDayOfWeek = (dayOfWeek - options.weekStartsOn + 8) % 7 || 7;
+      switch (token) {
+        case "c":
+          return String(localDayOfWeek);
+        case "cc":
+          return addLeadingZeros(localDayOfWeek, token.length);
+        case "co":
+          return localize2.ordinalNumber(localDayOfWeek, { unit: "day" });
+        case "ccc":
+          return localize2.day(dayOfWeek, {
+            width: "abbreviated",
+            context: "standalone"
+          });
+        case "ccccc":
+          return localize2.day(dayOfWeek, {
+            width: "narrow",
+            context: "standalone"
+          });
+        case "cccccc":
+          return localize2.day(dayOfWeek, {
+            width: "short",
+            context: "standalone"
+          });
+        case "cccc":
+        default:
+          return localize2.day(dayOfWeek, {
+            width: "wide",
+            context: "standalone"
+          });
+      }
+    },
+    // ISO day of week
+    i: function(date, token, localize2) {
+      const dayOfWeek = date.getDay();
+      const isoDayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
+      switch (token) {
+        case "i":
+          return String(isoDayOfWeek);
+        case "ii":
+          return addLeadingZeros(isoDayOfWeek, token.length);
+        case "io":
+          return localize2.ordinalNumber(isoDayOfWeek, { unit: "day" });
+        case "iii":
+          return localize2.day(dayOfWeek, {
+            width: "abbreviated",
+            context: "formatting"
+          });
+        case "iiiii":
+          return localize2.day(dayOfWeek, {
+            width: "narrow",
+            context: "formatting"
+          });
+        case "iiiiii":
+          return localize2.day(dayOfWeek, {
+            width: "short",
+            context: "formatting"
+          });
+        case "iiii":
+        default:
+          return localize2.day(dayOfWeek, {
+            width: "wide",
+            context: "formatting"
+          });
+      }
+    },
+    // AM or PM
+    a: function(date, token, localize2) {
+      const hours = date.getHours();
+      const dayPeriodEnumValue = hours / 12 >= 1 ? "pm" : "am";
+      switch (token) {
+        case "a":
+        case "aa":
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "abbreviated",
+            context: "formatting"
+          });
+        case "aaa":
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "abbreviated",
+            context: "formatting"
+          }).toLowerCase();
+        case "aaaaa":
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "narrow",
+            context: "formatting"
+          });
+        case "aaaa":
+        default:
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "wide",
+            context: "formatting"
+          });
+      }
+    },
+    // AM, PM, midnight, noon
+    b: function(date, token, localize2) {
+      const hours = date.getHours();
+      let dayPeriodEnumValue;
+      if (hours === 12) {
+        dayPeriodEnumValue = dayPeriodEnum.noon;
+      } else if (hours === 0) {
+        dayPeriodEnumValue = dayPeriodEnum.midnight;
+      } else {
+        dayPeriodEnumValue = hours / 12 >= 1 ? "pm" : "am";
+      }
+      switch (token) {
+        case "b":
+        case "bb":
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "abbreviated",
+            context: "formatting"
+          });
+        case "bbb":
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "abbreviated",
+            context: "formatting"
+          }).toLowerCase();
+        case "bbbbb":
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "narrow",
+            context: "formatting"
+          });
+        case "bbbb":
+        default:
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "wide",
+            context: "formatting"
+          });
+      }
+    },
+    // in the morning, in the afternoon, in the evening, at night
+    B: function(date, token, localize2) {
+      const hours = date.getHours();
+      let dayPeriodEnumValue;
+      if (hours >= 17) {
+        dayPeriodEnumValue = dayPeriodEnum.evening;
+      } else if (hours >= 12) {
+        dayPeriodEnumValue = dayPeriodEnum.afternoon;
+      } else if (hours >= 4) {
+        dayPeriodEnumValue = dayPeriodEnum.morning;
+      } else {
+        dayPeriodEnumValue = dayPeriodEnum.night;
+      }
+      switch (token) {
+        case "B":
+        case "BB":
+        case "BBB":
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "abbreviated",
+            context: "formatting"
+          });
+        case "BBBBB":
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "narrow",
+            context: "formatting"
+          });
+        case "BBBB":
+        default:
+          return localize2.dayPeriod(dayPeriodEnumValue, {
+            width: "wide",
+            context: "formatting"
+          });
+      }
+    },
+    // Hour [1-12]
+    h: function(date, token, localize2) {
+      if (token === "ho") {
+        let hours = date.getHours() % 12;
+        if (hours === 0) hours = 12;
+        return localize2.ordinalNumber(hours, { unit: "hour" });
+      }
+      return lightFormatters.h(date, token);
+    },
+    // Hour [0-23]
+    H: function(date, token, localize2) {
+      if (token === "Ho") {
+        return localize2.ordinalNumber(date.getHours(), { unit: "hour" });
+      }
+      return lightFormatters.H(date, token);
+    },
+    // Hour [0-11]
+    K: function(date, token, localize2) {
+      const hours = date.getHours() % 12;
+      if (token === "Ko") {
+        return localize2.ordinalNumber(hours, { unit: "hour" });
+      }
+      return addLeadingZeros(hours, token.length);
+    },
+    // Hour [1-24]
+    k: function(date, token, localize2) {
+      let hours = date.getHours();
+      if (hours === 0) hours = 24;
+      if (token === "ko") {
+        return localize2.ordinalNumber(hours, { unit: "hour" });
+      }
+      return addLeadingZeros(hours, token.length);
+    },
+    // Minute
+    m: function(date, token, localize2) {
+      if (token === "mo") {
+        return localize2.ordinalNumber(date.getMinutes(), { unit: "minute" });
+      }
+      return lightFormatters.m(date, token);
+    },
+    // Second
+    s: function(date, token, localize2) {
+      if (token === "so") {
+        return localize2.ordinalNumber(date.getSeconds(), { unit: "second" });
+      }
+      return lightFormatters.s(date, token);
+    },
+    // Fraction of second
+    S: function(date, token) {
+      return lightFormatters.S(date, token);
+    },
+    // Timezone (ISO-8601. If offset is 0, output is always `'Z'`)
+    X: function(date, token, _localize) {
+      const timezoneOffset = date.getTimezoneOffset();
+      if (timezoneOffset === 0) {
+        return "Z";
+      }
+      switch (token) {
+        case "X":
+          return formatTimezoneWithOptionalMinutes(timezoneOffset);
+        case "XXXX":
+        case "XX":
+          return formatTimezone(timezoneOffset);
+        case "XXXXX":
+        case "XXX":
+        default:
+          return formatTimezone(timezoneOffset, ":");
+      }
+    },
+    // Timezone (ISO-8601. If offset is 0, output is `'+00:00'` or equivalent)
+    x: function(date, token, _localize) {
+      const timezoneOffset = date.getTimezoneOffset();
+      switch (token) {
+        case "x":
+          return formatTimezoneWithOptionalMinutes(timezoneOffset);
+        case "xxxx":
+        case "xx":
+          return formatTimezone(timezoneOffset);
+        case "xxxxx":
+        case "xxx":
+        default:
+          return formatTimezone(timezoneOffset, ":");
+      }
+    },
+    // Timezone (GMT)
+    O: function(date, token, _localize) {
+      const timezoneOffset = date.getTimezoneOffset();
+      switch (token) {
+        case "O":
+        case "OO":
+        case "OOO":
+          return "GMT" + formatTimezoneShort(timezoneOffset, ":");
+        case "OOOO":
+        default:
+          return "GMT" + formatTimezone(timezoneOffset, ":");
+      }
+    },
+    // Timezone (specific non-location)
+    z: function(date, token, _localize) {
+      const timezoneOffset = date.getTimezoneOffset();
+      switch (token) {
+        case "z":
+        case "zz":
+        case "zzz":
+          return "GMT" + formatTimezoneShort(timezoneOffset, ":");
+        case "zzzz":
+        default:
+          return "GMT" + formatTimezone(timezoneOffset, ":");
+      }
+    },
+    // Seconds timestamp
+    t: function(date, token, _localize) {
+      const timestamp = Math.trunc(+date / 1e3);
+      return addLeadingZeros(timestamp, token.length);
+    },
+    // Milliseconds timestamp
+    T: function(date, token, _localize) {
+      return addLeadingZeros(+date, token.length);
+    }
+  };
+  function formatTimezoneShort(offset, delimiter = "") {
+    const sign = offset > 0 ? "-" : "+";
+    const absOffset = Math.abs(offset);
+    const hours = Math.trunc(absOffset / 60);
+    const minutes = absOffset % 60;
+    if (minutes === 0) {
+      return sign + String(hours);
+    }
+    return sign + String(hours) + delimiter + addLeadingZeros(minutes, 2);
+  }
+  function formatTimezoneWithOptionalMinutes(offset, delimiter) {
+    if (offset % 60 === 0) {
+      const sign = offset > 0 ? "-" : "+";
+      return sign + addLeadingZeros(Math.abs(offset) / 60, 2);
+    }
+    return formatTimezone(offset, delimiter);
+  }
+  function formatTimezone(offset, delimiter = "") {
+    const sign = offset > 0 ? "-" : "+";
+    const absOffset = Math.abs(offset);
+    const hours = addLeadingZeros(Math.trunc(absOffset / 60), 2);
+    const minutes = addLeadingZeros(absOffset % 60, 2);
+    return sign + hours + delimiter + minutes;
+  }
+
+  // node_modules/date-fns/_lib/format/longFormatters.js
+  var dateLongFormatter = (pattern, formatLong2) => {
+    switch (pattern) {
+      case "P":
+        return formatLong2.date({ width: "short" });
+      case "PP":
+        return formatLong2.date({ width: "medium" });
+      case "PPP":
+        return formatLong2.date({ width: "long" });
+      case "PPPP":
+      default:
+        return formatLong2.date({ width: "full" });
+    }
+  };
+  var timeLongFormatter = (pattern, formatLong2) => {
+    switch (pattern) {
+      case "p":
+        return formatLong2.time({ width: "short" });
+      case "pp":
+        return formatLong2.time({ width: "medium" });
+      case "ppp":
+        return formatLong2.time({ width: "long" });
+      case "pppp":
+      default:
+        return formatLong2.time({ width: "full" });
+    }
+  };
+  var dateTimeLongFormatter = (pattern, formatLong2) => {
+    const matchResult = pattern.match(/(P+)(p+)?/) || [];
+    const datePattern = matchResult[1];
+    const timePattern = matchResult[2];
+    if (!timePattern) {
+      return dateLongFormatter(pattern, formatLong2);
+    }
+    let dateTimeFormat;
+    switch (datePattern) {
+      case "P":
+        dateTimeFormat = formatLong2.dateTime({ width: "short" });
+        break;
+      case "PP":
+        dateTimeFormat = formatLong2.dateTime({ width: "medium" });
+        break;
+      case "PPP":
+        dateTimeFormat = formatLong2.dateTime({ width: "long" });
+        break;
+      case "PPPP":
+      default:
+        dateTimeFormat = formatLong2.dateTime({ width: "full" });
+        break;
+    }
+    return dateTimeFormat.replace("{{date}}", dateLongFormatter(datePattern, formatLong2)).replace("{{time}}", timeLongFormatter(timePattern, formatLong2));
+  };
+  var longFormatters = {
+    p: timeLongFormatter,
+    P: dateTimeLongFormatter
+  };
+
+  // node_modules/date-fns/_lib/protectedTokens.js
+  var dayOfYearTokenRE = /^D+$/;
+  var weekYearTokenRE = /^Y+$/;
+  var throwTokens = ["D", "DD", "YY", "YYYY"];
+  function isProtectedDayOfYearToken(token) {
+    return dayOfYearTokenRE.test(token);
+  }
+  function isProtectedWeekYearToken(token) {
+    return weekYearTokenRE.test(token);
+  }
+  function warnOrThrowProtectedError(token, format2, input) {
+    const _message = message(token, format2, input);
+    console.warn(_message);
+    if (throwTokens.includes(token)) throw new RangeError(_message);
+  }
+  function message(token, format2, input) {
+    const subject = token[0] === "Y" ? "years" : "days of the month";
+    return `Use \`${token.toLowerCase()}\` instead of \`${token}\` (in \`${format2}\`) for formatting ${subject} to the input \`${input}\`; see: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md`;
+  }
+
+  // node_modules/date-fns/format.js
+  var formattingTokensRegExp = /[yYQqMLwIdDecihHKkms]o|(\w)\1*|''|'(''|[^'])+('|$)|./g;
+  var longFormattingTokensRegExp = /P+p+|P+|p+|''|'(''|[^'])+('|$)|./g;
+  var escapedStringRegExp = /^'([^]*?)'?$/;
+  var doubleQuoteRegExp = /''/g;
+  var unescapedLatinCharacterRegExp = /[a-zA-Z]/;
+  function format(date, formatStr, options) {
+    const defaultOptions2 = getDefaultOptions();
+    const locale = options?.locale ?? defaultOptions2.locale ?? enUS;
+    const firstWeekContainsDate = options?.firstWeekContainsDate ?? options?.locale?.options?.firstWeekContainsDate ?? defaultOptions2.firstWeekContainsDate ?? defaultOptions2.locale?.options?.firstWeekContainsDate ?? 1;
+    const weekStartsOn = options?.weekStartsOn ?? options?.locale?.options?.weekStartsOn ?? defaultOptions2.weekStartsOn ?? defaultOptions2.locale?.options?.weekStartsOn ?? 0;
+    const originalDate = toDate(date, options?.in);
+    if (!isValid(originalDate)) {
+      throw new RangeError("Invalid time value");
+    }
+    let parts = formatStr.match(longFormattingTokensRegExp).map((substring) => {
+      const firstCharacter = substring[0];
+      if (firstCharacter === "p" || firstCharacter === "P") {
+        const longFormatter = longFormatters[firstCharacter];
+        return longFormatter(substring, locale.formatLong);
+      }
+      return substring;
+    }).join("").match(formattingTokensRegExp).map((substring) => {
+      if (substring === "''") {
+        return { isToken: false, value: "'" };
+      }
+      const firstCharacter = substring[0];
+      if (firstCharacter === "'") {
+        return { isToken: false, value: cleanEscapedString(substring) };
+      }
+      if (formatters[firstCharacter]) {
+        return { isToken: true, value: substring };
+      }
+      if (firstCharacter.match(unescapedLatinCharacterRegExp)) {
+        throw new RangeError(
+          "Format string contains an unescaped latin alphabet character `" + firstCharacter + "`"
+        );
+      }
+      return { isToken: false, value: substring };
+    });
+    if (locale.localize.preprocessor) {
+      parts = locale.localize.preprocessor(originalDate, parts);
+    }
+    const formatterOptions = {
+      firstWeekContainsDate,
+      weekStartsOn,
+      locale
+    };
+    return parts.map((part) => {
+      if (!part.isToken) return part.value;
+      const token = part.value;
+      if (!options?.useAdditionalWeekYearTokens && isProtectedWeekYearToken(token) || !options?.useAdditionalDayOfYearTokens && isProtectedDayOfYearToken(token)) {
+        warnOrThrowProtectedError(token, formatStr, String(date));
+      }
+      const formatter = formatters[token[0]];
+      return formatter(originalDate, token, locale.localize, formatterOptions);
+    }).join("");
+  }
+  function cleanEscapedString(input) {
+    const matched = input.match(escapedStringRegExp);
+    if (!matched) {
+      return input;
+    }
+    return matched[1].replace(doubleQuoteRegExp, "'");
+  }
+
+  // node_modules/date-fns/getDaysInMonth.js
+  function getDaysInMonth(date, options) {
+    const _date = toDate(date, options?.in);
+    const year = _date.getFullYear();
+    const monthIndex = _date.getMonth();
+    const lastDayOfMonth = constructFrom(_date, 0);
+    lastDayOfMonth.setFullYear(year, monthIndex + 1, 0);
+    lastDayOfMonth.setHours(0, 0, 0, 0);
+    return lastDayOfMonth.getDate();
+  }
+
+  // node_modules/date-fns/getMonth.js
+  function getMonth(date, options) {
+    return toDate(date, options?.in).getMonth();
+  }
+
+  // node_modules/date-fns/getYear.js
+  function getYear(date, options) {
+    return toDate(date, options?.in).getFullYear();
+  }
+
+  // node_modules/date-fns/isAfter.js
+  function isAfter(date, dateToCompare) {
+    return +toDate(date) > +toDate(dateToCompare);
+  }
+
+  // node_modules/date-fns/isBefore.js
+  function isBefore(date, dateToCompare) {
+    return +toDate(date) < +toDate(dateToCompare);
+  }
+
+  // node_modules/date-fns/isSameMonth.js
+  function isSameMonth(laterDate, earlierDate, options) {
+    const [laterDate_, earlierDate_] = normalizeDates(
+      options?.in,
+      laterDate,
+      earlierDate
+    );
+    return laterDate_.getFullYear() === earlierDate_.getFullYear() && laterDate_.getMonth() === earlierDate_.getMonth();
+  }
+
+  // node_modules/date-fns/isSameYear.js
+  function isSameYear(laterDate, earlierDate, options) {
+    const [laterDate_, earlierDate_] = normalizeDates(
+      options?.in,
+      laterDate,
+      earlierDate
+    );
+    return laterDate_.getFullYear() === earlierDate_.getFullYear();
+  }
+
+  // node_modules/date-fns/setMonth.js
+  function setMonth(date, month, options) {
+    const _date = toDate(date, options?.in);
+    const year = _date.getFullYear();
+    const day = _date.getDate();
+    const midMonth = constructFrom(options?.in || date, 0);
+    midMonth.setFullYear(year, month, 15);
+    midMonth.setHours(0, 0, 0, 0);
+    const daysInMonth = getDaysInMonth(midMonth);
+    _date.setMonth(month, Math.min(day, daysInMonth));
+    return _date;
+  }
+
+  // node_modules/date-fns/setYear.js
+  function setYear(date, year, options) {
+    const date_ = toDate(date, options?.in);
+    if (isNaN(+date_)) return constructFrom(options?.in || date, NaN);
+    date_.setFullYear(year);
+    return date_;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getBroadcastWeeksInMonth.js
+  var FIVE_WEEKS = 5;
+  var FOUR_WEEKS = 4;
+  function getBroadcastWeeksInMonth(month, dateLib) {
+    const firstDayOfMonth = dateLib.startOfMonth(month);
+    const firstDayOfWeek = firstDayOfMonth.getDay() > 0 ? firstDayOfMonth.getDay() : 7;
+    const broadcastStartDate = dateLib.addDays(month, -firstDayOfWeek + 1);
+    const lastDateOfLastWeek = dateLib.addDays(broadcastStartDate, FIVE_WEEKS * 7 - 1);
+    const numberOfWeeks = dateLib.getMonth(month) === dateLib.getMonth(lastDateOfLastWeek) ? FIVE_WEEKS : FOUR_WEEKS;
+    return numberOfWeeks;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/startOfBroadcastWeek.js
+  function startOfBroadcastWeek(date, dateLib) {
+    const firstOfMonth = dateLib.startOfMonth(date);
+    const dayOfWeek = firstOfMonth.getDay();
+    if (dayOfWeek === 1) {
+      return firstOfMonth;
+    } else if (dayOfWeek === 0) {
+      return dateLib.addDays(firstOfMonth, -1 * 6);
+    } else {
+      return dateLib.addDays(firstOfMonth, -1 * (dayOfWeek - 1));
+    }
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/endOfBroadcastWeek.js
+  function endOfBroadcastWeek(date, dateLib) {
+    const startDate = startOfBroadcastWeek(date, dateLib);
+    const numberOfWeeks = getBroadcastWeeksInMonth(date, dateLib);
+    const endDate = dateLib.addDays(startDate, numberOfWeeks * 7 - 1);
+    return endDate;
+  }
+
+  // node_modules/react-day-picker/dist/esm/locale/en-US.js
+  var enUS2 = {
+    ...enUS,
+    labels: {
+      labelDayButton: (date, modifiers, options, dateLib) => {
+        let formatDate2;
+        if (dateLib && typeof dateLib.format === "function") {
+          formatDate2 = dateLib.format.bind(dateLib);
+        } else {
+          formatDate2 = (d, pattern) => format(d, pattern, { locale: enUS, ...options });
+        }
+        let label = formatDate2(date, "PPPP");
+        if (modifiers.today)
+          label = `Today, ${label}`;
+        if (modifiers.selected)
+          label = `${label}, selected`;
+        return label;
+      },
+      labelMonthDropdown: "Choose the Month",
+      labelNext: "Go to the Next Month",
+      labelPrevious: "Go to the Previous Month",
+      labelWeekNumber: (weekNumber) => `Week ${weekNumber}`,
+      labelYearDropdown: "Choose the Year",
+      labelGrid: (date, options, dateLib) => {
+        let formatDate2;
+        if (dateLib && typeof dateLib.format === "function") {
+          formatDate2 = dateLib.format.bind(dateLib);
+        } else {
+          formatDate2 = (d, pattern) => format(d, pattern, { locale: enUS, ...options });
+        }
+        return formatDate2(date, "LLLL yyyy");
+      },
+      labelGridcell: (date, modifiers, options, dateLib) => {
+        let formatDate2;
+        if (dateLib && typeof dateLib.format === "function") {
+          formatDate2 = dateLib.format.bind(dateLib);
+        } else {
+          formatDate2 = (d, pattern) => format(d, pattern, { locale: enUS, ...options });
+        }
+        let label = formatDate2(date, "PPPP");
+        if (modifiers?.today) {
+          label = `Today, ${label}`;
+        }
+        return label;
+      },
+      labelNav: "Navigation bar",
+      labelWeekNumberHeader: "Week Number",
+      labelWeekday: (date, options, dateLib) => {
+        let formatDate2;
+        if (dateLib && typeof dateLib.format === "function") {
+          formatDate2 = dateLib.format.bind(dateLib);
+        } else {
+          formatDate2 = (d, pattern) => format(d, pattern, { locale: enUS, ...options });
+        }
+        return formatDate2(date, "cccc");
+      }
+    }
+  };
+
+  // node_modules/react-day-picker/dist/esm/classes/DateLib.js
+  var DateLib = class _DateLib {
+    /**
+     * Creates an instance of `DateLib`.
+     *
+     * @param options Configuration options for the date library.
+     * @param overrides Custom overrides for the date library functions.
+     */
+    constructor(options, overrides) {
+      this.today = () => {
+        if (this.overrides?.today) {
+          return this.overrides.today();
+        }
+        if (this.options.timeZone) {
+          return TZDate.tz(this.options.timeZone);
+        }
+        const DateCtor = this.options.Date ?? Date;
+        return new DateCtor();
+      };
+      this.newDate = (year, monthIndex, date) => {
+        if (this.overrides?.newDate) {
+          return this.overrides.newDate(year, monthIndex, date);
+        }
+        if (this.options.timeZone) {
+          return new TZDate(year, monthIndex, date, this.options.timeZone);
+        }
+        return new Date(year, monthIndex, date);
+      };
+      this.addDays = (date, amount) => {
+        return this.overrides?.addDays ? this.overrides.addDays(date, amount) : addDays(date, amount);
+      };
+      this.addMonths = (date, amount) => {
+        return this.overrides?.addMonths ? this.overrides.addMonths(date, amount) : addMonths(date, amount);
+      };
+      this.addWeeks = (date, amount) => {
+        return this.overrides?.addWeeks ? this.overrides.addWeeks(date, amount) : addWeeks(date, amount);
+      };
+      this.addYears = (date, amount) => {
+        return this.overrides?.addYears ? this.overrides.addYears(date, amount) : addYears(date, amount);
+      };
+      this.differenceInCalendarDays = (dateLeft, dateRight) => {
+        return this.overrides?.differenceInCalendarDays ? this.overrides.differenceInCalendarDays(dateLeft, dateRight) : differenceInCalendarDays(dateLeft, dateRight);
+      };
+      this.differenceInCalendarMonths = (dateLeft, dateRight) => {
+        return this.overrides?.differenceInCalendarMonths ? this.overrides.differenceInCalendarMonths(dateLeft, dateRight) : differenceInCalendarMonths(dateLeft, dateRight);
+      };
+      this.eachMonthOfInterval = (interval) => {
+        return this.overrides?.eachMonthOfInterval ? this.overrides.eachMonthOfInterval(interval) : eachMonthOfInterval(interval);
+      };
+      this.eachYearOfInterval = (interval) => {
+        const years = this.overrides?.eachYearOfInterval ? this.overrides.eachYearOfInterval(interval) : eachYearOfInterval(interval);
+        const uniqueYears = new Set(years.map((d) => this.getYear(d)));
+        if (uniqueYears.size === years.length) {
+          return years;
+        }
+        const yearsArray = [];
+        uniqueYears.forEach((y) => {
+          yearsArray.push(new Date(y, 0, 1));
+        });
+        return yearsArray;
+      };
+      this.endOfBroadcastWeek = (date) => {
+        return this.overrides?.endOfBroadcastWeek ? this.overrides.endOfBroadcastWeek(date) : endOfBroadcastWeek(date, this);
+      };
+      this.endOfISOWeek = (date) => {
+        return this.overrides?.endOfISOWeek ? this.overrides.endOfISOWeek(date) : endOfISOWeek(date);
+      };
+      this.endOfMonth = (date) => {
+        return this.overrides?.endOfMonth ? this.overrides.endOfMonth(date) : endOfMonth(date);
+      };
+      this.endOfWeek = (date, options2) => {
+        return this.overrides?.endOfWeek ? this.overrides.endOfWeek(date, options2) : endOfWeek(date, this.options);
+      };
+      this.endOfYear = (date) => {
+        return this.overrides?.endOfYear ? this.overrides.endOfYear(date) : endOfYear(date);
+      };
+      this.format = (date, formatStr, _options) => {
+        const formatted = this.overrides?.format ? this.overrides.format(date, formatStr, this.options) : format(date, formatStr, this.options);
+        if (this.options.numerals && this.options.numerals !== "latn") {
+          return this.replaceDigits(formatted);
+        }
+        return formatted;
+      };
+      this.getISOWeek = (date) => {
+        return this.overrides?.getISOWeek ? this.overrides.getISOWeek(date) : getISOWeek(date);
+      };
+      this.getMonth = (date, _options) => {
+        return this.overrides?.getMonth ? this.overrides.getMonth(date, this.options) : getMonth(date, this.options);
+      };
+      this.getYear = (date, _options) => {
+        return this.overrides?.getYear ? this.overrides.getYear(date, this.options) : getYear(date, this.options);
+      };
+      this.getWeek = (date, _options) => {
+        return this.overrides?.getWeek ? this.overrides.getWeek(date, this.options) : getWeek(date, this.options);
+      };
+      this.isAfter = (date, dateToCompare) => {
+        return this.overrides?.isAfter ? this.overrides.isAfter(date, dateToCompare) : isAfter(date, dateToCompare);
+      };
+      this.isBefore = (date, dateToCompare) => {
+        return this.overrides?.isBefore ? this.overrides.isBefore(date, dateToCompare) : isBefore(date, dateToCompare);
+      };
+      this.isDate = (value) => {
+        return this.overrides?.isDate ? this.overrides.isDate(value) : isDate(value);
+      };
+      this.isSameDay = (dateLeft, dateRight) => {
+        return this.overrides?.isSameDay ? this.overrides.isSameDay(dateLeft, dateRight) : isSameDay(dateLeft, dateRight);
+      };
+      this.isSameMonth = (dateLeft, dateRight) => {
+        return this.overrides?.isSameMonth ? this.overrides.isSameMonth(dateLeft, dateRight) : isSameMonth(dateLeft, dateRight);
+      };
+      this.isSameYear = (dateLeft, dateRight) => {
+        return this.overrides?.isSameYear ? this.overrides.isSameYear(dateLeft, dateRight) : isSameYear(dateLeft, dateRight);
+      };
+      this.max = (dates) => {
+        return this.overrides?.max ? this.overrides.max(dates) : max(dates);
+      };
+      this.min = (dates) => {
+        return this.overrides?.min ? this.overrides.min(dates) : min(dates);
+      };
+      this.setMonth = (date, month) => {
+        return this.overrides?.setMonth ? this.overrides.setMonth(date, month) : setMonth(date, month);
+      };
+      this.setYear = (date, year) => {
+        return this.overrides?.setYear ? this.overrides.setYear(date, year) : setYear(date, year);
+      };
+      this.startOfBroadcastWeek = (date, _dateLib) => {
+        return this.overrides?.startOfBroadcastWeek ? this.overrides.startOfBroadcastWeek(date, this) : startOfBroadcastWeek(date, this);
+      };
+      this.startOfDay = (date) => {
+        return this.overrides?.startOfDay ? this.overrides.startOfDay(date) : startOfDay(date);
+      };
+      this.startOfISOWeek = (date) => {
+        return this.overrides?.startOfISOWeek ? this.overrides.startOfISOWeek(date) : startOfISOWeek(date);
+      };
+      this.startOfMonth = (date) => {
+        return this.overrides?.startOfMonth ? this.overrides.startOfMonth(date) : startOfMonth(date);
+      };
+      this.startOfWeek = (date, _options) => {
+        return this.overrides?.startOfWeek ? this.overrides.startOfWeek(date, this.options) : startOfWeek(date, this.options);
+      };
+      this.startOfYear = (date) => {
+        return this.overrides?.startOfYear ? this.overrides.startOfYear(date) : startOfYear(date);
+      };
+      this.options = { locale: enUS2, ...options };
+      this.overrides = overrides;
+    }
+    /**
+     * Generates a mapping of Arabic digits (0-9) to the target numbering system
+     * digits.
+     *
+     * @since 9.5.0
+     * @returns A record mapping Arabic digits to the target numerals.
+     */
+    getDigitMap() {
+      const { numerals = "latn" } = this.options;
+      const formatter = new Intl.NumberFormat("en-US", {
+        numberingSystem: numerals
+      });
+      const digitMap = {};
+      for (let i = 0; i < 10; i++) {
+        digitMap[i.toString()] = formatter.format(i);
+      }
+      return digitMap;
+    }
+    /**
+     * Replaces Arabic digits in a string with the target numbering system digits.
+     *
+     * @since 9.5.0
+     * @param input The string containing Arabic digits.
+     * @returns The string with digits replaced.
+     */
+    replaceDigits(input) {
+      const digitMap = this.getDigitMap();
+      return input.replace(/\d/g, (digit) => digitMap[digit] || digit);
+    }
+    /**
+     * Formats a number using the configured numbering system.
+     *
+     * @since 9.5.0
+     * @param value The number to format.
+     * @returns The formatted number as a string.
+     */
+    formatNumber(value) {
+      return this.replaceDigits(value.toString());
+    }
+    /**
+     * Returns the preferred ordering for month and year labels for the current
+     * locale.
+     */
+    getMonthYearOrder() {
+      const code = this.options.locale?.code;
+      if (!code) {
+        return "month-first";
+      }
+      return _DateLib.yearFirstLocales.has(code) ? "year-first" : "month-first";
+    }
+    /**
+     * Formats the month/year pair respecting locale conventions.
+     *
+     * @since 9.11.0
+     */
+    formatMonthYear(date) {
+      const { locale, timeZone, numerals } = this.options;
+      const localeCode = locale?.code;
+      if (localeCode && _DateLib.yearFirstLocales.has(localeCode)) {
+        try {
+          const intl = new Intl.DateTimeFormat(localeCode, {
+            month: "long",
+            year: "numeric",
+            timeZone,
+            numberingSystem: numerals
+          });
+          const formatted = intl.format(date);
+          return formatted;
+        } catch {
+        }
+      }
+      const pattern = this.getMonthYearOrder() === "year-first" ? "y LLLL" : "LLLL y";
+      return this.format(date, pattern);
+    }
+  };
+  DateLib.yearFirstLocales = /* @__PURE__ */ new Set([
+    "eu",
+    "hu",
+    "ja",
+    "ja-Hira",
+    "ja-JP",
+    "ko",
+    "ko-KR",
+    "lt",
+    "lt-LT",
+    "lv",
+    "lv-LV",
+    "mn",
+    "mn-MN",
+    "zh",
+    "zh-CN",
+    "zh-HK",
+    "zh-TW"
+  ]);
+  var defaultDateLib = new DateLib();
+
+  // node_modules/react-day-picker/dist/esm/classes/CalendarDay.js
+  var CalendarDay = class {
+    constructor(date, displayMonth, dateLib = defaultDateLib) {
+      this.date = date;
+      this.displayMonth = displayMonth;
+      this.outside = Boolean(displayMonth && !dateLib.isSameMonth(date, displayMonth));
+      this.dateLib = dateLib;
+      this.isoDate = dateLib.format(date, "yyyy-MM-dd");
+      this.displayMonthId = dateLib.format(displayMonth, "yyyy-MM");
+      this.dateMonthId = dateLib.format(date, "yyyy-MM");
+    }
+    /**
+     * Checks if this day is equal to another `CalendarDay`, considering both the
+     * date and the displayed month.
+     *
+     * @param day The `CalendarDay` to compare with.
+     * @returns `true` if the days are equal, otherwise `false`.
+     */
+    isEqualTo(day) {
+      return this.dateLib.isSameDay(day.date, this.date) && this.dateLib.isSameMonth(day.displayMonth, this.displayMonth);
+    }
+  };
+
+  // node_modules/react-day-picker/dist/esm/classes/CalendarMonth.js
+  var CalendarMonth = class {
+    constructor(month, weeks) {
+      this.date = month;
+      this.weeks = weeks;
+    }
+  };
+
+  // node_modules/react-day-picker/dist/esm/classes/CalendarWeek.js
+  var CalendarWeek = class {
+    constructor(weekNumber, days) {
+      this.days = days;
+      this.weekNumber = weekNumber;
+    }
+  };
+
+  // node_modules/react-day-picker/dist/esm/components/custom-components.js
+  var custom_components_exports = {};
+  __export(custom_components_exports, {
+    CaptionLabel: () => CaptionLabel,
+    Chevron: () => Chevron,
+    Day: () => Day,
+    DayButton: () => DayButton,
+    Dropdown: () => Dropdown,
+    DropdownNav: () => DropdownNav,
+    Footer: () => Footer,
+    Month: () => Month,
+    MonthCaption: () => MonthCaption,
+    MonthGrid: () => MonthGrid,
+    Months: () => Months,
+    MonthsDropdown: () => MonthsDropdown,
+    Nav: () => Nav,
+    NextMonthButton: () => NextMonthButton,
+    Option: () => Option,
+    PreviousMonthButton: () => PreviousMonthButton,
+    Root: () => Root,
+    Select: () => Select,
+    Week: () => Week,
+    WeekNumber: () => WeekNumber,
+    WeekNumberHeader: () => WeekNumberHeader,
+    Weekday: () => Weekday,
+    Weekdays: () => Weekdays,
+    Weeks: () => Weeks,
+    YearsDropdown: () => YearsDropdown
+  });
+
+  // node_modules/react-day-picker/dist/esm/components/CaptionLabel.js
+  var import_react5 = __toESM(require_react(), 1);
+  function CaptionLabel(props) {
+    return import_react5.default.createElement("span", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Chevron.js
+  var import_react6 = __toESM(require_react(), 1);
+  function Chevron(props) {
+    const { size = 24, orientation = "left", className, style } = props;
+    return import_react6.default.createElement(
+      "svg",
+      { className, style, width: size, height: size, viewBox: "0 0 24 24" },
+      orientation === "up" && import_react6.default.createElement("polygon", { points: "6.77 17 12.5 11.43 18.24 17 20 15.28 12.5 8 5 15.28" }),
+      orientation === "down" && import_react6.default.createElement("polygon", { points: "6.77 8 12.5 13.57 18.24 8 20 9.72 12.5 17 5 9.72" }),
+      orientation === "left" && import_react6.default.createElement("polygon", { points: "16 18.112 9.81111111 12 16 5.87733333 14.0888889 4 6 12 14.0888889 20" }),
+      orientation === "right" && import_react6.default.createElement("polygon", { points: "8 18.112 14.18888889 12 8 5.87733333 9.91111111 4 18 12 9.91111111 20" })
+    );
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Day.js
+  var import_react7 = __toESM(require_react(), 1);
+  function Day(props) {
+    const { day, modifiers, ...tdProps } = props;
+    return import_react7.default.createElement("td", { ...tdProps });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/DayButton.js
+  var import_react8 = __toESM(require_react(), 1);
+  function DayButton(props) {
+    const { day, modifiers, ...buttonProps } = props;
+    const ref = import_react8.default.useRef(null);
+    import_react8.default.useEffect(() => {
+      if (modifiers.focused)
+        ref.current?.focus();
+    }, [modifiers.focused]);
+    return import_react8.default.createElement("button", { ref, ...buttonProps });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Dropdown.js
+  var import_react10 = __toESM(require_react(), 1);
+
+  // node_modules/react-day-picker/dist/esm/UI.js
+  var UI;
+  (function(UI2) {
+    UI2["Root"] = "root";
+    UI2["Chevron"] = "chevron";
+    UI2["Day"] = "day";
+    UI2["DayButton"] = "day_button";
+    UI2["CaptionLabel"] = "caption_label";
+    UI2["Dropdowns"] = "dropdowns";
+    UI2["Dropdown"] = "dropdown";
+    UI2["DropdownRoot"] = "dropdown_root";
+    UI2["Footer"] = "footer";
+    UI2["MonthGrid"] = "month_grid";
+    UI2["MonthCaption"] = "month_caption";
+    UI2["MonthsDropdown"] = "months_dropdown";
+    UI2["Month"] = "month";
+    UI2["Months"] = "months";
+    UI2["Nav"] = "nav";
+    UI2["NextMonthButton"] = "button_next";
+    UI2["PreviousMonthButton"] = "button_previous";
+    UI2["Week"] = "week";
+    UI2["Weeks"] = "weeks";
+    UI2["Weekday"] = "weekday";
+    UI2["Weekdays"] = "weekdays";
+    UI2["WeekNumber"] = "week_number";
+    UI2["WeekNumberHeader"] = "week_number_header";
+    UI2["YearsDropdown"] = "years_dropdown";
+  })(UI || (UI = {}));
+  var DayFlag;
+  (function(DayFlag2) {
+    DayFlag2["disabled"] = "disabled";
+    DayFlag2["hidden"] = "hidden";
+    DayFlag2["outside"] = "outside";
+    DayFlag2["focused"] = "focused";
+    DayFlag2["today"] = "today";
+  })(DayFlag || (DayFlag = {}));
+  var SelectionState;
+  (function(SelectionState2) {
+    SelectionState2["range_end"] = "range_end";
+    SelectionState2["range_middle"] = "range_middle";
+    SelectionState2["range_start"] = "range_start";
+    SelectionState2["selected"] = "selected";
+  })(SelectionState || (SelectionState = {}));
+  var Animation;
+  (function(Animation2) {
+    Animation2["weeks_before_enter"] = "weeks_before_enter";
+    Animation2["weeks_before_exit"] = "weeks_before_exit";
+    Animation2["weeks_after_enter"] = "weeks_after_enter";
+    Animation2["weeks_after_exit"] = "weeks_after_exit";
+    Animation2["caption_after_enter"] = "caption_after_enter";
+    Animation2["caption_after_exit"] = "caption_after_exit";
+    Animation2["caption_before_enter"] = "caption_before_enter";
+    Animation2["caption_before_exit"] = "caption_before_exit";
+  })(Animation || (Animation = {}));
+
+  // node_modules/react-day-picker/dist/esm/useDayPicker.js
+  var import_react9 = __toESM(require_react(), 1);
+  var dayPickerContext = (0, import_react9.createContext)(void 0);
+  function useDayPicker() {
+    const context = (0, import_react9.useContext)(dayPickerContext);
+    if (context === void 0) {
+      throw new Error("useDayPicker() must be used within a custom component.");
+    }
+    return context;
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Dropdown.js
+  function Dropdown(props) {
+    const { options, className, ...selectProps } = props;
+    const { classNames, components, styles } = useDayPicker();
+    const cssClassSelect = [classNames[UI.Dropdown], className].join(" ");
+    const selectedOption = options?.find(({ value }) => value === selectProps.value);
+    return import_react10.default.createElement(
+      "span",
+      { "data-disabled": selectProps.disabled, className: classNames[UI.DropdownRoot], style: styles?.[UI.DropdownRoot] },
+      import_react10.default.createElement(components.Select, { className: cssClassSelect, ...selectProps }, options?.map(({ value, label, disabled: disabled2 }) => import_react10.default.createElement(components.Option, { key: value, value, disabled: disabled2 }, label))),
+      import_react10.default.createElement(
+        "span",
+        { className: classNames[UI.CaptionLabel], style: styles?.[UI.CaptionLabel], "aria-hidden": true },
+        selectedOption?.label,
+        import_react10.default.createElement(components.Chevron, { orientation: "down", size: 18, className: classNames[UI.Chevron], style: styles?.[UI.Chevron] })
+      )
+    );
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/DropdownNav.js
+  var import_react11 = __toESM(require_react(), 1);
+  function DropdownNav(props) {
+    return import_react11.default.createElement("div", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Footer.js
+  var import_react12 = __toESM(require_react(), 1);
+  function Footer(props) {
+    return import_react12.default.createElement("div", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Month.js
+  var import_react13 = __toESM(require_react(), 1);
+  function Month(props) {
+    const { calendarMonth, displayIndex, ...divProps } = props;
+    return import_react13.default.createElement("div", { ...divProps }, props.children);
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/MonthCaption.js
+  var import_react14 = __toESM(require_react(), 1);
+  function MonthCaption(props) {
+    const { calendarMonth, displayIndex, ...divProps } = props;
+    return import_react14.default.createElement("div", { ...divProps });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/MonthGrid.js
+  var import_react15 = __toESM(require_react(), 1);
+  function MonthGrid(props) {
+    return import_react15.default.createElement("table", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Months.js
+  var import_react16 = __toESM(require_react(), 1);
+  function Months(props) {
+    return import_react16.default.createElement("div", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/MonthsDropdown.js
+  var import_react17 = __toESM(require_react(), 1);
+  function MonthsDropdown(props) {
+    const { components } = useDayPicker();
+    return import_react17.default.createElement(components.Dropdown, { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Nav.js
+  var import_react18 = __toESM(require_react(), 1);
+  function Nav(props) {
+    const { onPreviousClick, onNextClick, previousMonth, nextMonth, ...navProps } = props;
+    const { components, classNames, styles, labels: { labelPrevious: labelPrevious2, labelNext: labelNext2 } } = useDayPicker();
+    const handleNextClick = (0, import_react18.useCallback)((e) => {
+      if (nextMonth) {
+        onNextClick?.(e);
+      }
+    }, [nextMonth, onNextClick]);
+    const handlePreviousClick = (0, import_react18.useCallback)((e) => {
+      if (previousMonth) {
+        onPreviousClick?.(e);
+      }
+    }, [previousMonth, onPreviousClick]);
+    return import_react18.default.createElement(
+      "nav",
+      { ...navProps },
+      import_react18.default.createElement(
+        components.PreviousMonthButton,
+        { type: "button", className: classNames[UI.PreviousMonthButton], style: styles?.[UI.PreviousMonthButton], tabIndex: previousMonth ? void 0 : -1, "aria-disabled": previousMonth ? void 0 : true, "aria-label": labelPrevious2(previousMonth), onClick: handlePreviousClick },
+        import_react18.default.createElement(components.Chevron, { disabled: previousMonth ? void 0 : true, className: classNames[UI.Chevron], style: styles?.[UI.Chevron], orientation: "left" })
+      ),
+      import_react18.default.createElement(
+        components.NextMonthButton,
+        { type: "button", className: classNames[UI.NextMonthButton], style: styles?.[UI.NextMonthButton], tabIndex: nextMonth ? void 0 : -1, "aria-disabled": nextMonth ? void 0 : true, "aria-label": labelNext2(nextMonth), onClick: handleNextClick },
+        import_react18.default.createElement(components.Chevron, { disabled: nextMonth ? void 0 : true, orientation: "right", className: classNames[UI.Chevron], style: styles?.[UI.Chevron] })
+      )
+    );
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/NextMonthButton.js
+  var import_react19 = __toESM(require_react(), 1);
+  function NextMonthButton(props) {
+    return import_react19.default.createElement("button", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Option.js
+  var import_react20 = __toESM(require_react(), 1);
+  function Option(props) {
+    return import_react20.default.createElement("option", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/PreviousMonthButton.js
+  var import_react21 = __toESM(require_react(), 1);
+  function PreviousMonthButton(props) {
+    return import_react21.default.createElement("button", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Root.js
+  var import_react22 = __toESM(require_react(), 1);
+  function Root(props) {
+    const { rootRef, ...rest } = props;
+    return import_react22.default.createElement("div", { ...rest, ref: rootRef });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Select.js
+  var import_react23 = __toESM(require_react(), 1);
+  function Select(props) {
+    return import_react23.default.createElement("select", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Week.js
+  var import_react24 = __toESM(require_react(), 1);
+  function Week(props) {
+    const { week, ...trProps } = props;
+    return import_react24.default.createElement("tr", { ...trProps });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Weekday.js
+  var import_react25 = __toESM(require_react(), 1);
+  function Weekday(props) {
+    return import_react25.default.createElement("th", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Weekdays.js
+  var import_react26 = __toESM(require_react(), 1);
+  function Weekdays(props) {
+    return import_react26.default.createElement(
+      "thead",
+      { "aria-hidden": true },
+      import_react26.default.createElement("tr", { ...props })
+    );
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/WeekNumber.js
+  var import_react27 = __toESM(require_react(), 1);
+  function WeekNumber(props) {
+    const { week, ...thProps } = props;
+    return import_react27.default.createElement("th", { ...thProps });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/WeekNumberHeader.js
+  var import_react28 = __toESM(require_react(), 1);
+  function WeekNumberHeader(props) {
+    return import_react28.default.createElement("th", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/Weeks.js
+  var import_react29 = __toESM(require_react(), 1);
+  function Weeks(props) {
+    return import_react29.default.createElement("tbody", { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/components/YearsDropdown.js
+  var import_react30 = __toESM(require_react(), 1);
+  function YearsDropdown(props) {
+    const { components } = useDayPicker();
+    return import_react30.default.createElement(components.Dropdown, { ...props });
+  }
+
+  // node_modules/react-day-picker/dist/esm/DayPicker.js
+  var import_react35 = __toESM(require_react(), 1);
+
+  // node_modules/react-day-picker/dist/esm/utils/rangeIncludesDate.js
+  function rangeIncludesDate(range, date, excludeEnds = false, dateLib = defaultDateLib) {
+    let { from, to } = range;
+    const { differenceInCalendarDays: differenceInCalendarDays2, isSameDay: isSameDay2 } = dateLib;
+    if (from && to) {
+      const isRangeInverted = differenceInCalendarDays2(to, from) < 0;
+      if (isRangeInverted) {
+        [from, to] = [to, from];
+      }
+      const isInRange = differenceInCalendarDays2(date, from) >= (excludeEnds ? 1 : 0) && differenceInCalendarDays2(to, date) >= (excludeEnds ? 1 : 0);
+      return isInRange;
+    }
+    if (!excludeEnds && to) {
+      return isSameDay2(to, date);
+    }
+    if (!excludeEnds && from) {
+      return isSameDay2(from, date);
+    }
+    return false;
+  }
+
+  // node_modules/react-day-picker/dist/esm/utils/typeguards.js
+  function isDateInterval(matcher) {
+    return Boolean(matcher && typeof matcher === "object" && "before" in matcher && "after" in matcher);
+  }
+  function isDateRange(value) {
+    return Boolean(value && typeof value === "object" && "from" in value);
+  }
+  function isDateAfterType(value) {
+    return Boolean(value && typeof value === "object" && "after" in value);
+  }
+  function isDateBeforeType(value) {
+    return Boolean(value && typeof value === "object" && "before" in value);
+  }
+  function isDayOfWeekType(value) {
+    return Boolean(value && typeof value === "object" && "dayOfWeek" in value);
+  }
+  function isDatesArray(value, dateLib) {
+    return Array.isArray(value) && value.every(dateLib.isDate);
+  }
+
+  // node_modules/react-day-picker/dist/esm/utils/dateMatchModifiers.js
+  function dateMatchModifiers(date, matchers, dateLib = defaultDateLib) {
+    const matchersArr = !Array.isArray(matchers) ? [matchers] : matchers;
+    const { isSameDay: isSameDay2, differenceInCalendarDays: differenceInCalendarDays2, isAfter: isAfter2 } = dateLib;
+    return matchersArr.some((matcher) => {
+      if (typeof matcher === "boolean") {
+        return matcher;
+      }
+      if (dateLib.isDate(matcher)) {
+        return isSameDay2(date, matcher);
+      }
+      if (isDatesArray(matcher, dateLib)) {
+        return matcher.some((matcherDate) => isSameDay2(date, matcherDate));
+      }
+      if (isDateRange(matcher)) {
+        return rangeIncludesDate(matcher, date, false, dateLib);
+      }
+      if (isDayOfWeekType(matcher)) {
+        if (!Array.isArray(matcher.dayOfWeek)) {
+          return matcher.dayOfWeek === date.getDay();
+        }
+        return matcher.dayOfWeek.includes(date.getDay());
+      }
+      if (isDateInterval(matcher)) {
+        const diffBefore = differenceInCalendarDays2(matcher.before, date);
+        const diffAfter = differenceInCalendarDays2(matcher.after, date);
+        const isDayBefore = diffBefore > 0;
+        const isDayAfter = diffAfter < 0;
+        const isClosedInterval = isAfter2(matcher.before, matcher.after);
+        if (isClosedInterval) {
+          return isDayAfter && isDayBefore;
+        } else {
+          return isDayBefore || isDayAfter;
+        }
+      }
+      if (isDateAfterType(matcher)) {
+        return differenceInCalendarDays2(date, matcher.after) > 0;
+      }
+      if (isDateBeforeType(matcher)) {
+        return differenceInCalendarDays2(matcher.before, date) > 0;
+      }
+      if (typeof matcher === "function") {
+        return matcher(date);
+      }
+      return false;
+    });
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/createGetModifiers.js
+  function createGetModifiers(days, props, navStart, navEnd, dateLib) {
+    const { disabled: disabled2, hidden, modifiers, showOutsideDays, broadcastCalendar, today = dateLib.today() } = props;
+    const { isSameDay: isSameDay2, isSameMonth: isSameMonth2, startOfMonth: startOfMonth2, isBefore: isBefore2, endOfMonth: endOfMonth2, isAfter: isAfter2 } = dateLib;
+    const computedNavStart = navStart && startOfMonth2(navStart);
+    const computedNavEnd = navEnd && endOfMonth2(navEnd);
+    const internalModifiersMap = {
+      [DayFlag.focused]: [],
+      [DayFlag.outside]: [],
+      [DayFlag.disabled]: [],
+      [DayFlag.hidden]: [],
+      [DayFlag.today]: []
+    };
+    const customModifiersMap = {};
+    for (const day of days) {
+      const { date, displayMonth } = day;
+      const isOutside = Boolean(displayMonth && !isSameMonth2(date, displayMonth));
+      const isBeforeNavStart = Boolean(computedNavStart && isBefore2(date, computedNavStart));
+      const isAfterNavEnd = Boolean(computedNavEnd && isAfter2(date, computedNavEnd));
+      const isDisabled = Boolean(disabled2 && dateMatchModifiers(date, disabled2, dateLib));
+      const isHidden = Boolean(hidden && dateMatchModifiers(date, hidden, dateLib)) || isBeforeNavStart || isAfterNavEnd || // Broadcast calendar will show outside days as default
+      !broadcastCalendar && !showOutsideDays && isOutside || broadcastCalendar && showOutsideDays === false && isOutside;
+      const isToday = isSameDay2(date, today);
+      if (isOutside)
+        internalModifiersMap.outside.push(day);
+      if (isDisabled)
+        internalModifiersMap.disabled.push(day);
+      if (isHidden)
+        internalModifiersMap.hidden.push(day);
+      if (isToday)
+        internalModifiersMap.today.push(day);
+      if (modifiers) {
+        Object.keys(modifiers).forEach((name) => {
+          const modifierValue = modifiers?.[name];
+          const isMatch = modifierValue ? dateMatchModifiers(date, modifierValue, dateLib) : false;
+          if (!isMatch)
+            return;
+          if (customModifiersMap[name]) {
+            customModifiersMap[name].push(day);
+          } else {
+            customModifiersMap[name] = [day];
+          }
+        });
+      }
+    }
+    return (day) => {
+      const dayFlags = {
+        [DayFlag.focused]: false,
+        [DayFlag.disabled]: false,
+        [DayFlag.hidden]: false,
+        [DayFlag.outside]: false,
+        [DayFlag.today]: false
+      };
+      const customModifiers = {};
+      for (const name in internalModifiersMap) {
+        const days2 = internalModifiersMap[name];
+        dayFlags[name] = days2.some((d) => d === day);
+      }
+      for (const name in customModifiersMap) {
+        customModifiers[name] = customModifiersMap[name].some((d) => d === day);
+      }
+      return {
+        ...dayFlags,
+        // custom modifiers should override all the previous ones
+        ...customModifiers
+      };
+    };
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getClassNamesForModifiers.js
+  function getClassNamesForModifiers(modifiers, classNames, modifiersClassNames = {}) {
+    const modifierClassNames = Object.entries(modifiers).filter(([, active]) => active === true).reduce((previousValue, [key]) => {
+      if (modifiersClassNames[key]) {
+        previousValue.push(modifiersClassNames[key]);
+      } else if (classNames[DayFlag[key]]) {
+        previousValue.push(classNames[DayFlag[key]]);
+      } else if (classNames[SelectionState[key]]) {
+        previousValue.push(classNames[SelectionState[key]]);
+      }
+      return previousValue;
+    }, [classNames[UI.Day]]);
+    return modifierClassNames;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getComponents.js
+  function getComponents(customComponents) {
+    return {
+      ...custom_components_exports,
+      ...customComponents
+    };
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getDataAttributes.js
+  function getDataAttributes(props) {
+    const dataAttributes = {
+      "data-mode": props.mode ?? void 0,
+      "data-required": "required" in props ? props.required : void 0,
+      "data-multiple-months": props.numberOfMonths && props.numberOfMonths > 1 || void 0,
+      "data-week-numbers": props.showWeekNumber || void 0,
+      "data-broadcast-calendar": props.broadcastCalendar || void 0,
+      "data-nav-layout": props.navLayout || void 0
+    };
+    Object.entries(props).forEach(([key, val]) => {
+      if (key.startsWith("data-")) {
+        dataAttributes[key] = val;
+      }
+    });
+    return dataAttributes;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getDefaultClassNames.js
+  function getDefaultClassNames() {
+    const classNames = {};
+    for (const key in UI) {
+      classNames[UI[key]] = `rdp-${UI[key]}`;
+    }
+    for (const key in DayFlag) {
+      classNames[DayFlag[key]] = `rdp-${DayFlag[key]}`;
+    }
+    for (const key in SelectionState) {
+      classNames[SelectionState[key]] = `rdp-${SelectionState[key]}`;
+    }
+    for (const key in Animation) {
+      classNames[Animation[key]] = `rdp-${Animation[key]}`;
+    }
+    return classNames;
+  }
+
+  // node_modules/react-day-picker/dist/esm/formatters/index.js
+  var formatters_exports = {};
+  __export(formatters_exports, {
+    formatCaption: () => formatCaption,
+    formatDay: () => formatDay,
+    formatMonthDropdown: () => formatMonthDropdown,
+    formatWeekNumber: () => formatWeekNumber,
+    formatWeekNumberHeader: () => formatWeekNumberHeader,
+    formatWeekdayName: () => formatWeekdayName,
+    formatYearDropdown: () => formatYearDropdown
+  });
+
+  // node_modules/react-day-picker/dist/esm/formatters/formatCaption.js
+  function formatCaption(month, options, dateLib) {
+    const lib = dateLib ?? new DateLib(options);
+    return lib.formatMonthYear(month);
+  }
+
+  // node_modules/react-day-picker/dist/esm/formatters/formatDay.js
+  function formatDay(date, options, dateLib) {
+    return (dateLib ?? new DateLib(options)).format(date, "d");
+  }
+
+  // node_modules/react-day-picker/dist/esm/formatters/formatMonthDropdown.js
+  function formatMonthDropdown(month, dateLib = defaultDateLib) {
+    return dateLib.format(month, "LLLL");
+  }
+
+  // node_modules/react-day-picker/dist/esm/formatters/formatWeekdayName.js
+  function formatWeekdayName(weekday, options, dateLib) {
+    return (dateLib ?? new DateLib(options)).format(weekday, "cccccc");
+  }
+
+  // node_modules/react-day-picker/dist/esm/formatters/formatWeekNumber.js
+  function formatWeekNumber(weekNumber, dateLib = defaultDateLib) {
+    if (weekNumber < 10) {
+      return dateLib.formatNumber(`0${weekNumber.toLocaleString()}`);
+    }
+    return dateLib.formatNumber(`${weekNumber.toLocaleString()}`);
+  }
+
+  // node_modules/react-day-picker/dist/esm/formatters/formatWeekNumberHeader.js
+  function formatWeekNumberHeader() {
+    return ``;
+  }
+
+  // node_modules/react-day-picker/dist/esm/formatters/formatYearDropdown.js
+  function formatYearDropdown(year, dateLib = defaultDateLib) {
+    return dateLib.format(year, "yyyy");
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getFormatters.js
+  function getFormatters(customFormatters) {
+    return {
+      ...formatters_exports,
+      ...customFormatters
+    };
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/index.js
+  var labels_exports = {};
+  __export(labels_exports, {
+    labelDayButton: () => labelDayButton,
+    labelGrid: () => labelGrid,
+    labelGridcell: () => labelGridcell,
+    labelMonthDropdown: () => labelMonthDropdown,
+    labelNav: () => labelNav,
+    labelNext: () => labelNext,
+    labelPrevious: () => labelPrevious,
+    labelWeekNumber: () => labelWeekNumber,
+    labelWeekNumberHeader: () => labelWeekNumberHeader,
+    labelWeekday: () => labelWeekday,
+    labelYearDropdown: () => labelYearDropdown
+  });
+
+  // node_modules/react-day-picker/dist/esm/labels/labelDayButton.js
+  function labelDayButton(date, modifiers, options, dateLib) {
+    let label = (dateLib ?? new DateLib(options)).format(date, "PPPP");
+    if (modifiers.today)
+      label = `Today, ${label}`;
+    if (modifiers.selected)
+      label = `${label}, selected`;
+    return label;
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/labelGrid.js
+  function labelGrid(date, options, dateLib) {
+    const lib = dateLib ?? new DateLib(options);
+    return lib.formatMonthYear(date);
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/labelGridcell.js
+  function labelGridcell(date, modifiers, options, dateLib) {
+    let label = (dateLib ?? new DateLib(options)).format(date, "PPPP");
+    if (modifiers?.today) {
+      label = `Today, ${label}`;
+    }
+    return label;
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/labelMonthDropdown.js
+  function labelMonthDropdown(_options) {
+    return "Choose the Month";
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/labelNav.js
+  function labelNav() {
+    return "";
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/labelNext.js
+  var defaultLabel = "Go to the Next Month";
+  function labelNext(_month, _options) {
+    return defaultLabel;
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/labelPrevious.js
+  function labelPrevious(_month) {
+    return "Go to the Previous Month";
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/labelWeekday.js
+  function labelWeekday(date, options, dateLib) {
+    return (dateLib ?? new DateLib(options)).format(date, "cccc");
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/labelWeekNumber.js
+  function labelWeekNumber(weekNumber, _options) {
+    return `Week ${weekNumber}`;
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/labelWeekNumberHeader.js
+  function labelWeekNumberHeader(_options) {
+    return "Week Number";
+  }
+
+  // node_modules/react-day-picker/dist/esm/labels/labelYearDropdown.js
+  function labelYearDropdown(_options) {
+    return "Choose the Year";
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getLabels.js
+  var resolveLabel = (defaultLabel2, customLabel, localeLabel) => {
+    if (customLabel)
+      return customLabel;
+    if (localeLabel) {
+      return typeof localeLabel === "function" ? localeLabel : (..._args) => localeLabel;
+    }
+    return defaultLabel2;
+  };
+  function getLabels(customLabels, options) {
+    const localeLabels = options.locale?.labels ?? {};
+    return {
+      ...labels_exports,
+      ...customLabels ?? {},
+      labelDayButton: resolveLabel(labelDayButton, customLabels?.labelDayButton, localeLabels.labelDayButton),
+      labelMonthDropdown: resolveLabel(labelMonthDropdown, customLabels?.labelMonthDropdown, localeLabels.labelMonthDropdown),
+      labelNext: resolveLabel(labelNext, customLabels?.labelNext, localeLabels.labelNext),
+      labelPrevious: resolveLabel(labelPrevious, customLabels?.labelPrevious, localeLabels.labelPrevious),
+      labelWeekNumber: resolveLabel(labelWeekNumber, customLabels?.labelWeekNumber, localeLabels.labelWeekNumber),
+      labelYearDropdown: resolveLabel(labelYearDropdown, customLabels?.labelYearDropdown, localeLabels.labelYearDropdown),
+      labelGrid: resolveLabel(labelGrid, customLabels?.labelGrid, localeLabels.labelGrid),
+      labelGridcell: resolveLabel(labelGridcell, customLabels?.labelGridcell, localeLabels.labelGridcell),
+      labelNav: resolveLabel(labelNav, customLabels?.labelNav, localeLabels.labelNav),
+      labelWeekNumberHeader: resolveLabel(labelWeekNumberHeader, customLabels?.labelWeekNumberHeader, localeLabels.labelWeekNumberHeader),
+      labelWeekday: resolveLabel(labelWeekday, customLabels?.labelWeekday, localeLabels.labelWeekday)
+    };
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getMonthOptions.js
+  function getMonthOptions(displayMonth, navStart, navEnd, formatters2, dateLib) {
+    const { startOfMonth: startOfMonth2, startOfYear: startOfYear2, endOfYear: endOfYear2, eachMonthOfInterval: eachMonthOfInterval2, getMonth: getMonth2 } = dateLib;
+    const months = eachMonthOfInterval2({
+      start: startOfYear2(displayMonth),
+      end: endOfYear2(displayMonth)
+    });
+    const options = months.map((month) => {
+      const label = formatters2.formatMonthDropdown(month, dateLib);
+      const value = getMonth2(month);
+      const disabled2 = navStart && month < startOfMonth2(navStart) || navEnd && month > startOfMonth2(navEnd) || false;
+      return { value, label, disabled: disabled2 };
+    });
+    return options;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getStyleForModifiers.js
+  function getStyleForModifiers(dayModifiers, styles = {}, modifiersStyles = {}) {
+    let style = { ...styles?.[UI.Day] };
+    Object.entries(dayModifiers).filter(([, active]) => active === true).forEach(([modifier]) => {
+      style = {
+        ...style,
+        ...modifiersStyles?.[modifier]
+      };
+    });
+    return style;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getWeekdays.js
+  function getWeekdays(dateLib, ISOWeek, broadcastCalendar, today) {
+    const referenceToday = today ?? dateLib.today();
+    const start = broadcastCalendar ? dateLib.startOfBroadcastWeek(referenceToday, dateLib) : ISOWeek ? dateLib.startOfISOWeek(referenceToday) : dateLib.startOfWeek(referenceToday);
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const day = dateLib.addDays(start, i);
+      days.push(day);
+    }
+    return days;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getYearOptions.js
+  function getYearOptions(navStart, navEnd, formatters2, dateLib, reverse = false) {
+    if (!navStart)
+      return void 0;
+    if (!navEnd)
+      return void 0;
+    const { startOfYear: startOfYear2, endOfYear: endOfYear2, eachYearOfInterval: eachYearOfInterval2, getYear: getYear2 } = dateLib;
+    const firstNavYear = startOfYear2(navStart);
+    const lastNavYear = endOfYear2(navEnd);
+    const years = eachYearOfInterval2({ start: firstNavYear, end: lastNavYear });
+    if (reverse)
+      years.reverse();
+    return years.map((year) => {
+      const label = formatters2.formatYearDropdown(year, dateLib);
+      return {
+        value: getYear2(year),
+        label,
+        disabled: false
+      };
+    });
+  }
+
+  // node_modules/react-day-picker/dist/esm/noonDateLib.js
+  function createNoonOverrides(timeZone, options = {}) {
+    const { weekStartsOn, locale } = options;
+    const fallbackWeekStartsOn = weekStartsOn ?? locale?.options?.weekStartsOn ?? 0;
+    const toNoonTZDate = (date) => {
+      const normalizedDate = typeof date === "number" || typeof date === "string" ? new Date(date) : date;
+      return new TZDate(normalizedDate.getFullYear(), normalizedDate.getMonth(), normalizedDate.getDate(), 12, 0, 0, timeZone);
+    };
+    const toCalendarDate = (date) => {
+      const zoned = toNoonTZDate(date);
+      return new Date(zoned.getFullYear(), zoned.getMonth(), zoned.getDate(), 0, 0, 0, 0);
+    };
+    return {
+      today: () => {
+        return toNoonTZDate(TZDate.tz(timeZone));
+      },
+      newDate: (year, monthIndex, date) => {
+        return new TZDate(year, monthIndex, date, 12, 0, 0, timeZone);
+      },
+      startOfDay: (date) => {
+        return toNoonTZDate(date);
+      },
+      startOfWeek: (date, options2) => {
+        const base = toNoonTZDate(date);
+        const weekStartsOnValue = options2?.weekStartsOn ?? fallbackWeekStartsOn;
+        const diff = (base.getDay() - weekStartsOnValue + 7) % 7;
+        base.setDate(base.getDate() - diff);
+        return base;
+      },
+      startOfISOWeek: (date) => {
+        const base = toNoonTZDate(date);
+        const diff = (base.getDay() - 1 + 7) % 7;
+        base.setDate(base.getDate() - diff);
+        return base;
+      },
+      startOfMonth: (date) => {
+        const base = toNoonTZDate(date);
+        base.setDate(1);
+        return base;
+      },
+      startOfYear: (date) => {
+        const base = toNoonTZDate(date);
+        base.setMonth(0, 1);
+        return base;
+      },
+      endOfWeek: (date, options2) => {
+        const base = toNoonTZDate(date);
+        const weekStartsOnValue = options2?.weekStartsOn ?? fallbackWeekStartsOn;
+        const endDow = (weekStartsOnValue + 6) % 7;
+        const diff = (endDow - base.getDay() + 7) % 7;
+        base.setDate(base.getDate() + diff);
+        return base;
+      },
+      endOfISOWeek: (date) => {
+        const base = toNoonTZDate(date);
+        const diff = (7 - base.getDay()) % 7;
+        base.setDate(base.getDate() + diff);
+        return base;
+      },
+      endOfMonth: (date) => {
+        const base = toNoonTZDate(date);
+        base.setMonth(base.getMonth() + 1, 0);
+        return base;
+      },
+      endOfYear: (date) => {
+        const base = toNoonTZDate(date);
+        base.setMonth(11, 31);
+        return base;
+      },
+      eachMonthOfInterval: (interval) => {
+        const start = toNoonTZDate(interval.start);
+        const end = toNoonTZDate(interval.end);
+        const result = [];
+        const cursor = new TZDate(start.getFullYear(), start.getMonth(), 1, 12, 0, 0, timeZone);
+        const endKey = end.getFullYear() * 12 + end.getMonth();
+        while (cursor.getFullYear() * 12 + cursor.getMonth() <= endKey) {
+          result.push(new TZDate(cursor, timeZone));
+          cursor.setMonth(cursor.getMonth() + 1, 1);
+        }
+        return result;
+      },
+      // Normalize to noon once before arithmetic (avoid DST/midnight edge cases),
+      // mutate the same TZDate, and return it.
+      addDays: (date, amount) => {
+        const base = toNoonTZDate(date);
+        base.setDate(base.getDate() + amount);
+        return base;
+      },
+      addWeeks: (date, amount) => {
+        const base = toNoonTZDate(date);
+        base.setDate(base.getDate() + amount * 7);
+        return base;
+      },
+      addMonths: (date, amount) => {
+        const base = toNoonTZDate(date);
+        base.setMonth(base.getMonth() + amount);
+        return base;
+      },
+      addYears: (date, amount) => {
+        const base = toNoonTZDate(date);
+        base.setFullYear(base.getFullYear() + amount);
+        return base;
+      },
+      eachYearOfInterval: (interval) => {
+        const start = toNoonTZDate(interval.start);
+        const end = toNoonTZDate(interval.end);
+        const years = [];
+        const cursor = new TZDate(start.getFullYear(), 0, 1, 12, 0, 0, timeZone);
+        while (cursor.getFullYear() <= end.getFullYear()) {
+          years.push(new TZDate(cursor, timeZone));
+          cursor.setFullYear(cursor.getFullYear() + 1, 0, 1);
+        }
+        return years;
+      },
+      getWeek: (date, options2) => {
+        const base = toCalendarDate(date);
+        return getWeek(base, {
+          weekStartsOn: options2?.weekStartsOn ?? fallbackWeekStartsOn,
+          firstWeekContainsDate: options2?.firstWeekContainsDate ?? locale?.options?.firstWeekContainsDate ?? 1
+        });
+      },
+      getISOWeek: (date) => {
+        const base = toCalendarDate(date);
+        return getISOWeek(base);
+      },
+      differenceInCalendarDays: (dateLeft, dateRight) => {
+        const left = toCalendarDate(dateLeft);
+        const right = toCalendarDate(dateRight);
+        return differenceInCalendarDays(left, right);
+      },
+      differenceInCalendarMonths: (dateLeft, dateRight) => {
+        const left = toCalendarDate(dateLeft);
+        const right = toCalendarDate(dateRight);
+        return differenceInCalendarMonths(left, right);
+      }
+    };
+  }
+
+  // node_modules/react-day-picker/dist/esm/useAnimation.js
+  var import_react31 = __toESM(require_react(), 1);
+  var asHtmlElement = (element) => {
+    if (element instanceof HTMLElement)
+      return element;
+    return null;
+  };
+  var queryMonthEls = (element) => [
+    ...element.querySelectorAll("[data-animated-month]") ?? []
+  ];
+  var queryMonthEl = (element) => asHtmlElement(element.querySelector("[data-animated-month]"));
+  var queryCaptionEl = (element) => asHtmlElement(element.querySelector("[data-animated-caption]"));
+  var queryWeeksEl = (element) => asHtmlElement(element.querySelector("[data-animated-weeks]"));
+  var queryNavEl = (element) => asHtmlElement(element.querySelector("[data-animated-nav]"));
+  var queryWeekdaysEl = (element) => asHtmlElement(element.querySelector("[data-animated-weekdays]"));
+  function useAnimation(rootElRef, enabled, { classNames, months, focused, dateLib }) {
+    const previousRootElSnapshotRef = (0, import_react31.useRef)(null);
+    const previousMonthsRef = (0, import_react31.useRef)(months);
+    const animatingRef = (0, import_react31.useRef)(false);
+    (0, import_react31.useLayoutEffect)(() => {
+      const previousMonths = previousMonthsRef.current;
+      previousMonthsRef.current = months;
+      if (!enabled || !rootElRef.current || // safety check because the ref can be set to anything by consumers
+      !(rootElRef.current instanceof HTMLElement) || // validation required for the animation to work as expected
+      months.length === 0 || previousMonths.length === 0 || months.length !== previousMonths.length) {
+        return;
+      }
+      const isSameMonth2 = dateLib.isSameMonth(months[0].date, previousMonths[0].date);
+      const isAfterPreviousMonth = dateLib.isAfter(months[0].date, previousMonths[0].date);
+      const captionAnimationClass = isAfterPreviousMonth ? classNames[Animation.caption_after_enter] : classNames[Animation.caption_before_enter];
+      const weeksAnimationClass = isAfterPreviousMonth ? classNames[Animation.weeks_after_enter] : classNames[Animation.weeks_before_enter];
+      const previousRootElSnapshot = previousRootElSnapshotRef.current;
+      const rootElSnapshot = rootElRef.current.cloneNode(true);
+      if (rootElSnapshot instanceof HTMLElement) {
+        const currentMonthElsSnapshot = queryMonthEls(rootElSnapshot);
+        currentMonthElsSnapshot.forEach((currentMonthElSnapshot) => {
+          if (!(currentMonthElSnapshot instanceof HTMLElement))
+            return;
+          const previousMonthElSnapshot = queryMonthEl(currentMonthElSnapshot);
+          if (previousMonthElSnapshot && currentMonthElSnapshot.contains(previousMonthElSnapshot)) {
+            currentMonthElSnapshot.removeChild(previousMonthElSnapshot);
+          }
+          const captionEl = queryCaptionEl(currentMonthElSnapshot);
+          if (captionEl) {
+            captionEl.classList.remove(captionAnimationClass);
+          }
+          const weeksEl = queryWeeksEl(currentMonthElSnapshot);
+          if (weeksEl) {
+            weeksEl.classList.remove(weeksAnimationClass);
+          }
+        });
+        previousRootElSnapshotRef.current = rootElSnapshot;
+      } else {
+        previousRootElSnapshotRef.current = null;
+      }
+      if (animatingRef.current || isSameMonth2 || // skip animation if a day is focused because it can cause issues to the animation and is better for a11y
+      focused) {
+        return;
+      }
+      const previousMonthEls = previousRootElSnapshot instanceof HTMLElement ? queryMonthEls(previousRootElSnapshot) : [];
+      const currentMonthEls = queryMonthEls(rootElRef.current);
+      if (currentMonthEls?.every((el) => el instanceof HTMLElement) && previousMonthEls?.every((el) => el instanceof HTMLElement)) {
+        animatingRef.current = true;
+        const cleanUpFunctions = [];
+        rootElRef.current.style.isolation = "isolate";
+        const navEl = queryNavEl(rootElRef.current);
+        if (navEl) {
+          navEl.style.zIndex = "1";
+        }
+        currentMonthEls.forEach((currentMonthEl, index) => {
+          const previousMonthEl = previousMonthEls[index];
+          if (!previousMonthEl) {
+            return;
+          }
+          currentMonthEl.style.position = "relative";
+          currentMonthEl.style.overflow = "hidden";
+          const captionEl = queryCaptionEl(currentMonthEl);
+          if (captionEl) {
+            captionEl.classList.add(captionAnimationClass);
+          }
+          const weeksEl = queryWeeksEl(currentMonthEl);
+          if (weeksEl) {
+            weeksEl.classList.add(weeksAnimationClass);
+          }
+          const cleanUp = () => {
+            animatingRef.current = false;
+            if (rootElRef.current) {
+              rootElRef.current.style.isolation = "";
+            }
+            if (navEl) {
+              navEl.style.zIndex = "";
+            }
+            if (captionEl) {
+              captionEl.classList.remove(captionAnimationClass);
+            }
+            if (weeksEl) {
+              weeksEl.classList.remove(weeksAnimationClass);
+            }
+            currentMonthEl.style.position = "";
+            currentMonthEl.style.overflow = "";
+            if (currentMonthEl.contains(previousMonthEl)) {
+              currentMonthEl.removeChild(previousMonthEl);
+            }
+          };
+          cleanUpFunctions.push(cleanUp);
+          previousMonthEl.style.pointerEvents = "none";
+          previousMonthEl.style.position = "absolute";
+          previousMonthEl.style.overflow = "hidden";
+          previousMonthEl.setAttribute("aria-hidden", "true");
+          const previousWeekdaysEl = queryWeekdaysEl(previousMonthEl);
+          if (previousWeekdaysEl) {
+            previousWeekdaysEl.style.opacity = "0";
+          }
+          const previousCaptionEl = queryCaptionEl(previousMonthEl);
+          if (previousCaptionEl) {
+            previousCaptionEl.classList.add(isAfterPreviousMonth ? classNames[Animation.caption_before_exit] : classNames[Animation.caption_after_exit]);
+            previousCaptionEl.addEventListener("animationend", cleanUp);
+          }
+          const previousWeeksEl = queryWeeksEl(previousMonthEl);
+          if (previousWeeksEl) {
+            previousWeeksEl.classList.add(isAfterPreviousMonth ? classNames[Animation.weeks_before_exit] : classNames[Animation.weeks_after_exit]);
+          }
+          currentMonthEl.insertBefore(previousMonthEl, currentMonthEl.firstChild);
+        });
+      }
+    });
+  }
+
+  // node_modules/react-day-picker/dist/esm/useCalendar.js
+  var import_react33 = __toESM(require_react(), 1);
+
+  // node_modules/react-day-picker/dist/esm/helpers/getDates.js
+  function getDates(displayMonths, maxDate, props, dateLib) {
+    const firstMonth = displayMonths[0];
+    const lastMonth = displayMonths[displayMonths.length - 1];
+    const { ISOWeek, fixedWeeks, broadcastCalendar } = props ?? {};
+    const { addDays: addDays2, differenceInCalendarDays: differenceInCalendarDays2, differenceInCalendarMonths: differenceInCalendarMonths2, endOfBroadcastWeek: endOfBroadcastWeek2, endOfISOWeek: endOfISOWeek2, endOfMonth: endOfMonth2, endOfWeek: endOfWeek2, isAfter: isAfter2, startOfBroadcastWeek: startOfBroadcastWeek2, startOfISOWeek: startOfISOWeek2, startOfWeek: startOfWeek2 } = dateLib;
+    const startWeekFirstDate = broadcastCalendar ? startOfBroadcastWeek2(firstMonth, dateLib) : ISOWeek ? startOfISOWeek2(firstMonth) : startOfWeek2(firstMonth);
+    const displayMonthsWeekEnd = broadcastCalendar ? endOfBroadcastWeek2(lastMonth) : ISOWeek ? endOfISOWeek2(endOfMonth2(lastMonth)) : endOfWeek2(endOfMonth2(lastMonth));
+    const constraintWeekEnd = maxDate && (broadcastCalendar ? endOfBroadcastWeek2(maxDate) : ISOWeek ? endOfISOWeek2(maxDate) : endOfWeek2(maxDate));
+    const gridEndDate = constraintWeekEnd && isAfter2(displayMonthsWeekEnd, constraintWeekEnd) ? constraintWeekEnd : displayMonthsWeekEnd;
+    const nOfDays = differenceInCalendarDays2(gridEndDate, startWeekFirstDate);
+    const nOfMonths = differenceInCalendarMonths2(lastMonth, firstMonth) + 1;
+    const dates = [];
+    for (let i = 0; i <= nOfDays; i++) {
+      const date = addDays2(startWeekFirstDate, i);
+      dates.push(date);
+    }
+    const nrOfDaysWithFixedWeeks = broadcastCalendar ? 35 : 42;
+    const extraDates = nrOfDaysWithFixedWeeks * nOfMonths;
+    if (fixedWeeks && dates.length < extraDates) {
+      const daysToAdd = extraDates - dates.length;
+      for (let i = 0; i < daysToAdd; i++) {
+        const date = addDays2(dates[dates.length - 1], 1);
+        dates.push(date);
+      }
+    }
+    return dates;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getDays.js
+  function getDays(calendarMonths) {
+    const initialDays = [];
+    return calendarMonths.reduce((days, month) => {
+      const weekDays = month.weeks.reduce((weekDays2, week) => {
+        return weekDays2.concat(week.days.slice());
+      }, initialDays.slice());
+      return days.concat(weekDays.slice());
+    }, initialDays.slice());
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getDisplayMonths.js
+  function getDisplayMonths(firstDisplayedMonth, calendarEndMonth, props, dateLib) {
+    const { numberOfMonths = 1 } = props;
+    const months = [];
+    for (let i = 0; i < numberOfMonths; i++) {
+      const month = dateLib.addMonths(firstDisplayedMonth, i);
+      if (calendarEndMonth && month > calendarEndMonth) {
+        break;
+      }
+      months.push(month);
+    }
+    return months;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getInitialMonth.js
+  function getInitialMonth(props, navStart, navEnd, dateLib) {
+    const { month, defaultMonth, today = dateLib.today(), numberOfMonths = 1 } = props;
+    let initialMonth = month || defaultMonth || today;
+    const { differenceInCalendarMonths: differenceInCalendarMonths2, addMonths: addMonths2, startOfMonth: startOfMonth2 } = dateLib;
+    if (navEnd && differenceInCalendarMonths2(navEnd, initialMonth) < numberOfMonths - 1) {
+      const offset = -1 * (numberOfMonths - 1);
+      initialMonth = addMonths2(navEnd, offset);
+    }
+    if (navStart && differenceInCalendarMonths2(initialMonth, navStart) < 0) {
+      initialMonth = navStart;
+    }
+    return startOfMonth2(initialMonth);
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getMonths.js
+  function getMonths(displayMonths, dates, props, dateLib) {
+    const { addDays: addDays2, endOfBroadcastWeek: endOfBroadcastWeek2, endOfISOWeek: endOfISOWeek2, endOfMonth: endOfMonth2, endOfWeek: endOfWeek2, getISOWeek: getISOWeek2, getWeek: getWeek2, startOfBroadcastWeek: startOfBroadcastWeek2, startOfISOWeek: startOfISOWeek2, startOfWeek: startOfWeek2 } = dateLib;
+    const dayPickerMonths = displayMonths.reduce((months, month) => {
+      const firstDateOfFirstWeek = props.broadcastCalendar ? startOfBroadcastWeek2(month, dateLib) : props.ISOWeek ? startOfISOWeek2(month) : startOfWeek2(month);
+      const lastDateOfLastWeek = props.broadcastCalendar ? endOfBroadcastWeek2(month) : props.ISOWeek ? endOfISOWeek2(endOfMonth2(month)) : endOfWeek2(endOfMonth2(month));
+      const monthDates = dates.filter((date) => {
+        return date >= firstDateOfFirstWeek && date <= lastDateOfLastWeek;
+      });
+      const nrOfDaysWithFixedWeeks = props.broadcastCalendar ? 35 : 42;
+      if (props.fixedWeeks && monthDates.length < nrOfDaysWithFixedWeeks) {
+        const extraDates = dates.filter((date) => {
+          const daysToAdd = nrOfDaysWithFixedWeeks - monthDates.length;
+          return date > lastDateOfLastWeek && date <= addDays2(lastDateOfLastWeek, daysToAdd);
+        });
+        monthDates.push(...extraDates);
+      }
+      const weeks = monthDates.reduce((weeks2, date) => {
+        const weekNumber = props.ISOWeek ? getISOWeek2(date) : getWeek2(date);
+        const week = weeks2.find((week2) => week2.weekNumber === weekNumber);
+        const day = new CalendarDay(date, month, dateLib);
+        if (!week) {
+          weeks2.push(new CalendarWeek(weekNumber, [day]));
+        } else {
+          week.days.push(day);
+        }
+        return weeks2;
+      }, []);
+      const dayPickerMonth = new CalendarMonth(month, weeks);
+      months.push(dayPickerMonth);
+      return months;
+    }, []);
+    if (!props.reverseMonths) {
+      return dayPickerMonths;
+    } else {
+      return dayPickerMonths.reverse();
+    }
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getNavMonth.js
+  function getNavMonths(props, dateLib) {
+    let { startMonth, endMonth } = props;
+    const { startOfYear: startOfYear2, startOfDay: startOfDay2, startOfMonth: startOfMonth2, endOfMonth: endOfMonth2, addYears: addYears2, endOfYear: endOfYear2, today } = dateLib;
+    const hasYearDropdown = props.captionLayout === "dropdown" || props.captionLayout === "dropdown-years";
+    if (startMonth) {
+      startMonth = startOfMonth2(startMonth);
+    } else if (!startMonth && hasYearDropdown) {
+      startMonth = startOfYear2(addYears2(props.today ?? today(), -100));
+    }
+    if (endMonth) {
+      endMonth = endOfMonth2(endMonth);
+    } else if (!endMonth && hasYearDropdown) {
+      endMonth = endOfYear2(props.today ?? today());
+    }
+    return [
+      startMonth ? startOfDay2(startMonth) : startMonth,
+      endMonth ? startOfDay2(endMonth) : endMonth
+    ];
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getNextMonth.js
+  function getNextMonth(firstDisplayedMonth, calendarEndMonth, options, dateLib) {
+    if (options.disableNavigation) {
+      return void 0;
+    }
+    const { pagedNavigation, numberOfMonths = 1 } = options;
+    const { startOfMonth: startOfMonth2, addMonths: addMonths2, differenceInCalendarMonths: differenceInCalendarMonths2 } = dateLib;
+    const offset = pagedNavigation ? numberOfMonths : 1;
+    const month = startOfMonth2(firstDisplayedMonth);
+    if (!calendarEndMonth) {
+      return addMonths2(month, offset);
+    }
+    const monthsDiff = differenceInCalendarMonths2(calendarEndMonth, firstDisplayedMonth);
+    if (monthsDiff < numberOfMonths) {
+      return void 0;
+    }
+    return addMonths2(month, offset);
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getPreviousMonth.js
+  function getPreviousMonth(firstDisplayedMonth, calendarStartMonth, options, dateLib) {
+    if (options.disableNavigation) {
+      return void 0;
+    }
+    const { pagedNavigation, numberOfMonths } = options;
+    const { startOfMonth: startOfMonth2, addMonths: addMonths2, differenceInCalendarMonths: differenceInCalendarMonths2 } = dateLib;
+    const offset = pagedNavigation ? numberOfMonths ?? 1 : 1;
+    const month = startOfMonth2(firstDisplayedMonth);
+    if (!calendarStartMonth) {
+      return addMonths2(month, -offset);
+    }
+    const monthsDiff = differenceInCalendarMonths2(month, calendarStartMonth);
+    if (monthsDiff <= 0) {
+      return void 0;
+    }
+    return addMonths2(month, -offset);
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getWeeks.js
+  function getWeeks(months) {
+    const initialWeeks = [];
+    return months.reduce((weeks, month) => {
+      return weeks.concat(month.weeks.slice());
+    }, initialWeeks.slice());
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/useControlledValue.js
+  var import_react32 = __toESM(require_react(), 1);
+  function useControlledValue(defaultValue, controlledValue) {
+    const [uncontrolledValue, setValue] = (0, import_react32.useState)(defaultValue);
+    const value = controlledValue === void 0 ? uncontrolledValue : controlledValue;
+    return [value, setValue];
+  }
+
+  // node_modules/react-day-picker/dist/esm/useCalendar.js
+  function useCalendar(props, dateLib) {
+    const [navStart, navEnd] = getNavMonths(props, dateLib);
+    const { startOfMonth: startOfMonth2, endOfMonth: endOfMonth2 } = dateLib;
+    const initialMonth = getInitialMonth(props, navStart, navEnd, dateLib);
+    const [firstMonth, setFirstMonth] = useControlledValue(
+      initialMonth,
+      // initialMonth is always computed from props.month if provided
+      props.month ? initialMonth : void 0
+    );
+    (0, import_react33.useEffect)(() => {
+      const newInitialMonth = getInitialMonth(props, navStart, navEnd, dateLib);
+      setFirstMonth(newInitialMonth);
+    }, [props.timeZone]);
+    const { months, weeks, days, previousMonth, nextMonth } = (0, import_react33.useMemo)(() => {
+      const displayMonths = getDisplayMonths(firstMonth, navEnd, { numberOfMonths: props.numberOfMonths }, dateLib);
+      const dates = getDates(displayMonths, props.endMonth ? endOfMonth2(props.endMonth) : void 0, {
+        ISOWeek: props.ISOWeek,
+        fixedWeeks: props.fixedWeeks,
+        broadcastCalendar: props.broadcastCalendar
+      }, dateLib);
+      const months2 = getMonths(displayMonths, dates, {
+        broadcastCalendar: props.broadcastCalendar,
+        fixedWeeks: props.fixedWeeks,
+        ISOWeek: props.ISOWeek,
+        reverseMonths: props.reverseMonths
+      }, dateLib);
+      const weeks2 = getWeeks(months2);
+      const days2 = getDays(months2);
+      const previousMonth2 = getPreviousMonth(firstMonth, navStart, props, dateLib);
+      const nextMonth2 = getNextMonth(firstMonth, navEnd, props, dateLib);
+      return {
+        months: months2,
+        weeks: weeks2,
+        days: days2,
+        previousMonth: previousMonth2,
+        nextMonth: nextMonth2
+      };
+    }, [
+      dateLib,
+      firstMonth.getTime(),
+      navEnd?.getTime(),
+      navStart?.getTime(),
+      props.disableNavigation,
+      props.broadcastCalendar,
+      props.endMonth?.getTime(),
+      props.fixedWeeks,
+      props.ISOWeek,
+      props.numberOfMonths,
+      props.pagedNavigation,
+      props.reverseMonths
+    ]);
+    const { disableNavigation, onMonthChange } = props;
+    const isDayInCalendar = (day) => weeks.some((week) => week.days.some((d) => d.isEqualTo(day)));
+    const goToMonth = (date) => {
+      if (disableNavigation) {
+        return;
+      }
+      let newMonth = startOfMonth2(date);
+      if (navStart && newMonth < startOfMonth2(navStart)) {
+        newMonth = startOfMonth2(navStart);
+      }
+      if (navEnd && newMonth > startOfMonth2(navEnd)) {
+        newMonth = startOfMonth2(navEnd);
+      }
+      setFirstMonth(newMonth);
+      onMonthChange?.(newMonth);
+    };
+    const goToDay = (day) => {
+      if (isDayInCalendar(day)) {
+        return;
+      }
+      goToMonth(day.date);
+    };
+    const calendar = {
+      months,
+      weeks,
+      days,
+      navStart,
+      navEnd,
+      previousMonth,
+      nextMonth,
+      goToMonth,
+      goToDay
+    };
+    return calendar;
+  }
+
+  // node_modules/react-day-picker/dist/esm/useFocus.js
+  var import_react34 = __toESM(require_react(), 1);
+
+  // node_modules/react-day-picker/dist/esm/helpers/calculateFocusTarget.js
+  var FocusTargetPriority;
+  (function(FocusTargetPriority2) {
+    FocusTargetPriority2[FocusTargetPriority2["Today"] = 0] = "Today";
+    FocusTargetPriority2[FocusTargetPriority2["Selected"] = 1] = "Selected";
+    FocusTargetPriority2[FocusTargetPriority2["LastFocused"] = 2] = "LastFocused";
+    FocusTargetPriority2[FocusTargetPriority2["FocusedModifier"] = 3] = "FocusedModifier";
+  })(FocusTargetPriority || (FocusTargetPriority = {}));
+  function isFocusableDay(modifiers) {
+    return !modifiers[DayFlag.disabled] && !modifiers[DayFlag.hidden] && !modifiers[DayFlag.outside];
+  }
+  function calculateFocusTarget(days, getModifiers, isSelected, lastFocused) {
+    let focusTarget;
+    let foundFocusTargetPriority = -1;
+    for (const day of days) {
+      const modifiers = getModifiers(day);
+      if (isFocusableDay(modifiers)) {
+        if (modifiers[DayFlag.focused] && foundFocusTargetPriority < FocusTargetPriority.FocusedModifier) {
+          focusTarget = day;
+          foundFocusTargetPriority = FocusTargetPriority.FocusedModifier;
+        } else if (lastFocused?.isEqualTo(day) && foundFocusTargetPriority < FocusTargetPriority.LastFocused) {
+          focusTarget = day;
+          foundFocusTargetPriority = FocusTargetPriority.LastFocused;
+        } else if (isSelected(day.date) && foundFocusTargetPriority < FocusTargetPriority.Selected) {
+          focusTarget = day;
+          foundFocusTargetPriority = FocusTargetPriority.Selected;
+        } else if (modifiers[DayFlag.today] && foundFocusTargetPriority < FocusTargetPriority.Today) {
+          focusTarget = day;
+          foundFocusTargetPriority = FocusTargetPriority.Today;
+        }
+      }
+    }
+    if (!focusTarget) {
+      focusTarget = days.find((day) => isFocusableDay(getModifiers(day)));
+    }
+    return focusTarget;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getFocusableDate.js
+  function getFocusableDate(moveBy, moveDir, refDate, navStart, navEnd, props, dateLib) {
+    const { ISOWeek, broadcastCalendar } = props;
+    const { addDays: addDays2, addMonths: addMonths2, addWeeks: addWeeks2, addYears: addYears2, endOfBroadcastWeek: endOfBroadcastWeek2, endOfISOWeek: endOfISOWeek2, endOfWeek: endOfWeek2, max: max2, min: min2, startOfBroadcastWeek: startOfBroadcastWeek2, startOfISOWeek: startOfISOWeek2, startOfWeek: startOfWeek2 } = dateLib;
+    const moveFns = {
+      day: addDays2,
+      week: addWeeks2,
+      month: addMonths2,
+      year: addYears2,
+      startOfWeek: (date) => broadcastCalendar ? startOfBroadcastWeek2(date, dateLib) : ISOWeek ? startOfISOWeek2(date) : startOfWeek2(date),
+      endOfWeek: (date) => broadcastCalendar ? endOfBroadcastWeek2(date) : ISOWeek ? endOfISOWeek2(date) : endOfWeek2(date)
+    };
+    let focusableDate = moveFns[moveBy](refDate, moveDir === "after" ? 1 : -1);
+    if (moveDir === "before" && navStart) {
+      focusableDate = max2([navStart, focusableDate]);
+    } else if (moveDir === "after" && navEnd) {
+      focusableDate = min2([navEnd, focusableDate]);
+    }
+    return focusableDate;
+  }
+
+  // node_modules/react-day-picker/dist/esm/helpers/getNextFocus.js
+  function getNextFocus(moveBy, moveDir, refDay, calendarStartMonth, calendarEndMonth, props, dateLib, attempt = 0) {
+    if (attempt > 365) {
+      return void 0;
+    }
+    const focusableDate = getFocusableDate(moveBy, moveDir, refDay.date, calendarStartMonth, calendarEndMonth, props, dateLib);
+    const isDisabled = Boolean(props.disabled && dateMatchModifiers(focusableDate, props.disabled, dateLib));
+    const isHidden = Boolean(props.hidden && dateMatchModifiers(focusableDate, props.hidden, dateLib));
+    const targetMonth = focusableDate;
+    const focusDay = new CalendarDay(focusableDate, targetMonth, dateLib);
+    if (!isDisabled && !isHidden) {
+      return focusDay;
+    }
+    return getNextFocus(moveBy, moveDir, focusDay, calendarStartMonth, calendarEndMonth, props, dateLib, attempt + 1);
+  }
+
+  // node_modules/react-day-picker/dist/esm/useFocus.js
+  function useFocus(props, calendar, getModifiers, isSelected, dateLib) {
+    const { autoFocus } = props;
+    const [lastFocused, setLastFocused] = (0, import_react34.useState)();
+    const focusTarget = calculateFocusTarget(calendar.days, getModifiers, isSelected || (() => false), lastFocused);
+    const [focusedDay, setFocused] = (0, import_react34.useState)(autoFocus ? focusTarget : void 0);
+    const blur = () => {
+      setLastFocused(focusedDay);
+      setFocused(void 0);
+    };
+    const moveFocus = (moveBy, moveDir) => {
+      if (!focusedDay)
+        return;
+      const nextFocus = getNextFocus(moveBy, moveDir, focusedDay, calendar.navStart, calendar.navEnd, props, dateLib);
+      if (!nextFocus)
+        return;
+      if (props.disableNavigation) {
+        const isNextInCalendar = calendar.days.some((day) => day.isEqualTo(nextFocus));
+        if (!isNextInCalendar) {
+          return;
+        }
+      }
+      calendar.goToDay(nextFocus);
+      setFocused(nextFocus);
+    };
+    const isFocusTarget = (day) => {
+      return Boolean(focusTarget?.isEqualTo(day));
+    };
+    const useFocus2 = {
+      isFocusTarget,
+      setFocused,
+      focused: focusedDay,
+      blur,
+      moveFocus
+    };
+    return useFocus2;
+  }
+
+  // node_modules/react-day-picker/dist/esm/selection/useMulti.js
+  function useMulti(props, dateLib) {
+    const { selected: initiallySelected, required, onSelect } = props;
+    const [internallySelected, setSelected] = useControlledValue(initiallySelected, onSelect ? initiallySelected : void 0);
+    const selected = !onSelect ? internallySelected : initiallySelected;
+    const { isSameDay: isSameDay2 } = dateLib;
+    const isSelected = (date) => {
+      return selected?.some((d) => isSameDay2(d, date)) ?? false;
+    };
+    const { min: min2, max: max2 } = props;
+    const select = (triggerDate, modifiers, e) => {
+      let newDates = [...selected ?? []];
+      if (isSelected(triggerDate)) {
+        if (selected?.length === min2) {
+          return;
+        }
+        if (required && selected?.length === 1) {
+          return;
+        }
+        newDates = selected?.filter((d) => !isSameDay2(d, triggerDate));
+      } else {
+        if (selected?.length === max2) {
+          newDates = [triggerDate];
+        } else {
+          newDates = [...newDates, triggerDate];
+        }
+      }
+      if (!onSelect) {
+        setSelected(newDates);
+      }
+      onSelect?.(newDates, triggerDate, modifiers, e);
+      return newDates;
+    };
+    return {
+      selected,
+      select,
+      isSelected
+    };
+  }
+
+  // node_modules/react-day-picker/dist/esm/utils/addToRange.js
+  function addToRange(date, initialRange, min2 = 0, max2 = 0, required = false, dateLib = defaultDateLib) {
+    const { from, to } = initialRange || {};
+    const { isSameDay: isSameDay2, isAfter: isAfter2, isBefore: isBefore2 } = dateLib;
+    let range;
+    if (!from && !to) {
+      range = { from: date, to: min2 > 0 ? void 0 : date };
+    } else if (from && !to) {
+      if (isSameDay2(from, date)) {
+        if (min2 === 0) {
+          range = { from, to: date };
+        } else if (required) {
+          range = { from, to: void 0 };
+        } else {
+          range = void 0;
+        }
+      } else if (isBefore2(date, from)) {
+        range = { from: date, to: from };
+      } else {
+        range = { from, to: date };
+      }
+    } else if (from && to) {
+      if (isSameDay2(from, date) && isSameDay2(to, date)) {
+        if (required) {
+          range = { from, to };
+        } else {
+          range = void 0;
+        }
+      } else if (isSameDay2(from, date)) {
+        range = { from, to: min2 > 0 ? void 0 : date };
+      } else if (isSameDay2(to, date)) {
+        range = { from: date, to: min2 > 0 ? void 0 : date };
+      } else if (isBefore2(date, from)) {
+        range = { from: date, to };
+      } else if (isAfter2(date, from)) {
+        range = { from, to: date };
+      } else if (isAfter2(date, to)) {
+        range = { from, to: date };
+      } else {
+        throw new Error("Invalid range");
+      }
+    }
+    if (range?.from && range?.to) {
+      const diff = dateLib.differenceInCalendarDays(range.to, range.from);
+      if (max2 > 0 && diff > max2) {
+        range = { from: date, to: void 0 };
+      } else if (min2 > 1 && diff < min2) {
+        range = { from: date, to: void 0 };
+      }
+    }
+    return range;
+  }
+
+  // node_modules/react-day-picker/dist/esm/utils/rangeContainsDayOfWeek.js
+  function rangeContainsDayOfWeek(range, dayOfWeek, dateLib = defaultDateLib) {
+    const dayOfWeekArr = !Array.isArray(dayOfWeek) ? [dayOfWeek] : dayOfWeek;
+    let date = range.from;
+    const totalDays = dateLib.differenceInCalendarDays(range.to, range.from);
+    const totalDaysLimit = Math.min(totalDays, 6);
+    for (let i = 0; i <= totalDaysLimit; i++) {
+      if (dayOfWeekArr.includes(date.getDay())) {
+        return true;
+      }
+      date = dateLib.addDays(date, 1);
+    }
+    return false;
+  }
+
+  // node_modules/react-day-picker/dist/esm/utils/rangeOverlaps.js
+  function rangeOverlaps(rangeLeft, rangeRight, dateLib = defaultDateLib) {
+    return rangeIncludesDate(rangeLeft, rangeRight.from, false, dateLib) || rangeIncludesDate(rangeLeft, rangeRight.to, false, dateLib) || rangeIncludesDate(rangeRight, rangeLeft.from, false, dateLib) || rangeIncludesDate(rangeRight, rangeLeft.to, false, dateLib);
+  }
+
+  // node_modules/react-day-picker/dist/esm/utils/rangeContainsModifiers.js
+  function rangeContainsModifiers(range, modifiers, dateLib = defaultDateLib) {
+    const matchers = Array.isArray(modifiers) ? modifiers : [modifiers];
+    const nonFunctionMatchers = matchers.filter((matcher) => typeof matcher !== "function");
+    const nonFunctionMatchersResult = nonFunctionMatchers.some((matcher) => {
+      if (typeof matcher === "boolean")
+        return matcher;
+      if (dateLib.isDate(matcher)) {
+        return rangeIncludesDate(range, matcher, false, dateLib);
+      }
+      if (isDatesArray(matcher, dateLib)) {
+        return matcher.some((date) => rangeIncludesDate(range, date, false, dateLib));
+      }
+      if (isDateRange(matcher)) {
+        if (matcher.from && matcher.to) {
+          return rangeOverlaps(range, { from: matcher.from, to: matcher.to }, dateLib);
+        }
+        return false;
+      }
+      if (isDayOfWeekType(matcher)) {
+        return rangeContainsDayOfWeek(range, matcher.dayOfWeek, dateLib);
+      }
+      if (isDateInterval(matcher)) {
+        const isClosedInterval = dateLib.isAfter(matcher.before, matcher.after);
+        if (isClosedInterval) {
+          return rangeOverlaps(range, {
+            from: dateLib.addDays(matcher.after, 1),
+            to: dateLib.addDays(matcher.before, -1)
+          }, dateLib);
+        }
+        return dateMatchModifiers(range.from, matcher, dateLib) || dateMatchModifiers(range.to, matcher, dateLib);
+      }
+      if (isDateAfterType(matcher) || isDateBeforeType(matcher)) {
+        return dateMatchModifiers(range.from, matcher, dateLib) || dateMatchModifiers(range.to, matcher, dateLib);
+      }
+      return false;
+    });
+    if (nonFunctionMatchersResult) {
+      return true;
+    }
+    const functionMatchers = matchers.filter((matcher) => typeof matcher === "function");
+    if (functionMatchers.length) {
+      let date = range.from;
+      const totalDays = dateLib.differenceInCalendarDays(range.to, range.from);
+      for (let i = 0; i <= totalDays; i++) {
+        if (functionMatchers.some((matcher) => matcher(date))) {
+          return true;
+        }
+        date = dateLib.addDays(date, 1);
+      }
+    }
+    return false;
+  }
+
+  // node_modules/react-day-picker/dist/esm/selection/useRange.js
+  function useRange(props, dateLib) {
+    const { disabled: disabled2, excludeDisabled, resetOnSelect, selected: initiallySelected, required, onSelect } = props;
+    const [internallySelected, setSelected] = useControlledValue(initiallySelected, onSelect ? initiallySelected : void 0);
+    const selected = !onSelect ? internallySelected : initiallySelected;
+    const isSelected = (date) => selected && rangeIncludesDate(selected, date, false, dateLib);
+    const select = (triggerDate, modifiers, e) => {
+      const { min: min2, max: max2 } = props;
+      let newRange;
+      if (triggerDate) {
+        const selectedFrom = selected?.from;
+        const selectedTo = selected?.to;
+        const hasFullRange = !!selectedFrom && !!selectedTo;
+        const isClickingSingleDayRange = !!selectedFrom && !!selectedTo && dateLib.isSameDay(selectedFrom, selectedTo) && dateLib.isSameDay(triggerDate, selectedFrom);
+        if (resetOnSelect && (hasFullRange || !selected?.from)) {
+          if (!required && isClickingSingleDayRange) {
+            newRange = void 0;
+          } else {
+            newRange = { from: triggerDate, to: void 0 };
+          }
+        } else {
+          newRange = addToRange(triggerDate, selected, min2, max2, required, dateLib);
+        }
+      }
+      if (excludeDisabled && disabled2 && newRange?.from && newRange.to) {
+        if (rangeContainsModifiers({ from: newRange.from, to: newRange.to }, disabled2, dateLib)) {
+          newRange.from = triggerDate;
+          newRange.to = void 0;
+        }
+      }
+      if (!onSelect) {
+        setSelected(newRange);
+      }
+      onSelect?.(newRange, triggerDate, modifiers, e);
+      return newRange;
+    };
+    return {
+      selected,
+      select,
+      isSelected
+    };
+  }
+
+  // node_modules/react-day-picker/dist/esm/selection/useSingle.js
+  function useSingle(props, dateLib) {
+    const { selected: initiallySelected, required, onSelect } = props;
+    const [internallySelected, setSelected] = useControlledValue(initiallySelected, onSelect ? initiallySelected : void 0);
+    const selected = !onSelect ? internallySelected : initiallySelected;
+    const { isSameDay: isSameDay2 } = dateLib;
+    const isSelected = (compareDate) => {
+      return selected ? isSameDay2(selected, compareDate) : false;
+    };
+    const select = (triggerDate, modifiers, e) => {
+      let newDate = triggerDate;
+      if (!required && selected && selected && isSameDay2(triggerDate, selected)) {
+        newDate = void 0;
+      }
+      if (!onSelect) {
+        setSelected(newDate);
+      }
+      if (required) {
+        onSelect?.(newDate, triggerDate, modifiers, e);
+      } else {
+        onSelect?.(newDate, triggerDate, modifiers, e);
+      }
+      return newDate;
+    };
+    return {
+      selected,
+      select,
+      isSelected
+    };
+  }
+
+  // node_modules/react-day-picker/dist/esm/useSelection.js
+  function useSelection(props, dateLib) {
+    const single = useSingle(props, dateLib);
+    const multi = useMulti(props, dateLib);
+    const range = useRange(props, dateLib);
+    switch (props.mode) {
+      case "single":
+        return single;
+      case "multiple":
+        return multi;
+      case "range":
+        return range;
+      default:
+        return void 0;
+    }
+  }
+
+  // node_modules/react-day-picker/dist/esm/utils/toTimeZone.js
+  function toTimeZone(date, timeZone) {
+    if (date instanceof TZDate && date.timeZone === timeZone) {
+      return date;
+    }
+    return new TZDate(date, timeZone);
+  }
+
+  // node_modules/react-day-picker/dist/esm/utils/convertMatchersToTimeZone.js
+  function toZoneNoon(date, timeZone, noonSafe) {
+    if (!noonSafe)
+      return toTimeZone(date, timeZone);
+    const zoned = toTimeZone(date, timeZone);
+    const noonZoned = new TZDate(zoned.getFullYear(), zoned.getMonth(), zoned.getDate(), 12, 0, 0, timeZone);
+    return new Date(noonZoned.getTime());
+  }
+  function convertMatcher(matcher, timeZone, noonSafe) {
+    if (typeof matcher === "boolean" || typeof matcher === "function") {
+      return matcher;
+    }
+    if (matcher instanceof Date) {
+      return toZoneNoon(matcher, timeZone, noonSafe);
+    }
+    if (Array.isArray(matcher)) {
+      return matcher.map((value) => value instanceof Date ? toZoneNoon(value, timeZone, noonSafe) : value);
+    }
+    if (isDateRange(matcher)) {
+      return {
+        ...matcher,
+        from: matcher.from ? toTimeZone(matcher.from, timeZone) : matcher.from,
+        to: matcher.to ? toTimeZone(matcher.to, timeZone) : matcher.to
+      };
+    }
+    if (isDateInterval(matcher)) {
+      return {
+        before: toZoneNoon(matcher.before, timeZone, noonSafe),
+        after: toZoneNoon(matcher.after, timeZone, noonSafe)
+      };
+    }
+    if (isDateAfterType(matcher)) {
+      return {
+        after: toZoneNoon(matcher.after, timeZone, noonSafe)
+      };
+    }
+    if (isDateBeforeType(matcher)) {
+      return {
+        before: toZoneNoon(matcher.before, timeZone, noonSafe)
+      };
+    }
+    return matcher;
+  }
+  function convertMatchersToTimeZone(matchers, timeZone, noonSafe) {
+    if (!matchers) {
+      return matchers;
+    }
+    if (Array.isArray(matchers)) {
+      return matchers.map((matcher) => convertMatcher(matcher, timeZone, noonSafe));
+    }
+    return convertMatcher(matchers, timeZone, noonSafe);
+  }
+
+  // node_modules/react-day-picker/dist/esm/DayPicker.js
+  function DayPicker(initialProps) {
+    let props = initialProps;
+    const timeZone = props.timeZone;
+    if (timeZone) {
+      props = {
+        ...initialProps,
+        timeZone
+      };
+      if (props.today) {
+        props.today = toTimeZone(props.today, timeZone);
+      }
+      if (props.month) {
+        props.month = toTimeZone(props.month, timeZone);
+      }
+      if (props.defaultMonth) {
+        props.defaultMonth = toTimeZone(props.defaultMonth, timeZone);
+      }
+      if (props.startMonth) {
+        props.startMonth = toTimeZone(props.startMonth, timeZone);
+      }
+      if (props.endMonth) {
+        props.endMonth = toTimeZone(props.endMonth, timeZone);
+      }
+      if (props.mode === "single" && props.selected) {
+        props.selected = toTimeZone(props.selected, timeZone);
+      } else if (props.mode === "multiple" && props.selected) {
+        props.selected = props.selected?.map((date) => toTimeZone(date, timeZone));
+      } else if (props.mode === "range" && props.selected) {
+        props.selected = {
+          from: props.selected.from ? toTimeZone(props.selected.from, timeZone) : props.selected.from,
+          to: props.selected.to ? toTimeZone(props.selected.to, timeZone) : props.selected.to
+        };
+      }
+      if (props.disabled !== void 0) {
+        props.disabled = convertMatchersToTimeZone(props.disabled, timeZone);
+      }
+      if (props.hidden !== void 0) {
+        props.hidden = convertMatchersToTimeZone(props.hidden, timeZone);
+      }
+      if (props.modifiers) {
+        const nextModifiers = {};
+        Object.keys(props.modifiers).forEach((key) => {
+          nextModifiers[key] = convertMatchersToTimeZone(props.modifiers?.[key], timeZone);
+        });
+        props.modifiers = nextModifiers;
+      }
+    }
+    const { components, formatters: formatters2, labels, dateLib, locale, classNames } = (0, import_react35.useMemo)(() => {
+      const locale2 = { ...enUS2, ...props.locale };
+      const weekStartsOn = props.broadcastCalendar ? 1 : props.weekStartsOn;
+      const noonOverrides = props.noonSafe && props.timeZone ? createNoonOverrides(props.timeZone, {
+        weekStartsOn,
+        locale: locale2
+      }) : void 0;
+      const overrides = props.dateLib && noonOverrides ? { ...noonOverrides, ...props.dateLib } : props.dateLib ?? noonOverrides;
+      const dateLib2 = new DateLib({
+        locale: locale2,
+        weekStartsOn,
+        firstWeekContainsDate: props.firstWeekContainsDate,
+        useAdditionalWeekYearTokens: props.useAdditionalWeekYearTokens,
+        useAdditionalDayOfYearTokens: props.useAdditionalDayOfYearTokens,
+        timeZone: props.timeZone,
+        numerals: props.numerals
+      }, overrides);
+      return {
+        dateLib: dateLib2,
+        components: getComponents(props.components),
+        formatters: getFormatters(props.formatters),
+        labels: getLabels(props.labels, dateLib2.options),
+        locale: locale2,
+        classNames: { ...getDefaultClassNames(), ...props.classNames }
+      };
+    }, [
+      props.locale,
+      props.broadcastCalendar,
+      props.weekStartsOn,
+      props.firstWeekContainsDate,
+      props.useAdditionalWeekYearTokens,
+      props.useAdditionalDayOfYearTokens,
+      props.timeZone,
+      props.numerals,
+      props.dateLib,
+      props.noonSafe,
+      props.components,
+      props.formatters,
+      props.labels,
+      props.classNames
+    ]);
+    if (!props.today) {
+      props = { ...props, today: dateLib.today() };
+    }
+    const { captionLayout, mode, navLayout, numberOfMonths = 1, onDayBlur, onDayClick, onDayFocus, onDayKeyDown, onDayMouseEnter, onDayMouseLeave, onNextClick, onPrevClick, showWeekNumber, styles } = props;
+    const { formatCaption: formatCaption2, formatDay: formatDay2, formatMonthDropdown: formatMonthDropdown2, formatWeekNumber: formatWeekNumber2, formatWeekNumberHeader: formatWeekNumberHeader2, formatWeekdayName: formatWeekdayName2, formatYearDropdown: formatYearDropdown2 } = formatters2;
+    const calendar = useCalendar(props, dateLib);
+    const { days, months, navStart, navEnd, previousMonth, nextMonth, goToMonth } = calendar;
+    const getModifiers = createGetModifiers(days, props, navStart, navEnd, dateLib);
+    const { isSelected, select, selected: selectedValue } = useSelection(props, dateLib) ?? {};
+    const { blur, focused, isFocusTarget, moveFocus, setFocused } = useFocus(props, calendar, getModifiers, isSelected ?? (() => false), dateLib);
+    const { labelDayButton: labelDayButton2, labelGridcell: labelGridcell2, labelGrid: labelGrid2, labelMonthDropdown: labelMonthDropdown2, labelNav: labelNav2, labelPrevious: labelPrevious2, labelNext: labelNext2, labelWeekday: labelWeekday2, labelWeekNumber: labelWeekNumber2, labelWeekNumberHeader: labelWeekNumberHeader2, labelYearDropdown: labelYearDropdown2 } = labels;
+    const weekdays = (0, import_react35.useMemo)(() => getWeekdays(dateLib, props.ISOWeek, props.broadcastCalendar, props.today), [dateLib, props.ISOWeek, props.broadcastCalendar, props.today]);
+    const isInteractive = mode !== void 0 || onDayClick !== void 0;
+    const handlePreviousClick = (0, import_react35.useCallback)(() => {
+      if (!previousMonth)
+        return;
+      goToMonth(previousMonth);
+      onPrevClick?.(previousMonth);
+    }, [previousMonth, goToMonth, onPrevClick]);
+    const handleNextClick = (0, import_react35.useCallback)(() => {
+      if (!nextMonth)
+        return;
+      goToMonth(nextMonth);
+      onNextClick?.(nextMonth);
+    }, [goToMonth, nextMonth, onNextClick]);
+    const handleDayClick = (0, import_react35.useCallback)((day, m) => (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setFocused(day);
+      if (m.disabled) {
+        return;
+      }
+      select?.(day.date, m, e);
+      onDayClick?.(day.date, m, e);
+    }, [select, onDayClick, setFocused]);
+    const handleDayFocus = (0, import_react35.useCallback)((day, m) => (e) => {
+      setFocused(day);
+      onDayFocus?.(day.date, m, e);
+    }, [onDayFocus, setFocused]);
+    const handleDayBlur = (0, import_react35.useCallback)((day, m) => (e) => {
+      blur();
+      onDayBlur?.(day.date, m, e);
+    }, [blur, onDayBlur]);
+    const handleDayKeyDown = (0, import_react35.useCallback)((day, modifiers) => (e) => {
+      const keyMap = {
+        ArrowLeft: [
+          e.shiftKey ? "month" : "day",
+          props.dir === "rtl" ? "after" : "before"
+        ],
+        ArrowRight: [
+          e.shiftKey ? "month" : "day",
+          props.dir === "rtl" ? "before" : "after"
+        ],
+        ArrowDown: [e.shiftKey ? "year" : "week", "after"],
+        ArrowUp: [e.shiftKey ? "year" : "week", "before"],
+        PageUp: [e.shiftKey ? "year" : "month", "before"],
+        PageDown: [e.shiftKey ? "year" : "month", "after"],
+        Home: ["startOfWeek", "before"],
+        End: ["endOfWeek", "after"]
+      };
+      if (keyMap[e.key]) {
+        e.preventDefault();
+        e.stopPropagation();
+        const [moveBy, moveDir] = keyMap[e.key];
+        moveFocus(moveBy, moveDir);
+      }
+      onDayKeyDown?.(day.date, modifiers, e);
+    }, [moveFocus, onDayKeyDown, props.dir]);
+    const handleDayMouseEnter = (0, import_react35.useCallback)((day, modifiers) => (e) => {
+      onDayMouseEnter?.(day.date, modifiers, e);
+    }, [onDayMouseEnter]);
+    const handleDayMouseLeave = (0, import_react35.useCallback)((day, modifiers) => (e) => {
+      onDayMouseLeave?.(day.date, modifiers, e);
+    }, [onDayMouseLeave]);
+    const handleMonthChange = (0, import_react35.useCallback)((date, monthOffset) => (e) => {
+      const selectedMonth = Number(e.target.value);
+      const month = dateLib.setMonth(dateLib.startOfMonth(date), selectedMonth);
+      goToMonth(dateLib.addMonths(month, -monthOffset));
+    }, [dateLib, goToMonth]);
+    const handleYearChange = (0, import_react35.useCallback)((date, monthOffset) => (e) => {
+      const selectedYear = Number(e.target.value);
+      const month = dateLib.setYear(dateLib.startOfMonth(date), selectedYear);
+      goToMonth(dateLib.addMonths(month, -monthOffset));
+    }, [dateLib, goToMonth]);
+    const { className, style } = (0, import_react35.useMemo)(() => ({
+      className: [classNames[UI.Root], props.className].filter(Boolean).join(" "),
+      style: { ...styles?.[UI.Root], ...props.style }
+    }), [classNames, props.className, props.style, styles]);
+    const dataAttributes = getDataAttributes(props);
+    const getDropdownStyle = (dropdown) => {
+      const dropdownStyle = styles?.[UI.Dropdown];
+      const specificDropdownStyle = styles?.[dropdown];
+      if (!dropdownStyle && !specificDropdownStyle) {
+        return void 0;
+      }
+      return {
+        ...dropdownStyle,
+        ...specificDropdownStyle
+      };
+    };
+    const rootElRef = (0, import_react35.useRef)(null);
+    useAnimation(rootElRef, Boolean(props.animate), {
+      classNames,
+      months,
+      focused,
+      dateLib
+    });
+    const contextValue = {
+      dayPickerProps: props,
+      selected: selectedValue,
+      select,
+      isSelected,
+      months,
+      nextMonth,
+      previousMonth,
+      goToMonth,
+      getModifiers,
+      components,
+      classNames,
+      styles,
+      labels,
+      formatters: formatters2
+    };
+    return import_react35.default.createElement(
+      dayPickerContext.Provider,
+      { value: contextValue },
+      import_react35.default.createElement(
+        components.Root,
+        { rootRef: props.animate ? rootElRef : void 0, className, style, dir: props.dir, id: props.id, lang: props.lang ?? locale.code, nonce: props.nonce, title: props.title, role: props.role, "aria-label": props["aria-label"], "aria-labelledby": props["aria-labelledby"], ...dataAttributes },
+        import_react35.default.createElement(
+          components.Months,
+          { className: classNames[UI.Months], style: styles?.[UI.Months] },
+          !props.hideNavigation && !navLayout && import_react35.default.createElement(components.Nav, { "data-animated-nav": props.animate ? "true" : void 0, className: classNames[UI.Nav], style: styles?.[UI.Nav], "aria-label": labelNav2(), onPreviousClick: handlePreviousClick, onNextClick: handleNextClick, previousMonth, nextMonth }),
+          months.map((calendarMonth, displayIndex) => {
+            const monthOffset = props.reverseMonths ? months.length - 1 - displayIndex : displayIndex;
+            return import_react35.default.createElement(
+              components.Month,
+              {
+                "data-animated-month": props.animate ? "true" : void 0,
+                className: classNames[UI.Month],
+                style: styles?.[UI.Month],
+                // biome-ignore lint/suspicious/noArrayIndexKey: breaks animation
+                key: displayIndex,
+                displayIndex,
+                calendarMonth
+              },
+              navLayout === "around" && !props.hideNavigation && displayIndex === 0 && import_react35.default.createElement(
+                components.PreviousMonthButton,
+                { type: "button", className: classNames[UI.PreviousMonthButton], style: styles?.[UI.PreviousMonthButton], tabIndex: previousMonth ? void 0 : -1, "aria-disabled": previousMonth ? void 0 : true, "aria-label": labelPrevious2(previousMonth), onClick: handlePreviousClick, "data-animated-button": props.animate ? "true" : void 0 },
+                import_react35.default.createElement(components.Chevron, { disabled: previousMonth ? void 0 : true, className: classNames[UI.Chevron], style: styles?.[UI.Chevron], orientation: props.dir === "rtl" ? "right" : "left" })
+              ),
+              import_react35.default.createElement(components.MonthCaption, { "data-animated-caption": props.animate ? "true" : void 0, className: classNames[UI.MonthCaption], style: styles?.[UI.MonthCaption], calendarMonth, displayIndex }, captionLayout?.startsWith("dropdown") ? import_react35.default.createElement(
+                components.DropdownNav,
+                { className: classNames[UI.Dropdowns], style: styles?.[UI.Dropdowns] },
+                (() => {
+                  const monthControl = captionLayout === "dropdown" || captionLayout === "dropdown-months" ? import_react35.default.createElement(components.MonthsDropdown, { key: "month", className: classNames[UI.MonthsDropdown], "aria-label": labelMonthDropdown2(), disabled: Boolean(props.disableNavigation), onChange: handleMonthChange(calendarMonth.date, monthOffset), options: getMonthOptions(calendarMonth.date, navStart, navEnd, formatters2, dateLib), style: getDropdownStyle(UI.MonthsDropdown), value: dateLib.getMonth(calendarMonth.date) }) : import_react35.default.createElement("span", { key: "month" }, formatMonthDropdown2(calendarMonth.date, dateLib));
+                  const yearControl = captionLayout === "dropdown" || captionLayout === "dropdown-years" ? import_react35.default.createElement(components.YearsDropdown, { key: "year", className: classNames[UI.YearsDropdown], "aria-label": labelYearDropdown2(dateLib.options), disabled: Boolean(props.disableNavigation), onChange: handleYearChange(calendarMonth.date, monthOffset), options: getYearOptions(navStart, navEnd, formatters2, dateLib, Boolean(props.reverseYears)), style: getDropdownStyle(UI.YearsDropdown), value: dateLib.getYear(calendarMonth.date) }) : import_react35.default.createElement("span", { key: "year" }, formatYearDropdown2(calendarMonth.date, dateLib));
+                  const controls = dateLib.getMonthYearOrder() === "year-first" ? [yearControl, monthControl] : [monthControl, yearControl];
+                  return controls;
+                })(),
+                import_react35.default.createElement("span", { role: "status", "aria-live": "polite", style: {
+                  border: 0,
+                  clip: "rect(0 0 0 0)",
+                  height: "1px",
+                  margin: "-1px",
+                  overflow: "hidden",
+                  padding: 0,
+                  position: "absolute",
+                  width: "1px",
+                  whiteSpace: "nowrap",
+                  wordWrap: "normal"
+                } }, formatCaption2(calendarMonth.date, dateLib.options, dateLib))
+              ) : import_react35.default.createElement(components.CaptionLabel, { className: classNames[UI.CaptionLabel], style: styles?.[UI.CaptionLabel], role: "status", "aria-live": "polite" }, formatCaption2(calendarMonth.date, dateLib.options, dateLib))),
+              navLayout === "around" && !props.hideNavigation && displayIndex === numberOfMonths - 1 && import_react35.default.createElement(
+                components.NextMonthButton,
+                { type: "button", className: classNames[UI.NextMonthButton], style: styles?.[UI.NextMonthButton], tabIndex: nextMonth ? void 0 : -1, "aria-disabled": nextMonth ? void 0 : true, "aria-label": labelNext2(nextMonth), onClick: handleNextClick, "data-animated-button": props.animate ? "true" : void 0 },
+                import_react35.default.createElement(components.Chevron, { disabled: nextMonth ? void 0 : true, className: classNames[UI.Chevron], style: styles?.[UI.Chevron], orientation: props.dir === "rtl" ? "left" : "right" })
+              ),
+              displayIndex === numberOfMonths - 1 && navLayout === "after" && !props.hideNavigation && import_react35.default.createElement(components.Nav, { "data-animated-nav": props.animate ? "true" : void 0, className: classNames[UI.Nav], style: styles?.[UI.Nav], "aria-label": labelNav2(), onPreviousClick: handlePreviousClick, onNextClick: handleNextClick, previousMonth, nextMonth }),
+              import_react35.default.createElement(
+                components.MonthGrid,
+                { role: "grid", "aria-multiselectable": mode === "multiple" || mode === "range", "aria-label": labelGrid2(calendarMonth.date, dateLib.options, dateLib) || void 0, className: classNames[UI.MonthGrid], style: styles?.[UI.MonthGrid] },
+                !props.hideWeekdays && import_react35.default.createElement(
+                  components.Weekdays,
+                  { "data-animated-weekdays": props.animate ? "true" : void 0, className: classNames[UI.Weekdays], style: styles?.[UI.Weekdays] },
+                  showWeekNumber && import_react35.default.createElement(components.WeekNumberHeader, { "aria-label": labelWeekNumberHeader2(dateLib.options), className: classNames[UI.WeekNumberHeader], style: styles?.[UI.WeekNumberHeader], scope: "col" }, formatWeekNumberHeader2()),
+                  weekdays.map((weekday) => import_react35.default.createElement(components.Weekday, { "aria-label": labelWeekday2(weekday, dateLib.options, dateLib), className: classNames[UI.Weekday], key: String(weekday), style: styles?.[UI.Weekday], scope: "col" }, formatWeekdayName2(weekday, dateLib.options, dateLib)))
+                ),
+                import_react35.default.createElement(components.Weeks, { "data-animated-weeks": props.animate ? "true" : void 0, className: classNames[UI.Weeks], style: styles?.[UI.Weeks] }, calendarMonth.weeks.map((week) => {
+                  return import_react35.default.createElement(
+                    components.Week,
+                    { className: classNames[UI.Week], key: week.weekNumber, style: styles?.[UI.Week], week },
+                    showWeekNumber && import_react35.default.createElement(components.WeekNumber, { week, style: styles?.[UI.WeekNumber], "aria-label": labelWeekNumber2(week.weekNumber, {
+                      locale
+                    }), className: classNames[UI.WeekNumber], scope: "row", role: "rowheader" }, formatWeekNumber2(week.weekNumber, dateLib)),
+                    week.days.map((day) => {
+                      const { date } = day;
+                      const modifiers = getModifiers(day);
+                      modifiers[DayFlag.focused] = !modifiers.hidden && Boolean(focused?.isEqualTo(day));
+                      modifiers[SelectionState.selected] = isSelected?.(date) || modifiers.selected;
+                      if (isDateRange(selectedValue)) {
+                        const { from, to } = selectedValue;
+                        modifiers[SelectionState.range_start] = Boolean(from && to && dateLib.isSameDay(date, from));
+                        modifiers[SelectionState.range_end] = Boolean(from && to && dateLib.isSameDay(date, to));
+                        modifiers[SelectionState.range_middle] = rangeIncludesDate(selectedValue, date, true, dateLib);
+                      }
+                      const style2 = getStyleForModifiers(modifiers, styles, props.modifiersStyles);
+                      const className2 = getClassNamesForModifiers(modifiers, classNames, props.modifiersClassNames);
+                      const ariaLabel = !isInteractive && !modifiers.hidden ? labelGridcell2(date, modifiers, dateLib.options, dateLib) : void 0;
+                      return import_react35.default.createElement(components.Day, { key: `${day.isoDate}_${day.displayMonthId}`, day, modifiers, className: className2.join(" "), style: style2, role: "gridcell", "aria-selected": modifiers.selected || void 0, "aria-label": ariaLabel, "data-day": day.isoDate, "data-month": day.outside ? day.dateMonthId : void 0, "data-selected": modifiers.selected || void 0, "data-disabled": modifiers.disabled || void 0, "data-hidden": modifiers.hidden || void 0, "data-outside": day.outside || void 0, "data-focused": modifiers.focused || void 0, "data-today": modifiers.today || void 0 }, !modifiers.hidden && isInteractive ? import_react35.default.createElement(components.DayButton, { className: classNames[UI.DayButton], style: styles?.[UI.DayButton], type: "button", day, modifiers, disabled: !modifiers.focused && modifiers.disabled || void 0, "aria-disabled": modifiers.focused && modifiers.disabled || void 0, tabIndex: isFocusTarget(day) ? 0 : -1, "aria-label": labelDayButton2(date, modifiers, dateLib.options, dateLib), onClick: handleDayClick(day, modifiers), onBlur: handleDayBlur(day, modifiers), onFocus: handleDayFocus(day, modifiers), onKeyDown: handleDayKeyDown(day, modifiers), onMouseEnter: handleDayMouseEnter(day, modifiers), onMouseLeave: handleDayMouseLeave(day, modifiers) }, formatDay2(date, dateLib.options, dateLib)) : !modifiers.hidden && formatDay2(day.date, dateLib.options, dateLib));
+                    })
+                  );
+                }))
+              )
+            );
+          })
+        ),
+        props.footer && import_react35.default.createElement(components.Footer, { className: classNames[UI.Footer], style: styles?.[UI.Footer], role: "status", "aria-live": "polite" }, props.footer)
+      )
+    );
+  }
+
+  // src/components/ui/calendar.tsx
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
+  function Calendar2({
+    className,
+    classNames,
+    showOutsideDays = true,
+    captionLayout = "label",
+    buttonVariant = "ghost",
+    locale,
+    formatters: formatters2,
+    components,
+    ...props
+  }) {
+    const defaultClassNames = getDefaultClassNames();
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      DayPicker,
+      {
+        showOutsideDays,
+        className: cn(
+          "group/calendar bg-background p-2 [--cell-radius:var(--radius-md)] [--cell-size:--spacing(7)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
+          String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
+          String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
+          className
+        ),
+        captionLayout,
+        locale,
+        formatters: {
+          formatMonthDropdown: (date) => date.toLocaleString(locale?.code, { month: "short" }),
+          ...formatters2
+        },
+        classNames: {
+          root: cn("w-fit", defaultClassNames.root),
+          months: cn(
+            "relative flex flex-col gap-4 md:flex-row",
+            defaultClassNames.months
+          ),
+          month: cn("flex w-full flex-col gap-4", defaultClassNames.month),
+          nav: cn(
+            "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
+            defaultClassNames.nav
+          ),
+          button_previous: cn(
+            buttonVariants({ variant: buttonVariant }),
+            "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
+            defaultClassNames.button_previous
+          ),
+          button_next: cn(
+            buttonVariants({ variant: buttonVariant }),
+            "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
+            defaultClassNames.button_next
+          ),
+          month_caption: cn(
+            "flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)",
+            defaultClassNames.month_caption
+          ),
+          dropdowns: cn(
+            "flex h-(--cell-size) w-full items-center justify-center gap-1.5 text-sm font-medium",
+            defaultClassNames.dropdowns
+          ),
+          dropdown_root: cn(
+            "relative rounded-(--cell-radius)",
+            defaultClassNames.dropdown_root
+          ),
+          dropdown: cn(
+            "absolute inset-0 bg-popover opacity-0",
+            defaultClassNames.dropdown
+          ),
+          caption_label: cn(
+            "font-medium select-none",
+            captionLayout === "label" ? "text-sm" : "flex items-center gap-1 rounded-(--cell-radius) text-sm [&>svg]:size-3.5 [&>svg]:text-muted-foreground",
+            defaultClassNames.caption_label
+          ),
+          month_grid: cn("w-full border-collapse", defaultClassNames.month_grid),
+          weekdays: cn("flex", defaultClassNames.weekdays),
+          weekday: cn(
+            "flex-1 rounded-(--cell-radius) text-[0.8rem] font-normal text-muted-foreground select-none",
+            defaultClassNames.weekday
+          ),
+          week: cn("mt-2 flex w-full", defaultClassNames.week),
+          week_number_header: cn(
+            "w-(--cell-size) select-none",
+            defaultClassNames.week_number_header
+          ),
+          week_number: cn(
+            "text-[0.8rem] text-muted-foreground select-none",
+            defaultClassNames.week_number
+          ),
+          day: cn(
+            "group/day relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none [&:last-child[data-selected=true]_button]:rounded-r-(--cell-radius)",
+            props.showWeekNumber ? "[&:nth-child(2)[data-selected=true]_button]:rounded-l-(--cell-radius)" : "[&:first-child[data-selected=true]_button]:rounded-l-(--cell-radius)",
+            defaultClassNames.day
+          ),
+          range_start: cn(
+            "relative isolate z-0 rounded-l-(--cell-radius) bg-muted after:absolute after:inset-y-0 after:right-0 after:w-4 after:bg-muted",
+            defaultClassNames.range_start
+          ),
+          range_middle: cn("rounded-none", defaultClassNames.range_middle),
+          range_end: cn(
+            "relative isolate z-0 rounded-r-(--cell-radius) bg-muted after:absolute after:inset-y-0 after:left-0 after:w-4 after:bg-muted",
+            defaultClassNames.range_end
+          ),
+          today: cn(
+            "rounded-(--cell-radius) bg-muted text-foreground data-[selected=true]:rounded-none",
+            defaultClassNames.today
+          ),
+          outside: cn(
+            "text-muted-foreground aria-selected:text-muted-foreground",
+            defaultClassNames.outside
+          ),
+          disabled: cn(
+            "text-muted-foreground opacity-50",
+            defaultClassNames.disabled
+          ),
+          hidden: cn("invisible", defaultClassNames.hidden),
+          ...classNames
+        },
+        components: {
+          Root: ({ className: className2, rootRef, ...props2 }) => {
+            return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+              "div",
+              {
+                "data-slot": "calendar",
+                ref: rootRef,
+                className: cn(className2),
+                ...props2
+              }
+            );
+          },
+          Chevron: ({ className: className2, orientation, ...props2 }) => {
+            if (orientation === "left") {
+              return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ChevronLeft, { className: cn("size-4", className2), ...props2 });
+            }
+            if (orientation === "right") {
+              return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ChevronRight, { className: cn("size-4", className2), ...props2 });
+            }
+            return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ChevronDown, { className: cn("size-4", className2), ...props2 });
+          },
+          DayButton: ({ ...props2 }) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(CalendarDayButton, { locale, ...props2 }),
+          WeekNumber: ({ children, ...props2 }) => {
+            return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("td", { ...props2, children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "flex size-(--cell-size) items-center justify-center text-center", children }) });
+          },
+          ...components
+        },
+        ...props
+      }
+    );
+  }
+  function CalendarDayButton({
+    className,
+    day,
+    modifiers,
+    locale,
+    ...props
+  }) {
+    const defaultClassNames = getDefaultClassNames();
+    const ref = React63.useRef(null);
+    React63.useEffect(() => {
+      if (modifiers.focused) ref.current?.focus();
+    }, [modifiers.focused]);
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(
+      Button3,
+      {
+        variant: "ghost",
+        size: "icon",
+        "data-day": day.date.toLocaleDateString(locale?.code),
+        "data-selected-single": modifiers.selected && !modifiers.range_start && !modifiers.range_end && !modifiers.range_middle,
+        "data-range-start": modifiers.range_start,
+        "data-range-end": modifiers.range_end,
+        "data-range-middle": modifiers.range_middle,
+        className: cn(
+          "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 border-0 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-[3px] group-data-[focused=true]/day:ring-ring/50 data-[range-end=true]:rounded-(--cell-radius) data-[range-end=true]:rounded-r-(--cell-radius) data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground data-[range-middle=true]:rounded-none data-[range-middle=true]:bg-muted data-[range-middle=true]:text-foreground data-[range-start=true]:rounded-(--cell-radius) data-[range-start=true]:rounded-l-(--cell-radius) data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground dark:hover:text-foreground [&>span]:text-xs [&>span]:opacity-70",
+          defaultClassNames.day,
+          className
+        ),
+        ...props
+      }
+    );
+  }
+
+  // src/lib/api.ts
+  var BASE_URL = "/api";
+  var MAX_RETRIES = 2;
+  var RETRY_DELAY_MS = 1500;
+  async function request(endpoint, options, retryCount = 0) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15e3);
+      const res = await fetch(`${BASE_URL}${endpoint}`, {
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        ...options
+      });
+      clearTimeout(timeout);
+      const json2 = await res.json();
+      if (!res.ok) {
+        return { success: false, error: json2.error ?? `HTTP ${res.status}` };
+      }
+      return json2;
+    } catch (err) {
+      if (retryCount < MAX_RETRIES) {
+        await new Promise((r2) => setTimeout(r2, RETRY_DELAY_MS));
+        return request(endpoint, options, retryCount + 1);
+      }
+      const msg = err instanceof Error ? err.message : "Netzwerkfehler";
+      if (msg.includes("abort") || msg.includes("timeout")) {
+        return { success: false, error: "Der Server antwortet nicht. Bitte laden Sie die Seite neu (F5)." };
+      }
+      if (msg.includes("Failed to fetch") || msg.includes("NetworkError") || msg.includes("net::ERR")) {
+        return {
+          success: false,
+          error: "Verbindung zum Server unterbrochen. Die Anwendung wird in K\xFCrze neu verbinden \u2013 bitte warten."
+        };
+      }
+      return { success: false, error: msg };
+    }
+  }
+  function get(endpoint) {
+    return request(endpoint, { method: "GET" });
+  }
+  function post(endpoint, body) {
+    return request(endpoint, {
+      method: "POST",
+      body: JSON.stringify(body)
+    });
+  }
+  function put(endpoint, body) {
+    return request(endpoint, {
+      method: "PUT",
+      body: JSON.stringify(body)
+    });
+  }
+  function patch(endpoint, body) {
+    return request(endpoint, {
+      method: "PATCH",
+      body: JSON.stringify(body)
+    });
+  }
+  function del(endpoint) {
+    return request(endpoint, { method: "DELETE" });
+  }
+
+  // src/pages/PatientPortal.tsx
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
+  var CATEGORIES = [
+    { value: "CHECKUP", label: "Vorsorge", icon: "\u{1FA7A}" },
+    { value: "CONSULTATION", label: "Beratung", icon: "\u{1F4AC}" },
+    { value: "VACCINATION", label: "Impfung", icon: "\u{1F489}" },
+    { value: "PRESCRIPTION_PICKUP", label: "Rezept-Abholung", icon: "\u{1F48A}" }
+  ];
+  var STATUS_MAP = {
+    SCHEDULED: "Gebucht",
+    PENDING_CONFIRMATION: "Best\xE4tigung ausstehend",
+    CHECKED_IN: "Eingecheckt",
+    IN_PROGRESS: "In Behandlung",
+    COMPLETED: "Abgeschlossen",
+    CANCELLED: "Storniert",
+    NO_SHOW: "Nicht erschienen"
+  };
+  var CATEGORY_LABEL = {
+    CHECKUP: "Vorsorge",
+    CONSULTATION: "Beratung",
+    VACCINATION: "Impfung",
+    PRESCRIPTION_PICKUP: "Rezept-Abholung",
+    ACUTE: "Akut"
+  };
+  function PatientPortal() {
+    const [insuranceNumber, setInsuranceNumber] = (0, import_react36.useState)(localStorage.getItem("patient_insurance") || "");
+    const [dateOfBirth, setDateOfBirth] = (0, import_react36.useState)("");
+    const [patientName, setPatientName] = (0, import_react36.useState)(localStorage.getItem("patient_name") || "");
+    const location = useLocation();
+    const navigate = useNavigate();
+    const activeTab = location.pathname;
+    const [step, setStep] = (0, import_react36.useState)(localStorage.getItem("patient_insurance") ? "category" : "login");
+    const [category, setCategory] = (0, import_react36.useState)("");
+    const [bookingMode, setBookingMode] = (0, import_react36.useState)("single");
+    const [seriesTemplates, setSeriesTemplates] = (0, import_react36.useState)([]);
+    const [selectedSeriesId, setSelectedSeriesId] = (0, import_react36.useState)(null);
+    const [doctors, setDoctors] = (0, import_react36.useState)([]);
+    const [doctorId, setDoctorId] = (0, import_react36.useState)(null);
+    const [date, setDate] = (0, import_react36.useState)(void 0);
+    const [slots, setSlots] = (0, import_react36.useState)([]);
+    const [time, setTime] = (0, import_react36.useState)("");
+    const [questions, setQuestions] = (0, import_react36.useState)([]);
+    const [answers, setAnswers] = (0, import_react36.useState)([]);
+    const [loading, setLoading] = (0, import_react36.useState)(false);
+    const [error, setError] = (0, import_react36.useState)("");
+    const [success, setSuccess] = (0, import_react36.useState)(null);
+    const [myAppointments, setMyAppointments] = (0, import_react36.useState)([]);
+    const [showAppointments, setShowAppointments] = (0, import_react36.useState)(false);
+    (0, import_react36.useEffect)(() => {
+      const storedInsurance = localStorage.getItem("patient_insurance");
+      const storedName = localStorage.getItem("patient_name");
+      if (storedInsurance && storedName) {
+        setInsuranceNumber(storedInsurance);
+        setPatientName(storedName);
+        setStep("category");
+        get("/appointments?insuranceNumber=" + storedInsurance).then((res) => {
+          if (res.success && res.data) setMyAppointments(res.data);
+        });
+      }
+    }, []);
+    (0, import_react36.useEffect)(() => {
+      get("/doctors").then((res) => {
+        if (res.success && res.data) setDoctors(res.data);
+      });
+      get("/vaccination-series").then((res) => {
+        if (res.success && res.data) setSeriesTemplates(res.data);
+      });
+    }, []);
+    (0, import_react36.useEffect)(() => {
+      if (!category) return;
+      get("/questions?category=" + category).then((res) => {
+        if (res.success && res.data) {
+          setQuestions(res.data);
+          setAnswers(res.data.map((q) => ({
+            questionId: q.id,
+            questionText: q.question_text,
+            answer: ""
+          })));
+        } else {
+          setQuestions([]);
+          setAnswers([]);
+        }
+      });
+    }, [category]);
+    const loadAppointments = (0, import_react36.useCallback)(async () => {
+      if (!insuranceNumber) return;
+      const res = await get("/appointments?insuranceNumber=" + insuranceNumber);
+      if (res.success && res.data) {
+        setMyAppointments(res.data);
+      }
+    }, [insuranceNumber]);
+    const handleLogin = async (e) => {
+      e.preventDefault();
+      setError("");
+      setLoading(true);
+      const res = await post("/patients/lookup", {
+        insuranceNumber,
+        dateOfBirth: dateOfBirth || void 0
+      });
+      setLoading(false);
+      if (res.success && res.data) {
+        setPatientName(res.data.first_name + " " + res.data.last_name);
+        localStorage.setItem("patient_insurance", insuranceNumber);
+        localStorage.setItem("patient_name", res.data.first_name + " " + res.data.last_name);
+        setStep("category");
+        loadAppointments();
+      } else {
+        setError(res.error || "Patient nicht gefunden");
+      }
+    };
+    const handleCategory = (val) => {
+      setCategory(val);
+      setBookingMode("single");
+      setSelectedSeriesId(null);
+      setDoctorId(null);
+      setDate(void 0);
+      setSlots([]);
+      setTime("");
+      if (val === "VACCINATION") {
+        setStep("seriesChoice");
+      } else {
+        setStep("doctor");
+      }
+    };
+    const handleSeriesChoice = (mode) => {
+      setBookingMode(mode);
+      if (mode === "series") {
+        setStep("seriesTemplate");
+      } else {
+        setStep("doctor");
+      }
+    };
+    const handleSeriesTemplate = (id) => {
+      setSelectedSeriesId(id);
+      setStep("doctor");
+    };
+    const handleDoctor = (id) => {
+      setDoctorId(id);
+      setDate(void 0);
+      setSlots([]);
+      setTime("");
+      setStep("datetime");
+    };
+    const handleDateSelect = (0, import_react36.useCallback)(async (d) => {
+      setDate(d);
+      setTime("");
+      if (!d || !doctorId || !category) return;
+      setLoading(true);
+      const dateStr = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+      const res = await get("/slots?doctorId=" + doctorId + "&date=" + dateStr + "&category=" + category);
+      setLoading(false);
+      if (res.success && res.data) {
+        setSlots(res.data.slots);
+      } else {
+        setSlots([]);
+      }
+    }, [doctorId, category]);
+    const handleTimeSelect = (t) => {
+      setTime(t);
+      setStep("questions");
+    };
+    const handleAnswerChange = (questionId, value) => {
+      setAnswers(
+        (prev) => prev.map((a) => a.questionId === questionId ? { ...a, answer: value } : a)
+      );
+    };
+    const handleSubmit = async () => {
+      if (!date || !doctorId || !category || !time) return;
+      const missing2 = questions.filter((q) => q.required && !answers.find((a) => a.questionId === q.id)?.answer);
+      if (missing2.length > 0) {
+        setError("Bitte f\xFCellen Sie alle Pflichtfelder aus.");
+        return;
+      }
+      setError("");
+      setLoading(true);
+      const dateStr = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+      const filteredAnswers = answers.filter((a) => a.answer !== "");
+      if (bookingMode === "series" && selectedSeriesId) {
+        const res = await post("/appointments/series", {
+          insuranceNumber,
+          doctorId,
+          startDate: dateStr,
+          startTime: time,
+          seriesId: selectedSeriesId,
+          answers: filteredAnswers
+        });
+        setLoading(false);
+        if (res.success && res.data) {
+          const template = seriesTemplates.find((t) => t.id === selectedSeriesId);
+          setSuccess({ type: "series", data: { ...res.data, templateName: template?.name || "Impfserie" } });
+          setStep("confirm");
+          loadAppointments();
+        } else {
+          setError(res.error || "Buchung fehlgeschlagen");
+        }
+      } else {
+        const res = await post("/appointments", {
+          insuranceNumber,
+          doctorId,
+          date: dateStr,
+          time,
+          category,
+          answers: filteredAnswers
+        });
+        setLoading(false);
+        if (res.success && res.data) {
+          const doc = doctors.find((d) => d.id === doctorId);
+          setSuccess({
+            type: "single",
+            data: {
+              date: dateStr,
+              time,
+              category: CATEGORIES.find((c) => c.value === category)?.label || category,
+              doctorName: doc ? doc.first_name + " " + doc.last_name : ""
+            }
+          });
+          setStep("confirm");
+          loadAppointments();
+        } else {
+          setError(res.error || "Buchung fehlgeschlagen");
+        }
+      }
+    };
+    const handleConfirmDose = async (appointmentId) => {
+      setLoading(true);
+      const res = await patch("/appointments/" + appointmentId + "/confirm-series", {});
+      setLoading(false);
+      if (res.success) {
+        loadAppointments();
+      } else {
+        setError(res.error || "Best\xE4tigung fehlgeschlagen");
+      }
+    };
+    const handleNewBooking = () => {
+      setStep("category");
+      setCategory("");
+      setBookingMode("single");
+      setSelectedSeriesId(null);
+      setDoctorId(null);
+      setDate(void 0);
+      setSlots([]);
+      setTime("");
+      setQuestions([]);
+      setAnswers([]);
+      setError("");
+      setSuccess(null);
+    };
+    const handleBackToMenu = () => {
+      setShowAppointments(false);
+      setStep("overview");
+      navigate("/patient");
+    };
+    const today = /* @__PURE__ */ new Date();
+    today.setHours(0, 0, 0, 0);
+    if (success && step === "confirm") {
+      if (success.type === "series") {
+        const s2 = success.data;
+        return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-6", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h1", { className: "text-2xl font-semibold", children: "Mein Bereich" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { className: "max-w-lg", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { className: "flex items-center gap-2 text-green-600", children: "\u2705 Impfserie gebucht" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardDescription, { children: [
+                s2.templateName,
+                " \u2013 ",
+                s2.appointments.length,
+                " Dosen"
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardContent, { className: "space-y-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "rounded-lg bg-muted p-4 space-y-2", children: s2.appointments.map((apt, _i) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex justify-between text-sm", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "text-muted-foreground", children: [
+                  "Dosis ",
+                  apt.series_dose_number
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "font-medium", children: [
+                  apt.date,
+                  " um ",
+                  apt.time,
+                  " Uhr",
+                  apt.status === "SCHEDULED" && "\u2705",
+                  apt.status === "PENDING_CONFIRMATION" && "\u2705"
+                ] })
+              ] }, apt.id)) }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "text-xs text-muted-foreground", children: "\u{1F4A1} Folgetermine m\xFCssen Sie sp\xE4ter einzeln best\xE4tigen." }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { variant: "outline", className: "flex-1", onClick: handleBackToMenu, children: "\xDCbersicht" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { className: "flex-1", onClick: handleNewBooking, children: "Weiteren Termin buchen" })
+              ] })
+            ] })
+          ] })
+        ] });
+      }
+      const s = success.data;
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h1", { className: "text-2xl font-semibold", children: "Mein Bereich" }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { className: "max-w-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { className: "flex items-center gap-2 text-green-600", children: "\u2705 Termin best\xE4tigt" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "Ihre Buchung wurde erfolgreich gespeichert." })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardContent, { className: "space-y-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "rounded-lg bg-muted p-4 space-y-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-muted-foreground", children: "Terminart" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "font-medium", children: s.category })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-muted-foreground", children: "Arzt" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "font-medium", children: s.doctorName })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-muted-foreground", children: "Datum" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "font-medium", children: s.date })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-muted-foreground", children: "Uhrzeit" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "font-medium", children: [
+                  s.time,
+                  " Uhr"
+                ] })
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { variant: "outline", className: "flex-1", onClick: handleBackToMenu, children: "\xDCbersicht" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { className: "flex-1", onClick: handleNewBooking, children: "Weiteren Termin buchen" })
+            ] })
+          ] })
+        ] })
+      ] });
+    }
+    if (showAppointments) {
+      const seriesGroups = {};
+      const normalAppointments = myAppointments.filter((a) => !a.series_group_id);
+      for (const a of myAppointments) {
+        if (a.series_group_id) {
+          if (!seriesGroups[a.series_group_id]) seriesGroups[a.series_group_id] = [];
+          seriesGroups[a.series_group_id].push(a);
+        }
+      }
+      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h1", { className: "text-2xl font-semibold", children: "Meine Termine" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { variant: "outline", className: "text-sm", children: patientName })
+        ] }),
+        error && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: error }),
+        myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+              "\u23F3 Best\xE4tigung ausstehend",
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { variant: "secondary", className: "ml-auto", children: myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").length })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "Folgetermine einer Impfserie, die Sie best\xE4tigen m\xFCssen" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardContent, { className: "space-y-3", children: myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").map((apt) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "font-medium text-sm", children: [
+                "Dosis ",
+                apt.series_dose_number,
+                " \u2013 ",
+                apt.date,
+                " um ",
+                apt.time,
+                " Uhr"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-xs text-muted-foreground", children: [
+                "Dr. ",
+                apt.doctor_last_name
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { size: "sm", onClick: () => handleConfirmDose(apt.id), disabled: loading, children: loading ? "..." : "Best\xE4tigen" })
+          ] }, apt.id)) })
+        ] }),
+        Object.entries(seriesGroups).map(([groupId, aps]) => {
+          const seriesName = seriesTemplates.find((t) => t.id === aps[0]?.series_id)?.name || "Impfserie";
+          const sorted = [...aps].sort((a, b) => (a.series_dose_number || 0) - (b.series_dose_number || 0));
+          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+                "\u{1F489} ",
+                seriesName
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardDescription, { children: [
+                sorted.length,
+                " Dosen"
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardContent, { className: "space-y-2", children: sorted.map((apt) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-2 text-sm", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-3", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "font-medium", children: [
+                  "Dosis ",
+                  apt.series_dose_number
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "text-muted-foreground", children: [
+                  apt.date,
+                  " um ",
+                  apt.time,
+                  " Uhr"
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { className: apt.status === "SCHEDULED" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700", children: STATUS_MAP[apt.status] || apt.status })
+            ] }, apt.id)) })
+          ] }, groupId);
+        }),
+        normalAppointments.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { className: "text-base", children: "Weitere Termine" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardContent, { className: "space-y-2", children: normalAppointments.map((apt) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-2 text-sm", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: CATEGORY_LABEL[apt.category] || apt.category }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "text-muted-foreground", children: [
+                apt.date,
+                " um ",
+                apt.time,
+                " Uhr"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "text-xs text-muted-foreground", children: [
+                "Dr. ",
+                apt.doctor_last_name
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "flex items-center gap-2", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { variant: "outline", children: STATUS_MAP[apt.status] || apt.status }) })
+          ] }, apt.id)) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { variant: "outline", onClick: handleBackToMenu, children: "Zur\xFCck zur \xDCbersicht" })
+      ] });
+    }
+    const stepIndex = ["login", "category", "seriesChoice", "seriesTemplate", "doctor", "datetime", "questions", "confirm", "overview"];
+    const currentIdx = stepIndex.indexOf(step);
+    const showSteps = step !== "login" && step !== "overview" && step !== "confirm";
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h1", { className: "text-2xl font-semibold", children: "Patientenportal" }),
+        patientName && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex rounded-lg border bg-muted p-0.5", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+              "button",
+              {
+                onClick: () => {
+                  setStep("overview");
+                  setShowAppointments(false);
+                  navigate("/patient");
+                },
+                className: `px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeTab === "/patient" || activeTab === "/patient/" ? "bg-white text-primary shadow-sm" : "hover:text-foreground"}`,
+                children: "\xDCbersicht"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+              "button",
+              {
+                onClick: () => {
+                  setStep("category");
+                  setShowAppointments(false);
+                  navigate("/patient/book");
+                },
+                className: `px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${step !== "login" && step !== "overview" && !showAppointments ? "bg-white text-primary shadow-sm" : "hover:text-foreground"}`,
+                children: "Buchen"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+              "button",
+              {
+                onClick: async () => {
+                  await loadAppointments();
+                  setShowAppointments(true);
+                  navigate("/patient/appointments");
+                },
+                className: `px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${showAppointments ? "bg-white text-primary shadow-sm" : "hover:text-foreground"}`,
+                children: "Termine"
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+              "button",
+              {
+                onClick: () => navigate("/patient/prescriptions"),
+                className: `px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeTab === "/patient/prescriptions" ? "bg-white text-primary shadow-sm" : "hover:text-foreground"}`,
+                children: "Rezepte"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { variant: "outline", className: "text-sm", children: patientName })
+        ] })
+      ] }),
+      showSteps && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: ["Terminart", "Arzt", "Datum", "Fragebogen"].map((label, i) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "flex items-center gap-1", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "inline-flex size-6 items-center justify-center rounded-full text-xs font-medium " + (i + 1 < currentIdx ? "bg-primary text-primary-foreground" : i + 1 === currentIdx ? "bg-primary/20 text-primary font-bold" : "bg-muted text-muted-foreground"), children: i + 1 }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: i + 1 === currentIdx ? "font-medium text-foreground" : "", children: label }),
+        i < 3 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "mx-1", children: "\u203A" })
+      ] }, label)) }),
+      error && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: error }),
+      step === "login" && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { className: "max-w-md", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { children: "Patienten-Login" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "Geben Sie Ihre Versichertennummer ein, um einen Termin zu buchen." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("form", { onSubmit: handleLogin, className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Label, { htmlFor: "insurance", children: "Versichertennummer" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Input3, { id: "insurance", value: insuranceNumber, onChange: (e) => setInsuranceNumber(e.target.value), placeholder: "z. B. A123456789", required: true })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Label, { htmlFor: "dob", children: "Geburtsdatum (optional)" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Input3, { id: "dob", type: "date", value: dateOfBirth, onChange: (e) => setDateOfBirth(e.target.value) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { type: "submit", className: "w-full", disabled: loading, children: loading ? "Wird geladen..." : "Weiter" })
+        ] }) })
+      ] }),
+      step === "category" && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "grid gap-4 md:grid-cols-2", children: CATEGORIES.map((cat) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => handleCategory(cat.value), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "flex items-center gap-2 text-lg", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: cat.icon }),
+        cat.label
+      ] }) }) }, cat.value)) }),
+      step === "seriesChoice" && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "grid gap-4 md:grid-cols-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => handleSeriesChoice("single"), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { className: "text-lg", children: "\u{1F489} Einzeltermin" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "Nur eine Impfung buchen" })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => handleSeriesChoice("series"), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { className: "text-lg", children: "\u{1F4C5} Impfserie" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "Mehrere Dosen im Voraus planen (FSME, Hepatitis B, \u2026)" })
+        ] }) })
+      ] }),
+      step === "seriesTemplate" && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "grid gap-4 md:grid-cols-2", children: seriesTemplates.filter((t) => t.doses > 1).map((tpl) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => handleSeriesTemplate(tpl.id), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { className: "text-base", children: tpl.name }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardDescription, { children: [
+          tpl.doses,
+          " Dosen \u2013 ",
+          tpl.description?.split("\u2013")[1] || tpl.description
+        ] })
+      ] }) }, tpl.id)) }),
+      step === "doctor" && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "grid gap-4 md:grid-cols-3", children: doctors.filter(function(d) {
+        return category !== "VACCINATION" || d.id === 1;
+      }).map((doc) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:shadow-md " + (doctorId === doc.id ? "ring-2 ring-primary" : "hover:border-primary"), onClick: () => handleDoctor(doc.id), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "inline-block size-3 rounded-full", style: { backgroundColor: doc.color || "#888" } }),
+          "Dr. ",
+          doc.last_name
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardDescription, { children: [
+          doc.first_name,
+          " ",
+          doc.last_name
+        ] })
+      ] }) }, doc.id)) }),
+      step === "datetime" && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "grid gap-6 md:grid-cols-[auto_1fr]", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Label, { className: "mb-2 block", children: "Datum ausw\xE4hlen" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Calendar2, { mode: "single", selected: date, onSelect: handleDateSelect, disabled: (d) => d < today })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Label, { className: "mb-2 block", children: [
+            "Verf\xFCgbare Zeiten",
+            loading && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "ml-2 text-xs text-muted-foreground", children: "(lade...)" })
+          ] }),
+          !date && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "text-sm text-muted-foreground", children: "Bitte w\xE4hlen Sie zuerst ein Datum." }),
+          date && slots.length === 0 && !loading && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "text-sm text-muted-foreground", children: "Keine freien Slots an diesem Tag." }),
+          date && slots.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "flex flex-wrap gap-2", children: slots.map((t) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { variant: time === t ? "default" : "outline", size: "sm", onClick: () => handleTimeSelect(t), children: t }, t)) })
+        ] })
+      ] }),
+      step === "questions" && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { className: "max-w-lg", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { children: "Fragebogen" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "Bitte beantworten Sie die folgenden Fragen f\xFCr Ihren Termin." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardContent, { className: "space-y-4", children: [
+          questions.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "text-sm text-muted-foreground", children: "F\xFCr diese Terminart sind keine Fragen hinterlegt." }),
+          questions.map((q) => {
+            const answer = answers.find((a) => a.questionId === q.id);
+            return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Label, { children: [
+                q.question_text,
+                q.required ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-destructive ml-1", children: "*" }) : null
+              ] }),
+              q.answer_type === "boolean" ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { type: "button", size: "sm", variant: answer?.answer === "true" ? "default" : "outline", onClick: () => handleAnswerChange(q.id, "true"), children: "Ja" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { type: "button", size: "sm", variant: answer?.answer === "false" ? "default" : "outline", onClick: () => handleAnswerChange(q.id, "false"), children: "Nein" })
+              ] }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Input3, { value: answer?.answer || "", onChange: (e) => handleAnswerChange(q.id, e.target.value), placeholder: "Ihre Antwort..." })
+            ] }, q.id);
+          }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-3 pt-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { variant: "outline", onClick: () => setStep("datetime"), children: "Zur\xFCck" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { className: "flex-1", onClick: handleSubmit, disabled: loading, children: loading ? "Wird gebucht..." : "Termin verbindlich buchen" })
+          ] })
+        ] })
+      ] })
+    ] });
+  }
+
+  // src/pages/PatientOverview.tsx
+  var import_react37 = __toESM(require_react(), 1);
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+  var STATUS_MAP2 = {
+    SCHEDULED: "Gebucht",
+    PENDING_CONFIRMATION: "Best\xE4tigung ausstehend",
+    CHECKED_IN: "Eingecheckt",
+    IN_PROGRESS: "In Behandlung",
+    COMPLETED: "Abgeschlossen",
+    CANCELLED: "Storniert",
+    NO_SHOW: "Nicht erschienen"
+  };
+  var CATEGORY_LABEL2 = {
+    CHECKUP: "Vorsorge",
+    CONSULTATION: "Beratung",
+    VACCINATION: "Impfung",
+    PRESCRIPTION_PICKUP: "Rezept-Abholung",
+    ACUTE: "Akut"
+  };
+  function PatientOverview() {
+    const navigate = useNavigate();
+    const patientName = localStorage.getItem("patient_name") || "Patient";
+    const insuranceNumber = localStorage.getItem("patient_insurance") || "";
+    const [appointments, setAppointments] = (0, import_react37.useState)([]);
+    const [prescriptions, setPrescriptions] = (0, import_react37.useState)([]);
+    (0, import_react37.useEffect)(() => {
+      if (!insuranceNumber) return;
+      get("/appointments?insuranceNumber=" + insuranceNumber).then((r2) => {
+        if (r2.success && r2.data) setAppointments(r2.data);
+      });
+      get("/prescriptions?insuranceNumber=" + insuranceNumber).then((r2) => {
+        if (r2.success && r2.data) setPrescriptions(r2.data);
+      });
+    }, [insuranceNumber]);
+    const nextAppointment = appointments.filter((a) => a.status !== "CANCELLED" && a.status !== "NO_SHOW").sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))[0];
+    const pendingConfirmations = appointments.filter((a) => a.status === "PENDING_CONFIRMATION");
+    const pendingPrescriptions = prescriptions.filter((a) => a.status === "PENDING" || a.status === "APPROVED");
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("h1", { className: "text-2xl font-semibold", children: [
+          "Willkommen, ",
+          patientName
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("p", { className: "text-muted-foreground", children: [
+          "Versichertennummer: ",
+          insuranceNumber
+        ] })
+      ] }),
+      nextAppointment && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardTitle, { className: "text-lg flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Calendar, { className: "h-5 w-5 text-primary" }),
+          "N\xE4chster Termin"
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardContent, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("p", { className: "text-sm", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { children: nextAppointment.date }),
+            " um ",
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { children: nextAppointment.time })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("p", { className: "text-sm text-muted-foreground", children: [
+            CATEGORY_LABEL2[nextAppointment.category] || nextAppointment.category,
+            " bei Dr. ",
+            nextAppointment.doctor_last_name,
+            " \xE2\u20AC\u201D ",
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "font-medium", children: STATUS_MAP2[nextAppointment.status] || nextAppointment.status })
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "grid gap-4 md:grid-cols-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/patient/book"), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Calendar, { className: "h-4 w-4" }),
+            "Termin buchen"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(CardDescription, { children: "Neuen Termin vereinbaren" })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Card, { className: "cursor-pointer transition-all hover:shadow-md " + (pendingConfirmations.length > 0 ? "hover:border-amber-500 border-amber-200" : "hover:border-primary"), onClick: () => navigate("/patient/appointments"), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ClipboardList, { className: "h-4 w-4" }),
+            "Meine Termine"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardDescription, { children: [
+            appointments.length,
+            " Termine",
+            pendingConfirmations.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "ml-2 text-amber-600 font-semibold", children: [
+              "(",
+              pendingConfirmations.length,
+              " ausstehend)"
+            ] })
+          ] })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Card, { className: "cursor-pointer transition-all hover:shadow-md " + (pendingPrescriptions.length > 0 ? "hover:border-amber-500 border-amber-200" : "hover:border-primary"), onClick: () => navigate("/patient/prescriptions"), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Pill, { className: "h-4 w-4" }),
+            "Rezepte"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardDescription, { children: [
+            prescriptions.length,
+            " Rezepte",
+            pendingPrescriptions.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "ml-2 text-amber-600 font-semibold", children: [
+              "(",
+              pendingPrescriptions.length,
+              " offen)"
+            ] })
+          ] })
+        ] }) })
+      ] })
+    ] });
+  }
+
+  // src/pages/PatientAppointments.tsx
+  var import_react38 = __toESM(require_react(), 1);
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
+  var STATUS_MAP3 = {
+    SCHEDULED: "Gebucht",
+    PENDING_CONFIRMATION: "Best\xE4tigung ausstehend",
+    CHECKED_IN: "Eingecheckt",
+    IN_PROGRESS: "In Behandlung",
+    COMPLETED: "Abgeschlossen",
+    CANCELLED: "Storniert",
+    NO_SHOW: "Nicht erschienen"
+  };
+  var CATEGORY_LABEL3 = {
+    CHECKUP: "Vorsorge",
+    CONSULTATION: "Beratung",
+    VACCINATION: "Impfung",
+    PRESCRIPTION_PICKUP: "Rezept-Abholung",
+    ACUTE: "Akut"
+  };
+  var STATUS_BADGE = {
+    SCHEDULED: "default",
+    PENDING_CONFIRMATION: "secondary",
+    CHECKED_IN: "default",
+    IN_PROGRESS: "default",
+    COMPLETED: "outline",
+    CANCELLED: "destructive",
+    NO_SHOW: "destructive"
+  };
+  function PatientAppointments() {
+    const insuranceNumber = localStorage.getItem("patient_insurance") || "";
+    const [appointments, setAppointments] = (0, import_react38.useState)([]);
+    const [filter, setFilter] = (0, import_react38.useState)("ALL");
+    const [loading, setLoading] = (0, import_react38.useState)(true);
+    const loadAppointments = () => {
+      setLoading(true);
+      get("/appointments?insuranceNumber=" + insuranceNumber).then((r2) => {
+        if (r2.success && r2.data) setAppointments(r2.data);
+        setLoading(false);
+      });
+    };
+    (0, import_react38.useEffect)(() => {
+      loadAppointments();
+    }, [insuranceNumber]);
+    const handleConfirmSeries = async (appointmentId) => {
+      const r2 = await patch("/appointments/" + appointmentId + "/confirm-series", {});
+      if (r2.success) loadAppointments();
+    };
+    const filtered = filter === "ALL" ? appointments : appointments.filter((a) => a.status === filter);
+    const counts = {};
+    for (const a of appointments) {
+      counts[a.status] = (counts[a.status] || 0) + 1;
+    }
+    counts["ALL"] = appointments.length;
+    if (loading) {
+      return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "flex items-center justify-center py-12", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "text-muted-foreground", children: "Lade Termine..." }) });
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center justify-between flex-wrap gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h1", { className: "text-2xl font-semibold", children: "Meine Termine" }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "flex gap-1 flex-wrap", children: ["ALL", ...Object.keys(STATUS_MAP3)].map((s) => {
+          if (!counts[s] && s !== "ALL") return null;
+          return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(
+            Button3,
+            {
+              size: "sm",
+              variant: filter === s ? "default" : "outline",
+              onClick: () => setFilter(s),
+              className: "text-xs",
+              children: [
+                s === "ALL" ? "Alle" : STATUS_MAP3[s],
+                /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "ml-1.5 opacity-70", children: [
+                  "(",
+                  counts[s] || 0,
+                  ")"
+                ] })
+              ]
+            },
+            s
+          );
+        }) })
+      ] }),
+      appointments.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(CardContent, { className: "py-8 text-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "text-muted-foreground", children: "Sie haben noch keine Termine." }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { className: "mt-4", onClick: () => window.location.href = "/patient/book", children: "Termin buchen" })
+      ] }) }),
+      filtered.length === 0 && appointments.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "text-muted-foreground", children: "Keine Termine mit diesem Status." }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "space-y-3", children: filtered.map((a) => /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(CardContent, { className: "py-4 flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "font-medium", children: [
+            a.date,
+            " um ",
+            a.time
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "text-sm text-muted-foreground", children: [
+            CATEGORY_LABEL3[a.category] || a.category,
+            " bei Dr. ",
+            a.doctor_last_name,
+            a.series_dose_number && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "ml-2", children: [
+              "(Dosis ",
+              a.series_dose_number,
+              ")"
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center gap-2", children: [
+          a.status === "PENDING_CONFIRMATION" && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { size: "sm", onClick: () => handleConfirmSeries(a.id), children: "Best\xE4tigen" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { variant: STATUS_BADGE[a.status] || "outline", children: STATUS_MAP3[a.status] || a.status })
+        ] })
+      ] }) }, a.id)) })
+    ] });
+  }
+
+  // src/pages/PatientPrescriptions.tsx
+  var import_react39 = __toESM(require_react(), 1);
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
+  var STATUS_MAP4 = {
+    PENDING: "Ausstehend",
+    APPROVED: "Freigegeben",
+    REJECTED: "Abgelehnt",
+    DISPENSED: "Ausgegeben"
+  };
+  var STATUS_BADGE2 = {
+    PENDING: "secondary",
+    APPROVED: "default",
+    REJECTED: "destructive",
+    DISPENSED: "outline"
+  };
+  function PatientPrescriptions() {
+    const insuranceNumber = localStorage.getItem("patient_insurance") || "";
+    const [prescriptions, setPrescriptions] = (0, import_react39.useState)([]);
+    const [loading, setLoading] = (0, import_react39.useState)(true);
+    (0, import_react39.useEffect)(() => {
+      if (!insuranceNumber) return;
+      setLoading(true);
+      get("/prescriptions?insuranceNumber=" + insuranceNumber).then((r2) => {
+        if (r2.success && r2.data) setPrescriptions(r2.data);
+        setLoading(false);
+      });
+    }, [insuranceNumber]);
+    if (loading) {
+      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "flex items-center justify-center py-12", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "text-muted-foreground", children: "Lade Rezepte..." }) });
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h1", { className: "text-2xl font-semibold", children: "Meine Rezepte" }),
+      prescriptions.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "text-muted-foreground", children: "Sie haben noch keine Rezepte." }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "space-y-3", children: prescriptions.map((p) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(CardContent, { className: "py-4 flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "font-medium", children: p.medication_name }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { className: "text-sm text-muted-foreground", children: [
+            p.dosage && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+              "Dosierung: ",
+              p.dosage,
+              " \xB7 "
+            ] }),
+            "Dr. ",
+            p.doctor_last_name,
+            " \xE2\u20AC\u201D ",
+            p.request_date
+          ] }),
+          p.notes && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "text-xs text-muted-foreground mt-1", children: p.notes })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { variant: STATUS_BADGE2[p.status] || "outline", children: STATUS_MAP4[p.status] || p.status })
+      ] }) }, p.id)) })
+    ] });
+  }
+
+  // src/pages/PatientSettings.tsx
+  var import_react40 = __toESM(require_react(), 1);
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
+  function PatientSettings() {
+    const [insuranceNumber, setInsuranceNumber] = (0, import_react40.useState)("");
+    const [dateOfBirth, setDateOfBirth] = (0, import_react40.useState)("");
+    const [patientId, setPatientId] = (0, import_react40.useState)(null);
+    const [patientName, setPatientName] = (0, import_react40.useState)("");
+    const [email, setEmail] = (0, import_react40.useState)("");
+    const [emailOptIn, setEmailOptIn] = (0, import_react40.useState)(false);
+    const [phone, setPhone] = (0, import_react40.useState)("");
+    const [loggedIn, setLoggedIn] = (0, import_react40.useState)(false);
+    const [loading, setLoading] = (0, import_react40.useState)(false);
+    const [saving, setSaving] = (0, import_react40.useState)(false);
+    const [error, setError] = (0, import_react40.useState)("");
+    const [successMsg, setSuccessMsg] = (0, import_react40.useState)("");
+    const loadSettings = async (id) => {
+      const res = await get("/patients/" + id + "/reminder-settings");
+      if (res.success && res.data) {
+        setEmail(res.data.email || "");
+        setEmailOptIn(res.data.email_opt_in === 1);
+        setPhone(res.data.phone || "");
+      }
+    };
+    const handleLogin = async (e) => {
+      e.preventDefault();
+      setError("");
+      const storedInsurance = localStorage.getItem("patient_insurance");
+      const storedName = localStorage.getItem("patient_name");
+      if (storedInsurance && storedName) {
+        setInsuranceNumber(storedInsurance);
+        setPatientName(storedName);
+        setLoggedIn(true);
+        const res2 = await fetch("/api/patients/lookup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ insuranceNumber: storedInsurance })
+        }).then((r2) => r2.json());
+        if (res2.success && res2.data) {
+          loadSettings(res2.data.id);
+        }
+        return;
+      }
+      setLoading(true);
+      const res = await fetch("/api/patients/lookup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ insuranceNumber, dateOfBirth: dateOfBirth || void 0 })
+      }).then((r2) => r2.json());
+      setLoading(false);
+      if (res.success && res.data) {
+        setPatientId(res.data.id);
+        setPatientName(res.data.first_name + " " + res.data.last_name);
+        setLoggedIn(true);
+        loadSettings(res.data.id);
+      } else {
+        setError(res.error || "Patient nicht gefunden");
+      }
+    };
+    const handleSave = async () => {
+      if (!patientId) return;
+      setError("");
+      setSuccessMsg("");
+      setSaving(true);
+      const res = await patch("/patients/" + patientId + "/reminder-settings", { email, emailOptIn });
+      setSaving(false);
+      if (res.success) {
+        setSuccessMsg("Einstellungen gespeichert");
+        setTimeout(() => setSuccessMsg(""), 3e3);
+      } else {
+        setError(res.error || "Fehler beim Speichern");
+      }
+    };
+    if (!loggedIn) {
+      return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h1", { className: "text-2xl font-semibold", children: "Einstellungen" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(Card, { className: "max-w-md", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(CardHeader, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CardTitle, { children: "Patienten-Login" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CardDescription, { children: "Geben Sie Ihre Versichertennummer ein, um Ihre Einstellungen zu verwalten." })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("form", { onSubmit: handleLogin, className: "space-y-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Label, { htmlFor: "insurance", children: "Versichertennummer" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Input3, { id: "insurance", value: insuranceNumber, onChange: (e) => setInsuranceNumber(e.target.value), placeholder: "z. B. A123456789", required: true })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Label, { htmlFor: "dob", children: "Geburtsdatum (optional)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Input3, { id: "dob", type: "date", value: dateOfBirth, onChange: (e) => setDateOfBirth(e.target.value) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button3, { type: "submit", className: "w-full", disabled: loading, children: loading ? "Wird geladen..." : "Weiter" })
+          ] }) })
+        ] })
+      ] });
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h1", { className: "text-2xl font-semibold", children: "Einstellungen" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Badge, { variant: "outline", className: "text-sm", children: patientName })
+      ] }),
+      error && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: error }),
+      successMsg && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "rounded-lg border border-green-500/50 bg-green-50 p-3 text-sm text-green-700", children: successMsg }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(Card, { className: "max-w-lg", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CardTitle, { className: "text-base", children: "Benachrichtigungen & Kontakt" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CardDescription, { children: "Verwalten Sie Ihre Kontaktdaten und entscheiden Sie, ob Sie Erinnerungen erhalten moechten." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(CardContent, { className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Label, { htmlFor: "email", children: "E-Mail-Adresse" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Input3, { id: "email", type: "email", value: email, onChange: (e) => setEmail(e.target.value), placeholder: "max@example.com" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Label, { htmlFor: "phone", children: "Telefonnummer" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Input3, { id: "phone", type: "tel", value: phone, disabled: true }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "text-xs text-muted-foreground", children: "Die Telefonnummer kann nur in der Praxis geaendert werden." })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-center gap-3 rounded-lg border p-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "text-sm font-medium", children: "E-Mail-Erinnerungen" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "text-xs text-muted-foreground", children: "Sie erhalten 24 Stunden vor Ihrem Termin eine Erinnerung per E-Mail." })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button3, { size: "sm", variant: emailOptIn ? "default" : "outline", onClick: () => setEmailOptIn(!emailOptIn), disabled: !email, children: emailOptIn ? "Aktiviert" : "Deaktiviert" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Button3, { onClick: handleSave, disabled: saving, className: "w-full", children: saving ? "Wird gespeichert..." : "Einstellungen speichern" })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(Card, { className: "max-w-lg", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CardTitle, { className: "text-base", children: "Informationen zu Erinnerungen" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CardDescription, { children: "Wie wir Sie benachrichtigen" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(CardContent, { className: "space-y-2 text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-start gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "mt-0.5 text-lg", children: "\u{1F4E7}" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "font-medium", children: "24h-Erinnerung" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "text-xs text-muted-foreground", children: "Am Vortag Ihres Termins erhalten Sie eine E-Mail mit Datum, Uhrzeit und Arzt." })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-start gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "mt-0.5 text-lg", children: "\u{1F512}" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "font-medium", children: "Keine Speicherung" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "text-xs text-muted-foreground", children: "Ihre Daten werden nur zur Terminverwaltung genutzt und nicht an Dritte weitergegeben." })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "flex items-start gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "mt-0.5 text-lg", children: "\u{1F4E7}" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "font-medium", children: "DSGVO-konform" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "text-xs text-muted-foreground", children: "Sie koennen Ihre Einwilligung jederzeit widerrufen." })
+            ] })
+          ] })
+        ] })
+      ] })
+    ] });
+  }
+
+  // src/pages/MFADashboard.tsx
+  var import_react41 = __toESM(require_react(), 1);
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
+  function categoryBadgeClass(cat) {
+    const map = {
+      CHECKUP: "bg-blue-100 text-blue-800",
+      CONSULTATION: "bg-purple-100 text-purple-800",
+      VACCINATION: "bg-green-100 text-green-800",
+      PRESCRIPTION_PICKUP: "bg-amber-100 text-amber-800",
+      ACUTE: "bg-red-100 text-red-800",
+      BLOOD_DRAW: "bg-slate-100 text-slate-800",
+      INITIAL: "bg-orange-100 text-orange-800"
+    };
+    return map[cat] || "bg-gray-100 text-gray-800";
+  }
+  function categoryLabel(cat) {
+    const map = {
+      CHECKUP: "Vorsorge",
+      CONSULTATION: "Beratung",
+      VACCINATION: "Impfung",
+      PRESCRIPTION_PICKUP: "Rezept-Abholung",
+      ACUTE: "Akut",
+      BLOOD_DRAW: "Blutabnahme",
+      INITIAL: "Erstgespr\xE4ch"
+    };
+    return map[cat] || cat;
+  }
+  function statusBadgeClass(status) {
+    const map = {
+      SCHEDULED: "bg-slate-100 text-slate-700 border-slate-300",
+      PENDING_CONFIRMATION: "bg-amber-100 text-amber-700 border-amber-300",
+      CHECKED_IN: "bg-blue-100 text-blue-700 border-blue-300",
+      IN_PROGRESS: "bg-yellow-100 text-yellow-700 border-yellow-300",
+      COMPLETED: "bg-green-100 text-green-700 border-green-300",
+      CANCELLED: "bg-red-100 text-red-700 border-red-300",
+      NO_SHOW: "bg-gray-200 text-gray-700 border-gray-400"
+    };
+    return map[status] || "bg-slate-100 text-slate-700";
+  }
+  function statusLabel(status) {
+    const map = {
+      SCHEDULED: "Geplant",
+      PENDING_CONFIRMATION: "Ausstehend",
+      CHECKED_IN: "Eingecheckt",
+      IN_PROGRESS: "In Behandlung",
+      COMPLETED: "Abgeschlossen",
+      CANCELLED: "Storniert",
+      NO_SHOW: "Nicht erschienen"
+    };
+    return map[status] || status;
+  }
+  function rxStatusBadge(status) {
+    const map = {
+      PENDING: { class: "bg-red-100 text-red-800 border-red-300", label: "[Neu]" },
+      IN_PROGRESS: { class: "bg-yellow-100 text-yellow-800 border-yellow-300", label: "[In Pr\xFCfung]" },
+      APPROVED: { class: "bg-green-100 text-green-800 border-green-300", label: "[Freigegeben]" },
+      REJECTED: { class: "bg-gray-200 text-gray-700 border-gray-400", label: "[Abgelehnt]" },
+      COLLECTED: { class: "bg-blue-100 text-blue-800 border-blue-300", label: "[Abgeholt]" }
+    };
+    return map[status] || { class: "bg-gray-100 text-gray-700", label: status };
+  }
+  var NEXT_STATUS_MAP = {
+    PENDING_CONFIRMATION: ["SCHEDULED"],
+    SCHEDULED: ["CHECKED_IN", "CANCELLED"],
+    CHECKED_IN: ["IN_PROGRESS", "NO_SHOW", "CANCELLED"],
+    IN_PROGRESS: ["COMPLETED", "NO_SHOW"],
+    COMPLETED: [],
+    CANCELLED: [],
+    NO_SHOW: []
+  };
+  var RX_NEXT_STATUS = {
+    PENDING: ["IN_PROGRESS", "REJECTED"],
+    IN_PROGRESS: [],
+    APPROVED: ["COLLECTED"],
+    REJECTED: [],
+    COLLECTED: []
+  };
+  function MFADashboard() {
+    const [dashboard, setDashboard] = (0, import_react41.useState)(null);
+    const [loading, setLoading] = (0, import_react41.useState)(true);
+    const [error, setError] = (0, import_react41.useState)("");
+    const [selectedAppointment, setSelectedAppointment] = (0, import_react41.useState)(null);
+    const [showAppointmentDialog, setShowAppointmentDialog] = (0, import_react41.useState)(false);
+    const [newNote, setNewNote] = (0, import_react41.useState)("");
+    const [showPrescriptionDialog, setShowPrescriptionDialog] = (0, import_react41.useState)(false);
+    const [fixPatient, setFixPatient] = (0, import_react41.useState)("");
+    const [fixMedication, setFixMedication] = (0, import_react41.useState)("");
+    const loadDashboard = (0, import_react41.useCallback)(async () => {
+      setLoading(true);
+      const res = await get("/mfa/dashboard");
+      setLoading(false);
+      if (res.success && res.data) {
+        setDashboard(res.data);
+      } else {
+        setError(res.error || "Dashboard-Daten konnten nicht geladen werden");
+      }
+    }, []);
+    (0, import_react41.useEffect)(() => {
+      loadDashboard();
+    }, [loadDashboard]);
+    const handleStatusChange = async (appointmentId, newStatus) => {
+      await patch("/appointments/" + appointmentId + "/status", { status: newStatus });
+      loadDashboard();
+    };
+    const handleSaveNote = async () => {
+      if (!selectedAppointment) return;
+      await patch("/appointments/" + selectedAppointment.id + "/note", { note: newNote });
+      setShowAppointmentDialog(false);
+      setSelectedAppointment(null);
+      loadDashboard();
+    };
+    const handleRxStatusChange = async (id, newStatus) => {
+      await patch("/prescriptions/" + id + "/status", { status: newStatus });
+      loadDashboard();
+    };
+    const handleCreatePrescription = async () => {
+      if (!fixPatient || !fixMedication) return;
+      await post("/prescriptions", {
+        insuranceNumber: fixPatient,
+        medicationName: fixMedication,
+        initiatedByMfaId: 1,
+        responsibleDoctorId: 1
+      });
+      setShowPrescriptionDialog(false);
+      setFixPatient("");
+      setFixMedication("");
+      loadDashboard();
+    };
+    const today = dashboard?.date || (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+    return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h1", { className: "text-2xl font-semibold", children: "MFA-Dashboard" }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center gap-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(Badge, { variant: "outline", className: "text-sm", children: [
+            "Heute, ",
+            today
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button3, { size: "sm", variant: "outline", onClick: loadDashboard, disabled: loading, children: loading ? "..." : " Aktualisieren" })
+        ] })
+      ] }),
+      error && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: error }),
+      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "grid gap-4 md:grid-cols-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(Card, { className: "md:col-span-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardHeader, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "inline-flex size-2 rounded-full bg-blue-500" }),
+              "Heutige Termine",
+              dashboard && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { variant: "secondary", className: "ml-auto text-xs", children: dashboard.todaysAppointments.length })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardDescription, { children: [
+              dashboard?.todaysAppointments.length || 0,
+              " Termin",
+              dashboard?.todaysAppointments.length !== 1 ? "e" : "",
+              " heute"
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardContent, { className: "space-y-3 max-h-[70vh] overflow-y-auto", children: [
+            dashboard && dashboard.todaysAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").length > 0 && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "mb-3 rounded-lg border border-amber-200 bg-amber-50 p-3", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("p", { className: "text-sm font-medium text-amber-800 flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "inline-flex size-2 rounded-full bg-amber-500" }),
+              dashboard.todaysAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").length,
+              " Termin(e) warten auf Best\xE4tigung"
+            ] }) }),
+            !dashboard || dashboard.todaysAppointments.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "text-sm text-muted-foreground py-4 text-center", children: "Keine Termine f\xFCr heute." }) : dashboard.todaysAppointments.map((apt) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+              "div",
+              {
+                className: "rounded-lg border p-3 space-y-2 text-sm hover:border-blue-200 transition-colors",
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-start justify-between", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-0.5", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "font-medium", children: [
+                        apt.patient_last_name,
+                        ", ",
+                        apt.patient_first_name
+                      ] }),
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-xs text-muted-foreground", children: [
+                        apt.insurance_number,
+                        " \xB7 ",
+                        apt.phone
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-right", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "font-semibold text-base", children: apt.time }),
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { className: categoryBadgeClass(apt.category) + " text-xs mt-1", children: categoryLabel(apt.category) })
+                    ] })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center gap-2 text-xs text-muted-foreground", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                      "span",
+                      {
+                        className: "inline-block size-2 rounded-full",
+                        style: { backgroundColor: apt.doctor_color || "#888" }
+                      }
+                    ),
+                    "Dr. ",
+                    apt.doctor_last_name,
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "ml-auto", children: apt.booking_type === "PHONE" ? "Tel." : "Online" })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center gap-2 pt-1", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { className: statusBadgeClass(apt.status) + " text-xs", children: statusLabel(apt.status) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "ml-auto flex gap-1", children: [
+                      NEXT_STATUS_MAP[apt.status]?.map((ns) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                        Button3,
+                        {
+                          size: "xs",
+                          variant: "outline",
+                          onClick: () => handleStatusChange(apt.id, ns),
+                          children: statusLabel(ns)
+                        },
+                        ns
+                      )),
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                        Button3,
+                        {
+                          size: "xs",
+                          variant: "ghost",
+                          onClick: () => {
+                            setSelectedAppointment(apt);
+                            setNewNote(apt.mfa_note || "");
+                            setShowAppointmentDialog(true);
+                          },
+                          title: "Notiz"
+                        }
+                      )
+                    ] })
+                  ] }),
+                  apt.mfa_note && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "text-xs text-muted-foreground italic bg-muted p-2 rounded", children: apt.mfa_note }),
+                  apt.no_show_count >= 2 && /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-xs text-destructive font-medium", children: [
+                    "\u26A0\uFE0F No-Shows: ",
+                    apt.no_show_count
+                  ] })
+                ]
+              },
+              apt.id
+            ))
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(Card, { className: "md:col-span-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardHeader, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "inline-flex size-2 rounded-full bg-amber-500" }),
+              "Offene Rezeptanfragen",
+              dashboard && dashboard.pendingPrescriptions.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { variant: "secondary", className: "ml-auto text-xs", children: dashboard.pendingPrescriptions.length })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CardDescription, { children: "Ampel-Workflow: [Neu] \u2192 [In Pr\xFCfung] \u2192 [Freigegeben]" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardContent, { className: "space-y-3 max-h-[70vh] overflow-y-auto", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+              Button3,
+              {
+                size: "sm",
+                className: "w-full",
+                variant: "outline",
+                onClick: () => setShowPrescriptionDialog(true),
+                children: "+ Neues Rezept anlegen"
+              }
+            ),
+            !dashboard || dashboard.pendingPrescriptions.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "text-sm text-muted-foreground py-4 text-center", children: "Keine offenen Rezeptanfragen." }) : dashboard.pendingPrescriptions.map((rx) => {
+              const sb = rxStatusBadge(rx.status);
+              return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+                "div",
+                {
+                  className: "rounded-lg border p-3 space-y-2 text-sm hover:border-amber-200 transition-colors",
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-start justify-between", children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "font-medium", children: rx.medication_name }),
+                        rx.dosage && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "text-xs text-muted-foreground", children: rx.dosage })
+                      ] }),
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { className: sb.class + " text-xs", children: sb.label })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-xs text-muted-foreground", children: [
+                      rx.patient_last_name,
+                      ", ",
+                      rx.patient_first_name,
+                      " (",
+                      rx.insurance_number,
+                      ")"
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-xs text-muted-foreground flex items-center gap-1", children: [
+                      "Dr. ",
+                      rx.doctor_last_name,
+                      /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "ml-auto", children: [
+                        " ",
+                        formatDate(rx.request_date)
+                      ] })
+                    ] }),
+                    rx.notes && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "text-xs italic bg-muted p-2 rounded", children: rx.notes }),
+                    /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "flex gap-1 pt-1", children: RX_NEXT_STATUS[rx.status]?.map((ns) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                      Button3,
+                      {
+                        size: "xs",
+                        variant: ns === "IN_PROGRESS" ? "default" : ns === "REJECTED" ? "destructive" : "outline",
+                        className: "text-xs",
+                        onClick: () => handleRxStatusChange(rx.id, ns),
+                        children: ns === "IN_PROGRESS" ? "Pr\xFCfen & weiterleiten" : ns === "APPROVED" ? "Freigeben" : ns === "REJECTED" ? "Ablehnen" : ns === "COLLECTED" ? "Abgeholt" : ns
+                      },
+                      ns
+                    )) })
+                  ]
+                },
+                rx.id
+              );
+            })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(Card, { className: "md:col-span-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardHeader, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "inline-flex size-2 rounded-full bg-red-500" }),
+              "Akutslots",
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Badge, { variant: "secondary", className: "ml-auto text-xs", children: "Heute" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CardDescription, { children: "Verbleibende Akutslots pro Arzt" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CardContent, { className: "space-y-4", children: !dashboard || dashboard.acuteSlotInfo.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "text-sm text-muted-foreground py-4 text-center", children: "Keine Daten verf\xFCgbar." }) : dashboard.acuteSlotInfo.map((slot) => {
+            const pct = slot.totalSlots > 0 ? Math.round(slot.usedSlots / slot.totalSlots * 100) : 0;
+            const barColor = pct >= 100 ? "bg-red-500" : pct >= 75 ? "bg-amber-500" : "bg-green-500";
+            return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between text-sm", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                    "span",
+                    {
+                      className: "inline-block size-2.5 rounded-full",
+                      style: { backgroundColor: slot.doctorColor || "#888" }
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-medium", children: slot.doctorName })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "text-right", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "font-semibold text-lg", children: slot.remainingSlots }),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "text-xs text-muted-foreground", children: [
+                    " / ",
+                    slot.totalSlots
+                  ] })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "h-2 w-full rounded-full bg-muted overflow-hidden", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+                "div",
+                {
+                  className: "h-full rounded-full transition-all " + barColor,
+                  style: { width: Math.min(pct, 100) + "%" }
+                }
+              ) }),
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex justify-between text-xs text-muted-foreground", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { children: [
+                  slot.usedSlots,
+                  " belegt"
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { children: [
+                  slot.remainingSlots,
+                  " frei"
+                ] })
+              ] })
+            ] }, slot.doctorId);
+          }) })
+        ] })
+      ] }),
+      showAppointmentDialog && selectedAppointment && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(Card, { className: "w-full max-w-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CardTitle, { className: "text-base", children: "Notiz zu Termin" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardDescription, { children: [
+            selectedAppointment.patient_last_name,
+            ", ",
+            selectedAppointment.patient_first_name,
+            " \u2013 ",
+            selectedAppointment.time,
+            " Uhr"
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardContent, { className: "space-y-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "MFA-Notiz" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+            Input3,
+            {
+              value: newNote,
+              onChange: (e) => setNewNote(e.target.value),
+              placeholder: "Notiz eingeben..."
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex gap-2 justify-end", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button3, { variant: "outline", onClick: () => setShowAppointmentDialog(false), children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button3, { onClick: handleSaveNote, children: "Speichern" })
+          ] })
+        ] })
+      ] }) }),
+      showPrescriptionDialog && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(Card, { className: "w-full max-w-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CardTitle, { className: "text-base", children: "Neues Rezept anlegen" }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CardDescription, { children: "Rezeptanfrage f\xFCr einen Patienten erfassen" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardContent, { className: "space-y-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Versichertennummer" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+              Input3,
+              {
+                value: fixPatient,
+                onChange: (e) => setFixPatient(e.target.value),
+                placeholder: "z. B. A123456789"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Medikament" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+              Input3,
+              {
+                value: fixMedication,
+                onChange: (e) => setFixMedication(e.target.value),
+                placeholder: "z. B. Ibuprofen 400mg"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button3, { variant: "outline", onClick: () => setShowPrescriptionDialog(false), children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button3, { onClick: handleCreatePrescription, disabled: !fixPatient || !fixMedication, children: "Anlegen" })
+          ] })
+        ] })
+      ] }) })
+    ] });
+  }
+
+  // src/pages/MFAPatients.tsx
+  var import_react42 = __toESM(require_react(), 1);
+  var import_jsx_runtime21 = __toESM(require_jsx_runtime(), 1);
+  function MFAPatients() {
+    const [patients, setPatients] = (0, import_react42.useState)([]);
+    const [search, setSearch] = (0, import_react42.useState)("");
+    const [loading, setLoading] = (0, import_react42.useState)(true);
+    (0, import_react42.useEffect)(() => {
+      setLoading(true);
+      get("/patients").then((r2) => {
+        if (r2.success && r2.data) setPatients(r2.data);
+        setLoading(false);
+      });
+    }, []);
+    const filtered = patients.filter((p) => {
+      if (!search) return true;
+      const q = search.toLowerCase();
+      return p.insurance_number.toLowerCase().includes(q) || p.first_name.toLowerCase().includes(q) || p.last_name.toLowerCase().includes(q) || p.phone.includes(q);
+    });
+    return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("h1", { className: "text-2xl font-semibold", children: "Patienten" }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "relative w-72", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(
+            Input3,
+            {
+              placeholder: "Suchen (Name, Vers.-Nr., Telefon)...",
+              value: search,
+              onChange: (e) => setSearch(e.target.value),
+              className: "pl-9"
+            }
+          )
+        ] })
+      ] }),
+      loading && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { className: "text-muted-foreground", children: "Lade Patienten..." }),
+      !loading && filtered.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("p", { className: "text-muted-foreground", children: "Keine Patienten gefunden." }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime21.jsx)("div", { className: "grid gap-4 md:grid-cols-2 xl:grid-cols-3", children: filtered.map((p) => /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(CardHeader, { className: "pb-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(CardTitle, { className: "text-base", children: [
+            p.last_name,
+            ", ",
+            p.first_name
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(CardDescription, { children: [
+            "Vers.-Nr.: ",
+            p.insurance_number,
+            " \xB7 ",
+            "geb. ",
+            p.date_of_birth
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(CardContent, { className: "space-y-2 text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center gap-2 text-muted-foreground", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Phone, { className: "h-3.5 w-3.5" }),
+            p.phone
+          ] }),
+          p.email && /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center gap-2 text-muted-foreground", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(Mail, { className: "h-3.5 w-3.5" }),
+            p.email
+          ] }),
+          p.no_show_count >= 2 && /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)("div", { className: "flex items-center gap-2 text-destructive text-xs font-medium pt-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime21.jsx)(TriangleAlert, { className: "h-3.5 w-3.5" }),
+            "No-Shows: ",
+            p.no_show_count
+          ] })
+        ] })
+      ] }, p.id)) })
+    ] });
+  }
+
+  // src/pages/MFAAppointments.tsx
+  var import_react43 = __toESM(require_react(), 1);
+  var import_jsx_runtime22 = __toESM(require_jsx_runtime(), 1);
+  var STATUS_MAP5 = {
+    SCHEDULED: "Geplant",
+    PENDING_CONFIRMATION: "Ausstehend",
+    CHECKED_IN: "Eingecheckt",
+    IN_PROGRESS: "In Behandlung",
+    COMPLETED: "Abgeschlossen",
+    CANCELLED: "Storniert",
+    NO_SHOW: "Nicht erschienen"
+  };
+  var CATEGORY_LABEL4 = {
+    CHECKUP: "Vorsorge",
+    CONSULTATION: "Beratung",
+    VACCINATION: "Impfung",
+    PRESCRIPTION_PICKUP: "Rezept-Abholung",
+    ACUTE: "Akut",
+    BLOOD_DRAW: "Blutabnahme",
+    INITIAL: "Erstgespr\xE4ch"
+  };
+  var STATUS_BADGE3 = {
+    SCHEDULED: "default",
+    PENDING_CONFIRMATION: "secondary",
+    CHECKED_IN: "default",
+    IN_PROGRESS: "default",
+    COMPLETED: "outline",
+    CANCELLED: "destructive",
+    NO_SHOW: "destructive"
+  };
+  function MFAAppointments() {
+    const [appointments, setAppointments] = (0, import_react43.useState)([]);
+    const [filter, setFilter] = (0, import_react43.useState)("ALL");
+    const [loading, setLoading] = (0, import_react43.useState)(true);
+    const loadAppointments = () => {
+      setLoading(true);
+      get("/mfa/appointments").then((r2) => {
+        if (r2.success && r2.data) setAppointments(r2.data);
+        setLoading(false);
+      });
+    };
+    (0, import_react43.useEffect)(() => {
+      loadAppointments();
+    }, []);
+    const handleConfirm = async (id) => {
+      await patch("/appointments/" + id + "/confirm-series", {});
+      loadAppointments();
+    };
+    const handleStatusChange = async (id, newStatus) => {
+      await patch("/appointments/" + id + "/status", { status: newStatus });
+      loadAppointments();
+    };
+    const filtered = filter === "ALL" ? appointments : appointments.filter((a) => a.status === filter);
+    const counts = {};
+    for (const a of appointments) {
+      counts[a.status] = (counts[a.status] || 0) + 1;
+    }
+    counts["ALL"] = appointments.length;
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h1", { className: "text-2xl font-semibold", children: "Alle Termine" }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "flex gap-1", children: ["ALL", ...Object.keys(STATUS_MAP5)].map((s) => {
+          if (!counts[s] && s !== "ALL") return null;
+          return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+            Button3,
+            {
+              size: "sm",
+              variant: filter === s ? "default" : "outline",
+              onClick: () => setFilter(s),
+              className: "text-xs",
+              children: [
+                s === "ALL" ? "Alle" : STATUS_MAP5[s],
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "ml-1.5 opacity-70", children: [
+                  "(",
+                  counts[s] || 0,
+                  ")"
+                ] })
+              ]
+            },
+            s
+          );
+        }) })
+      ] }),
+      loading && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "text-muted-foreground", children: "Lade Termine..." }),
+      !loading && filtered.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "text-muted-foreground", children: "Keine Termine gefunden." }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "space-y-3", children: filtered.map((a) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(CardContent, { className: "py-4", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-start justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(User, { className: "h-4 w-4 text-muted-foreground" }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "font-medium", children: [
+              a.patient_last_name,
+              ", ",
+              a.patient_first_name
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "text-xs text-muted-foreground", children: [
+              "(",
+              a.insurance_number,
+              ")"
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-3 text-sm text-muted-foreground", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Calendar, { className: "h-3.5 w-3.5" }),
+              a.date
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Clock, { className: "h-3.5 w-3.5" }),
+              a.time
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Stethoscope, { className: "h-3.5 w-3.5" }),
+              "Dr. ",
+              a.doctor_last_name
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(FileText, { className: "h-3.5 w-3.5" }),
+              CATEGORY_LABEL4[a.category] || a.category
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2", children: [
+          a.status === "PENDING_CONFIRMATION" && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { size: "sm", variant: "default", onClick: () => handleConfirm(a.id), children: "Best\xE4tigen" }),
+          a.status === "SCHEDULED" && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => handleStatusChange(a.id, "CHECKED_IN"), children: "Check-In" }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { size: "sm", variant: "destructive", onClick: () => handleStatusChange(a.id, "CANCELLED"), children: "Stornieren" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { variant: STATUS_BADGE3[a.status] || "outline", children: STATUS_MAP5[a.status] || a.status })
+        ] })
+      ] }) }) }, a.id)) })
+    ] });
+  }
+
+  // src/pages/MFAPrescriptions.tsx
+  var import_react44 = __toESM(require_react(), 1);
+  var import_jsx_runtime23 = __toESM(require_jsx_runtime(), 1);
+  var STATUS_MAP6 = {
+    PENDING: "Ausstehend",
+    IN_PROGRESS: "In Pr\xFCfung",
+    APPROVED: "Freigegeben",
+    REJECTED: "Abgelehnt",
+    COLLECTED: "Abgeholt"
+  };
+  var STATUS_BADGE4 = {
+    PENDING: "secondary",
+    IN_PROGRESS: "default",
+    APPROVED: "default",
+    REJECTED: "destructive",
+    COLLECTED: "outline"
+  };
+  var RX_NEXT_STATUS2 = {
+    PENDING: ["IN_PROGRESS", "REJECTED"],
+    IN_PROGRESS: [],
+    APPROVED: ["COLLECTED"],
+    REJECTED: [],
+    COLLECTED: []
+  };
+  function MFAPrescriptions() {
+    const [prescriptions, setPrescriptions] = (0, import_react44.useState)([]);
+    const [filter, setFilter] = (0, import_react44.useState)("PENDING");
+    const [loading, setLoading] = (0, import_react44.useState)(true);
+    const loadData = () => {
+      setLoading(true);
+      get("/prescriptions/all").then((r2) => {
+        if (r2.success && r2.data) setPrescriptions(r2.data);
+        setLoading(false);
+      });
+    };
+    (0, import_react44.useEffect)(() => {
+      loadData();
+    }, []);
+    const handleStatusChange = async (id, newStatus) => {
+      await patch("/prescriptions/" + id + "/status", { status: newStatus });
+      loadData();
+    };
+    const filtered = filter === "ALL" ? prescriptions : prescriptions.filter((p) => p.status === filter);
+    const counts = {};
+    for (const p of prescriptions) {
+      counts[p.status] = (counts[p.status] || 0) + 1;
+    }
+    counts["ALL"] = prescriptions.length;
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("h1", { className: "text-2xl font-semibold", children: "Rezeptverwaltung" }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "flex gap-1 flex-wrap", children: ["ALL", "PENDING", "IN_PROGRESS", "APPROVED", "REJECTED", "COLLECTED"].map((s) => {
+          if (!counts[s]) return null;
+          return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(Button3, { size: "sm", variant: filter === s ? "default" : "outline", onClick: () => setFilter(s), className: "text-xs", children: [
+            s === "ALL" ? "Alle" : STATUS_MAP6[s],
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "ml-1 opacity-70", children: [
+              "(",
+              counts[s],
+              ")"
+            ] })
+          ] }, s);
+        }) })
+      ] }),
+      loading && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "text-muted-foreground", children: "Lade Rezepte..." }),
+      !loading && filtered.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "text-muted-foreground", children: "Keine Rezepte gefunden." }) }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "space-y-3", children: filtered.map((rx) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CardContent, { className: "py-4", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-start justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-1.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Pill, { className: "h-4 w-4 text-muted-foreground" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { className: "font-medium", children: rx.medication_name }),
+            rx.dosage && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "text-sm text-muted-foreground", children: [
+              "(",
+              rx.dosage,
+              ")"
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "text-sm text-muted-foreground", children: [
+            rx.patient_last_name,
+            ", ",
+            rx.patient_first_name,
+            " (",
+            rx.insurance_number,
+            ")",
+            " \xC2\xB7 ",
+            "Dr. ",
+            rx.doctor_last_name,
+            " \xC2\xB7 ",
+            "angefragt: ",
+            rx.request_date
+          ] }),
+          rx.notes && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "text-xs italic bg-muted p-2 rounded inline-block", children: rx.notes }),
+          rx.status !== "COLLECTED" && rx.status !== "REJECTED" && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "flex gap-1 pt-1", children: RX_NEXT_STATUS2[rx.status]?.map((ns) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            Button3,
+            {
+              size: "xs",
+              variant: ns === "IN_PROGRESS" ? "default" : ns === "REJECTED" ? "destructive" : "outline",
+              onClick: () => handleStatusChange(rx.id, ns),
+              className: "text-xs",
+              children: ns === "IN_PROGRESS" ? "Pr\xFCfen" : ns === "APPROVED" ? "Freigeben" : ns === "REJECTED" ? "Ablehnen" : ns === "COLLECTED" ? "Abgeholt" : ns
+            },
+            ns
+          )) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { variant: STATUS_BADGE4[rx.status] || "outline", children: STATUS_MAP6[rx.status] || rx.status })
+      ] }) }) }, rx.id)) })
+    ] });
+  }
+
+  // src/pages/MFAVaccinations.tsx
+  var import_react45 = __toESM(require_react(), 1);
+  var import_jsx_runtime24 = __toESM(require_jsx_runtime(), 1);
+  var STATUS_LABEL = {
+    SCHEDULED: "Geplant",
+    PENDING_CONFIRMATION: "Ausstehend",
+    COMPLETED: "Abgeschlossen",
+    CHECKED_IN: "Eingecheckt",
+    IN_PROGRESS: "In Behandlung",
+    CANCELLED: "Storniert"
+  };
+  function MFAVaccinations() {
+    const [vaccinations, setVaccinations] = (0, import_react45.useState)([]);
+    const [templates, setTemplates] = (0, import_react45.useState)([]);
+    const [loading, setLoading] = (0, import_react45.useState)(true);
+    (0, import_react45.useEffect)(() => {
+      Promise.all([
+        get("/mfa/vaccinations"),
+        get("/vaccination-series")
+      ]).then(([vRes, tRes]) => {
+        if (vRes.success && vRes.data) setVaccinations(vRes.data);
+        if (tRes.success && tRes.data) setTemplates(tRes.data);
+        setLoading(false);
+      });
+    }, []);
+    if (loading) {
+      return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "space-y-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h1", { className: "text-2xl font-semibold", children: "Impfungen" }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "text-muted-foreground", children: "Lade..." })
+      ] });
+    }
+    const seriesAppointments = vaccinations.filter((v) => v.series_group_id);
+    const singleVaccinations = vaccinations.filter((v) => !v.series_group_id);
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "flex items-center justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h1", { className: "text-2xl font-semibold", children: "Impfungen" }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Syringe, { className: "h-4 w-4" }),
+            "Impfserien-Vorlagen"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(CardDescription, { children: "Verf\xFCgbare Impfserien und Dosierungsschemata" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(CardContent, { children: [
+          templates.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "text-sm text-muted-foreground", children: "Keine Vorlagen verf\xFCgbar." }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "grid gap-3 md:grid-cols-2 xl:grid-cols-3", children: templates.map((t) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "rounded-lg border p-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "font-medium text-sm", children: t.name }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "text-xs text-muted-foreground mt-1", children: [
+              t.doses,
+              " Dosen"
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "text-xs text-muted-foreground", children: t.description })
+          ] }, t.id)) })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(FlaskConical, { className: "h-4 w-4" }),
+            "Impftermine"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(CardDescription, { children: "Alle Impftermine - einzeln und als Serie" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(CardContent, { children: [
+          vaccinations.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "text-sm text-muted-foreground", children: "Keine Impftermine vorhanden." }),
+          /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "space-y-2", children: vaccinations.map((v) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-3 text-sm", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "font-medium", children: [
+                v.patient_last_name,
+                ", ",
+                v.patient_first_name,
+                " (",
+                v.insurance_number,
+                ")"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "text-xs text-muted-foreground", children: [
+                v.date,
+                " um ",
+                v.time,
+                " \xB7 Dr. ",
+                v.doctor_last_name,
+                v.series_dose_number && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("span", { children: [
+                  " \xB7 Dosis ",
+                  v.series_dose_number
+                ] })
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Badge, { variant: "outline", className: "text-xs", children: STATUS_LABEL[v.status] || v.status })
+          ] }, v.id)) })
+        ] })
+      ] })
+    ] });
+  }
+
+  // src/pages/MFAReminders.tsx
+  var import_react46 = __toESM(require_react(), 1);
+  var import_jsx_runtime25 = __toESM(require_jsx_runtime(), 1);
+  function MFAReminders() {
+    const [pending, setPending] = (0, import_react46.useState)([]);
+    const [dashboard, setDashboard] = (0, import_react46.useState)(null);
+    const [processing, setProcessing] = (0, import_react46.useState)(false);
+    const [loading, setLoading] = (0, import_react46.useState)(true);
+    const [statusMsg, setStatusMsg] = (0, import_react46.useState)("");
+    const [error, setError] = (0, import_react46.useState)("");
+    const loadData = async () => {
+      setLoading(true);
+      const [dashRes, pendRes] = await Promise.all([
+        get("/reminders/dashboard"),
+        get("/reminders/pending")
+      ]);
+      setLoading(false);
+      if (dashRes.success && dashRes.data) setDashboard(dashRes.data);
+      if (pendRes.success && pendRes.data) setPending(pendRes.data);
+    };
+    (0, import_react46.useEffect)(() => {
+      loadData();
+    }, []);
+    const handleProcess = async () => {
+      setProcessing(true);
+      setError("");
+      setStatusMsg("");
+      const res = await post("/reminders/process", {});
+      setProcessing(false);
+      if (res.success && res.data) {
+        var d = res.data;
+        setStatusMsg("Erinnerungen verarbeitet: " + d.stats.generated + " generiert, " + d.stats.sent + " gesendet");
+        loadData();
+      } else {
+        setError(res.error || "Fehler beim Verarbeiten");
+      }
+    };
+    if (loading) {
+      return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "space-y-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h1", { className: "text-2xl font-semibold", children: "Erinnerungen" }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { className: "text-muted-foreground", children: "Lade..." })
+      ] });
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("h1", { className: "text-2xl font-semibold", children: "Erinnerungs-Zentrale" }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center gap-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(Badge, { variant: "outline", className: "text-sm", children: [
+            "Heute: ",
+            dashboard?.sentToday || 0,
+            " gesendet"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(Badge, { variant: pending.length > 0 ? "default" : "secondary", className: "text-sm", children: [
+            pending.length,
+            " ausstehend"
+          ] })
+        ] })
+      ] }),
+      error && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: error }),
+      statusMsg && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("div", { className: "rounded-lg border border-green-500/50 bg-green-50 p-3 text-sm text-green-700", children: statusMsg }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(CardTitle, { className: "text-base", children: "Erinnerungen verarbeiten" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(CardDescription, { children: "Generiert 24h-Erinnerungen fuer morgige Termine und sendet alle ausstehenden Erinnerungen (Simulation)." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Button3, { onClick: handleProcess, disabled: processing, className: "w-full sm:w-auto", children: processing ? "Verarbeite..." : "Jetzt verarbeiten & senden" }) })
+      ] }),
+      pending.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(CardTitle, { className: "text-base", children: [
+          "Ausstehende Erinnerungen (",
+          pending.length,
+          ")"
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(CardContent, { className: "space-y-2", children: pending.map((r2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-3 text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "font-medium", children: [
+              r2.patient_last_name,
+              ", ",
+              r2.patient_first_name
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "text-xs text-muted-foreground", children: [
+              r2.appointment_date,
+              " um ",
+              r2.appointment_time,
+              " Uhr \xB7 Dr. ",
+              r2.doctor_last_name
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Badge, { variant: "outline", className: "text-xs", children: r2.type === "24H" ? "24h" : "Same-Day" }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Badge, { variant: r2.channel === "EMAIL" ? "default" : "secondary", className: "text-xs", children: r2.channel }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Badge, { variant: "outline", className: "bg-amber-100 text-amber-700", children: "Ausstehend" })
+          ] })
+        ] }, r2.id)) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(CardTitle, { className: "text-base", children: "Verlauf (letzte 50)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(CardDescription, { children: "Alle gesendeten und ausstehenden Erinnerungen" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)(CardContent, { className: "space-y-1 max-h-96 overflow-y-auto", children: [
+          dashboard?.recent.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { className: "text-sm text-muted-foreground", children: "Noch keine Erinnerungen." }),
+          dashboard?.recent.map((r2) => /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center gap-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("span", { className: "font-medium", children: [
+                r2.patient_last_name,
+                ", ",
+                r2.patient_first_name
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("span", { className: "text-muted-foreground", children: [
+                r2.appointment_date,
+                " ",
+                r2.appointment_time
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-muted-foreground", children: r2.channel })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Badge, { variant: "outline", className: "text-[10px] px-1 py-0", children: r2.type === "24H" ? "24h" : "Today" }),
+              /* @__PURE__ */ (0, import_jsx_runtime25.jsx)(Badge, { className: "text-[10px] px-1 py-0 " + (r2.status === "SENT" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"), children: r2.status === "SENT" ? "Gesendet" : "Ausstehend" }),
+              r2.sent_at && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { className: "text-muted-foreground", children: r2.sent_at })
+            ] })
+          ] }, r2.id))
+        ] })
+      ] })
+    ] });
+  }
+
+  // src/pages/DoctorLogin.tsx
+  var import_react47 = __toESM(require_react(), 1);
+  var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
+  function DoctorLogin() {
+    const navigate = useNavigate();
+    const [firstName, setFirstName] = (0, import_react47.useState)("");
+    const [lastName, setLastName] = (0, import_react47.useState)("");
+    const [loading, setLoading] = (0, import_react47.useState)(false);
+    const [error, setError] = (0, import_react47.useState)("");
+    (0, import_react47.useEffect)(() => {
+      const stored = localStorage.getItem("doctor_info");
+      if (stored) {
+        navigate("/doctor");
+      }
+    }, []);
+    const handleLogin = async (e) => {
+      e.preventDefault();
+      setError("");
+      setLoading(true);
+      try {
+        const r2 = await post("/doctor/login", { firstName, lastName });
+        if (r2.success && r2.data) {
+          localStorage.setItem("doctor_info", JSON.stringify(r2.data));
+          navigate("/doctor");
+        } else {
+          setError(r2.error || "Arzt nicht gefunden");
+        }
+      } catch {
+        setError("Verbindungsfehler");
+      }
+      setLoading(false);
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-slate-100 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(Card, { className: "w-full max-w-md shadow-lg", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(CardHeader, { className: "text-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CardTitle, { className: "text-2xl", children: "Arzt-Login" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CardDescription, { children: "Bitte melden Sie sich mit Ihrem Namen an" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(CardContent, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("form", { onSubmit: handleLogin, className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Label, { htmlFor: "firstName", children: "Vorname" }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Input3, { id: "firstName", value: firstName, onChange: (e) => setFirstName(e.target.value), placeholder: "z. B. Ahmet", required: true })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Label, { htmlFor: "lastName", children: "Nachname" }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Input3, { id: "lastName", value: lastName, onChange: (e) => setLastName(e.target.value), placeholder: "z. B. Demir", required: true })
+          ] }),
+          error && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive", children: error }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button3, { type: "submit", className: "w-full", disabled: loading, children: loading ? "Wird gepr\xFCft..." : "Anmelden" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "mt-4 text-center text-sm text-muted-foreground", children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("p", { children: [
+          "Testzugang: ",
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("code", { className: "rounded bg-muted px-1.5 py-0.5 text-xs font-mono", children: "Ahmet Demir" })
+        ] }) })
+      ] })
+    ] }) });
+  }
+
+  // src/pages/DoctorDashboard.tsx
+  var import_react48 = __toESM(require_react(), 1);
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
+  function DoctorDashboard() {
+    const navigate = useNavigate();
+    const [doctorInfo, setDoctorInfo] = (0, import_react48.useState)(null);
+    const [pendingRx, setPendingRx] = (0, import_react48.useState)([]);
+    (0, import_react48.useEffect)(() => {
+      const stored = localStorage.getItem("doctor_info");
+      if (stored) {
+        const info = JSON.parse(stored);
+        setDoctorInfo(info);
+        get("/doctor/prescriptions?doctorId=" + info.id).then((r2) => {
+          if (r2.success && r2.data) {
+            setPendingRx(r2.data.filter((p) => p.status === "PENDING"));
+          }
+        });
+      } else {
+        navigate("/doctor-login");
+      }
+    }, []);
+    if (!doctorInfo) return null;
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("h1", { className: "text-2xl font-semibold", children: [
+          "Willkommen, Dr. ",
+          doctorInfo.last_name
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { className: "text-muted-foreground", children: "Arzt-Portal" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "grid gap-4 md:grid-cols-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/doctor/prescriptions"), children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ClipboardCheck, { className: "h-4 w-4" }),
+            "Rezept-Freigabe"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardDescription, { children: pendingRx.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "text-amber-600 font-semibold", children: [
+            pendingRx.length,
+            " ausstehend"
+          ] }) : "Keine ausstehenden Rezepte" })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/doctor/absences"), children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CalendarDays, { className: "h-4 w-4" }),
+            "Urlaub & Abwesenheit"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardDescription, { children: "Abwesenheiten verwalten" })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/doctor/master-data"), children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Stethoscope, { className: "h-4 w-4" }),
+            "Stammdaten"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardDescription, { children: "Diagnosen & Medikamente bearbeiten" })
+        ] }) })
+      ] })
+    ] });
+  }
+
+  // src/pages/DoctorPrescriptions.tsx
+  var import_react49 = __toESM(require_react(), 1);
+
+  // src/components/ui/textarea.tsx
+  var React64 = __toESM(require_react(), 1);
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
+  var Textarea = React64.forwardRef(
+    ({ className, ...props }, ref) => {
+      return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+        "textarea",
+        {
+          className: cn(
+            "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+            className
+          ),
+          ref,
+          ...props
+        }
+      );
+    }
+  );
+  Textarea.displayName = "Textarea";
+
+  // src/pages/DoctorPrescriptions.tsx
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+  var STATUS_MAP7 = {
+    PENDING: "Ausstehend",
+    IN_PROGRESS: "In Pr\xFCfung",
+    APPROVED: "Freigegeben",
+    REJECTED: "Abgelehnt",
+    COLLECTED: "Abgeholt"
+  };
+  var STATUS_BADGE5 = {
+    PENDING: "secondary",
+    IN_PROGRESS: "default",
+    APPROVED: "default",
+    REJECTED: "destructive",
+    COLLECTED: "outline"
+  };
+  function DoctorPrescriptions() {
+    const navigate = useNavigate();
+    const [doctorInfo, setDoctorInfo] = (0, import_react49.useState)(null);
+    const [prescriptions, setPrescriptions] = (0, import_react49.useState)([]);
+    const [filter, setFilter] = (0, import_react49.useState)("IN_PROGRESS");
+    const [loading, setLoading] = (0, import_react49.useState)(true);
+    const [rejectModal, setRejectModal] = (0, import_react49.useState)(null);
+    const [rejectReason, setRejectReason] = (0, import_react49.useState)("");
+    const [showNewForm, setShowNewForm] = (0, import_react49.useState)(false);
+    const [newInsurance, setNewInsurance] = (0, import_react49.useState)("");
+    const [newMedication, setNewMedication] = (0, import_react49.useState)("");
+    const [newDosage, setNewDosage] = (0, import_react49.useState)("");
+    const [newNotes, setNewNotes] = (0, import_react49.useState)("");
+    (0, import_react49.useEffect)(() => {
+      const stored = localStorage.getItem("doctor_info");
+      if (stored) {
+        setDoctorInfo(JSON.parse(stored));
+      } else {
+        navigate("/doctor-login");
+      }
+    }, []);
+    const loadPrescriptions = () => {
+      setLoading(true);
+      get("/doctor/prescriptions").then((r2) => {
+        if (r2.success && r2.data) setPrescriptions(r2.data);
+        setLoading(false);
+      });
+    };
+    (0, import_react49.useEffect)(() => {
+      if (doctorInfo) loadPrescriptions();
+    }, [doctorInfo]);
+    const handleApprove = async (id) => {
+      await patch("/doctor/prescriptions/" + id + "/approve", { status: "APPROVED" });
+      loadPrescriptions();
+    };
+    const handleReject = async (id) => {
+      await patch("/doctor/prescriptions/" + id + "/approve", { status: "REJECTED", rejectReason });
+      setRejectModal(null);
+      setRejectReason("");
+      loadPrescriptions();
+    };
+    const handleCreate = async () => {
+      if (!newInsurance || !newMedication || !doctorInfo) return;
+      const r2 = await post("/doctor/prescriptions", {
+        insuranceNumber: newInsurance,
+        medicationName: newMedication,
+        dosage: newDosage,
+        notes: newNotes,
+        doctorId: doctorInfo.id
+      });
+      if (r2.success) {
+        setShowNewForm(false);
+        setNewInsurance("");
+        setNewMedication("");
+        setNewDosage("");
+        setNewNotes("");
+        loadPrescriptions();
+      }
+    };
+    const filtered = filter === "ALL" ? prescriptions : prescriptions.filter((p) => p.status === filter);
+    const counts = {};
+    for (const p of prescriptions) counts[p.status] = (counts[p.status] || 0) + 1;
+    counts["ALL"] = prescriptions.length;
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex items-center justify-between flex-wrap gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("h1", { className: "text-2xl font-semibold", children: "Rezept-Freigabe" }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex gap-1 flex-wrap", children: [
+          ["ALL", "PENDING", "IN_PROGRESS", "APPROVED", "REJECTED", "COLLECTED"].map((s) => {
+            if (!counts[s] && s !== "ALL") return null;
+            return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Button3, { size: "sm", variant: filter === s ? "default" : "outline", onClick: () => setFilter(s), className: "text-xs", children: [
+              s === "ALL" ? "Alle" : STATUS_MAP7[s],
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "ml-1.5 opacity-70", children: [
+                "(",
+                counts[s] || 0,
+                ")"
+              ] })
+            ] }, s);
+          }),
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button3, { size: "sm", variant: "outline", className: "ml-2", onClick: () => setShowNewForm(!showNewForm), children: "+ Neues Rezept" })
+        ] })
+      ] }),
+      showNewForm && /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Card, { className: "border-primary", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardTitle, { className: "text-base", children: "Neues Rezept ausstellen" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardContent, { className: "space-y-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "grid gap-3 md:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Label, { children: "Versichertennummer" }),
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Input3, { value: newInsurance, onChange: (e) => setNewInsurance(e.target.value), placeholder: "z. B. A123456789" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Label, { children: "Medikament" }),
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Input3, { value: newMedication, onChange: (e) => setNewMedication(e.target.value), placeholder: "Medikamentname" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Label, { children: "Dosierung" }),
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Input3, { value: newDosage, onChange: (e) => setNewDosage(e.target.value), placeholder: "z. B. 500 mg" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Label, { children: "Notizen" }),
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Input3, { value: newNotes, onChange: (e) => setNewNotes(e.target.value), placeholder: "Optional" })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button3, { variant: "outline", onClick: () => setShowNewForm(false), children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button3, { onClick: handleCreate, children: "Rezept ausstellen" })
+          ] })
+        ] })
+      ] }),
+      loading && /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "text-muted-foreground", children: "Lade Rezepte..." }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "space-y-3", children: filtered.map((p) => /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardContent, { className: "py-4", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex items-start justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(User, { className: "h-4 w-4 text-muted-foreground" }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "font-medium", children: [
+              p.patient_last_name,
+              ", ",
+              p.patient_first_name
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "text-xs text-muted-foreground", children: [
+              "(",
+              p.insurance_number,
+              ")"
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex items-center gap-3 text-sm text-muted-foreground", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Pill, { className: "h-3.5 w-3.5" }),
+              p.medication_name,
+              p.dosage && /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "ml-1", children: [
+                "(",
+                p.dosage,
+                ")"
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Calendar, { className: "h-3.5 w-3.5" }),
+              p.request_date
+            ] })
+          ] }),
+          p.notes && /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { className: "text-xs text-muted-foreground mt-1", children: [
+            "Notiz: ",
+            p.notes
+          ] }),
+          p.last_consultation && (() => {
+            const lastConsult = new Date(p.last_consultation);
+            const oneYearAgo = /* @__PURE__ */ new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            const isOld = lastConsult < oneYearAgo;
+            return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { className: "text-xs mt-1", children: [
+              "Letzte Konsultation: ",
+              p.last_consultation,
+              isOld ? " \u26A0\uFE0F > 1 Jahr her \u2013 Freigabe nicht m\xF6glich" : " \u2705 < 1 Jahr"
+            ] });
+          })(),
+          !p.last_consultation && /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "text-xs mt-1 text-destructive font-semibold", children: "Keine Konsultation bekannt \u2013 Freigabe nicht m\xF6glich" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex items-center gap-2", children: [
+          p.status === "PENDING" && /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(import_jsx_runtime29.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Button3, { size: "sm", variant: "default", onClick: () => handleApprove(p.id), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CircleCheckBig, { className: "h-3.5 w-3.5 mr-1" }),
+              " Freigeben"
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Button3, { size: "sm", variant: "destructive", onClick: () => setRejectModal(p.id), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CircleX, { className: "h-3.5 w-3.5 mr-1" }),
+              " Ablehnen"
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Badge, { variant: STATUS_BADGE5[p.status] || "outline", children: STATUS_MAP7[p.status] || p.status })
+        ] })
+      ] }) }) }, p.id)) }),
+      rejectModal !== null && /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Card, { className: "w-full max-w-md mx-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardTitle, { children: "Rezept ablehnen" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardContent, { className: "space-y-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Label, { children: "Grund der Ablehnung" }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Textarea, { value: rejectReason, onChange: (e) => setRejectReason(e.target.value), placeholder: "Bitte Grund angeben..." })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex gap-2 justify-end", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button3, { variant: "outline", onClick: () => setRejectModal(null), children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button3, { variant: "destructive", onClick: () => handleReject(rejectModal), children: "Ablehnen" })
+          ] })
+        ] })
+      ] }) })
+    ] });
+  }
+
+  // src/pages/DoctorAbsences.tsx
+  var import_react50 = __toESM(require_react(), 1);
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
+  function DoctorAbsences() {
+    const navigate = useNavigate();
+    const [doctorInfo, setDoctorInfo] = (0, import_react50.useState)(null);
+    const [absences, setAbsences] = (0, import_react50.useState)([]);
+    const [doctors, setDoctors] = (0, import_react50.useState)([]);
+    const [loading, setLoading] = (0, import_react50.useState)(true);
+    const [showForm, setShowForm] = (0, import_react50.useState)(false);
+    const [type, setType] = (0, import_react50.useState)("VACATION");
+    const [selectedDoctors, setSelectedDoctors] = (0, import_react50.useState)([]);
+    const [startDate, setStartDate] = (0, import_react50.useState)("");
+    const [endDate, setEndDate] = (0, import_react50.useState)("");
+    const [reason, setReason] = (0, import_react50.useState)("");
+    (0, import_react50.useEffect)(() => {
+      const stored = localStorage.getItem("doctor_info");
+      if (stored) {
+        setDoctorInfo(JSON.parse(stored));
+      } else {
+        navigate("/doctor-login");
+      }
+    }, []);
+    const loadData = () => {
+      setLoading(true);
+      Promise.all([
+        get("/doctor/absences"),
+        get("/doctors")
+      ]).then(([a, d]) => {
+        if (a.success && a.data) setAbsences(a.data);
+        if (d.success && d.data) setDoctors(d.data);
+        setLoading(false);
+      });
+    };
+    (0, import_react50.useEffect)(() => {
+      if (doctorInfo) loadData();
+    }, [doctorInfo]);
+    const handleCreate = async () => {
+      if (!startDate || !endDate || selectedDoctors.length === 0) return;
+      const r2 = await post("/doctor/absences", {
+        type,
+        doctorIds: selectedDoctors,
+        startDate,
+        endDate,
+        reason: reason || void 0,
+        blocksBooking: true
+      });
+      if (r2.success) {
+        setShowForm(false);
+        setType("VACATION");
+        setSelectedDoctors([]);
+        setStartDate("");
+        setEndDate("");
+        setReason("");
+        loadData();
+      }
+    };
+    const handleDelete = async (id) => {
+      const r2 = await del("/doctor/absences/" + id);
+      if (r2.success) loadData();
+    };
+    const toggleDoctor = (id) => {
+      setSelectedDoctors(
+        (prev) => prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]
+      );
+    };
+    const typeLabels = {
+      VACATION: "Urlaub",
+      SICKNESS: "Krankheit",
+      TRAINING: "Fortbildung",
+      OTHER: "Sonstiges"
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("h1", { className: "text-2xl font-semibold", children: "Urlaub & Abwesenheit" }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Button3, { onClick: () => setShowForm(!showForm), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+          " Abwesenheit eintragen"
+        ] })
+      ] }),
+      showForm && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Card, { className: "border-primary", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardTitle, { className: "text-base", children: "Neue Abwesenheit" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(CardContent, { className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "grid gap-4 md:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Typ" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("select", { className: "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm", value: type, onChange: (e) => setType(e.target.value), children: Object.entries(typeLabels).map(([k, v]) => /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("option", { value: k, children: v }, k)) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Betroffene \xC4rzte" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "flex flex-wrap gap-1", children: doctors.map((doc) => /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Button3, { type: "button", size: "sm", variant: selectedDoctors.includes(doc.id) ? "default" : "outline", onClick: () => toggleDoctor(doc.id), children: [
+                "Dr. ",
+                doc.last_name
+              ] }, doc.id)) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Startdatum" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Input3, { type: "date", value: startDate, onChange: (e) => setStartDate(e.target.value) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Enddatum" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Input3, { type: "date", value: endDate, onChange: (e) => setEndDate(e.target.value) })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Grund (optional)" }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Textarea, { value: reason, onChange: (e) => setReason(e.target.value), placeholder: "Grund der Abwesenheit..." })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { variant: "outline", onClick: () => setShowForm(false), children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { onClick: handleCreate, children: "Speichern" })
+          ] })
+        ] })
+      ] }),
+      loading && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "text-muted-foreground", children: "Lade Abwesenheiten..." }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-3", children: [
+        absences.length === 0 && !loading && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "text-muted-foreground", children: "Keine Abwesenheiten eingetragen." }) }) }),
+        absences.map((a) => /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(CardContent, { className: "py-4 flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CalendarDays, { className: "h-4 w-4 text-muted-foreground" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "font-medium", children: [
+                a.start_date,
+                " bis ",
+                a.end_date
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Badge, { variant: "secondary", children: typeLabels[a.type] || a.type }),
+              a.blocks_booking === 1 && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Badge, { variant: "outline", children: "Keine Buchung" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("p", { className: "text-sm text-muted-foreground", children: [
+              "\xC4rzte: ",
+              a.doctor_ids.split(",").map((id) => {
+                const doc = doctors.find((d) => d.id === Number(id));
+                return doc ? `Dr. ${doc.last_name}` : id;
+              }).join(", ")
+            ] }),
+            a.reason && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+              "Grund: ",
+              a.reason
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleDelete(a.id), children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Trash2, { className: "h-4 w-4 text-destructive" }) })
+        ] }) }, a.id))
+      ] })
+    ] });
+  }
+
+  // src/pages/DoctorMasterData.tsx
+  var import_react51 = __toESM(require_react(), 1);
+
+  // src/components/ui/tabs.tsx
+  var React65 = __toESM(require_react(), 1);
+  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
+  var TabsContext = React65.createContext(null);
+  function Tabs({ defaultValue, value: controlledValue, onValueChange, children, className }) {
+    const [uncontrolledValue, setUncontrolledValue] = React65.useState(defaultValue || "");
+    const isControlled = controlledValue !== void 0;
+    const currentValue = isControlled ? controlledValue : uncontrolledValue;
+    const handleValueChange = React65.useCallback(
+      (newValue) => {
+        if (!isControlled) setUncontrolledValue(newValue);
+        onValueChange?.(newValue);
+      },
+      [isControlled, onValueChange]
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContext.Provider, { value: { value: currentValue, onValueChange: handleValueChange }, children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: cn("w-full", className), children }) });
+  }
+  function TabsList({ children, className }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: cn("inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground", className), children });
+  }
+  function TabsTrigger({ value, children, className }) {
+    const ctx = React65.useContext(TabsContext);
+    const isActive = ctx?.value === value;
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+      "button",
+      {
+        type: "button",
+        role: "tab",
+        onClick: () => ctx?.onValueChange(value),
+        className: cn(
+          "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+          isActive ? "bg-background text-foreground shadow" : "hover:bg-background/50 hover:text-foreground",
+          className
+        ),
+        children
+      }
+    );
+  }
+  function TabsContent({ value, children, className }) {
+    const ctx = React65.useContext(TabsContext);
+    if (ctx?.value !== value) return null;
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { role: "tabpanel", className: cn("mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", className), children });
+  }
+
+  // src/pages/DoctorMasterData.tsx
+  var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
+  function DoctorMasterData() {
+    const navigate = useNavigate();
+    const [doctorInfo, setDoctorInfo] = (0, import_react51.useState)(null);
+    const [medications, setMedications] = (0, import_react51.useState)([]);
+    const [diagnoses, setDiagnoses] = (0, import_react51.useState)([]);
+    const [medSearch, setMedSearch] = (0, import_react51.useState)("");
+    const [diagSearch, setDiagSearch] = (0, import_react51.useState)("");
+    const [showMedForm, setShowMedForm] = (0, import_react51.useState)(false);
+    const [editMedId, setEditMedId] = (0, import_react51.useState)(null);
+    const [medName, setMedName] = (0, import_react51.useState)("");
+    const [medIngredient, setMedIngredient] = (0, import_react51.useState)("");
+    const [medStrength, setMedStrength] = (0, import_react51.useState)("");
+    const [medForm, setMedForm] = (0, import_react51.useState)("");
+    const [showDiagForm, setShowDiagForm] = (0, import_react51.useState)(false);
+    const [diagInsurance, setDiagInsurance] = (0, import_react51.useState)("");
+    const [diagIcd, setDiagIcd] = (0, import_react51.useState)("");
+    const [diagText, setDiagText] = (0, import_react51.useState)("");
+    const [diagDate, setDiagDate] = (0, import_react51.useState)("");
+    const [diagNotes, setDiagNotes] = (0, import_react51.useState)("");
+    (0, import_react51.useEffect)(() => {
+      const stored = localStorage.getItem("doctor_info");
+      if (!stored) {
+        navigate("/doctor-login");
+        return;
+      }
+      setDoctorInfo(JSON.parse(stored));
+      loadMedications();
+      loadDiagnoses();
+    }, []);
+    const [slots, setSlots] = (0, import_react51.useState)([]);
+    const [loadingSlots, setLoadingSlots] = (0, import_react51.useState)(false);
+    const [showSlotForm, setShowSlotForm] = (0, import_react51.useState)(false);
+    const [newSlotWeekday, setNewSlotWeekday] = (0, import_react51.useState)(1);
+    const [newSlotStart, setNewSlotStart] = (0, import_react51.useState)("08:00");
+    const [newSlotEnd, setNewSlotEnd] = (0, import_react51.useState)("12:00");
+    const loadSlots = () => {
+      if (!doctorInfo) return;
+      setLoadingSlots(true);
+      get("/doctor/availability?doctorId=" + doctorInfo.id).then((r2) => {
+        if (r2.success && r2.data) setSlots(r2.data);
+        setLoadingSlots(false);
+      });
+    };
+    (0, import_react51.useEffect)(() => {
+      if (doctorInfo) loadSlots();
+    }, [doctorInfo]);
+    const handleAddSlot = () => {
+      setNewSlotWeekday(1);
+      setNewSlotStart("08:00");
+      setNewSlotEnd("12:00");
+      setShowSlotForm(true);
+    };
+    const handleSlotSave = async () => {
+      if (!doctorInfo) return;
+      const r2 = await post("/doctor/availability", {
+        doctorId: doctorInfo.id,
+        weekday: newSlotWeekday,
+        startTime: newSlotStart,
+        endTime: newSlotEnd
+      });
+      if (r2.success) {
+        setShowSlotForm(false);
+        loadSlots();
+      }
+    };
+    const handleToggleSlot = async (id, currentActive) => {
+      await put("/doctor/availability/" + id, { isActive: currentActive === 0 });
+      loadSlots();
+    };
+    const handleDeleteSlot = async (id) => {
+      await del("/doctor/availability/" + id);
+      loadSlots();
+    };
+    const loadMedications = () => {
+      get("/doctor/medications").then((r2) => {
+        if (r2.success && r2.data) setMedications(r2.data);
+      });
+    };
+    const loadDiagnoses = () => {
+      get("/doctor/diagnoses").then((r2) => {
+        if (r2.success && r2.data) setDiagnoses(r2.data);
+      });
+    };
+    const handleMedSave = async () => {
+      if (!medName) return;
+      if (editMedId) {
+        await patch("/doctor/medications/" + editMedId, { name: medName, activeIngredient: medIngredient, strength: medStrength, form: medForm });
+      } else {
+        await post("/doctor/medications", { name: medName, activeIngredient: medIngredient, strength: medStrength, form: medForm });
+      }
+      resetMedForm();
+      loadMedications();
+    };
+    const handleMedEdit = (m) => {
+      setEditMedId(m.id);
+      setMedName(m.name);
+      setMedIngredient(m.active_ingredient || "");
+      setMedStrength(m.strength || "");
+      setMedForm(m.form || "");
+      setShowMedForm(true);
+    };
+    const handleMedDelete = async (id) => {
+      await del("/doctor/medications/" + id);
+      loadMedications();
+    };
+    const resetMedForm = () => {
+      setShowMedForm(false);
+      setEditMedId(null);
+      setMedName("");
+      setMedIngredient("");
+      setMedStrength("");
+      setMedForm("");
+    };
+    const handleDiagSave = async () => {
+      if (!diagInsurance || !diagIcd || !diagText || !doctorInfo) return;
+      const r2 = await post("/doctor/diagnoses", {
+        insuranceNumber: diagInsurance,
+        icdCode: diagIcd,
+        diagnosisText: diagText,
+        diagnosisDate: diagDate || void 0,
+        notes: diagNotes || void 0,
+        doctorId: doctorInfo.id
+      });
+      if (r2.success) {
+        setShowDiagForm(false);
+        setDiagInsurance("");
+        setDiagIcd("");
+        setDiagText("");
+        setDiagDate("");
+        setDiagNotes("");
+        loadDiagnoses();
+      }
+    };
+    const filteredMeds = medications.filter(
+      (m) => m.name.toLowerCase().includes(medSearch.toLowerCase()) || m.active_ingredient && m.active_ingredient.toLowerCase().includes(medSearch.toLowerCase())
+    );
+    const filteredDiagnoses = diagnoses.filter(
+      (d) => d.icd_code.toLowerCase().includes(diagSearch.toLowerCase()) || d.diagnosis_text.toLowerCase().includes(diagSearch.toLowerCase()) || d.patient_last_name.toLowerCase().includes(diagSearch.toLowerCase())
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h1", { className: "text-2xl font-semibold", children: "Stammdaten" }),
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Tabs, { defaultValue: "medications", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsList, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsTrigger, { value: "medications", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Pill, { className: "h-4 w-4 mr-1" }),
+            " Medikamente"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsTrigger, { value: "diagnoses", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Stethoscope, { className: "h-4 w-4 mr-1" }),
+            " Diagnosen"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsTrigger, { value: "availability", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Clock, { className: "h-4 w-4 mr-1" }),
+            " Sprechzeiten"
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "medications", className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "relative flex-1 max-w-sm", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Search, { className: "absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { className: "pl-8", placeholder: "Medikament suchen...", value: medSearch, onChange: (e) => setMedSearch(e.target.value) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Button3, { onClick: () => {
+              resetMedForm();
+              setShowMedForm(true);
+            }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+              " Medikament hinzuf\xFCgen"
+            ] })
+          ] }),
+          showMedForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "border-primary", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardTitle, { children: editMedId ? "Medikament bearbeiten" : "Neues Medikament" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "space-y-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "grid gap-3 md:grid-cols-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Name *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medName, onChange: (e) => setMedName(e.target.value) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Wirkstoff" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medIngredient, onChange: (e) => setMedIngredient(e.target.value) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "St\xE4rke" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medStrength, onChange: (e) => setMedStrength(e.target.value) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Form" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medForm, onChange: (e) => setMedForm(e.target.value) })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "outline", onClick: resetMedForm, children: "Abbrechen" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { onClick: handleMedSave, children: "Speichern" })
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "grid gap-2 md:grid-cols-2", children: filteredMeds.map((m) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "font-medium", children: m.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+                m.active_ingredient && `${m.active_ingredient}`,
+                m.strength && ` \xE2\u20AC\u201C ${m.strength}`,
+                m.form && ` \xE2\u20AC\u201C ${m.form}`
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleMedEdit(m), children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Pencil, { className: "h-3.5 w-3.5" }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleMedDelete(m.id), children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Trash2, { className: "h-3.5 w-3.5 text-destructive" }) })
+            ] })
+          ] }) }, m.id)) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "diagnoses", className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "relative flex-1 max-w-sm", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Search, { className: "absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { className: "pl-8", placeholder: "Diagnose suchen...", value: diagSearch, onChange: (e) => setDiagSearch(e.target.value) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Button3, { onClick: () => setShowDiagForm(!showDiagForm), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+              " Diagnose hinzuf\xFCgen"
+            ] })
+          ] }),
+          showDiagForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "border-primary", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardTitle, { className: "text-base", children: "Neue Diagnose" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "space-y-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "grid gap-3 md:grid-cols-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Versichertennummer *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagInsurance, onChange: (e) => setDiagInsurance(e.target.value), placeholder: "A123456789" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "ICD-Code *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagIcd, onChange: (e) => setDiagIcd(e.target.value), placeholder: "z. B. J06.9" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Diagnosetext *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagText, onChange: (e) => setDiagText(e.target.value), placeholder: "Diagnosebeschreibung" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Datum" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { type: "date", value: diagDate, onChange: (e) => setDiagDate(e.target.value) })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Notizen" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Textarea, { value: diagNotes, onChange: (e) => setDiagNotes(e.target.value) })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "outline", onClick: () => setShowDiagForm(false), children: "Abbrechen" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { onClick: handleDiagSave, children: "Speichern" })
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "space-y-2", children: filteredDiagnoses.map((d) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-3", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-start justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Badge, { variant: "secondary", children: d.icd_code }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { className: "font-medium", children: d.diagnosis_text })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground mt-1", children: [
+                "Patient: ",
+                d.patient_last_name,
+                ", ",
+                d.patient_first_name,
+                " (",
+                d.insurance_number,
+                ") \xE2\u20AC\u201C ",
+                d.diagnosis_date
+              ] }),
+              d.notes && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+                "Notiz: ",
+                d.notes
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "flex gap-1", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Pencil, { className: "h-3.5 w-3.5" }) }) })
+          ] }) }) }, d.id)) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "availability", className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h3", { className: "text-lg font-medium", children: "Sprechzeiten verwalten" }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Button3, { onClick: handleAddSlot, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+              " Zeitfenster hinzuf\xFCgen"
+            ] })
+          ] }),
+          showSlotForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "border-primary", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardTitle, { className: "text-base", children: "Neues Zeitfenster" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "space-y-3", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "grid gap-3 md:grid-cols-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Wochentag *" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("select", { className: "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm", value: newSlotWeekday, onChange: (e) => setNewSlotWeekday(Number(e.target.value)), children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("option", { value: "1", children: "Montag" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("option", { value: "2", children: "Dienstag" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("option", { value: "3", children: "Mittwoch" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("option", { value: "4", children: "Donnerstag" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("option", { value: "5", children: "Freitag" })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Startzeit *" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { type: "time", value: newSlotStart, onChange: (e) => setNewSlotStart(e.target.value) })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Endzeit *" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { type: "time", value: newSlotEnd, onChange: (e) => setNewSlotEnd(e.target.value) })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "\xA0" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "outline", onClick: () => setShowSlotForm(false), children: "Abbrechen" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { onClick: handleSlotSave, children: "Speichern" })
+                ] })
+              ] })
+            ] }) })
+          ] }),
+          loadingSlots && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Lade Sprechzeiten..." }),
+          !loadingSlots && slots.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Keine Sprechzeiten eingetragen. Bitte f\xFCgen Sie Zeitfenster hinzu." }) }) }),
+          [1, 2, 3, 4, 5].map((day) => {
+            const daySlots = slots.filter((s) => s.weekday === day);
+            if (daySlots.length === 0) return null;
+            const dayNames = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"];
+            return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h4", { className: "font-medium text-sm text-muted-foreground", children: dayNames[day - 1] }),
+              daySlots.map((slot) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-3", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("span", { className: "font-medium", children: [
+                    slot.start_time,
+                    " - ",
+                    slot.end_time
+                  ] }),
+                  slot.is_active === 0 && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Badge, { variant: "outline", children: "Inaktiv" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleToggleSlot(slot.id, slot.is_active), children: slot.is_active ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CircleX, { className: "h-3.5 w-3.5" }) : /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CircleCheckBig, { className: "h-3.5 w-3.5 text-green-600" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleDeleteSlot(slot.id), children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Trash2, { className: "h-3.5 w-3.5 text-destructive" }) })
+                ] })
+              ] }) }, slot.id))
+            ] }, day);
+          })
+        ] })
+      ] })
+    ] });
+  }
+
+  // src/App.tsx
+  var import_jsx_runtime33 = __toESM(require_jsx_runtime(), 1);
+  function App() {
+    return /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(BrowserRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Routes, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(LandingPage, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/doctor-login", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(DoctorLogin, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Route, { element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(RootLayout, { role: "patient" }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/patient", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(PatientOverview, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/patient/book", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(PatientPortal, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/patient/appointments", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(PatientAppointments, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/patient/prescriptions", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(PatientPrescriptions, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/patient/settings", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(PatientSettings, {}) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Route, { element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(RootLayout, { role: "mfa" }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/mfa", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(MFADashboard, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/mfa/patients", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(MFAPatients, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/mfa/appointments", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(MFAAppointments, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/mfa/prescriptions", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(MFAPrescriptions, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/mfa/vaccinations", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(MFAVaccinations, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/mfa/reminders", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(MFAReminders, {}) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Route, { element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(RootLayout, { role: "doctor" }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/doctor", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(DoctorDashboard, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/doctor/prescriptions", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(DoctorPrescriptions, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/doctor/absences", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(DoctorAbsences, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Route, { path: "/doctor/master-data", element: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(DoctorMasterData, {}) })
+      ] })
+    ] }) });
+  }
+
+  // src/entry-umd.tsx
+  var root = document.getElementById("root");
+  if (root) {
+    import_client.default.createRoot(root).render(
+      import_react52.default.createElement(import_react52.default.StrictMode, null, import_react52.default.createElement(App))
+    );
+  }
+  var entry_umd_default = App;
+  return __toCommonJS(entry_umd_exports);
+})();
+/*! Bundled license information:
+
+react/cjs/react.production.min.js:
+  (**
+   * @license React
+   * react.production.min.js
+   *
+   * Copyright (c) Facebook, Inc. and its affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+scheduler/cjs/scheduler.production.min.js:
+  (**
+   * @license React
+   * scheduler.production.min.js
+   *
+   * Copyright (c) Facebook, Inc. and its affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react-dom/cjs/react-dom.production.min.js:
+  (**
+   * @license React
+   * react-dom.production.min.js
+   *
+   * Copyright (c) Facebook, Inc. and its affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+react/cjs/react-jsx-runtime.production.min.js:
+  (**
+   * @license React
+   * react-jsx-runtime.production.min.js
+   *
+   * Copyright (c) Facebook, Inc. and its affiliates.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   *)
+
+@remix-run/router/dist/router.js:
+  (**
+   * @remix-run/router v1.21.0
+   *
+   * Copyright (c) Remix Software Inc.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE.md file in the root directory of this source tree.
+   *
+   * @license MIT
+   *)
+
+react-router/dist/index.js:
+  (**
+   * React Router v6.28.0
+   *
+   * Copyright (c) Remix Software Inc.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE.md file in the root directory of this source tree.
+   *
+   * @license MIT
+   *)
+
+react-router-dom/dist/index.js:
+  (**
+   * React Router DOM v6.28.0
+   *
+   * Copyright (c) Remix Software Inc.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE.md file in the root directory of this source tree.
+   *
+   * @license MIT
+   *)
+
+lucide-react/dist/esm/shared/src/utils.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/defaultAttributes.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/Icon.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/createLucideIcon.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/bell.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/calendar-days.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/calendar.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/chevron-down.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/chevron-left.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/chevron-right.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/circle-check-big.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/circle-x.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/clipboard-check.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/clipboard-list.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/clock.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/file-text.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/flask-conical.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/home.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/layout-dashboard.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/log-out.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/mail.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/pencil.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/phone.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/pill.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/plus.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/search.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/settings.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/stethoscope.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/syringe.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/trash-2.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/triangle-alert.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/user.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/lucide-react.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+*/

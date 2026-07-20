@@ -1,5 +1,6 @@
-import { Router } from 'express';
+ï»¿import { Router } from 'express';
 import { getDb } from '../db/connection.ts';
+import { isDoctorAbsent } from '../services/absenceCheck.ts';
 
 export const slotsRouter = Router();
 
@@ -40,7 +41,7 @@ slotsRouter.get('/slots', (req, res) => {
       return;
     }
 
-    // Prüfen, ob Kategorie online buchbar ist
+    // PrÃ¼fen, ob Kategorie online buchbar ist
     const config = db.prepare(
       'SELECT online_bookable, default_duration_minutes, default_buffer_minutes FROM appointment_type_configs WHERE category = ?'
     ).get(category) as {
@@ -59,18 +60,8 @@ slotsRouter.get('/slots', (req, res) => {
       return;
     }
 
-    // Praxis- oder Arzt-spezifische Schließung prüfen
-    const absences = db.prepare(
-      "SELECT type, doctor_ids FROM absences WHERE ? BETWEEN start_date AND end_date AND blocks_booking = 1"
-    ).all(date) as { type: string; doctor_ids: string }[];
-
-    const isBlocked = absences.some(function (a) {
-      if (a.type === 'FULL_PRACTICE') return true;
-      if (a.type === 'SINGLE_DOCTOR') {
-        return a.doctor_ids.split(',').map(Number).includes(doctorId);
-      }
-      return false;
-    });
+    // PrÃ¼fen ob der Arzt an diesem Datum abwesend ist (shared helper)
+    const isBlocked = isDoctorAbsent(db, doctorId, date);
 
     if (isBlocked) {
       res.json({ success: true, data: { date, doctorId, category, slots: [] } });
@@ -91,21 +82,21 @@ slotsRouter.get('/slots', (req, res) => {
       bookedTimes.add(existingRows[i].time);
     }
 
-    // Slots erzeugen (08:00–12:00, 13:00–17:00)
-    const slots: string[] = [];
-    const morningStart = timeToMinutes('08:00');
-    const morningEnd = timeToMinutes('12:00');
-    const afternoonStart = timeToMinutes('13:00');
-    const afternoonEnd = timeToMinutes('17:00');
+    // Sprechzeiten aus der Datenbank laden
+    const dateObj = new Date(date + 'T12:00:00');
+    const weekday = dateObj.getDay();
+    const availRows = db.prepare(
+      'SELECT start_time, end_time FROM doctor_availability WHERE doctor_id = ? AND weekday = ? AND is_active = 1 ORDER BY start_time'
+    ).all(doctorId, weekday === 0 ? 7 : weekday) as { start_time: string; end_time: string }[];
 
     const today = getTodayDate();
     const nowMinutes = getCurrentMinutes();
+    const slots: string[] = [];
 
     function addSlots(start: number, end: number) {
       for (let m = start; m + slotDuration <= end; m += slotDuration) {
         const t = minutesToTime(m);
         if (!bookedTimes.has(t)) {
-          // Für heute: nur zukünftige Slots anzeigen
           if (date !== today || m > nowMinutes) {
             slots.push(t);
           }
@@ -113,8 +104,12 @@ slotsRouter.get('/slots', (req, res) => {
       }
     }
 
-    addSlots(morningStart, morningEnd);
-    addSlots(afternoonStart, afternoonEnd);
+    if (availRows.length > 0) {
+      for (const row of availRows) {
+        addSlots(timeToMinutes(row.start_time), timeToMinutes(row.end_time));
+      }
+    }
+    // Wenn keine Sprechzeiten hinterlegt: keine Slots anzeigen
 
     res.json({
       success: true,
@@ -135,12 +130,12 @@ slotsRouter.get('/slots/acute', (req, res) => {
     const today = getTodayDate();
     const nowMinutes = getCurrentMinutes();
 
-    // Alle Ärzte mit ihren Akutslot-Kontingenten
+    // Alle Ã„rzte mit ihren Akutslot-Kontingenten
     const doctors = db.prepare(
       'SELECT id, first_name, last_name, color, acute_slots_per_day FROM doctors ORDER BY last_name, first_name'
     ).all() as { id: number; first_name: string; last_name: string; color: string | null; acute_slots_per_day: number }[];
 
-    // Heute bereits gebuchte Akutslots pro Arzt zählen
+    // Heute bereits gebuchte Akutslots pro Arzt zÃ¤hlen
     const bookedRows = db.prepare(
       "SELECT doctor_id, COUNT(*) as count FROM appointments WHERE date = ? AND category = 'ACUTE' AND status != 'CANCELLED' GROUP BY doctor_id"
     ).all(today) as { doctor_id: number; count: number }[];
@@ -154,11 +149,11 @@ slotsRouter.get('/slots/acute', (req, res) => {
       const total = doc.acute_slots_per_day;
       const used = bookedMap[doc.id] || 0;
 
-      // Zwei Hälften: Vormittag (07:00–12:00) und Nachmittag (13:00–17:00)
+      // Zwei HÃ¤lften: Vormittag (07:00â€“12:00) und Nachmittag (13:00â€“17:00)
       const morningSlots = Math.max(0, Math.ceil((total - used) / 2));
       const afternoonSlots = Math.max(0, Math.floor((total - used) / 2));
 
-      // Für heute: bereits vergangene Hälften leeren
+      // FÃ¼r heute: bereits vergangene HÃ¤lften leeren
       const finalMorning = nowMinutes < timeToMinutes('12:00') ? morningSlots : 0;
       const finalAfternoon = nowMinutes < timeToMinutes('17:00') ? afternoonSlots : 0;
 
@@ -180,3 +175,6 @@ slotsRouter.get('/slots/acute', (req, res) => {
     });
   }
 });
+
+
+

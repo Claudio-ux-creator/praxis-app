@@ -1,9 +1,9 @@
-import { Bell, Calendar, ClipboardList, FlaskConical, Home, LayoutDashboard, LogOut, Pill, Settings, User } from "lucide-react";
+import { Bell, Calendar, ClipboardList, FlaskConical, Home, LayoutDashboard, LogOut, Pill, Settings, User, Stethoscope, CalendarDays, ClipboardCheck } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const patientLinks = [
-  { to: "/patient", icon: Home, label: "�bersicht" },
+  { to: "/patient", icon: Home, label: "Übersicht" },
   { to: "/patient/book", icon: Calendar, label: "Termin buchen" },
   { to: "/patient/appointments", icon: ClipboardList, label: "Meine Termine" },
   { to: "/patient/prescriptions", icon: Pill, label: "Rezepte" },
@@ -19,19 +19,34 @@ const mfaLinks = [
   { to: "/mfa/reminders", icon: Bell, label: "Erinnerungen" },
 ];
 
+const doctorLinks = [
+  { to: "/doctor", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/doctor/prescriptions", icon: ClipboardCheck, label: "Rezept-Freigabe" },
+  { to: "/doctor/absences", icon: CalendarDays, label: "Urlaub & Abwesenheit" },
+  { to: "/doctor/master-data", icon: Stethoscope, label: "Stammdaten" },
+];
+
 interface SidebarProps {
-  role: "patient" | "mfa";
+  role: "patient" | "mfa" | "doctor";
 }
 
 export function Sidebar({ role }: SidebarProps) {
-  const links = role === "patient" ? patientLinks : mfaLinks;
+  let links = patientLinks;
+  let portalLabel = "Patientenportal";
+  if (role === "mfa") {
+    links = mfaLinks;
+    portalLabel = "MFA-Portal";
+  } else if (role === "doctor") {
+    links = doctorLinks;
+    portalLabel = "Arzt-Portal";
+  }
 
   return (
     <aside className="w-64 border-r bg-card flex flex-col h-screen sticky top-0">
       <div className="p-4 border-b">
         <p className="font-semibold text-sm text-primary">Praxis Demir & Kollegen</p>
         <p className="text-xs text-muted-foreground">
-          {role === "patient" ? "Patientenportal" : "MFA-Portal"}
+          {portalLabel}
         </p>
       </div>
 
@@ -40,7 +55,7 @@ export function Sidebar({ role }: SidebarProps) {
           <NavLink
             key={link.to}
             to={link.to}
-            end={link.to === "/mfa"}
+            end={link.to === "/mfa" || link.to === "/doctor"}
             className={({ isActive }) =>
               cn(
                 "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
@@ -62,6 +77,7 @@ export function Sidebar({ role }: SidebarProps) {
           onClick={() => {
             localStorage.removeItem("patient_insurance");
             localStorage.removeItem("patient_name");
+            localStorage.removeItem("doctor_info");
           }}
           className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
         >

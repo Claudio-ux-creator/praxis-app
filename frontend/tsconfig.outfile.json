@@ -1,0 +1,33 @@
+{
+    "compilerOptions":  {
+                            "target":  "ES5",
+                            "module":  "system",
+                            "jsx":  "react",
+                            "jsxFactory":  "React.createElement",
+                            "strict":  false,
+                            "esModuleInterop":  true,
+                            "skipLibCheck":  true,
+                            "outFile":  "./build/app.js",
+                            "declaration":  false,
+                            "sourceMap":  false,
+                            "resolveJsonModule":  true,
+                            "baseUrl":  ".",
+                            "paths":  {
+                                          "@/*":  [
+                                                      "src/*"
+                                                  ],
+                                          "@shared/types":  [
+                                                                "../shared/types"
+                                                            ]
+                                      }
+                        },
+    "include":  [
+                    "src/**/*.tsx",
+                    "src/**/*.ts"
+                ],
+    "exclude":  [
+                    "node_modules",
+                    "public",
+                    "build"
+                ]
+}

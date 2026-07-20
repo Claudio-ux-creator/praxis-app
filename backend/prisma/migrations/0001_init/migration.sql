@@ -123,7 +123,7 @@ INSERT OR IGNORE INTO staff (first_name, last_name, role, doctor_id)
 VALUES
     ('Ayşe', 'Yılmaz', 'MFA', NULL),
     ('Ali', 'Kaya', 'MFA', NULL),
-    ('Ahmet', 'Demir', 'DOCTOR', 1),
+    ('Aylin', 'Demir', 'DOCTOR', 1),
     ('Fatma', 'Demir', 'DOCTOR', 2),
     ('Mehmet', 'Kollegen', 'DOCTOR', 3);
 
@@ -151,4 +151,6 @@ VALUES
 -- Seed: Sample patient
 INSERT OR IGNORE INTO patients (id, insurance_number, first_name, last_name, date_of_birth, phone, email, email_opt_in)
 VALUES (1, 'A123456789', 'Max', 'Mustermann', '1990-05-15', '+49 176 12345678', 'max@example.com', 1);
+
+
 

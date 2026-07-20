@@ -1,10 +1,11 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Search, Phone, Mail, AlertTriangle } from 'lucide-react';
 import { get } from '@/lib/api';
+import { formatDate } from "@/lib/utils";
 
 interface Patient {
   id: number;
@@ -103,3 +104,5 @@ export default function MFAPatients() {
     </div>
   );
 }
+
+

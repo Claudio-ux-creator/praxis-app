@@ -1,5 +1,6 @@
 ﻿import { Router } from 'express';
 import { getDb } from '../db/connection.ts';
+import { isDoctorAbsent } from '../services/absenceCheck.ts';
 
 export const appointmentsRouter = Router();
 
@@ -47,8 +48,13 @@ appointmentsRouter.post('/appointments', (req, res) => {
       return;
     }
 
-    const result = db.prepare(
-      "INSERT INTO appointments (patient_id, doctor_id, category, date, time, status, booking_type) VALUES (?, ?, ?, ?, ?, 'PENDING_CONFIRMATION', 'ONLINE')"
+    // Prüfen ob der Arzt an diesem Datum abwesend ist
+    if (isDoctorAbsent(db, doctorId, date)) {
+      res.status(409).json({ success: false, error: 'Der gewünschte Arzt ist an diesem Tag abwesend. Bitte wählen Sie einen anderen Tag oder Arzt.' });
+      return;
+    }
+
+    const result = db.prepare("INSERT INTO appointments (patient_id, doctor_id, category, date, time, status, booking_type) VALUES (?, ?, ?, ?, ?, 'PENDING_CONFIRMATION', 'ONLINE')"
     ).run(patient.id, doctorId, category, date, time);
 
     if (answers && Array.isArray(answers)) {
@@ -57,6 +63,18 @@ appointmentsRouter.post('/appointments', (req, res) => {
       );
       for (const a of answers) {
         insertAnswer.run(result.lastInsertRowid, a.questionId, a.questionText || "", a.answer);
+      }
+    }
+
+    // Bei Rezept-Abholung automatisch eine PENDING-Rezeptanfrage erstellen
+    if (category === 'PRESCRIPTION_PICKUP' && answers && Array.isArray(answers)) {
+      // Medikamentenname aus Antwort extrahieren
+      const medicationAnswer = answers.find(function(a) { return a.answer && a.answer !== ''; });
+      if (medicationAnswer && medicationAnswer.answer) {
+        const medicationName = medicationAnswer.answer;
+        db.prepare(
+          "INSERT INTO prescriptions (patient_id, medication_name, dosage, notes, initiated_by_mfa_id, responsible_doctor_id, status, request_date, pickup_appointment_id) VALUES (?, ?, ?, ?, ?, ?, 'PENDING', ?, ?)"
+        ).run(patient.id, medicationName, null, 'Patientenanfrage aus Terminbuchung', 0, doctorId, date, result.lastInsertRowid);
       }
     }
 
@@ -86,6 +104,12 @@ appointmentsRouter.post('/appointments/series', (req, res) => {
     const template = db.prepare('SELECT * FROM vaccination_templates WHERE id = ?').get(seriesTemplateId) as any;
     if (!template) {
       res.status(404).json({ success: false, error: 'Impfserien-Vorlage nicht gefunden' });
+      return;
+    }
+
+    // Prüfen ob der Arzt am Startdatum abwesend ist
+    if (isDoctorAbsent(db, doctorId, date)) {
+      res.status(409).json({ success: false, error: 'Der gewünschte Arzt ist am ausgewählten Startdatum abwesend. Bitte wählen Sie einen anderen Tag oder Arzt.' });
       return;
     }
 
@@ -177,3 +201,8 @@ appointmentsRouter.patch('/appointments/:id/note', (req, res) => {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
   }
 });
+
+
+
+
+

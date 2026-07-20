@@ -72,6 +72,7 @@ export default function LandingPage() {
           <div className="mt-4 space-y-2 text-center text-sm text-muted-foreground">
             <p>Testzugang: <code className="rounded bg-muted px-1.5 py-0.5 text-xs font-mono">A123456789</code></p>
             <p><a href="/mfa" className="text-primary underline">MFA-Login</a></p>
+            <p><a href="/doctor-login" className="text-primary underline">Arzt-Login</a></p>
           </div>
         </CardContent>
       </Card>
