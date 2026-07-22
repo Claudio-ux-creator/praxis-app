@@ -1,4 +1,4 @@
-import { Bell, Calendar, ClipboardList, FlaskConical, Home, LayoutDashboard, LogOut, Pill, Settings, User, Stethoscope, CalendarDays, ClipboardCheck } from "lucide-react";
+﻿import { Bell, Calendar, ClipboardList, FlaskConical, Home, LayoutDashboard, LogOut, Pill, Settings, User, Stethoscope, CalendarDays, ClipboardCheck, Clock } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +24,7 @@ const doctorLinks = [
   { to: "/doctor/prescriptions", icon: ClipboardCheck, label: "Rezept-Freigabe" },
   { to: "/doctor/absences", icon: CalendarDays, label: "Urlaub & Abwesenheit" },
   { to: "/doctor/master-data", icon: Stethoscope, label: "Stammdaten" },
+  { to: "/doctor/acute-hours", icon: Clock, label: "Akutsprechstunde" },
 ];
 
 interface SidebarProps {

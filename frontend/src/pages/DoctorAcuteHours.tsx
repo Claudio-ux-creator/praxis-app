@@ -19,7 +19,6 @@ export default function DoctorAcuteHours() {
   const [startTime, setStartTime] = useState("08:00");
   const [endTime, setEndTime] = useState("12:00");
   const [slotInterval, setSlotInterval] = useState(30);
-  const [maxSlots, setMaxSlots] = useState(5);
   const [isActive, setIsActive] = useState(true);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,7 +37,6 @@ export default function DoctorAcuteHours() {
         setStartTime(r.data.start_time || "08:00");
         setEndTime(r.data.end_time || "12:00");
         setSlotInterval(r.data.slot_interval || 30);
-        setMaxSlots(r.data.max_slots || 5);
         setIsActive(r.data.is_active ? true : false);
         setSaved(true);
       } else {
@@ -59,7 +57,6 @@ export default function DoctorAcuteHours() {
       startTime,
       endTime,
       slotInterval,
-      maxSlots,
       isActive,
     });
     if (r.success) {
@@ -111,8 +108,18 @@ export default function DoctorAcuteHours() {
               <Input type="number" min="10" max="120" step="5" value={slotInterval} onChange={(e) => setSlotInterval(Number(e.target.value))} />
             </div>
             <div className="space-y-1">
-              <Label>Max. Slots</Label>
-              <Input type="number" min="1" max="50" value={maxSlots} onChange={(e) => setMaxSlots(Number(e.target.value))} />
+              <Label>Max. Slots (berechnet)</Label>
+              <div className="flex items-center h-10 px-3 rounded-md border border-input bg-muted/50 text-sm">
+                {(() => {
+                  const sp = startTime.split(":").map(Number);
+                  const ep = endTime.split(":").map(Number);
+                  const sm = sp[0] * 60 + sp[1];
+                  const em = ep[0] * 60 + ep[1];
+                  const total = em - sm;
+                  const calc = total > 0 && slotInterval > 0 ? Math.floor(total / slotInterval) : 1;
+                  return <span>Es werden <strong>{calc}</strong> Slots generiert</span>;
+                })()}
+              </div>
             </div>
             <div className="space-y-1">
               <Label>Aktiv</Label>
@@ -151,3 +158,5 @@ export default function DoctorAcuteHours() {
     </div>
   );
 }
+
+

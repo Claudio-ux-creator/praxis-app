@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+﻿import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { RootLayout } from '@/components/layout/RootLayout';
 import LandingPage from '@/pages/LandingPage';
 import PatientPortal from '@/pages/PatientPortal';
@@ -17,6 +17,7 @@ import DoctorDashboard from '@/pages/DoctorDashboard';
 import DoctorPrescriptions from '@/pages/DoctorPrescriptions';
 import DoctorAbsences from '@/pages/DoctorAbsences';
 import DoctorMasterData from '@/pages/DoctorMasterData';
+import DoctorAcuteHours from '@/pages/DoctorAcuteHours';
 
 export default function App() {
   return (
@@ -50,6 +51,7 @@ export default function App() {
           <Route path="/doctor/prescriptions" element={<DoctorPrescriptions />} />
           <Route path="/doctor/absences" element={<DoctorAbsences />} />
           <Route path="/doctor/master-data" element={<DoctorMasterData />} />
+          <Route path="/doctor/acute-hours" element={<DoctorAcuteHours />} />
         </Route>
       </Routes>
     </BrowserRouter>

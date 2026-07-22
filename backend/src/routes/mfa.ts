@@ -3,7 +3,6 @@ import { getDb } from '../db/connection.ts';
 
 export const mfaRouter = Router();
 
-// Verschreibungspflichtige Medikamente (verschreibungspflichtig = nicht rezeptfrei)
 const PRESCRIPTION_ONLY_KEYWORDS = [
   'amoxicillin', 'penicillin', 'antibiotikum', 'antibiotika', 'ciprofloxacin', 'doxycyclin', 'erythromycin',
   'ramipril', 'enalapril', 'lisinopril', 'metoprolol', 'bisoprolol', 'amlodipin', 'simvastatin', 'atorvastatin',
@@ -12,10 +11,6 @@ const PRESCRIPTION_ONLY_KEYWORDS = [
   'diclofenac', 'naproxen',
   'cortison', 'prednisolon', 'dexamethason',
   'furosemid', 'torasemid', 'hydrochlorothiazid', 'hct',
-  'fentanyl', 'morphin', 'oxycodon', 'tilidin', 'pethidin', 'methadon', 'buprenorphin',
-  'amphetamine', 'methylphenidat', 'modafinil',
-  'benzodiazepin', 'diazepam', 'lorazepam', 'alprazolam',
-  'zolpidem', 'zopiclon', 'phenobarbital', 'pentobarbital', 'ketamin', 'ghb',
   'antidepressivum', 'antidepressiva', 'fluoxetin', 'citalopram', 'sertralin', 'venlafaxin',
   'neuroleptika', 'risperidon', 'olanzapin', 'quetiapin',
   'theophyllin', 'salbutamol', 'formoterol', 'budesonid',
@@ -27,7 +22,6 @@ const PRESCRIPTION_ONLY_KEYWORDS = [
 
 function isPrescriptionOnly(name: string): boolean {
   const lower = name.toLowerCase();
-  // Paracetamol und Ibuprofen in niedriger Dosierung sind rezeptfrei
   if (lower.includes('paracetamol')) {
     const match = lower.match(/(\d+)\s*mg/);
     if (match && parseInt(match[1]) <= 500) return false;
@@ -36,7 +30,6 @@ function isPrescriptionOnly(name: string): boolean {
     const match = lower.match(/(\d+)\s*mg/);
     if (match && parseInt(match[1]) <= 400) return false;
   }
-  // ASS in niedriger Dosierung (100mg) ist rezeptfrei
   if (lower.includes('ass') || lower.includes('acetylsalicyl')) {
     const match = lower.match(/(\d+)\s*mg/);
     if (match && parseInt(match[1]) <= 100) return false;
@@ -58,142 +51,36 @@ function checkConsultation(db: any, patientId: number): { passed: boolean; messa
   return { passed: true, message: '' };
 }
 
-// POST /api/mfa/prescriptions/:id/forward - MFA prüft Rezept und leitet an Arzt weiter
-mfaRouter.post('/mfa/prescriptions/:id/forward', (req, res) => {
-  try {
-    const db = getDb();
-    const id = Number(req.params.id);
-
-    const rx = db.prepare(
-      'SELECT p.id, p.medication_name, p.patient_id, p.status, p.responsible_doctor_id, pat.last_consultation FROM prescriptions p JOIN patients pat ON pat.id = p.patient_id WHERE p.id = ?'
-    ).get(id) as { id: number; medication_name: string; patient_id: number; status: string; responsible_doctor_id: number; last_consultation: string | null } | undefined;
-
-    if (!rx) {
-      res.status(404).json({ success: false, error: 'Rezept nicht gefunden' });
-      return;
-    }
-
-    if (rx.status !== 'PENDING') {
-      res.status(409).json({ success: false, error: 'Rezept hat nicht den Status PENDING' });
-      return;
-    }
-
-    // 1. Prüfung: Ist das Medikament verschreibungspflichtig?
-    if (isPrescriptionOnly(rx.medication_name)) {
-      res.status(409).json({
-        success: false,
-        error: '\\"' + rx.medication_name + '\\" ist verschreibungspflichtig und kann von der MFA nicht freigegeben werden. Bitte den Arzt informieren.',
-        checks: {
-          prescriptionOnly: true,
-          consultationOk: null,
-        }
-      });
-      return;
-    }
-
-    // 2. Prüfung: War die letzte Konsultation < 1 Jahr her?
-    const consultCheck = checkConsultation(db, rx.patient_id);
-    if (!consultCheck.passed) {
-      res.status(409).json({
-        success: false,
-        error: consultCheck.message,
-        checks: {
-          prescriptionOnly: false,
-          consultationOk: false,
-        }
-      });
-      return;
-    }
-
-    // Beide Prüfungen bestanden -> an Arzt weiterleiten
-    db.prepare("UPDATE prescriptions SET status = 'IN_PROGRESS', updated_at = datetime('now') WHERE id = ?").run(id);
-
-    res.json({
-      success: true,
-      data: { id, status: 'IN_PROGRESS' },
-      checks: {
-        prescriptionOnly: false,
-        consultationOk: true,
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
-  }
-});
-
-// POST /api/mfa/prescriptions/:id/reject - MFA lehnt Rezept ab (mit Grund)
-mfaRouter.post('/mfa/prescriptions/:id/reject', (req, res) => {
-  try {
-    const db = getDb();
-    const id = Number(req.params.id);
-    const { reason } = req.body;
-
-    const rx = db.prepare('SELECT id, status FROM prescriptions WHERE id = ?').get(id) as { id: number; status: string } | undefined;
-    if (!rx) {
-      res.status(404).json({ success: false, error: 'Rezept nicht gefunden' });
-      return;
-    }
-
-    if (rx.status !== 'PENDING') {
-      res.status(409).json({ success: false, error: 'Rezept hat nicht den Status PENDING' });
-      return;
-    }
-
-    const notes = reason || 'Von MFA abgelehnt';
-    db.prepare("UPDATE prescriptions SET status = 'REJECTED', notes = ?, updated_at = datetime('now') WHERE id = ?")
-      .run(notes, id);
-
-    res.json({ success: true, data: { id, status: 'REJECTED' } });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
-  }
-});
-
-// GET /api/mfa/dashboard - Aggregierte Dashboard-Daten für MFA
 mfaRouter.get('/mfa/dashboard', (_req, res) => {
   try {
     const db = getDb();
     const today = new Date().toISOString().slice(0, 10);
-
     const todaysAppointments = db.prepare(
       "SELECT a.id, a.patient_id, a.doctor_id, a.category, a.date, a.time, a.status, a.booking_type, a.mfa_note, p.insurance_number, p.first_name AS patient_first_name, p.last_name AS patient_last_name, p.date_of_birth, p.phone, p.no_show_count, d.first_name AS doctor_first_name, d.last_name AS doctor_last_name, d.color AS doctor_color FROM appointments a JOIN patients p ON p.id = a.patient_id JOIN doctors d ON d.id = a.doctor_id WHERE a.date = ? AND a.status != 'CANCELLED' ORDER BY a.time"
     ).all(today);
-
     const pendingPrescriptions = db.prepare(
-      "SELECT p.id, p.patient_id, p.medication_name, p.dosage, p.notes, p.status, p.request_date, p.approved_date, p.initiated_by_mfa_id, pat.first_name AS patient_first_name, pat.last_name AS patient_last_name, pat.insurance_number, pat.phone, d.first_name AS doctor_first_name, d.last_name AS doctor_last_name FROM prescriptions p JOIN patients pat ON pat.id = p.patient_id JOIN doctors d ON d.id = p.responsible_doctor_id WHERE p.status IN ('PENDING', 'IN_PROGRESS', 'APPROVED') ORDER BY p.request_date DESC"
+      "SELECT p.id, p.patient_id, p.medication_name, p.dosage, p.notes, p.status, p.request_date, p.approved_date, p.initiated_by_mfa_id, pat.first_name AS patient_first_name, pat.last_name AS patient_last_name, pat.insurance_number, pat.phone, d.first_name AS doctor_first_name, d.last_name AS doctor_last_name FROM prescriptions p JOIN patients pat ON pat.id = p.patient_id JOIN doctors d ON d.id = p.responsible_doctor_id WHERE p.status IN ('PENDING') ORDER BY p.request_date DESC"
     ).all();
-
     const doctors = db.prepare('SELECT id, first_name, last_name, color, acute_slots_per_day FROM doctors ORDER BY last_name, first_name').all() as any[];
     const bookedRows = db.prepare(
       "SELECT doctor_id, COUNT(*) as count FROM appointments WHERE date = ? AND category = 'ACUTE' AND status != 'CANCELLED' GROUP BY doctor_id"
     ).all(today) as any[];
     const bookedMap: Record<number, number> = {};
-    for (const row of bookedRows) {
-      bookedMap[row.doctor_id] = row.count;
-    }
-    const acuteSlotInfo = doctors.map((doc: any) => {
-      const total = doc.acute_slots_per_day;
-      const used = bookedMap[doc.id] || 0;
-      return {
-        doctorId: doc.id,
-        doctorName: doc.first_name + ' ' + doc.last_name,
-        doctorColor: doc.color,
-        totalSlots: total,
-        usedSlots: used,
-        remainingSlots: Math.max(0, total - used),
-      };
-    });
-
-    res.json({
-      success: true,
-      data: { date: today, todaysAppointments, pendingPrescriptions, acuteSlotInfo },
-    });
+    for (const row of bookedRows) bookedMap[row.doctor_id] = row.count;
+    const acuteSlotInfo = doctors.map((doc: any) => ({
+      doctorId: doc.id,
+      doctorName: doc.first_name + ' ' + doc.last_name,
+      doctorColor: doc.color,
+      totalSlots: doc.acute_slots_per_day,
+      usedSlots: bookedMap[doc.id] || 0,
+      remainingSlots: Math.max(0, doc.acute_slots_per_day - (bookedMap[doc.id] || 0)),
+    }));
+    res.json({ success: true, data: { date: today, todaysAppointments, pendingPrescriptions, acuteSlotInfo } });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
   }
 });
 
-// GET /api/mfa/appointments - Alle Termine (MFA)
 mfaRouter.get('/mfa/appointments', (_req, res) => {
   try {
     const db = getDb();
@@ -206,34 +93,20 @@ mfaRouter.get('/mfa/appointments', (_req, res) => {
   }
 });
 
-// GET /api/mfa/notifications?insuranceNumber= - Patient notifications
 mfaRouter.get('/mfa/notifications', (req, res) => {
   try {
     const db = getDb();
     const insuranceNumber = req.query.insuranceNumber as string;
-
-    if (!insuranceNumber) {
-      res.status(400).json({ success: false, error: 'insuranceNumber erforderlich' });
-      return;
-    }
-
+    if (!insuranceNumber) { res.status(400).json({ success: false, error: 'insuranceNumber erforderlich' }); return; }
     const patient = db.prepare('SELECT id FROM patients WHERE insurance_number = ?').get(insuranceNumber) as { id: number } | undefined;
-    if (!patient) {
-      res.status(404).json({ success: false, error: 'Patient nicht gefunden' });
-      return;
-    }
-
-    const notifications = db.prepare(
-      'SELECT id, type, title, message, related_entity_type, related_entity_id, is_read, created_at FROM patient_notifications WHERE patient_id = ? ORDER BY created_at DESC LIMIT 20'
-    ).all(patient.id);
-
+    if (!patient) { res.status(404).json({ success: false, error: 'Patient nicht gefunden' }); return; }
+    const notifications = db.prepare('SELECT id, type, title, message, related_entity_type, related_entity_id, is_read, created_at FROM patient_notifications WHERE patient_id = ? ORDER BY created_at DESC LIMIT 20').all(patient.id);
     res.json({ success: true, data: notifications });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
   }
 });
 
-// PATCH /api/mfa/notifications/:id/read - Mark notification as read
 mfaRouter.patch('/mfa/notifications/:id/read', (req, res) => {
   try {
     const db = getDb();
@@ -245,8 +118,6 @@ mfaRouter.patch('/mfa/notifications/:id/read', (req, res) => {
   }
 });
 
-// GET /api/mfa/notifications - Patient notifications
-// GET /api/mfa/vaccinations - Alle Impftermine (MFA)
 mfaRouter.get('/mfa/vaccinations', (_req, res) => {
   try {
     const db = getDb();
@@ -258,6 +129,4 @@ mfaRouter.get('/mfa/vaccinations', (_req, res) => {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
   }
 });
-
-
 

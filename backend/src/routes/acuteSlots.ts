@@ -28,11 +28,19 @@ acuteSlotsRouter.get('/acute-slots/doctor-hours', (req, res) => {
 acuteSlotsRouter.post('/acute-slots/doctor-hours', (req, res) => {
   try {
     const db = getDb();
-    const { doctorId, date, startTime, endTime, slotInterval, maxSlots, isActive } = req.body;
+    const { doctorId, date, startTime, endTime, slotInterval, isActive } = req.body;
     if (!doctorId || !date || !startTime || !endTime) {
       res.status(400).json({ success: false, error: 'doctorId, date, startTime und endTime erforderlich' });
       return;
     }
+    // Automatische Berechnung von max_slots aus Startzeit, Endzeit und Intervall
+    const interval = slotInterval || 30;
+    const startParts = startTime.split(':').map(Number);
+    const endParts = endTime.split(':').map(Number);
+    const startMinutes = startParts[0] * 60 + startParts[1];
+    const endMinutes = endParts[0] * 60 + endParts[1];
+    const totalMinutes = endMinutes - startMinutes;
+    const calculatedMaxSlots = totalMinutes > 0 && interval > 0 ? Math.floor(totalMinutes / interval) : 1;
     db.prepare(
       `INSERT INTO doctor_acute_hours (doctor_id, date, start_time, end_time, slot_interval, max_slots, is_active)
        VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -43,8 +51,8 @@ acuteSlotsRouter.post('/acute-slots/doctor-hours', (req, res) => {
          max_slots = excluded.max_slots,
          is_active = excluded.is_active,
          updated_at = datetime('now')`
-    ).run(doctorId, date, startTime, endTime, slotInterval || 30, maxSlots || 5, isActive !== undefined ? (isActive ? 1 : 0) : 1);
-    res.json({ success: true, data: { doctorId, date } });
+    ).run(doctorId, date, startTime, endTime, interval, calculatedMaxSlots, isActive !== undefined ? (isActive ? 1 : 0) : 1);
+    res.json({ success: true, data: { doctorId, date, max_slots: calculatedMaxSlots } });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
   }
@@ -80,14 +88,22 @@ acuteSlotsRouter.get('/acute-slots', (req, res) => {
          ORDER BY s.time`
       ).all(hours.doctor_id, date) as any[];
 
-      if (existingSlots.length === 0) {
-        // Slots generieren basierend auf den Einstellungen
-        const interval = hours.slot_interval || 30;
-        const maxSlots = hours.max_slots || 5;
-        const startParts = hours.start_time.split(':').map(Number);
-        const endParts = hours.end_time.split(':').map(Number);
-        const startMinutes = startParts[0] * 60 + startParts[1];
-        const endMinutes = endParts[0] * 60 + endParts[1];
+      // Slots immer neu generieren, falls Konfiguration geändert wurde
+      // (z.B. andere Startzeit, Endzeit oder Intervall)
+      const interval = hours.slot_interval || 30;
+      const maxSlots = hours.max_slots || 5;
+      const startParts = hours.start_time.split(':').map(Number);
+      const endParts = hours.end_time.split(':').map(Number);
+      const startMinutes = startParts[0] * 60 + startParts[1];
+      const endMinutes = endParts[0] * 60 + endParts[1];
+      const expectedCount = Math.floor((endMinutes - startMinutes) / interval);
+
+      if (existingSlots.length !== expectedCount || existingSlots[0]?.time !== hours.start_time) {
+        // Alte Slots löschen und neu generieren
+        if (existingSlots.length > 0) {
+          db.prepare('DELETE FROM acute_slots WHERE doctor_id = ? AND date = ?').run(hours.doctor_id, date);
+        }
+        existingSlots = [];
         let count = 0;
 
         for (let m = startMinutes; m < endMinutes && count < maxSlots; m += interval) {
@@ -164,3 +180,5 @@ acuteSlotsRouter.post('/acute-slots/:id/cancel', (req, res) => {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
   }
 });
+
+

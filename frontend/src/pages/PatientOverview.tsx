@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -89,7 +89,7 @@ export default function PatientOverview() {
             <p className="text-sm"><strong>{nextAppointment.date}</strong> um <strong>{nextAppointment.time}</strong></p>
             <p className="text-sm text-muted-foreground">
               {CATEGORY_LABEL[nextAppointment.category] || nextAppointment.category} bei Dr. {nextAppointment.doctor_last_name}
-              {' â€” '}
+              {' — '}
               <span className="font-medium">{STATUS_MAP[nextAppointment.status] || nextAppointment.status}</span>
             </p>
           </CardContent>

@@ -12,3 +12,9 @@ package-lock.json
 Untitled-1.md
 Untitled-1.txt
 test-esbuild.cjs
+
+praxis.db
+praxis.db-shm
+praxis.db-wal
+check_slots.mjs
+

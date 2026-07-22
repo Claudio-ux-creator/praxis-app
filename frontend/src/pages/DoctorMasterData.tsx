@@ -256,8 +256,8 @@ export default function DoctorMasterData() {
                     <p className="font-medium">{m.name}</p>
                     <p className="text-xs text-muted-foreground">
                       {m.active_ingredient && `${m.active_ingredient}`}
-                      {m.strength && ` â€“ ${m.strength}`}
-                      {m.form && ` â€“ ${m.form}`}
+                      {m.strength && `  -  ${m.strength}`}
+                      {m.form && `  -  ${m.form}`}
                     </p>
                   </div>
                   <div className="flex gap-1">
@@ -312,7 +312,7 @@ export default function DoctorMasterData() {
                         <span className="font-medium">{d.diagnosis_text}</span>
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Patient: {d.patient_last_name}, {d.patient_first_name} ({d.insurance_number}) â€“ {d.diagnosis_date}
+                        Patient: {d.patient_last_name}, {d.patient_first_name} ({d.insurance_number})  -  {d.diagnosis_date}
                       </p>
                       {d.notes && <p className="text-xs text-muted-foreground">Notiz: {d.notes}</p>}
                     </div>

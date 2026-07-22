@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Pill, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
-import { get, patch } from '@/lib/api';
+import { get, post, patch } from '@/lib/api';
 import { formatDate } from "@/lib/utils";
 
 interface Prescription {
@@ -24,18 +24,20 @@ interface Prescription {
 
 const STATUS_MAP: Record<string, string> = {
   PENDING: 'Ausstehend',
-  IN_PROGRESS: 'In Prüfung',
-  APPROVED: 'Freigegeben',
-  REJECTED: 'Abgelehnt',
-  COLLECTED: 'Abgeholt',
+  mfa_approved: 'MFA geprüfung',
+  mfa_rejected: 'MFA abgelehnt',
+  doctor_approved: 'Arzt freigegeben',
+  doctor_rejected: 'Arzt abgelehnt',
+  collected: 'Abgeholt',
 };
 
 const STATUS_BADGE: Record<string, string> = {
   PENDING: 'secondary',
-  IN_PROGRESS: 'default',
-  APPROVED: 'default',
-  REJECTED: 'destructive',
-  COLLECTED: 'outline',
+  mfa_approved: 'default',
+  mfa_rejected: 'destructive',
+  doctor_approved: 'default',
+  doctor_rejected: 'destructive',
+  collected: 'outline',
 };
 
 const RX_NEXT_STATUS: Record<string, string[]> = {
@@ -50,6 +52,21 @@ export default function MFAPrescriptions() {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   const [filter, setFilter] = useState<string>('PENDING');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const handleForwardToDoctor = async (id: number) => {
+    const r = await post('/prescriptions/' + id + '/mfa-approve', { mfaUserId: 1 });
+    if (!r.success) { alert(r.error || 'Fehler'); return; }
+    loadData();
+  };
+
+  const handleRejectByMfa = async (id: number) => {
+    const reason = prompt('Grund für die Ablehnung:');
+    if (reason === null) return;
+    const r = await post('/prescriptions/' + id + '/mfa-reject', { mfaUserId: 1, reason: reason || '' });
+    if (!r.success) { alert(r.error || 'Fehler'); return; }
+    loadData();
+  };
 
   const loadData = () => {
     setLoading(true);
@@ -81,7 +98,7 @@ export default function MFAPrescriptions() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Rezeptverwaltung</h1>
         <div className="flex gap-1 flex-wrap">
-          {['ALL', 'PENDING', 'IN_PROGRESS', 'APPROVED', 'REJECTED', 'COLLECTED'].map((s) => {
+          {['ALL', 'PENDING', 'mfa_approved', 'mfa_rejected', 'auto_rejected', 'doctor_approved', 'doctor_rejected', 'collected'].map((s) => {
             if (!counts[s]) return null;
             return (
               <Button key={s} size="sm" variant={filter === s ? 'default' : 'outline'} onClick={() => setFilter(s)} className="text-xs">
@@ -118,31 +135,27 @@ export default function MFAPrescriptions() {
                   </div>
                   <div className="text-sm text-muted-foreground">
                     {rx.patient_last_name}, {rx.patient_first_name} ({rx.insurance_number})
-                    {' Â· '}Dr. {rx.doctor_last_name}
-                    {' Â· '}angefragt: {rx.request_date}
+                    {' - '}Dr. {rx.doctor_last_name}
+                    {' - '}angefragt: {rx.request_date}
                   </div>
                   {rx.notes && (
                     <div className="text-xs italic bg-muted p-2 rounded inline-block">{rx.notes}</div>
                   )}
-                  {rx.status !== 'COLLECTED' && rx.status !== 'REJECTED' && (
+                  {rx.status === 'PENDING' && (
                     <div className="flex gap-1 pt-1">
-                      {RX_NEXT_STATUS[rx.status]?.map((ns) => (
-                        <Button
-                          key={ns}
-                          size="xs"
-                          variant={
-                            ns === 'IN_PROGRESS' ? 'default' :
-                            ns === 'REJECTED' ? 'destructive' : 'outline'
-                          }
-                          onClick={() => handleStatusChange(rx.id, ns)}
-                          className="text-xs"
-                        >
-                          {ns === 'IN_PROGRESS' ? 'Prüfen' :
-                           ns === 'APPROVED' ? 'Freigeben' :
-                           ns === 'REJECTED' ? 'Ablehnen' :
-                           ns === 'COLLECTED' ? 'Abgeholt' : ns}
-                        </Button>
-                      ))}
+                      <Button size="xs" variant="default" onClick={() => handleForwardToDoctor(rx.id)} className="text-xs">
+                        An Arzt weiterleiten
+                      </Button>
+                      <Button size="xs" variant="destructive" onClick={() => handleRejectByMfa(rx.id)} className="text-xs">
+                        Ablehnen
+                      </Button>
+                    </div>
+                  )}
+                  {rx.status === 'doctor_approved' && (
+                    <div className="flex gap-1 pt-1">
+                      <Button size="xs" variant="default" onClick={() => handleStatusChange(rx.id, 'collected')} className="text-xs">
+                        Abgeholt
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -157,8 +170,6 @@ export default function MFAPrescriptions() {
     </div>
   );
 }
-
-
 
 
 

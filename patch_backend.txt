@@ -1,0 +1,34 @@
+﻿--- backend/src/routes/acuteSlots.ts
+@@ // POST /api/acute-slots/doctor-hours – Akutsprechstunde speichern
+ acuteSlotsRouter.post('/acute-slots/doctor-hours', (req, res) => {
+   try {
+     const db = getDb();
+     const { doctorId, date, startTime, endTime, slotInterval, isActive } = req.body;
+     if (!doctorId || !date || !startTime || !endTime) {
+       res.status(400).json({ success: false, error: 'doctorId, date, startTime und endTime erforderlich' });
+       return;
+     }
++    // Automatische Berechnung von max_slots
++    const interval = slotInterval || 30;
++    const startParts = startTime.split(':').map(Number);
++    const endParts = endTime.split(':').map(Number);
++    const startMinutes = startParts[0] * 60 + startParts[1];
++    const endMinutes = endParts[0] * 60 + endParts[1];
++    const totalMinutes = endMinutes - startMinutes;
++    const calculatedMaxSlots = totalMinutes > 0 && interval > 0 ? Math.floor(totalMinutes / interval) : 1;
++
+     db.prepare(
+       INSERT INTO doctor_acute_hours (doctor_id, date, start_time, end_time, slot_interval, max_slots, is_active)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+@@ ... @@
+          updated_at = datetime('now')
+-    ).run(doctorId, date, startTime, endTime, slotInterval || 30, maxSlots || 5, isActive !== undefined ? (isActive ? 1 : 0) : 1);
++    ).run(doctorId, date, startTime, endTime, interval, calculatedMaxSlots, isActive !== undefined ? (isActive ? 1 : 0) : 1);
++    // Berechnete max_slots in der Response zurückgeben
++    const saved = db.prepare('SELECT * FROM doctor_acute_hours WHERE doctor_id = ? AND date = ?').get(doctorId, date) as any;
+-    res.json({ success: true, data: { doctorId, date } });
++    res.json({ success: true, data: saved || { doctorId, date, max_slots: calculatedMaxSlots } });
+   } catch (error) {
+     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+   }
+ });

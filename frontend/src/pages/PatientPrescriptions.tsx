@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿﻿import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { get } from '@/lib/api';
@@ -18,16 +18,20 @@ interface PrescriptionResult {
 
 const STATUS_MAP: Record<string, string> = {
   PENDING: 'Ausstehend',
-  APPROVED: 'Freigegeben',
-  REJECTED: 'Abgelehnt',
-  DISPENSED: 'Ausgegeben',
+  mfa_approved: 'MFA geprüfung',
+  mfa_rejected: 'MFA abgelehnt',
+  doctor_approved: 'Freigegeben',
+  doctor_rejected: 'Abgelehnt (Arzt)',
+  collected: 'Abgeholt',
 };
 
 const STATUS_BADGE: Record<string, string> = {
   PENDING: 'secondary',
-  APPROVED: 'default',
-  REJECTED: 'destructive',
-  DISPENSED: 'outline',
+  mfa_approved: 'default',
+  mfa_rejected: 'destructive',
+  doctor_approved: 'default',
+  doctor_rejected: 'destructive',
+  collected: 'outline',
 };
 
 export default function PatientPrescriptions() {
@@ -69,7 +73,7 @@ export default function PatientPrescriptions() {
                 <p className="text-sm text-muted-foreground">
                   {p.dosage && <span>Dosierung: {p.dosage} &middot; </span>}
                   Dr. {p.doctor_last_name}
-                  {' â€” '}
+                  {' — '}
                   {p.request_date}
                 </p>
                 {p.notes && <p className="text-xs text-muted-foreground mt-1">{p.notes}</p>}
@@ -84,7 +88,5 @@ export default function PatientPrescriptions() {
     </div>
   );
 }
-
-
 
 

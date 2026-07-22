@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,33 +35,32 @@ interface DoctorInfo {
 }
 
 const STATUS_MAP: Record<string, string> = {
-
   PENDING: "Ausstehend",
-  IN_PROGRESS: "In Prüfung",
-  APPROVED: "Freigegeben",
-  REJECTED: "Abgelehnt",
-  COLLECTED: "Abgeholt",
+  mfa_approved: "MFA gepr\u00FCft",
+  mfa_rejected: "MFA abgelehnt",
+  doctor_approved: "Freigegeben",
+  doctor_rejected: "Abgelehnt",
+  collected: "Abgeholt",
 };
 
 const STATUS_BADGE: Record<string, string> = {
-
   PENDING: "secondary",
-  IN_PROGRESS: "default",
-  APPROVED: "default",
-  REJECTED: "destructive",
-  COLLECTED: "outline",
+  mfa_approved: "default",
+  mfa_rejected: "destructive",
+  doctor_approved: "default",
+  doctor_rejected: "destructive",
+  collected: "outline",
 };
 
 export default function DoctorPrescriptions() {
   const navigate = useNavigate();
   const [doctorInfo, setDoctorInfo] = useState<DoctorInfo | null>(null);
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
-  const [filter, setFilter] = useState<string>("IN_PROGRESS");
+  const [filter, setFilter] = useState<string>("mfa_approved");
   const [loading, setLoading] = useState(true);
   const [rejectModal, setRejectModal] = useState<number | null>(null);
   const [rejectReason, setRejectReason] = useState("");
 
-  // New prescription form
   const [showNewForm, setShowNewForm] = useState(false);
   const [newInsurance, setNewInsurance] = useState("");
   const [newMedication, setNewMedication] = useState("");
@@ -90,12 +89,14 @@ export default function DoctorPrescriptions() {
   }, [doctorInfo]);
 
   const handleApprove = async (id: number) => {
-    await patch("/doctor/prescriptions/" + id + "/approve", { status: "APPROVED" });
+    const r = await patch("/doctor/prescriptions/" + id + "/approve", { status: "doctor_approved" });
+    if (!r.success) { alert(r.error || "Fehler"); return; }
     loadPrescriptions();
   };
 
   const handleReject = async (id: number) => {
-    await patch("/doctor/prescriptions/" + id + "/approve", { status: "REJECTED", rejectReason });
+    const r = await patch("/doctor/prescriptions/" + id + "/approve", { status: "doctor_rejected", rejectReason });
+    if (!r.success) { alert(r.error || "Fehler"); return; }
     setRejectModal(null);
     setRejectReason("");
     loadPrescriptions();
@@ -130,7 +131,7 @@ export default function DoctorPrescriptions() {
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h1 className="text-2xl font-semibold">Rezept-Freigabe</h1>
         <div className="flex gap-1 flex-wrap">
-          {["ALL", "PENDING", "IN_PROGRESS", "APPROVED", "REJECTED", "COLLECTED"].map((s) => {
+          {["ALL", "PENDING", "mfa_approved", "mfa_rejected", "auto_rejected", "doctor_approved", "doctor_rejected", "collected"].map((s) => {
             if (!counts[s] && s !== "ALL") return null;
             return (
               <Button key={s} size="sm" variant={filter === s ? "default" : "outline"} onClick={() => setFilter(s)} className="text-xs">
@@ -145,18 +146,17 @@ export default function DoctorPrescriptions() {
         </div>
       </div>
 
-      {/* New Prescription Form */}
       {showNewForm && (
         <Card className="border-primary">
-          <CardHeader><CardTitle className="text-base">Neues Rezept ausstellen</CardTitle></CardHeader>
+          <CardHeader><CardTitle>Neues Rezept ausstellen</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             <div className="grid gap-3 md:grid-cols-2">
               <div className="space-y-1">
-                <Label>Versichertennummer</Label>
-                <Input value={newInsurance} onChange={(e) => setNewInsurance(e.target.value)} placeholder="z. B. A123456789" />
+                <Label>Versichertennummer *</Label>
+                <Input value={newInsurance} onChange={(e) => setNewInsurance(e.target.value)} placeholder="A123456789" />
               </div>
               <div className="space-y-1">
-                <Label>Medikament</Label>
+                <Label>Medikament *</Label>
                 <Input value={newMedication} onChange={(e) => setNewMedication(e.target.value)} placeholder="Medikamentname" />
               </div>
               <div className="space-y-1">
@@ -210,16 +210,17 @@ export default function DoctorPrescriptions() {
                       return (
                         <p className="text-xs mt-1">
                           Letzte Konsultation: {p.last_consultation}
-                          {isOld ? ' ⚠️ > 1 Jahr her – Freigabe nicht möglich' : ' ✅ < 1 Jahr'}</p>
+                          {isOld ? " \u26A0\uFE0F > 1 Jahr her \u2013 Freigabe nicht m\u00F6glich" : " \u2705 < 1 Jahr"}
+                        </p>
                       );
                     })()
                   )}
                   {!p.last_consultation && (
-                    <p className="text-xs mt-1 text-destructive font-semibold">Keine Konsultation bekannt – Freigabe nicht möglich</p>
+                    <p className="text-xs mt-1 text-destructive font-semibold">Keine Konsultation bekannt \u2013 Freigabe nicht m\u00F6glich</p>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  {p.status === "PENDING" && (
+                  {p.status === "mfa_approved" && (
                     <>
                       <Button size="sm" variant="default" onClick={() => handleApprove(p.id)}>
                         <CheckCircle className="h-3.5 w-3.5 mr-1" /> Freigeben
@@ -239,7 +240,6 @@ export default function DoctorPrescriptions() {
         ))}
       </div>
 
-      {/* Reject Modal */}
       {rejectModal !== null && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <Card className="w-full max-w-md mx-4">
@@ -260,7 +260,3 @@ export default function DoctorPrescriptions() {
     </div>
   );
 }
-
-
-
-

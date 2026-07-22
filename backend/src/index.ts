@@ -32,10 +32,18 @@ app.use('/api', (await import('./routes/mfa.ts')).mfaRouter);
 app.use('/api', (await import('./routes/reminders.ts')).remindersRouter);
 app.use('/api', (await import('./routes/doctor.ts')).doctorRouter);
 app.use('/api', (await import('./routes/availability.ts')).availabilityRouter);
+app.use('/api', (await import('./routes/acuteSlots.ts')).acuteSlotsRouter);
 
 // Statische Dateien + SPA-Fallback in einer Middleware
 app.use((req, res, next) => {
   if (req.method !== 'GET') return next();
+
+  // Kein Cache für JS-Bundle (bei jedem Neustart frisch laden)
+  if (req.path === "/build/app.js") {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+  }
 
   // Nur Pfade ohne API-Prefix behandeln
   const requestedPath = req.path === '/' ? '/index.html' : req.path;

@@ -29,7 +29,7 @@ doctorRouter.get('/doctor/prescriptions', (req, res) => {
       params.push(doctorId);
     }
 
-    sql += " p.status IN ('IN_PROGRESS')";
+    sql += " p.status IN ('mfa_approved')";
 
     sql += ' ORDER BY p.request_date DESC';
 
@@ -46,14 +46,15 @@ doctorRouter.patch('/doctor/prescriptions/:id/approve', (req, res) => {
     const db = getDb();
     const id = Number(req.params.id);
     const { status, rejectReason } = req.body;
+    const doctorId = req.body.doctorId || null;
 
-    if (!status || !['APPROVED', 'REJECTED'].includes(status)) {
-      res.status(400).json({ success: false, error: 'status muss APPROVED oder REJECTED sein' });
+    if (!status || !['doctor_approved', 'doctor_rejected'].includes(status)) {
+      res.status(400).json({ success: false, error: 'status muss doctor_approved oder doctor_rejected sein' });
       return;
     }
 
     const today = new Date().toISOString().slice(0, 10);
-    const notes = status === 'REJECTED' && rejectReason ? rejectReason : null;
+    const notes = status === 'doctor_rejected' && rejectReason ? rejectReason : null;
 
     // Prüfen, ob das Rezept den Status IN_PROGRESS hat
     const currentRx = db.prepare('SELECT status FROM prescriptions WHERE id = ?').get(id) as { status: string } | undefined;
@@ -61,13 +62,13 @@ doctorRouter.patch('/doctor/prescriptions/:id/approve', (req, res) => {
       res.status(404).json({ success: false, error: 'Rezept nicht gefunden' });
       return;
     }
-    if (currentRx.status !== 'IN_PROGRESS') {
-      res.status(409).json({ success: false, error: 'Rezept muss von der MFA geprüft sein (IN_PROGRESS), bevor der Arzt es freigeben oder ablehnen kann.' });
+    if (currentRx.status !== 'mfa_approved') {
+      res.status(409).json({ success: false, error: 'Rezept muss von der MFA geprüft sein (mfa_approved), bevor der Arzt es freigeben oder ablehnen kann.' });
       return;
     }
 
     // Bei Freigabe prüfen, ob die letzte Konsultation länger als 1 Jahr zurückliegt
-    if (status === 'APPROVED') {
+    if (status === 'doctor_approved') {
       const rx = db.prepare(
         'SELECT pat.last_consultation FROM prescriptions pr JOIN patients pat ON pat.id = pr.patient_id WHERE pr.id = ?'
       ).get(id) as { last_consultation: string | null } | undefined;
@@ -87,7 +88,7 @@ doctorRouter.patch('/doctor/prescriptions/:id/approve', (req, res) => {
     }
 
     // When doctor approves, create a notification for the patient
-    if (status === 'APPROVED') {
+    if (status === 'doctor_approved') {
       const rxInfo = db.prepare(
         'SELECT p.id, p.medication_name, p.patient_id, pat.insurance_number FROM prescriptions p JOIN patients pat ON pat.id = p.patient_id WHERE p.id = ?'
       ).get(id) as { id: number; medication_name: string; patient_id: number; insurance_number: string } | undefined;
@@ -106,8 +107,27 @@ doctorRouter.patch('/doctor/prescriptions/:id/approve', (req, res) => {
       }
     }
 
-    db.prepare("UPDATE prescriptions SET status = ?, approved_date = ?, notes = ?, updated_at = datetime('now') WHERE id = ?")
-      .run(status, today, notes, id);
+    // Bei Ablehnung Benachrichtigung senden
+    if (status === 'doctor_rejected') {
+      const rxInfo2 = db.prepare(
+        'SELECT p.id, p.medication_name, p.patient_id FROM prescriptions p WHERE p.id = ?'
+      ).get(id);
+      if (rxInfo2) {
+        db.prepare(
+          "INSERT INTO patient_notifications (patient_id, type, title, message, related_entity_type, related_entity_id) VALUES (?, ?, ?, ?, ?, ?)"
+        ).run(
+          rxInfo2.patient_id,
+          'PRESCRIPTION_REJECTED',
+          'Rezept abgelehnt',
+          'Ihre Rezeptanfrage f\u00fcr ' + rxInfo2.medication_name + ' wurde vom Arzt abgelehnt' + (rejectReason ? '. Grund: ' + rejectReason : '') + '.',
+          'prescription',
+          id
+        );
+      }
+    }
+
+    db.prepare("UPDATE prescriptions SET status = ?, doctor_approved_by = ?, doctor_approved_at = datetime('now'), approved_date = ?, notes = ?, updated_at = datetime('now') WHERE id = ?")
+      .run(status, doctorId || null, today, notes, id);
 
     res.json({ success: true, data: { id, status } });
   } catch (error) {
@@ -155,8 +175,8 @@ doctorRouter.post('/doctor/prescriptions', (req, res) => {
     }
 
     const result = db.prepare(
-      "INSERT INTO prescriptions (patient_id, medication_name, dosage, notes, initiated_by_mfa_id, responsible_doctor_id, status, request_date, approved_date) VALUES (?, ?, ?, ?, ?, ?, 'APPROVED', ?, ?)"
-    ).run(patient.id, medicationName, dosage || null, notes || null, doctorId, doctorId, today, today);
+      "INSERT INTO prescriptions (patient_id, medication_name, dosage, notes, initiated_by_mfa_id, responsible_doctor_id, assigned_doctor_id, status, request_date, requires_doctor_approval, doctor_approved_by, approved_date) VALUES (?, ?, ?, ?, ?, ?, ?, 'doctor_approved', ?, 0, ?, ?)"
+    ).run(patient.id, medicationName, dosage || null, notes || null, doctorId, doctorId, doctorId, today, 0, doctorId, today);
 
     res.json({ success: true, data: { id: result.lastInsertRowid } });
   } catch (error) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -107,8 +107,8 @@ export default function MFAVaccinations() {
                     {v.patient_last_name}, {v.patient_first_name} ({v.insurance_number})
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {v.date} um {v.time} · Dr. {v.doctor_last_name}
-                    {v.series_dose_number && <span> · Dosis {v.series_dose_number}</span>}
+                    {v.date} um {v.time} - Dr. {v.doctor_last_name}
+                    {v.series_dose_number && <span> - Dosis {v.series_dose_number}</span>}
                   </div>
                 </div>
                 <Badge variant="outline" className="text-xs">
