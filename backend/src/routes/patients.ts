@@ -39,6 +39,70 @@ patientsRouter.post('/patients', (req, res) => {
   }
 });
 
+// PATCH /api/patients/:id - Patientendaten aktualisieren (MFA)
+patientsRouter.patch('/patients/:id', (req, res) => {
+  try {
+    const db = getDb();
+    const id = Number(req.params.id);
+    const { firstName, lastName, dateOfBirth, phone, email, emailOptIn, insuranceType, mfaComment } = req.body;
+    db.prepare(
+      "UPDATE patients SET first_name = COALESCE(?, first_name), last_name = COALESCE(?, last_name), date_of_birth = COALESCE(?, date_of_birth), phone = COALESCE(?, phone), email = COALESCE(?, email), email_opt_in = COALESCE(?, email_opt_in), insurance_type = COALESCE(?, insurance_type), mfa_comment = COALESCE(?, mfa_comment), updated_at = datetime('now') WHERE id = ?"
+    ).run(firstName || null, lastName || null, dateOfBirth || null, phone || null, email !== undefined ? email : null, emailOptIn !== undefined ? (emailOptIn ? 1 : 0) : null, insuranceType || null, mfaComment !== undefined ? mfaComment : null, id);
+    res.json({ success: true, data: { id } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+  }
+});
+
+// DELETE /api/patients/:id - Patienten löschen (MFA)
+patientsRouter.delete('/patients/:id', (req, res) => {
+  try {
+    const db = getDb();
+    const id = Number(req.params.id);
+
+    // Prüfen ob der Patient verknüpfte Termine hat
+    const appointmentCount = db.prepare('SELECT COUNT(*) as count FROM appointments WHERE patient_id = ?').get(id);
+    const prescriptionCount = db.prepare('SELECT COUNT(*) as count FROM prescriptions WHERE patient_id = ?').get(id);
+    const diagnosisCount = db.prepare('SELECT COUNT(*) as count FROM diagnoses WHERE patient_id = ?').get(id);
+
+    res.json({ success: true, data: {
+      appointmentCount: (appointmentCount).count || 0,
+      prescriptionCount: (prescriptionCount).count || 0,
+      diagnosisCount: (diagnosisCount).count || 0,
+    }});
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+  }
+});
+
+// DELETE /api/patients/:id/force - Patienten mit allen verknüpften Daten löschen (MFA)
+patientsRouter.delete('/patients/:id/force', (req, res) => {
+  try {
+    const db = getDb();
+    const id = Number(req.params.id);
+
+    db.exec('BEGIN TRANSACTION');
+    try {
+      db.prepare('DELETE FROM questionnaire_answers WHERE appointment_id IN (SELECT id FROM appointments WHERE patient_id = ?)').run(id);
+      db.prepare('DELETE FROM patient_notifications WHERE patient_id = ?').run(id);
+      db.prepare('DELETE FROM reminders WHERE patient_id = ?').run(id);
+      db.prepare('DELETE FROM diagnoses WHERE patient_id = ?').run(id);
+      db.prepare('DELETE FROM prescriptions WHERE patient_id = ?').run(id);
+      db.prepare('DELETE FROM appointments WHERE patient_id = ?').run(id);
+      db.prepare('DELETE FROM acute_slots WHERE patient_id = ?').run(id);
+      db.prepare('DELETE FROM patients WHERE id = ?').run(id);
+      db.exec('COMMIT');
+    } catch (e) {
+      db.exec('ROLLBACK');
+      throw e;
+    }
+
+    res.json({ success: true, data: { id } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+  }
+});
+
 // PATCH /api/patients/:id/comment - MFA-Kommentar aktualisieren
 patientsRouter.patch('/patients/:id/comment', (req, res) => {
   try {

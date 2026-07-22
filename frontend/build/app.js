@@ -20740,7 +20740,18 @@ var PraxisApp = (() => {
     const [showDiagnoses, setShowDiagnoses] = (0, import_react42.useState)(null);
     const [diagnoses, setDiagnoses] = (0, import_react42.useState)([]);
     const [loadingDiagnoses, setLoadingDiagnoses] = (0, import_react42.useState)(false);
-    const [saving, setSaving] = (0, import_react42.useState)(false);
+    const [editPatient, setEditPatient] = (0, import_react42.useState)(null);
+    const [editFirst, setEditFirst] = (0, import_react42.useState)("");
+    const [editLast, setEditLast] = (0, import_react42.useState)("");
+    const [editDob, setEditDob] = (0, import_react42.useState)("");
+    const [editPhone, setEditPhone] = (0, import_react42.useState)("");
+    const [editEmail, setEditEmail] = (0, import_react42.useState)("");
+    const [editInsType, setEditInsType] = (0, import_react42.useState)("public");
+    const [editComment, setEditComment] = (0, import_react42.useState)("");
+    const [editSaving, setEditSaving] = (0, import_react42.useState)(false);
+    const [deletePatient, setDeletePatient] = (0, import_react42.useState)(null);
+    const [deleteInfo, setDeleteInfo] = (0, import_react42.useState)(null);
+    const [deleting, setDeleting] = (0, import_react42.useState)(false);
     const [newIns, setNewIns] = (0, import_react42.useState)("");
     const [newFirst, setNewFirst] = (0, import_react42.useState)("");
     const [newLast, setNewLast] = (0, import_react42.useState)("");
@@ -20749,6 +20760,7 @@ var PraxisApp = (() => {
     const [newEmail, setNewEmail] = (0, import_react42.useState)("");
     const [newInsType, setNewInsType] = (0, import_react42.useState)("public");
     const [newComment, setNewComment] = (0, import_react42.useState)("");
+    const [saving, setSaving] = (0, import_react42.useState)(false);
     const loadPatients = () => {
       setLoading(true);
       get("/patients").then((r2) => {
@@ -20772,6 +20784,61 @@ var PraxisApp = (() => {
         else setDiagnoses([]);
         setLoadingDiagnoses(false);
       });
+    };
+    const openEdit = (p, e) => {
+      e.stopPropagation();
+      setEditPatient(p);
+      setEditFirst(p.first_name);
+      setEditLast(p.last_name);
+      setEditDob(p.date_of_birth);
+      setEditPhone(p.phone);
+      setEditEmail(p.email || "");
+      setEditInsType(p.insurance_type || "public");
+      setEditComment(p.mfa_comment || "");
+    };
+    const handleEditSave = async () => {
+      if (!editPatient || !editFirst || !editLast || !editDob || !editPhone) return;
+      setEditSaving(true);
+      const r2 = await patch("/patients/" + editPatient.id, {
+        firstName: editFirst,
+        lastName: editLast,
+        dateOfBirth: editDob,
+        phone: editPhone,
+        email: editEmail || void 0,
+        emailOptIn: false,
+        insuranceType: editInsType,
+        mfaComment: editComment || void 0
+      });
+      setEditSaving(false);
+      if (r2.success) {
+        setEditPatient(null);
+        loadPatients();
+      } else {
+        alert(r2.error || "Fehler beim Speichern");
+      }
+    };
+    const openDelete = async (p, e) => {
+      e.stopPropagation();
+      setDeletePatient(p);
+      setDeleteInfo(null);
+      try {
+        const r2 = await del("/patients/" + p.id);
+        if (r2.success) setDeleteInfo(r2.data);
+      } catch {
+      }
+    };
+    const handleDeleteForce = async () => {
+      if (!deletePatient) return;
+      setDeleting(true);
+      const r2 = await del("/patients/" + deletePatient.id + "/force");
+      setDeleting(false);
+      if (r2.success) {
+        setDeletePatient(null);
+        setDeleteInfo(null);
+        loadPatients();
+      } else {
+        alert(r2.error || "Fehler beim L\xF6schen");
+      }
     };
     const handleCreatePatient = async () => {
       if (!newIns || !newFirst || !newLast || !newDob || !newPhone) return;
@@ -20800,13 +20867,27 @@ var PraxisApp = (() => {
       setSaving(false);
       if (r2.success) {
         setShowNewForm(false);
-        resetForm();
+        setNewIns("");
+        setNewFirst("");
+        setNewLast("");
+        setNewDob("");
+        setNewPhone("");
+        setNewEmail("");
+        setNewInsType("public");
+        setNewComment("");
         loadPatients();
       } else {
         alert(r2.error || "Fehler beim Anlegen");
       }
     };
-    const resetForm = () => {
+    const handleSaveComment = async (patientId, comment) => {
+      const r2 = await patch("/patients/" + patientId + "/comment", { mfaComment: comment });
+      if (r2.success) {
+        setPatients((prev) => prev.map((p) => p.id === patientId ? { ...p, mfa_comment: comment } : p));
+        if (showDiagnoses?.id === patientId) setShowDiagnoses((prev) => prev ? { ...prev, mfa_comment: comment } : null);
+      }
+    };
+    const resetNewForm = () => {
       setNewIns("");
       setNewFirst("");
       setNewLast("");
@@ -20815,15 +20896,6 @@ var PraxisApp = (() => {
       setNewEmail("");
       setNewInsType("public");
       setNewComment("");
-    };
-    const handleSaveComment = async (patientId, comment) => {
-      const r2 = await patch("/patients/" + patientId + "/comment", { mfaComment: comment });
-      if (r2.success) {
-        setPatients((prev) => prev.map((p) => p.id === patientId ? { ...p, mfa_comment: comment } : p));
-        if (showDiagnoses?.id === patientId) {
-          setShowDiagnoses((prev) => prev ? { ...prev, mfa_comment: comment } : null);
-        }
-      }
     };
     return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-6", children: [
       /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between flex-wrap gap-4", children: [
@@ -20834,7 +20906,7 @@ var PraxisApp = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Input3, { placeholder: "Suchen...", value: search, onChange: (e) => setSearch(e.target.value), className: "pl-9" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(Button3, { onClick: () => {
-            resetForm();
+            resetNewForm();
             setShowNewForm(true);
           }, children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(UserPlus, { className: "h-4 w-4 mr-1" }),
@@ -20844,23 +20916,28 @@ var PraxisApp = (() => {
       ] }),
       loading && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "text-muted-foreground", children: "Lade Patienten..." }),
       !loading && filtered.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "text-muted-foreground", children: "Keine Patienten gefunden." }) }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "grid gap-4 md:grid-cols-2 xl:grid-cols-3", children: filtered.map((p) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-sm", onClick: () => openDiagnoses(p), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(CardHeader, { className: "pb-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
-            p.last_name,
-            ", ",
-            p.first_name,
-            p.insurance_type === "private" && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { variant: "outline", className: "text-[10px] px-1.5 py-0 border-amber-300 text-amber-700 bg-amber-50", children: "Privat" })
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "grid gap-4 md:grid-cols-2 xl:grid-cols-3", children: filtered.map((p) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(Card, { className: "transition-all hover:border-primary hover:shadow-sm", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(CardHeader, { className: "pb-2", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-start justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+              p.last_name,
+              ", ",
+              p.first_name,
+              p.insurance_type === "private" && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { variant: "outline", className: "text-[10px] px-1.5 py-0 border-amber-300 text-amber-700 bg-amber-50", children: "Privat" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(CardDescription, { children: [
+              "Vers.-Nr.: ",
+              p.insurance_number,
+              " \xB7 geb. ",
+              p.date_of_birth
+            ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(CardDescription, { children: [
-            "Vers.-Nr.: ",
-            p.insurance_number,
-            " ? ",
-            "geb. ",
-            p.date_of_birth
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex gap-1 shrink-0", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { size: "sm", variant: "ghost", className: "h-7 w-7 p-0", onClick: (e) => openEdit(p, e), title: "Bearbeiten", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Pencil, { className: "h-3.5 w-3.5" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { size: "sm", variant: "ghost", className: "h-7 w-7 p-0 text-destructive", onClick: (e) => openDelete(p, e), title: "L\xF6schen", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Trash2, { className: "h-3.5 w-3.5" }) })
           ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(CardContent, { className: "space-y-2 text-sm", children: [
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(CardContent, { className: "space-y-2 text-sm pt-0 cursor-pointer", onClick: () => openDiagnoses(p), children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2 text-muted-foreground", children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Phone, { className: "h-3.5 w-3.5" }),
             " ",
@@ -20879,6 +20956,11 @@ var PraxisApp = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(TriangleAlert, { className: "h-3.5 w-3.5" }),
             " No-Shows: ",
             p.no_show_count
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "text-xs text-muted-foreground flex items-center gap-1 pt-1 border-t mt-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Stethoscope, { className: "h-3 w-3" }),
+            " ",
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: "Klick f\xFCr Diagnosen" })
           ] })
         ] })
       ] }, p.id)) }),
@@ -20919,25 +21001,123 @@ var PraxisApp = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "Versicherungsart *" }),
             /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex gap-3 pt-1", children: [
               /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { className: "flex items-center gap-2 cursor-pointer", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("input", { type: "radio", name: "insType", value: "public", checked: newInsType === "public", onChange: () => setNewInsType("public"), className: "h-4 w-4" }),
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("input", { type: "radio", name: "newInsType", value: "public", checked: newInsType === "public", onChange: () => setNewInsType("public"), className: "h-4 w-4" }),
                 /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ShieldCheck, { className: "h-4 w-4 text-blue-600" }),
                 /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "text-sm", children: "Gesetzlich versichert" })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { className: "flex items-center gap-2 cursor-pointer", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("input", { type: "radio", name: "insType", value: "private", checked: newInsType === "private", onChange: () => setNewInsType("private"), className: "h-4 w-4" }),
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("input", { type: "radio", name: "newInsType", value: "private", checked: newInsType === "private", onChange: () => setNewInsType("private"), className: "h-4 w-4" }),
                 /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ShieldAlert, { className: "h-4 w-4 text-amber-600" }),
                 /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "text-sm", children: "Privat versichert" })
               ] })
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-1", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "Kommentar (f?r den Arzt)" }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Textarea, { value: newComment, onChange: (e) => setNewComment(e.target.value), placeholder: "z. B. Bitte pr?fen Sie Diagnose XYZ", rows: 2 })
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "Kommentar (f\xFCr den Arzt)" }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Textarea, { value: newComment, onChange: (e) => setNewComment(e.target.value), placeholder: "z. B. Bitte pr\xFCfen Sie Diagnose XYZ", rows: 2 })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { variant: "outline", onClick: () => setShowNewForm(false), children: "Abbrechen" }),
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { onClick: handleCreatePatient, disabled: !newIns || !newFirst || !newLast || !newDob || !newPhone || saving, children: saving ? "Wird angelegt..." : "Patient anlegen" })
           ] })
+        ] })
+      ] }) }),
+      editPatient && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "w-full max-w-lg bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 z-[999]", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h3", { className: "text-base font-semibold mb-4", children: "Patient bearbeiten" }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "grid grid-cols-2 gap-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "Vorname *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Input3, { value: editFirst, onChange: (e) => setEditFirst(e.target.value) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "Nachname *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Input3, { value: editLast, onChange: (e) => setEditLast(e.target.value) })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "grid grid-cols-2 gap-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "Versichertennummer" }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Input3, { value: editPatient.insurance_number, disabled: true, className: "bg-muted/50" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "Geburtsdatum *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Input3, { type: "date", value: editDob, onChange: (e) => setEditDob(e.target.value) })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "grid grid-cols-2 gap-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "Telefon *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Input3, { value: editPhone, onChange: (e) => setEditPhone(e.target.value) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "E-Mail" }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Input3, { value: editEmail, onChange: (e) => setEditEmail(e.target.value) })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "Versicherungsart *" }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex gap-3 pt-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { className: "flex items-center gap-2 cursor-pointer", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("input", { type: "radio", name: "editInsType", value: "public", checked: editInsType === "public", onChange: () => setEditInsType("public"), className: "h-4 w-4" }),
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ShieldCheck, { className: "h-4 w-4 text-blue-600" }),
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "text-sm", children: "Gesetzlich" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { className: "flex items-center gap-2 cursor-pointer", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("input", { type: "radio", name: "editInsType", value: "private", checked: editInsType === "private", onChange: () => setEditInsType("private"), className: "h-4 w-4" }),
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ShieldAlert, { className: "h-4 w-4 text-amber-600" }),
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "text-sm", children: "Privat" })
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Label, { children: "MFA-Kommentar" }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Textarea, { value: editComment, onChange: (e) => setEditComment(e.target.value), rows: 2 })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { variant: "outline", onClick: () => setEditPatient(null), children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { onClick: handleEditSave, disabled: !editFirst || !editLast || !editDob || !editPhone || editSaving, children: editSaving ? "Wird gespeichert..." : "Speichern" })
+          ] })
+        ] })
+      ] }) }),
+      deletePatient && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "w-full max-w-md bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 z-[999]", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("h3", { className: "text-base font-semibold mb-2", children: "Patient l\xF6schen" }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "text-sm text-muted-foreground mb-4", children: [
+          "M\xF6chten Sie ",
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("strong", { children: [
+            deletePatient.last_name,
+            ", ",
+            deletePatient.first_name
+          ] }),
+          " wirklich l\xF6schen?"
+        ] }),
+        deleteInfo && (deleteInfo.appointmentCount > 0 || deleteInfo.prescriptionCount > 0 || deleteInfo.diagnosisCount > 0) && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "font-medium text-amber-800 flex items-center gap-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(TriangleAlert, { className: "h-4 w-4" }),
+            " Verkn\xFCpfte Daten"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("ul", { className: "text-amber-700 mt-1 space-y-0.5 text-xs", children: [
+            deleteInfo.appointmentCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("li", { children: [
+              deleteInfo.appointmentCount,
+              " Termin(e)"
+            ] }),
+            deleteInfo.prescriptionCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("li", { children: [
+              deleteInfo.prescriptionCount,
+              " Rezept(e)"
+            ] }),
+            deleteInfo.diagnosisCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("li", { children: [
+              deleteInfo.diagnosisCount,
+              " Diagnose(n)"
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "text-xs text-amber-600 mt-2", children: "Diese Daten werden ebenfalls gel\xF6scht." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { variant: "outline", onClick: () => {
+            setDeletePatient(null);
+            setDeleteInfo(null);
+          }, children: "Abbrechen" }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { variant: "destructive", onClick: handleDeleteForce, disabled: deleting, children: deleting ? "Wird gel\xF6scht..." : "Endg\xFCltig l\xF6schen" })
         ] })
       ] }) }),
       showDiagnoses && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "w-full max-w-2xl bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 z-[999] max-h-[85vh] overflow-y-auto", children: [
@@ -20951,36 +21131,18 @@ var PraxisApp = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
               "Vers.-Nr.: ",
               showDiagnoses.insurance_number,
-              showDiagnoses.insurance_type === "private" && " ? Privatversichert"
+              showDiagnoses.insurance_type === "private" ? " \xB7 Privatversichert" : ""
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { variant: "ghost", size: "sm", onClick: () => setShowDiagnoses(null), children: "Schlie?en" })
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { variant: "ghost", size: "sm", onClick: () => setShowDiagnoses(null), children: "Schlie\xDFen" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "mb-4 p-3 bg-muted/30 rounded-lg", children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(Label, { className: "text-xs font-medium flex items-center gap-1 mb-1", children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(MessageSquare, { className: "h-3 w-3" }),
             " MFA-Kommentar"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-            Textarea,
-            {
-              value: showDiagnoses.mfa_comment || "",
-              onChange: (e) => setShowDiagnoses((prev) => prev ? { ...prev, mfa_comment: e.target.value } : null),
-              placeholder: "Kein Kommentar. Hier Notiz f?r den Arzt hinterlegen...",
-              rows: 2,
-              className: "text-sm"
-            }
-          ),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-            Button3,
-            {
-              size: "sm",
-              variant: "outline",
-              className: "mt-2 text-xs h-7",
-              onClick: () => handleSaveComment(showDiagnoses.id, showDiagnoses.mfa_comment || ""),
-              children: "Kommentar speichern"
-            }
-          )
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Textarea, { value: showDiagnoses.mfa_comment || "", onChange: (e) => setShowDiagnoses((prev) => prev ? { ...prev, mfa_comment: e.target.value } : null), placeholder: "Kein Kommentar. Hier Notiz f\xFCr den Arzt hinterlegen...", rows: 2, className: "text-sm" }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { size: "sm", variant: "outline", className: "mt-2 text-xs h-7", onClick: () => handleSaveComment(showDiagnoses.id, showDiagnoses.mfa_comment || ""), children: "Kommentar speichern" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { children: [
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("h4", { className: "text-sm font-medium flex items-center gap-1 mb-2", children: [
@@ -20989,22 +21151,22 @@ var PraxisApp = (() => {
           ] }),
           loadingDiagnoses && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "text-sm text-muted-foreground", children: "Lade Diagnosen..." }),
           !loadingDiagnoses && diagnoses.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "text-sm text-muted-foreground", children: "Keine Diagnosen eingetragen." }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "space-y-2", children: diagnoses.map((d) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(CardContent, { className: "py-3", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "flex items-start justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { variant: "secondary", children: d.icd_code }),
-              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "font-medium text-sm", children: d.diagnosis_text })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "text-xs text-muted-foreground mt-1", children: [
-              "Dr. ",
-              d.doctor_last_name,
-              " ? ",
-              d.diagnosis_date
-            ] }),
-            d.notes && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "text-xs text-muted-foreground mt-1 italic", children: [
-              "Notiz: ",
-              d.notes
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "space-y-2", children: diagnoses.map((d) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(CardContent, { className: "py-3", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-start gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Badge, { variant: "secondary", children: d.icd_code }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("p", { className: "font-medium text-sm", children: d.diagnosis_text }),
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "text-xs text-muted-foreground mt-0.5", children: [
+                "Dr. ",
+                d.doctor_last_name,
+                " \xB7 ",
+                d.diagnosis_date
+              ] }),
+              d.notes && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("p", { className: "text-xs text-muted-foreground mt-1 italic", children: [
+                "Notiz: ",
+                d.notes
+              ] })
             ] })
-          ] }) }) }) }, d.id)) })
+          ] }) }) }, d.id)) })
         ] })
       ] }) })
     ] });
