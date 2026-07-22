@@ -22186,6 +22186,18 @@ var PraxisApp = (() => {
     const [diagText, setDiagText] = (0, import_react51.useState)("");
     const [diagDate, setDiagDate] = (0, import_react51.useState)("");
     const [diagNotes, setDiagNotes] = (0, import_react51.useState)("");
+    const [slots, setSlots] = (0, import_react51.useState)([]);
+    const [loadingSlots, setLoadingSlots] = (0, import_react51.useState)(false);
+    const [showSlotForm, setShowSlotForm] = (0, import_react51.useState)(false);
+    const [newSlotWeekday, setNewSlotWeekday] = (0, import_react51.useState)(1);
+    const [newSlotStart, setNewSlotStart] = (0, import_react51.useState)("08:00");
+    const [newSlotEnd, setNewSlotEnd] = (0, import_react51.useState)("12:00");
+    const [patients, setPatients] = (0, import_react51.useState)([]);
+    const [patientSearch, setPatientSearch] = (0, import_react51.useState)("");
+    const [loadingPatients, setLoadingPatients] = (0, import_react51.useState)(false);
+    const [selectedPatient, setSelectedPatient] = (0, import_react51.useState)(null);
+    const [patientDiagnoses, setPatientDiagnoses] = (0, import_react51.useState)([]);
+    const [loadingPatientDiagnoses, setLoadingPatientDiagnoses] = (0, import_react51.useState)(false);
     (0, import_react51.useEffect)(() => {
       const stored = localStorage.getItem("doctor_info");
       if (!stored) {
@@ -22196,12 +22208,6 @@ var PraxisApp = (() => {
       loadMedications();
       loadDiagnoses();
     }, []);
-    const [slots, setSlots] = (0, import_react51.useState)([]);
-    const [loadingSlots, setLoadingSlots] = (0, import_react51.useState)(false);
-    const [showSlotForm, setShowSlotForm] = (0, import_react51.useState)(false);
-    const [newSlotWeekday, setNewSlotWeekday] = (0, import_react51.useState)(1);
-    const [newSlotStart, setNewSlotStart] = (0, import_react51.useState)("08:00");
-    const [newSlotEnd, setNewSlotEnd] = (0, import_react51.useState)("12:00");
     const loadSlots = () => {
       if (!doctorInfo) return;
       setLoadingSlots(true);
@@ -22212,6 +22218,15 @@ var PraxisApp = (() => {
     };
     (0, import_react51.useEffect)(() => {
       if (doctorInfo) loadSlots();
+    }, [doctorInfo]);
+    (0, import_react51.useEffect)(() => {
+      if (doctorInfo) {
+        setLoadingPatients(true);
+        get("/patients").then((r2) => {
+          if (r2.success && r2.data) setPatients(r2.data);
+          setLoadingPatients(false);
+        });
+      }
     }, [doctorInfo]);
     const handleAddSlot = () => {
       setNewSlotWeekday(1);
@@ -22257,7 +22272,12 @@ var PraxisApp = (() => {
       } else {
         await post("/doctor/medications", { name: medName, activeIngredient: medIngredient, strength: medStrength, form: medForm });
       }
-      resetMedForm();
+      setShowMedForm(false);
+      setEditMedId(null);
+      setMedName("");
+      setMedIngredient("");
+      setMedStrength("");
+      setMedForm("");
       loadMedications();
     };
     const handleMedEdit = (m) => {
@@ -22272,17 +22292,9 @@ var PraxisApp = (() => {
       await del("/doctor/medications/" + id);
       loadMedications();
     };
-    const resetMedForm = () => {
-      setShowMedForm(false);
-      setEditMedId(null);
-      setMedName("");
-      setMedIngredient("");
-      setMedStrength("");
-      setMedForm("");
-    };
     const handleDiagSave = async () => {
       if (!diagInsurance || !diagIcd || !diagText || !doctorInfo) return;
-      const r2 = await post("/doctor/diagnoses", {
+      await post("/doctor/diagnoses", {
         insuranceNumber: diagInsurance,
         icdCode: diagIcd,
         diagnosisText: diagText,
@@ -22290,26 +22302,47 @@ var PraxisApp = (() => {
         notes: diagNotes || void 0,
         doctorId: doctorInfo.id
       });
-      if (r2.success) {
-        setShowDiagForm(false);
-        setDiagInsurance("");
-        setDiagIcd("");
-        setDiagText("");
-        setDiagDate("");
-        setDiagNotes("");
-        loadDiagnoses();
-      }
+      setShowDiagForm(false);
+      setDiagInsurance("");
+      setDiagIcd("");
+      setDiagText("");
+      setDiagDate("");
+      setDiagNotes("");
+      loadDiagnoses();
     };
-    const filteredMeds = medications.filter(
-      (m) => m.name.toLowerCase().includes(medSearch.toLowerCase()) || m.active_ingredient && m.active_ingredient.toLowerCase().includes(medSearch.toLowerCase())
-    );
-    const filteredDiagnoses = diagnoses.filter(
-      (d) => d.icd_code.toLowerCase().includes(diagSearch.toLowerCase()) || d.diagnosis_text.toLowerCase().includes(diagSearch.toLowerCase()) || d.patient_last_name.toLowerCase().includes(diagSearch.toLowerCase())
-    );
+    const openPatientDiagnoses = (p) => {
+      setSelectedPatient(p);
+      setLoadingPatientDiagnoses(true);
+      get("/patients/" + p.id + "/diagnoses").then((r2) => {
+        if (r2.success && r2.data) setPatientDiagnoses(r2.data);
+        else setPatientDiagnoses([]);
+        setLoadingPatientDiagnoses(false);
+      });
+    };
+    const filteredPatients = patients.filter((p) => {
+      if (!patientSearch) return true;
+      const q = patientSearch.toLowerCase();
+      return p.insurance_number.toLowerCase().includes(q) || p.first_name.toLowerCase().includes(q) || p.last_name.toLowerCase().includes(q) || p.phone.includes(q);
+    });
+    const filteredMeds = medications.filter((m) => {
+      if (!medSearch) return true;
+      const q = medSearch.toLowerCase();
+      return m.name.toLowerCase().includes(q) || m.active_ingredient && m.active_ingredient.toLowerCase().includes(q);
+    });
+    const filteredDiags = diagnoses.filter((d) => {
+      if (!diagSearch) return true;
+      const q = diagSearch.toLowerCase();
+      return d.icd_code.toLowerCase().includes(q) || d.diagnosis_text.toLowerCase().includes(q) || d.patient_last_name.toLowerCase().includes(q);
+    });
+    if (!doctorInfo) return null;
     return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-6", children: [
       /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h1", { className: "text-2xl font-semibold", children: "Stammdaten" }),
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Tabs, { defaultValue: "medications", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Tabs, { defaultValue: "patients", className: "space-y-4", children: [
         /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsList, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsTrigger, { value: "patients", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(User, { className: "h-4 w-4 mr-1" }),
+            " Patienten"
+          ] }),
           /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsTrigger, { value: "medications", children: [
             /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Pill, { className: "h-4 w-4 mr-1" }),
             " Medikamente"
@@ -22323,54 +22356,163 @@ var PraxisApp = (() => {
             " Sprechzeiten"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "medications", className: "space-y-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between gap-4", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "relative flex-1 max-w-sm", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Search, { className: "absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { className: "pl-8", placeholder: "Medikament suchen...", value: medSearch, onChange: (e) => setMedSearch(e.target.value) })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Button3, { onClick: () => {
-              resetMedForm();
-              setShowMedForm(true);
-            }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
-              " Medikament hinzuf\xFCgen"
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "patients", className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h3", { className: "text-lg font-medium", children: "Alle Patienten" }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "relative w-64", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { placeholder: "Patient suchen...", value: patientSearch, onChange: (e) => setPatientSearch(e.target.value), className: "pl-9" })
             ] })
           ] }),
-          showMedForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "border-primary", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardTitle, { children: editMedId ? "Medikament bearbeiten" : "Neues Medikament" }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "space-y-3", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "grid gap-3 md:grid-cols-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Name *" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medName, onChange: (e) => setMedName(e.target.value) })
+          loadingPatients && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Lade Patienten..." }),
+          !loadingPatients && filteredPatients.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Keine Patienten gefunden." }) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "grid gap-4 md:grid-cols-2 xl:grid-cols-3", children: filteredPatients.map((p) => /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-sm", onClick: () => openPatientDiagnoses(p), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardHeader, { className: "pb-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "flex items-start justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+                p.last_name,
+                ", ",
+                p.first_name,
+                p.insurance_type === "private" && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Badge, { variant: "outline", className: "text-[10px] px-1.5 py-0 border-amber-300 text-amber-700 bg-amber-50", children: "Privat" })
+              ] }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardDescription, { children: [
+                "Vers.-Nr.: ",
+                p.insurance_number,
+                " \xB7 geb. ",
+                p.date_of_birth
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "space-y-2 text-sm pt-0", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-2 text-muted-foreground", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Phone, { className: "h-3.5 w-3.5" }),
+                " ",
+                p.phone
+              ] }),
+              p.email && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-2 text-muted-foreground", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Mail, { className: "h-3.5 w-3.5" }),
+                " ",
+                p.email
+              ] }),
+              p.mfa_comment && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 rounded p-2 mt-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(MessageSquare, { className: "h-3 w-3 mt-0.5 shrink-0" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { className: "italic", children: p.mfa_comment })
+              ] }),
+              p.no_show_count >= 2 && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-2 text-destructive text-xs font-medium pt-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(TriangleAlert, { className: "h-3.5 w-3.5" }),
+                " No-Shows: ",
+                p.no_show_count
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "text-xs text-muted-foreground flex items-center gap-1 pt-1 border-t mt-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Stethoscope, { className: "h-3 w-3" }),
+                " ",
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { children: "Klick f\xFCr Diagnosen" })
+              ] })
+            ] })
+          ] }, p.id)) }),
+          selectedPatient && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "w-full max-w-2xl bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 z-[999] max-h-[85vh] overflow-y-auto", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between mb-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("h3", { className: "text-base font-semibold", children: [
+                  selectedPatient.last_name,
+                  ", ",
+                  selectedPatient.first_name
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Wirkstoff" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medIngredient, onChange: (e) => setMedIngredient(e.target.value) })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "St\xE4rke" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medStrength, onChange: (e) => setMedStrength(e.target.value) })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Form" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medForm, onChange: (e) => setMedForm(e.target.value) })
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+                  "Vers.-Nr.: ",
+                  selectedPatient.insurance_number,
+                  selectedPatient.insurance_type === "private" ? " \xB7 Privatversichert" : ""
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "outline", onClick: resetMedForm, children: "Abbrechen" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { onClick: handleMedSave, children: "Speichern" })
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "ghost", size: "sm", onClick: () => setSelectedPatient(null), children: "Schlie\xDFen" })
+            ] }),
+            selectedPatient.mfa_comment && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "mb-4 p-3 bg-muted/30 rounded-lg text-sm", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("span", { className: "font-medium flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(MessageSquare, { className: "h-3.5 w-3.5" }),
+                " MFA-Kommentar:"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground mt-1 italic", children: selectedPatient.mfa_comment })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("h4", { className: "text-sm font-medium flex items-center gap-1 mb-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Stethoscope, { className: "h-4 w-4" }),
+                " Diagnosen"
+              ] }),
+              loadingPatientDiagnoses && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-sm text-muted-foreground", children: "Lade Diagnosen..." }),
+              !loadingPatientDiagnoses && patientDiagnoses.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-sm text-muted-foreground", children: "Keine Diagnosen eingetragen." }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "space-y-2", children: patientDiagnoses.map((d) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-3", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-start gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Badge, { variant: "secondary", children: d.icd_code }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "font-medium text-sm", children: d.diagnosis_text }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground mt-0.5", children: [
+                    "Dr. ",
+                    d.doctor_last_name,
+                    " \xB7 ",
+                    d.diagnosis_date
+                  ] }),
+                  d.notes && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground mt-1 italic", children: [
+                    "Notiz: ",
+                    d.notes
+                  ] })
+                ] })
+              ] }) }) }, d.id)) })
+            ] })
+          ] }) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "medications", className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h3", { className: "text-lg font-medium", children: "Medikamente verwalten" }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "relative w-56", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { placeholder: "Medikament suchen...", value: medSearch, onChange: (e) => setMedSearch(e.target.value), className: "pl-9" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Button3, { onClick: () => {
+                setEditMedId(null);
+                setMedName("");
+                setMedIngredient("");
+                setMedStrength("");
+                setMedForm("");
+                setShowMedForm(true);
+              }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+                " Medikament hinzuf\xFCgen"
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "grid gap-2 md:grid-cols-2", children: filteredMeds.map((m) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
+          showMedForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "border-primary", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardTitle, { className: "text-base", children: editMedId ? "Medikament bearbeiten" : "Neues Medikament" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "space-y-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "grid gap-3 md:grid-cols-4", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Name *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medName, onChange: (e) => setMedName(e.target.value), placeholder: "z.B. Ibuprofen" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Wirkstoff" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medIngredient, onChange: (e) => setMedIngredient(e.target.value), placeholder: "z.B. Ibuprofen" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "St\xE4rke" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medStrength, onChange: (e) => setMedStrength(e.target.value), placeholder: "z.B. 400 mg" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Darreichungsform" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medForm, onChange: (e) => setMedForm(e.target.value), placeholder: "z.B. Tabletten" })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "outline", onClick: () => setShowMedForm(false), children: "Abbrechen" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { onClick: handleMedSave, disabled: !medName, children: editMedId ? "Aktualisieren" : "Hinzuf\xFCgen" })
+              ] })
+            ] })
+          ] }),
+          filteredMeds.length === 0 && !showMedForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Keine Medikamente gefunden." }) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "grid gap-3 md:grid-cols-2 xl:grid-cols-3", children: filteredMeds.map((m) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
             /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "font-medium", children: m.name }),
               /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
-                m.active_ingredient && `${m.active_ingredient}`,
-                m.strength && `  -  ${m.strength}`,
-                m.form && `  -  ${m.form}`
+                m.active_ingredient && `${m.active_ingredient} `,
+                m.strength && `- ${m.strength} `,
+                m.form && `- ${m.form}`
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-1", children: [
@@ -22380,70 +22522,76 @@ var PraxisApp = (() => {
           ] }) }, m.id)) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "diagnoses", className: "space-y-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between gap-4", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "relative flex-1 max-w-sm", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Search, { className: "absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { className: "pl-8", placeholder: "Diagnose suchen...", value: diagSearch, onChange: (e) => setDiagSearch(e.target.value) })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Button3, { onClick: () => setShowDiagForm(!showDiagForm), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
-              " Diagnose hinzuf\xFCgen"
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h3", { className: "text-lg font-medium", children: "Diagnosen verwalten" }),
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "relative w-56", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { placeholder: "Diagnose suchen...", value: diagSearch, onChange: (e) => setDiagSearch(e.target.value), className: "pl-9" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Button3, { onClick: () => {
+                setShowDiagForm(true);
+              }, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+                " Diagnose hinzuf\xFCgen"
+              ] })
             ] })
           ] }),
           showDiagForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "border-primary", children: [
             /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardTitle, { className: "text-base", children: "Neue Diagnose" }) }),
             /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "space-y-3", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "grid gap-3 md:grid-cols-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "grid gap-3 md:grid-cols-5", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Versichertennummer *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Versichertennr. *" }),
                   /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagInsurance, onChange: (e) => setDiagInsurance(e.target.value), placeholder: "A123456789" })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "ICD-Code *" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagIcd, onChange: (e) => setDiagIcd(e.target.value), placeholder: "z. B. J06.9" })
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagIcd, onChange: (e) => setDiagIcd(e.target.value), placeholder: "J06.9" })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Diagnosetext *" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagText, onChange: (e) => setDiagText(e.target.value), placeholder: "Diagnosebeschreibung" })
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Diagnose *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagText, onChange: (e) => setDiagText(e.target.value), placeholder: "Diagnosetext" })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
                   /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Datum" }),
                   /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { type: "date", value: diagDate, onChange: (e) => setDiagDate(e.target.value) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Notizen" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagNotes, onChange: (e) => setDiagNotes(e.target.value), placeholder: "Optional" })
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Notizen" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Textarea, { value: diagNotes, onChange: (e) => setDiagNotes(e.target.value) })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "outline", onClick: () => setShowDiagForm(false), children: "Abbrechen" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { onClick: handleDiagSave, children: "Speichern" })
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { onClick: handleDiagSave, disabled: !diagInsurance || !diagIcd || !diagText, children: "Speichern" })
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "space-y-2", children: filteredDiagnoses.map((d) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-3", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-start justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Badge, { variant: "secondary", children: d.icd_code }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { className: "font-medium", children: d.diagnosis_text })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground mt-1", children: [
-                "Patient: ",
-                d.patient_last_name,
-                ", ",
-                d.patient_first_name,
-                " (",
-                d.insurance_number,
-                ")  -  ",
-                d.diagnosis_date
-              ] }),
-              d.notes && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
-                "Notiz: ",
-                d.notes
+          filteredDiags.length === 0 && !showDiagForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Keine Diagnosen gefunden." }) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "space-y-2", children: filteredDiags.map((d) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-start gap-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Badge, { variant: "secondary", children: d.icd_code }),
+              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { className: "font-medium", children: d.diagnosis_text }),
+                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground mt-1", children: [
+                  "Patient: ",
+                  d.patient_last_name,
+                  ", ",
+                  d.patient_first_name,
+                  " (",
+                  d.insurance_number,
+                  ") - ",
+                  d.diagnosis_date
+                ] }),
+                d.notes && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+                  "Notiz: ",
+                  d.notes
+                ] })
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "flex gap-1", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Pencil, { className: "h-3.5 w-3.5" }) }) })
-          ] }) }) }, d.id)) })
+          ] }) }, d.id)) })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "availability", className: "space-y-4", children: [
           /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between", children: [
