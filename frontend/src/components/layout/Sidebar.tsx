@@ -23,6 +23,7 @@ const doctorLinks = [
   { to: "/doctor", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/doctor/prescriptions", icon: ClipboardCheck, label: "Rezept-Freigabe" },
   { to: "/doctor/absences", icon: CalendarDays, label: "Urlaub & Abwesenheit" },
+  { to: "/doctor/appointments", icon: CalendarDays, label: "Terminübersicht" },
   { to: "/doctor/master-data", icon: Stethoscope, label: "Stammdaten" },
   { to: "/doctor/acute-hours", icon: Clock, label: "Akutsprechstunde" },
 ];

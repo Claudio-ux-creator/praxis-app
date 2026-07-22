@@ -18,6 +18,7 @@ import DoctorPrescriptions from '@/pages/DoctorPrescriptions';
 import DoctorAbsences from '@/pages/DoctorAbsences';
 import DoctorMasterData from '@/pages/DoctorMasterData';
 import DoctorAcuteHours from '@/pages/DoctorAcuteHours';
+import DoctorAppointmentsOverview from '@/pages/DoctorAppointmentsOverview';
 
 export default function App() {
   return (
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/doctor/absences" element={<DoctorAbsences />} />
           <Route path="/doctor/master-data" element={<DoctorMasterData />} />
           <Route path="/doctor/acute-hours" element={<DoctorAcuteHours />} />
+          <Route path="/doctor/appointments" element={<DoctorAppointmentsOverview />} />
         </Route>
       </Routes>
     </BrowserRouter>

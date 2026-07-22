@@ -33,6 +33,7 @@ app.use('/api', (await import('./routes/reminders.ts')).remindersRouter);
 app.use('/api', (await import('./routes/doctor.ts')).doctorRouter);
 app.use('/api', (await import('./routes/availability.ts')).availabilityRouter);
 app.use('/api', (await import('./routes/acuteSlots.ts')).acuteSlotsRouter);
+app.use('/api', (await import('./routes/doctorAppointments.ts')).doctorAppointmentsRouter);
 
 // Statische Dateien + SPA-Fallback in einer Middleware
 app.use((req, res, next) => {
@@ -69,4 +70,5 @@ function startServer(port) {
   });
 }
 startServer(PORT);
+
 
