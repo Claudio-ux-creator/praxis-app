@@ -99,6 +99,8 @@ export default function PatientPortal() {
   const [selectedSeriesId, setSelectedSeriesId] = useState<number | null>(null);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [doctorId, setDoctorId] = useState<number | null>(null);
+  const [anyDoctor, setAnyDoctor] = useState(false);
+  const [slotDoctorMap, setSlotDoctorMap] = useState<Record<string, number>>({});
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [slots, setSlots] = useState<string[]>([]);
   const [time, setTime] = useState("");
@@ -192,8 +194,10 @@ export default function PatientPortal() {
     setBookingMode("single");
     setSelectedSeriesId(null);
     setDoctorId(null);
+    setAnyDoctor(false);
     setDate(undefined);
     setSlots([]);
+    setSlotDoctorMap({});
     setTime("");
     if (val === "VACCINATION") {
       setStep("seriesChoice");
@@ -221,8 +225,21 @@ export default function PatientPortal() {
   // Select doctor
   const handleDoctor = (id: number) => {
     setDoctorId(id);
+    setAnyDoctor(false);
     setDate(undefined);
     setSlots([]);
+    setSlotDoctorMap({});
+    setTime("");
+    setStep("datetime");
+  };
+
+  // "Arzt egal" ausgewählt - nächsten verfügbaren Arzt automatisch ermitteln
+  const handleAnyDoctor = () => {
+    setDoctorId(null);
+    setAnyDoctor(true);
+    setDate(undefined);
+    setSlots([]);
+    setSlotDoctorMap({});
     setTime("");
     setStep("datetime");
   };
@@ -231,22 +248,49 @@ export default function PatientPortal() {
   const handleDateSelect = useCallback(async (d: Date | undefined) => {
     setDate(d);
     setTime("");
-    if (!d || !doctorId || !category) return;
+    if (!d || !category) return;
+    if (!anyDoctor && !doctorId) return;
     setLoading(true);
     const dateStr = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-    const res = await get<{ slots: string[] }>("/slots?doctorId=" + doctorId + "&date=" + dateStr + "&category=" + category);
-    setLoading(false);
-    if (res.success && res.data) {
-      setSlots(res.data.slots);
+
+    if (anyDoctor) {
+      const eligibleDoctors = doctors.filter((doc) => category !== "VACCINATION" || doc.id === 1);
+      const results = await Promise.all(
+        eligibleDoctors.map((doc) => get<{ slots: string[] }>("/slots?doctorId=" + doc.id + "&date=" + dateStr + "&category=" + category))
+      );
+      const map: Record<string, number> = {};
+      for (let i = 0; i < eligibleDoctors.length; i++) {
+        const r = results[i];
+        if (r.success && r.data) {
+          for (const t of r.data.slots) {
+            if (!(t in map)) map[t] = eligibleDoctors[i].id;
+          }
+        }
+      }
+      setLoading(false);
+      setSlotDoctorMap(map);
+      setSlots(Object.keys(map).sort());
     } else {
-      setSlots([]);
+      const res = await get<{ slots: string[] }>("/slots?doctorId=" + doctorId + "&date=" + dateStr + "&category=" + category);
+      setLoading(false);
+      if (res.success && res.data) {
+        setSlots(res.data.slots);
+      } else {
+        setSlots([]);
+      }
     }
-  }, [doctorId, category]);
+  }, [doctorId, category, anyDoctor, doctors]);
 
   // Select time ? go to questions
   const handleTimeSelect = (t: string) => {
     setTime(t);
-    if(bookingMode==="series"){handleSubmitSeries(t);}else{setStep("questions");}
+    const resolvedDoctorId = anyDoctor ? slotDoctorMap[t] : doctorId;
+    if (anyDoctor && resolvedDoctorId) setDoctorId(resolvedDoctorId);
+    if (bookingMode === "series") {
+      handleSubmitSeries(t, resolvedDoctorId || undefined);
+    } else {
+      setStep("questions");
+    }
   };
 
   // Handle answer change
@@ -257,13 +301,14 @@ export default function PatientPortal() {
   };
 
   // Submit booking (single or series)
-  const handleSubmitSeries = async (selectedTime: string) => {
-    if (!date || !doctorId || !selectedSeriesId) return;
+  const handleSubmitSeries = async (selectedTime: string, doctorIdOverride?: number) => {
+    const effectiveDoctorId = doctorIdOverride ?? doctorId;
+    if (!date || !effectiveDoctorId || !selectedSeriesId) return;
     setLoading(true);
     const dateStr = date.getFullYear() +"-"+ String(date.getMonth() + 1).padStart(2, "0") +"-"+ String(date.getDate()).padStart(2, "0");
     const res = await post<{ seriesGroupId: string; appointments: any[] }>("/appointments/series", {
       insuranceNumber,
-      doctorId,
+      doctorId: effectiveDoctorId,
       date: dateStr,
       time: selectedTime,
       seriesTemplateId: selectedSeriesId,
@@ -389,8 +434,10 @@ const handleSubmit = async () => {
     setBookingMode("single");
     setSelectedSeriesId(null);
     setDoctorId(null);
+    setAnyDoctor(false);
     setDate(undefined);
     setSlots([]);
+    setSlotDoctorMap({});
     setTime("");
     setQuestions([]);
     setAnswers([]);
@@ -839,6 +886,17 @@ const handleSubmit = async () => {
       {/* Step: Doctor */}
       {step === "doctor" && (
         <div className="grid gap-4 md:grid-cols-3">
+          {category !== "VACCINATION" && (
+            <Card className={"cursor-pointer transition-all hover:shadow-md " + (anyDoctor ? "ring-2 ring-primary" : "hover:border-primary")} onClick={handleAnyDoctor}>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <span className="inline-block size-3 rounded-full bg-muted-foreground/40" />
+                  Arzt egal
+                </CardTitle>
+                <CardDescription>Nächster verfügbarer Arzt wird automatisch gewählt</CardDescription>
+              </CardHeader>
+            </Card>
+          )}
           {(doctors.filter(function(d) { return category !== "VACCINATION" || d.id === 1; })).map((doc) => (
             <Card key={doc.id} className={"cursor-pointer transition-all hover:shadow-md " + (doctorId === doc.id ? "ring-2 ring-primary" : "hover:border-primary")} onClick={() => handleDoctor(doc.id)}>
               <CardHeader>

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getDb } from '../db/connection.ts';
+import { isDoctorAbsent } from '../services/absenceCheck.ts';
 
 export const mfaRouter = Router();
 
@@ -88,6 +89,53 @@ mfaRouter.get('/mfa/appointments', (_req, res) => {
       "SELECT a.id, a.patient_id, a.doctor_id, a.category, a.date, a.time, a.status, a.booking_type, a.mfa_note, p.first_name AS patient_first_name, p.last_name AS patient_last_name, p.insurance_number, p.phone, d.first_name AS doctor_first_name, d.last_name AS doctor_last_name, d.color AS doctor_color FROM appointments a JOIN patients p ON p.id = a.patient_id JOIN doctors d ON d.id = a.doctor_id ORDER BY a.date DESC, a.time DESC"
     ).all();
     res.json({ success: true, data: rows });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+  }
+});
+
+// PATCH /api/mfa/appointments/:id/move - Termin verschieben (MFA)
+mfaRouter.patch('/mfa/appointments/:id/move', (req, res) => {
+  try {
+    const db = getDb();
+    const id = Number(req.params.id);
+    const { newDate, newTime, reason } = req.body;
+
+    if (!newDate || !newTime) {
+      res.status(400).json({ success: false, error: 'newDate und newTime erforderlich' });
+      return;
+    }
+
+    const appt = db.prepare('SELECT id, doctor_id, date, time, mfa_note FROM appointments WHERE id = ?').get(id) as
+      { id: number; doctor_id: number; date: string; time: string; mfa_note: string | null } | undefined;
+    if (!appt) {
+      res.status(404).json({ success: false, error: 'Termin nicht gefunden' });
+      return;
+    }
+
+    if (isDoctorAbsent(db, appt.doctor_id, newDate)) {
+      res.status(409).json({ success: false, error: 'Der behandelnde Arzt ist am gewünschten Tag abwesend.' });
+      return;
+    }
+
+    const conflict = db.prepare(
+      "SELECT id FROM appointments WHERE doctor_id = ? AND date = ? AND time = ? AND status != 'CANCELLED' AND id != ?"
+    ).get(appt.doctor_id, newDate, newTime, id);
+    if (conflict) {
+      res.status(409).json({ success: false, error: 'Zu diesem Zeitpunkt existiert bereits ein anderer Termin bei diesem Arzt.' });
+      return;
+    }
+
+    const noteAddition = reason
+      ? `Verschoben von ${appt.date} ${appt.time} auf ${newDate} ${newTime}: ${reason}`
+      : `Verschoben von ${appt.date} ${appt.time} auf ${newDate} ${newTime}`;
+    const newNote = appt.mfa_note ? `${appt.mfa_note}\n${noteAddition}` : noteAddition;
+
+    db.prepare(
+      "UPDATE appointments SET date = ?, time = ?, mfa_note = ?, updated_at = datetime('now') WHERE id = ?"
+    ).run(newDate, newTime, newNote, id);
+
+    res.json({ success: true, data: { id, date: newDate, time: newTime } });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
   }

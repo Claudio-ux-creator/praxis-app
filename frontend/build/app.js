@@ -8944,6 +8944,16 @@ var PraxisApp = (() => {
     ["path", { d: "M10.3 21a1.94 1.94 0 0 0 3.4 0", key: "qgo35s" }]
   ]);
 
+  // node_modules/lucide-react/dist/esm/icons/calendar-clock.js
+  var CalendarClock = createLucideIcon("CalendarClock", [
+    ["path", { d: "M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5", key: "1osxxc" }],
+    ["path", { d: "M16 2v4", key: "4m81vk" }],
+    ["path", { d: "M8 2v4", key: "1cmpym" }],
+    ["path", { d: "M3 10h5", key: "r794hk" }],
+    ["path", { d: "M17.5 17.5 16 16.3V14", key: "akvzfd" }],
+    ["circle", { cx: "16", cy: "16", r: "6", key: "qoo3c4" }]
+  ]);
+
   // node_modules/lucide-react/dist/esm/icons/calendar-days.js
   var CalendarDays = createLucideIcon("CalendarDays", [
     ["path", { d: "M8 2v4", key: "1cmpym" }],
@@ -19431,6 +19441,8 @@ var PraxisApp = (() => {
     const [selectedSeriesId, setSelectedSeriesId] = (0, import_react36.useState)(null);
     const [doctors, setDoctors] = (0, import_react36.useState)([]);
     const [doctorId, setDoctorId] = (0, import_react36.useState)(null);
+    const [anyDoctor, setAnyDoctor] = (0, import_react36.useState)(false);
+    const [slotDoctorMap, setSlotDoctorMap] = (0, import_react36.useState)({});
     const [date, setDate] = (0, import_react36.useState)(void 0);
     const [slots, setSlots] = (0, import_react36.useState)([]);
     const [time, setTime] = (0, import_react36.useState)("");
@@ -19509,8 +19521,10 @@ var PraxisApp = (() => {
       setBookingMode("single");
       setSelectedSeriesId(null);
       setDoctorId(null);
+      setAnyDoctor(false);
       setDate(void 0);
       setSlots([]);
+      setSlotDoctorMap({});
       setTime("");
       if (val === "VACCINATION") {
         setStep("seriesChoice");
@@ -19532,29 +19546,62 @@ var PraxisApp = (() => {
     };
     const handleDoctor = (id) => {
       setDoctorId(id);
+      setAnyDoctor(false);
       setDate(void 0);
       setSlots([]);
+      setSlotDoctorMap({});
+      setTime("");
+      setStep("datetime");
+    };
+    const handleAnyDoctor = () => {
+      setDoctorId(null);
+      setAnyDoctor(true);
+      setDate(void 0);
+      setSlots([]);
+      setSlotDoctorMap({});
       setTime("");
       setStep("datetime");
     };
     const handleDateSelect = (0, import_react36.useCallback)(async (d) => {
       setDate(d);
       setTime("");
-      if (!d || !doctorId || !category) return;
+      if (!d || !category) return;
+      if (!anyDoctor && !doctorId) return;
       setLoading(true);
       const dateStr = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-      const res = await get("/slots?doctorId=" + doctorId + "&date=" + dateStr + "&category=" + category);
-      setLoading(false);
-      if (res.success && res.data) {
-        setSlots(res.data.slots);
+      if (anyDoctor) {
+        const eligibleDoctors = doctors.filter((doc) => category !== "VACCINATION" || doc.id === 1);
+        const results = await Promise.all(
+          eligibleDoctors.map((doc) => get("/slots?doctorId=" + doc.id + "&date=" + dateStr + "&category=" + category))
+        );
+        const map = {};
+        for (let i = 0; i < eligibleDoctors.length; i++) {
+          const r2 = results[i];
+          if (r2.success && r2.data) {
+            for (const t of r2.data.slots) {
+              if (!(t in map)) map[t] = eligibleDoctors[i].id;
+            }
+          }
+        }
+        setLoading(false);
+        setSlotDoctorMap(map);
+        setSlots(Object.keys(map).sort());
       } else {
-        setSlots([]);
+        const res = await get("/slots?doctorId=" + doctorId + "&date=" + dateStr + "&category=" + category);
+        setLoading(false);
+        if (res.success && res.data) {
+          setSlots(res.data.slots);
+        } else {
+          setSlots([]);
+        }
       }
-    }, [doctorId, category]);
+    }, [doctorId, category, anyDoctor, doctors]);
     const handleTimeSelect = (t) => {
       setTime(t);
+      const resolvedDoctorId = anyDoctor ? slotDoctorMap[t] : doctorId;
+      if (anyDoctor && resolvedDoctorId) setDoctorId(resolvedDoctorId);
       if (bookingMode === "series") {
-        handleSubmitSeries(t);
+        handleSubmitSeries(t, resolvedDoctorId || void 0);
       } else {
         setStep("questions");
       }
@@ -19564,13 +19611,14 @@ var PraxisApp = (() => {
         (prev) => prev.map((a) => a.questionId === questionId ? { ...a, answer: value } : a)
       );
     };
-    const handleSubmitSeries = async (selectedTime) => {
-      if (!date || !doctorId || !selectedSeriesId) return;
+    const handleSubmitSeries = async (selectedTime, doctorIdOverride) => {
+      const effectiveDoctorId = doctorIdOverride ?? doctorId;
+      if (!date || !effectiveDoctorId || !selectedSeriesId) return;
       setLoading(true);
       const dateStr = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
       const res = await post("/appointments/series", {
         insuranceNumber,
-        doctorId,
+        doctorId: effectiveDoctorId,
         date: dateStr,
         time: selectedTime,
         seriesTemplateId: selectedSeriesId
@@ -19687,8 +19735,10 @@ var PraxisApp = (() => {
       setBookingMode("single");
       setSelectedSeriesId(null);
       setDoctorId(null);
+      setAnyDoctor(false);
       setDate(void 0);
       setSlots([]);
+      setSlotDoctorMap({});
       setTime("");
       setQuestions([]);
       setAnswers([]);
@@ -20055,20 +20105,29 @@ var PraxisApp = (() => {
           tpl.description?.split("\u2013")[1] || tpl.description
         ] })
       ] }) }, tpl.id)) }),
-      step === "doctor" && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "grid gap-4 md:grid-cols-3", children: doctors.filter(function(d) {
-        return category !== "VACCINATION" || d.id === 1;
-      }).map((doc) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:shadow-md " + (doctorId === doc.id ? "ring-2 ring-primary" : "hover:border-primary"), onClick: () => handleDoctor(doc.id), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "inline-block size-3 rounded-full", style: { backgroundColor: doc.color || "#888" } }),
-          "Dr. ",
-          doc.last_name
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardDescription, { children: [
-          doc.first_name,
-          " ",
-          doc.last_name
-        ] })
-      ] }) }, doc.id)) }),
+      step === "doctor" && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "grid gap-4 md:grid-cols-3", children: [
+        category !== "VACCINATION" && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:shadow-md " + (anyDoctor ? "ring-2 ring-primary" : "hover:border-primary"), onClick: handleAnyDoctor, children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "inline-block size-3 rounded-full bg-muted-foreground/40" }),
+            "Arzt egal"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "N\xE4chster verf\xFCgbarer Arzt wird automatisch gew\xE4hlt" })
+        ] }) }),
+        doctors.filter(function(d) {
+          return category !== "VACCINATION" || d.id === 1;
+        }).map((doc) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:shadow-md " + (doctorId === doc.id ? "ring-2 ring-primary" : "hover:border-primary"), onClick: () => handleDoctor(doc.id), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "inline-block size-3 rounded-full", style: { backgroundColor: doc.color || "#888" } }),
+            "Dr. ",
+            doc.last_name
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardDescription, { children: [
+            doc.first_name,
+            " ",
+            doc.last_name
+          ] })
+        ] }) }, doc.id))
+      ] }),
       step === "datetime" && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "grid gap-6 md:grid-cols-[auto_1fr]", children: [
         /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Label, { className: "mb-2 block", children: "Datum ausw\xE4hlen" }),
@@ -21488,10 +21547,47 @@ var PraxisApp = (() => {
     CANCELLED: "destructive",
     NO_SHOW: "destructive"
   };
+  function pad2(n) {
+    return String(n).padStart(2, "0");
+  }
+  function fmtDayMonth(d) {
+    return pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + ".";
+  }
+  function getISOWeekInfo(dateStr) {
+    const date = /* @__PURE__ */ new Date(dateStr + "T00:00:00");
+    const dow = date.getDay() || 7;
+    const weekStart = new Date(date);
+    weekStart.setDate(date.getDate() - dow + 1);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    const thursday = new Date(weekStart);
+    thursday.setDate(weekStart.getDate() + 3);
+    const yearStart = new Date(thursday.getFullYear(), 0, 1);
+    const week = Math.ceil(((thursday.getTime() - yearStart.getTime()) / 864e5 + 1) / 7);
+    return { week, weekStart, weekEnd };
+  }
+  function weekGroupKey(dateStr) {
+    const { week, weekStart } = getISOWeekInfo(dateStr);
+    return weekStart.getFullYear() + "-W" + pad2(week);
+  }
+  function weekGroupLabel(dateStr) {
+    const { week, weekStart, weekEnd } = getISOWeekInfo(dateStr);
+    return "KW " + week + " \u2013 " + fmtDayMonth(weekStart) + " \u2013 " + fmtDayMonth(weekEnd) + weekEnd.getFullYear();
+  }
   function MFAAppointments() {
     const [appointments, setAppointments] = (0, import_react43.useState)([]);
     const [filter, setFilter] = (0, import_react43.useState)("ALL");
+    const [search, setSearch] = (0, import_react43.useState)("");
     const [loading, setLoading] = (0, import_react43.useState)(true);
+    const [moveTarget, setMoveTarget] = (0, import_react43.useState)(null);
+    const [moveDate, setMoveDate] = (0, import_react43.useState)("");
+    const [moveTime, setMoveTime] = (0, import_react43.useState)("");
+    const [moveReason, setMoveReason] = (0, import_react43.useState)("");
+    const [moving, setMoving] = (0, import_react43.useState)(false);
+    const [moveError, setMoveError] = (0, import_react43.useState)("");
+    const [moveSlots, setMoveSlots] = (0, import_react43.useState)([]);
+    const [moveSlotsLoading, setMoveSlotsLoading] = (0, import_react43.useState)(false);
+    const [moveSlotsError, setMoveSlotsError] = (0, import_react43.useState)("");
     const loadAppointments = () => {
       setLoading(true);
       get("/mfa/appointments").then((r2) => {
@@ -21502,6 +21598,30 @@ var PraxisApp = (() => {
     (0, import_react43.useEffect)(() => {
       loadAppointments();
     }, []);
+    (0, import_react43.useEffect)(() => {
+      if (!moveTarget || !moveDate) {
+        setMoveSlots([]);
+        setMoveSlotsError("");
+        return;
+      }
+      setMoveSlotsLoading(true);
+      setMoveSlotsError("");
+      get(
+        "/slots?doctorId=" + moveTarget.doctor_id + "&date=" + moveDate + "&category=" + moveTarget.category
+      ).then((r2) => {
+        setMoveSlotsLoading(false);
+        if (r2.success && r2.data) {
+          let slots = r2.data.slots;
+          if (moveDate === moveTarget.date && !slots.includes(moveTarget.time)) {
+            slots = [...slots, moveTarget.time].sort();
+          }
+          setMoveSlots(slots);
+        } else {
+          setMoveSlots([]);
+          setMoveSlotsError(r2.error || "Slots konnten nicht geladen werden");
+        }
+      });
+    }, [moveTarget, moveDate]);
     const handleConfirm = async (id) => {
       await patch("/appointments/" + id + "/confirm-series", {});
       loadAppointments();
@@ -21510,7 +21630,53 @@ var PraxisApp = (() => {
       await patch("/appointments/" + id + "/status", { status: newStatus });
       loadAppointments();
     };
-    const filtered = filter === "ALL" ? appointments : appointments.filter((a) => a.status === filter);
+    const openMoveDialog = (a) => {
+      setMoveTarget(a);
+      setMoveDate(a.date);
+      setMoveTime(a.time);
+      setMoveReason("");
+      setMoveError("");
+    };
+    const closeMoveDialog = () => {
+      setMoveTarget(null);
+      setMoveError("");
+    };
+    const handleMove = async () => {
+      if (!moveTarget || !moveDate || !moveTime) return;
+      setMoving(true);
+      setMoveError("");
+      const res = await patch("/mfa/appointments/" + moveTarget.id + "/move", {
+        newDate: moveDate,
+        newTime: moveTime,
+        reason: moveReason || void 0
+      });
+      setMoving(false);
+      if (res.success) {
+        setMoveTarget(null);
+        loadAppointments();
+      } else {
+        setMoveError(res.error || "Verschieben fehlgeschlagen");
+      }
+    };
+    const byStatus = filter === "ALL" ? appointments : appointments.filter((a) => a.status === filter);
+    const searchTerm = search.trim().toLowerCase();
+    const filtered = searchTerm === "" ? byStatus : byStatus.filter(
+      (a) => a.patient_first_name.toLowerCase().includes(searchTerm) || a.patient_last_name.toLowerCase().includes(searchTerm) || (a.patient_first_name + " " + a.patient_last_name).toLowerCase().includes(searchTerm) || (a.patient_last_name + " " + a.patient_first_name).toLowerCase().includes(searchTerm) || a.insurance_number.toLowerCase().includes(searchTerm)
+    );
+    const weekGroups = {};
+    for (const a of filtered) {
+      const key = weekGroupKey(a.date);
+      if (!weekGroups[key]) {
+        weekGroups[key] = { label: weekGroupLabel(a.date), weekStart: getISOWeekInfo(a.date).weekStart, items: [] };
+      }
+      weekGroups[key].items.push(a);
+    }
+    const weekKeys = Object.keys(weekGroups).sort(
+      (a, b) => weekGroups[b].weekStart.getTime() - weekGroups[a].weekStart.getTime()
+    );
+    for (const key of weekKeys) {
+      weekGroups[key].items.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+    }
     const counts = {};
     for (const a of appointments) {
       counts[a.status] = (counts[a.status] || 0) + 1;
@@ -21541,52 +21707,141 @@ var PraxisApp = (() => {
           );
         }) })
       ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+        Input3,
+        {
+          value: search,
+          onChange: (e) => setSearch(e.target.value),
+          placeholder: "Suche nach Patientenname oder Versichertennummer...",
+          className: "max-w-sm"
+        }
+      ),
       loading && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "text-muted-foreground", children: "Lade Termine..." }),
       !loading && filtered.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "text-muted-foreground", children: "Keine Termine gefunden." }) }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "space-y-3", children: filtered.map((a) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CardContent, { className: "py-4", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-start justify-between", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(User, { className: "h-4 w-4 text-muted-foreground" }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "font-medium", children: [
-              a.patient_last_name,
-              ", ",
-              a.patient_first_name
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "text-xs text-muted-foreground", children: [
-              "(",
-              a.insurance_number,
-              ")"
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-3 text-sm text-muted-foreground", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Calendar, { className: "h-3.5 w-3.5" }),
-              a.date
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Clock, { className: "h-3.5 w-3.5" }),
-              a.time
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Stethoscope, { className: "h-3.5 w-3.5" }),
-              "Dr. ",
-              a.doctor_last_name
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { className: "h-3.5 w-3.5" }),
-              CATEGORY_LABEL4[a.category] || a.category
-            ] })
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "space-y-6", children: weekKeys.map((key) => /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("h2", { className: "text-sm font-semibold text-muted-foreground flex items-center gap-2", children: [
+          weekGroups[key].label,
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(Badge, { variant: "outline", className: "font-normal", children: [
+            weekGroups[key].items.length,
+            " Termine"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", children: [
-          a.status === "PENDING_CONFIRMATION" && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button3, { size: "sm", variant: "default", onClick: () => handleConfirm(a.id), children: "Best\xE4tigen" }),
-          a.status === "SCHEDULED" && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => handleStatusChange(a.id, "CHECKED_IN"), children: "Check-In" }),
-            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button3, { size: "sm", variant: "destructive", onClick: () => handleStatusChange(a.id, "CANCELLED"), children: "Stornieren" })
+        weekGroups[key].items.map((a) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CardContent, { className: "py-4", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-start justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(User, { className: "h-4 w-4 text-muted-foreground" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "font-medium", children: [
+                a.patient_last_name,
+                ", ",
+                a.patient_first_name
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "text-xs text-muted-foreground", children: [
+                "(",
+                a.insurance_number,
+                ")"
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-3 text-sm text-muted-foreground", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Calendar, { className: "h-3.5 w-3.5" }),
+                a.date
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Clock, { className: "h-3.5 w-3.5" }),
+                a.time
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Stethoscope, { className: "h-3.5 w-3.5" }),
+                "Dr. ",
+                a.doctor_last_name
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(FileText, { className: "h-3.5 w-3.5" }),
+                CATEGORY_LABEL4[a.category] || a.category
+              ] })
+            ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { variant: STATUS_BADGE3[a.status] || "outline", children: STATUS_MAP5[a.status] || a.status })
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2", children: [
+            a.status === "PENDING_CONFIRMATION" && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button3, { size: "sm", variant: "default", onClick: () => handleConfirm(a.id), children: "Best\xE4tigen" }),
+            a.status === "SCHEDULED" && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => handleStatusChange(a.id, "CHECKED_IN"), children: "Check-In" }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button3, { size: "sm", variant: "destructive", onClick: () => handleStatusChange(a.id, "CANCELLED"), children: "Stornieren" })
+            ] }),
+            a.status !== "COMPLETED" && a.status !== "CANCELLED" && a.status !== "NO_SHOW" && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(Button3, { size: "sm", variant: "outline", onClick: () => openMoveDialog(a), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CalendarClock, { className: "h-3.5 w-3.5 mr-1" }),
+              "Verschieben"
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Badge, { variant: STATUS_BADGE3[a.status] || "outline", children: STATUS_MAP5[a.status] || a.status })
+          ] })
+        ] }) }) }, a.id))
+      ] }, key)) }),
+      moveTarget && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(Card, { className: "w-full max-w-md bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 z-[999]", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(CardTitle, { className: "text-base", children: "Termin verschieben" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(CardContent, { className: "space-y-3", children: [
+          moveError && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: moveError }),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "rounded-lg bg-muted p-3 space-y-1 text-sm", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-2 font-medium", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(User, { className: "h-3.5 w-3.5 text-muted-foreground" }),
+              moveTarget.patient_last_name,
+              ", ",
+              moveTarget.patient_first_name
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex items-center gap-3 text-muted-foreground", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Calendar, { className: "h-3.5 w-3.5" }),
+                moveTarget.date
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Clock, { className: "h-3.5 w-3.5" }),
+                moveTarget.time
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Stethoscope, { className: "h-3.5 w-3.5" }),
+                "Dr. ",
+                moveTarget.doctor_last_name
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Label, { children: "Neues Datum *" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Input3, { type: "date", value: moveDate, onChange: (e) => {
+              setMoveDate(e.target.value);
+              setMoveTime("");
+            } })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Label, { children: "Neue Uhrzeit *" }),
+            moveSlotsLoading && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "text-sm text-muted-foreground", children: "Lade verf\xFCgbare Slots..." }),
+            !moveSlotsLoading && moveSlotsError && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(import_jsx_runtime23.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("p", { className: "text-xs text-amber-700", children: [
+                moveSlotsError,
+                " \u2013 Uhrzeit manuell eingeben:"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Input3, { type: "time", value: moveTime, onChange: (e) => setMoveTime(e.target.value) })
+            ] }),
+            !moveSlotsLoading && !moveSlotsError && moveSlots.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("p", { className: "text-sm text-muted-foreground", children: "Keine freien Slots an diesem Tag." }),
+            !moveSlotsLoading && !moveSlotsError && moveSlots.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { className: "flex flex-wrap gap-2", children: moveSlots.map((t) => /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+              Button3,
+              {
+                type: "button",
+                size: "sm",
+                variant: moveTime === t ? "default" : "outline",
+                onClick: () => setMoveTime(t),
+                children: t
+              },
+              t
+            )) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Label, { children: "Grund" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Input3, { value: moveReason, onChange: (e) => setMoveReason(e.target.value), placeholder: "Optional" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button3, { variant: "outline", onClick: closeMoveDialog, disabled: moving, children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(Button3, { onClick: handleMove, disabled: moving || !moveDate || !moveTime, children: moving ? "..." : "Verschieben" })
+          ] })
         ] })
-      ] }) }) }, a.id)) })
+      ] }) })
     ] });
   }
 
@@ -23956,6 +24211,14 @@ lucide-react/dist/esm/createLucideIcon.js:
    *)
 
 lucide-react/dist/esm/icons/bell.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/calendar-clock.js:
   (**
    * @license lucide-react v0.378.0 - ISC
    *
