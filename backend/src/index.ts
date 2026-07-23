@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import cors from 'cors';
 import { initDatabase } from './db/connection.ts';
 import { migrateSchema } from './db/migrate.ts';
@@ -34,6 +34,11 @@ app.use('/api', (await import('./routes/doctor.ts')).doctorRouter);
 app.use('/api', (await import('./routes/availability.ts')).availabilityRouter);
 app.use('/api', (await import('./routes/acuteSlots.ts')).acuteSlotsRouter);
 app.use('/api', (await import('./routes/doctorAppointments.ts')).doctorAppointmentsRouter);
+
+// Unbekannte API-Routen: immer JSON statt HTML zurückgeben
+app.use('/api', (req, res) => {
+  res.status(404).json({ success: false, error: `Endpunkt nicht gefunden: ${req.method} ${req.path}` });
+});
 
 // Statische Dateien + SPA-Fallback in einer Middleware
 app.use((req, res, next) => {

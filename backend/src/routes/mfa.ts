@@ -1,4 +1,4 @@
-﻿import { Router } from 'express';
+import { Router } from 'express';
 import { getDb } from '../db/connection.ts';
 
 export const mfaRouter = Router();

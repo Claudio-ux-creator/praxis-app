@@ -1,4 +1,4 @@
-﻿import { Router } from "express";
+import { Router } from "express";
 import { getDb } from "../db/connection.ts";
 import { isDoctorAbsent } from "../services/absenceCheck.ts";
 
@@ -11,33 +11,40 @@ const BTM_KEYWORDS = [
   "zolpidem", "zopiclon", "phenobarbital", "pentobarbital", "ketamin", "ghb",
 ];
 
+function isCriticalMedication(db: any, name: string): boolean {
+  if (!name) return false;
+  const lower = name.toLowerCase();
+  const rows = db.prepare("SELECT id FROM critical_medications WHERE LOWER(medication_name) LIKE ? OR LOWER(active_ingredient) LIKE ?").all("%" + lower + "%", "%" + lower + "%");
+  return rows.length > 0;
+}
+
 function isBTMMedication(name: string): boolean {
   const lower = name.toLowerCase();
   return BTM_KEYWORDS.some(function (kw) { return lower.includes(kw); });
 }
 
 /**
- * Prüft, ob der Patient in den letzten 12 Monaten eine Kontrolluntersuchung hatte.
- * Gibt null zurück wenn OK, andernfalls eine Fehlermeldung.
+ * PrÃ¼ft, ob der Patient in den letzten 12 Monaten eine Kontrolluntersuchung hatte.
+ * Gibt null zurÃ¼ck wenn OK, andernfalls eine Fehlermeldung.
  */
 function checkConsultation(db: any, patientId: number): string | null {
   const pat = db.prepare("SELECT last_consultation FROM patients WHERE id = ?").get(patientId) as { last_consultation: string | null } | undefined;
   if (!pat?.last_consultation) {
-    return "Patient hatte noch keine Konsultation. Rezept nur nach Untersuchung möglich.";
+    return "Patient hatte noch keine Konsultation. Rezept nur nach Untersuchung mÃ¶glich.";
   }
   const lastConsult = new Date(pat.last_consultation);
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
   if (lastConsult < oneYearAgo) {
-    return "Letzte Konsultation des Patienten ist länger als 1 Jahr her – neues Rezept nur nach Untersuchung möglich.";
+    return "Letzte Konsultation des Patienten ist lÃ¤nger als 1 Jahr her â€“ neues Rezept nur nach Untersuchung mÃ¶glich.";
   }
   return null;
 }
 
 /**
- * Prüft die letzte Konsultation und lehnt das Rezept automatisch ab, wenn
- * die letzte Untersuchung länger als 12 Monate zurückliegt.
- * Gibt true zurück wenn die Prüfung bestanden wurde (Rezept kann erstellt werden),
+ * PrÃ¼ft die letzte Konsultation und lehnt das Rezept automatisch ab, wenn
+ * die letzte Untersuchung lÃ¤nger als 12 Monate zurÃ¼ckliegt.
+ * Gibt true zurÃ¼ck wenn die PrÃ¼fung bestanden wurde (Rezept kann erstellt werden),
  * false wenn automatisch abgelehnt wurde.
  */
 function autoRejectIfNoConsultation(db: any, patientId: number, medicationName: string, requestDate: string, res: any): boolean {
@@ -52,7 +59,7 @@ function autoRejectIfNoConsultation(db: any, patientId: number, medicationName: 
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
     if (lastConsult < oneYearAgo) {
-      reason = "Die letzte Kontrolluntersuchung liegt länger als 12 Monate zurück.";
+      reason = "Die letzte Kontrolluntersuchung liegt lÃ¤nger als 12 Monate zurÃ¼ck.";
     }
   }
   
@@ -71,7 +78,7 @@ function autoRejectIfNoConsultation(db: any, patientId: number, medicationName: 
       patientId,
       'PRESCRIPTION_AUTO_REJECTED',
       'Rezeptanfrage automatisch abgelehnt',
-      'Ihre Rezeptanfrage für ' + medicationName + ' vom ' + requestDate + ' konnte nicht bearbeitet werden, da Ihre letzte Kontrolluntersuchung länger als 12 Monate zurückliegt. Bitte vereinbaren Sie zunächst einen Kontrolltermin in unserer Praxis.',
+      'Ihre Rezeptanfrage für ' + medicationName + ' wurde automatisch abgelehnt, da dieses Medikament nur nach einem persönlichen Arztgespräch verschrieben werden darf. Bitte vereinbaren Sie einen Termin.',
       'prescription',
       rxId
     );
@@ -83,13 +90,13 @@ function autoRejectIfNoConsultation(db: any, patientId: number, medicationName: 
         status: 'auto_rejected',
         autoRejected: true,
         reason: reason,
-        message: 'Ihre Rezeptanfrage wurde automatisch abgelehnt, da Ihre letzte Kontrolluntersuchung länger als 12 Monate zurückliegt. Bitte vereinbaren Sie zunächst einen Kontrolltermin.'
+        message: 'Ihre Rezeptanfrage wurde automatisch abgelehnt, da Ihre letzte Kontrolluntersuchung lÃ¤nger als 12 Monate zurÃ¼ckliegt. Bitte vereinbaren Sie zunÃ¤chst einen Kontrolltermin.'
       }
     });
     return false;
   }
   
-  return true; // Prüfung bestanden
+  return true; // PrÃ¼fung bestanden
 }
 
 function createNotification(db: any, patientId: number, type: string, title: string, message: string, entityId: number): void {
@@ -143,7 +150,7 @@ prescriptionsRouter.post("/prescriptions/request", (req, res) => {
       res.status(400).json({ success: false, error: "insuranceNumber und medicationName erforderlich" });
       return;
     }
-    const patient = db.prepare("SELECT id, last_consultation FROM patients WHERE insurance_number = ?").get(insuranceNumber) as { id: number; last_consultation: string | null } | undefined;
+    const patient = db.prepare("SELECT id, last_consultation FROM patients WHERE insurance_number = ?").get(insuranceNumber);
     if (!patient) {
       res.status(404).json({ success: false, error: "Patient nicht gefunden" });
       return;
@@ -151,31 +158,61 @@ prescriptionsRouter.post("/prescriptions/request", (req, res) => {
     
     const today = new Date().toISOString().slice(0, 10);
     
-    // Automatische Prüfung: Kontrolluntersuchung in den letzten 12 Monaten?
-    if (!autoRejectIfNoConsultation(db, patient.id, medicationName, today, res)) {
-      return; // Wurde automatisch abgelehnt
-    }
-    
-    // Prüfung bestanden – normaler Workflow
-    const responsibleDoctorId = doctorId || 1;
-    if (isDoctorAbsent(db, responsibleDoctorId, today)) {
-      res.status(409).json({ success: false, error: "Der ausgewählte Arzt ist derzeit abwesend." });
+    // PRUEFUNG: Handelt es sich um ein kritisches Medikament?
+    const isCritical = isCriticalMedication(db, medicationName);
+    if (isCritical) {
+      const result = db.prepare(
+        "INSERT INTO prescriptions (patient_id, medication_name, dosage, notes, initiated_by_mfa_id, responsible_doctor_id, assigned_doctor_id, status, request_date, requires_doctor_approval, mfa_rejection_reason) VALUES (?, ?, ?, ?, 0, ?, ?, 'AUTO_REJECTED_CRITICAL', ?, 1, ?)"
+      ).run(patient.id, medicationName, dosage || null, notes || null, doctorId || 1, doctorId || 1, today, "Dieses Medikament erfordert eine persönliche ärztliche Untersuchung und kann nicht online angefordert werden");
+      
+      const rxId = result.lastInsertRowid;
+      
+      // Benachrichtigung an den Patienten
+      db.prepare(
+        "INSERT INTO patient_notifications (patient_id, type, title, message, related_entity_type, related_entity_id) VALUES (?, ?, ?, ?, ?, ?)"
+      ).run(
+        patient.id,
+        "PRESCRIPTION_AUTO_REJECTED",
+        "Rezeptanfrage automatisch abgelehnt",
+        "Ihre Rezeptanfrage für " + medicationName + " wurde automatisch abgelehnt, da dieses Medikament nur nach einem persönlichen Arztgespräch verschrieben werden darf. Bitte vereinbaren Sie einen Termin.",
+        "prescription",
+        rxId
+      );
+      
+      res.json({ success: true, data: { id: rxId, status: "AUTO_REJECTED_CRITICAL", autoRejected: true, reason: "Kritisches Medikament - erfordert ärztliche Untersuchung" } });
       return;
     }
+    
+    // Automatische Pruefung: Kontrolluntersuchung in den letzten 12 Monaten?
+    if (!autoRejectIfNoConsultation(db, patient.id, medicationName, today, res)) {
+      return;
+    }
+    
+    // Pruefung bestanden - normaler Workflow
+    const responsibleDoctorId = doctorId || 1;
+    if (isDoctorAbsent(db, responsibleDoctorId, today)) {
+      res.status(409).json({ success: false, error: "Der ausgewÃ¤hlte Arzt ist derzeit abwesend." });
+      return;
+    }
+    
     const result = db.prepare(
-      "INSERT INTO prescriptions (patient_id, medication_name, dosage, notes, initiated_by_mfa_id, responsible_doctor_id, status, request_date) VALUES (?, ?, ?, ?, 0, ?, 'PENDING', ?)"
-    ).run(patient.id, medicationName, dosage || null, notes || null, responsibleDoctorId, today);
-    res.json({ success: true, data: { id: result.lastInsertRowid, status: 'PENDING' } });
+      "INSERT INTO prescriptions (patient_id, medication_name, dosage, notes, initiated_by_mfa_id, responsible_doctor_id, assigned_doctor_id, status, request_date, requires_doctor_approval) VALUES (?, ?, ?, ?, 0, ?, ?, 'PENDING', ?, 1)"
+    ).run(patient.id, medicationName, dosage || null, notes || null, responsibleDoctorId, responsibleDoctorId, today);
+    
+    res.json({ success: true, data: { id: result.lastInsertRowid, status: "PENDING" } });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
   }
 });
 
-// POST /api/prescriptions/mfa-create - MFA erstellt Rezept für Patienten
 prescriptionsRouter.post("/prescriptions/mfa-create", (req, res) => {
   try {
     const db = getDb();
     const { patientId, medicationName, dosage, notes, initiatedByMfaId, responsibleDoctorId } = req.body;
+    if (isCriticalMedication(db, medicationName)) {
+      res.status(409).json({ success: false, error: "Dieses Medikament ist als kritisch eingestuft und erfordert eine persönliche ärztliche Untersuchung. Bitte leiten Sie den Patienten an den Arzt weiter." });
+      return;
+    }
     if (!patientId || !medicationName) {
       res.status(400).json({ success: false, error: "patientId und medicationName erforderlich" });
       return;
@@ -183,7 +220,7 @@ prescriptionsRouter.post("/prescriptions/mfa-create", (req, res) => {
     
     const today = new Date().toISOString().slice(0, 10);
     
-    // Automatische Prüfung: Kontrolluntersuchung in den letzten 12 Monaten?
+    // Automatische PrÃ¼fung: Kontrolluntersuchung in den letzten 12 Monaten?
     if (!autoRejectIfNoConsultation(db, patientId, medicationName, today, res)) {
       return; // Wurde automatisch abgelehnt
     }
@@ -225,7 +262,7 @@ prescriptionsRouter.post("/prescriptions/:id/mfa-approve", (req, res) => {
     }
     const now = new Date().toISOString();
     db.prepare("UPDATE prescriptions SET status = 'mfa_approved', mfa_approved_by = ?, mfa_approved_at = ?, updated_at = datetime('now') WHERE id = ?").run(mfaUserId, now, id);
-    createNotification(db, rx.patient_id, "PRESCRIPTION_FORWARDED", "Rezept wurde weitergeleitet", "Ihr Rezept für " + rx.medication_name + " wurde an den Arzt zur Freigabe weitergeleitet.", id);
+    createNotification(db, rx.patient_id, "PRESCRIPTION_FORWARDED", "Rezept wurde weitergeleitet", "Ihr Rezept fÃ¼r " + rx.medication_name + " wurde an den Arzt zur Freigabe weitergeleitet.", id);
     res.json({ success: true, data: { id, status: "mfa_approved" } });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
@@ -243,14 +280,14 @@ prescriptionsRouter.post("/prescriptions/:id/mfa-reject", (req, res) => {
     if (!rx) { res.status(404).json({ success: false, error: "Rezept nicht gefunden" }); return; }
     if (rx.status !== "PENDING") { res.status(409).json({ success: false, error: "Rezept hat nicht den Status PENDING" }); return; }
     db.prepare("UPDATE prescriptions SET status = 'mfa_rejected', mfa_rejection_reason = ?, updated_at = datetime('now') WHERE id = ?").run(reason || null, id);
-    createNotification(db, rx.patient_id, "PRESCRIPTION_REJECTED", "Rezept wurde abgelehnt (MFA)", "Ihre Rezeptanfrage für " + rx.medication_name + " wurde von der MFA abgelehnt." + (reason ? " Grund: " + reason : ""), id);
+    createNotification(db, rx.patient_id, "PRESCRIPTION_REJECTED", "Rezept wurde abgelehnt (MFA)", "Ihre Rezeptanfrage fÃ¼r " + rx.medication_name + " wurde von der MFA abgelehnt." + (reason ? " Grund: " + reason : ""), id);
     res.json({ success: true, data: { id, status: "mfa_rejected" } });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
   }
 });
 
-// POST /api/prescriptions/:id/doctor-approve - Arzt gibt Rezept endgültig frei
+// POST /api/prescriptions/:id/doctor-approve - Arzt gibt Rezept endgÃ¼ltig frei
 prescriptionsRouter.post("/prescriptions/:id/doctor-approve", (req, res) => {
   try {
     const db = getDb();
@@ -258,17 +295,17 @@ prescriptionsRouter.post("/prescriptions/:id/doctor-approve", (req, res) => {
     const { doctorUserId } = req.body;
     const rx = db.prepare("SELECT status, patient_id, medication_name FROM prescriptions WHERE id = ?").get(id) as any;
     if (!rx) { res.status(404).json({ success: false, error: "Rezept nicht gefunden" }); return; }
-    if (rx.status !== "mfa_approved") { res.status(409).json({ success: false, error: "Rezept muss von MFA geprüft sein (mfa_approved)" }); return; }
+    if (rx.status !== "mfa_approved") { res.status(409).json({ success: false, error: "Rezept muss von MFA geprÃ¼ft sein (mfa_approved)" }); return; }
     const now = new Date().toISOString();
     db.prepare("UPDATE prescriptions SET status = 'doctor_approved', doctor_approved_by = ?, doctor_approved_at = ?, updated_at = datetime('now') WHERE id = ?").run(doctorUserId || null, now, id);
-    createNotification(db, rx.patient_id, "PRESCRIPTION_READY", "Rezept freigegeben", "Ihr Rezept für " + rx.medication_name + " wurde freigegeben und kann abgeholt werden.", id);
+    createNotification(db, rx.patient_id, "PRESCRIPTION_READY", "Rezept freigegeben", "Ihr Rezept fÃ¼r " + rx.medication_name + " wurde freigegeben und kann abgeholt werden.", id);
     res.json({ success: true, data: { id, status: "doctor_approved" } });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
   }
 });
 
-// POST /api/prescriptions/:id/doctor-reject - Arzt lehnt Rezept endgültig ab
+// POST /api/prescriptions/:id/doctor-reject - Arzt lehnt Rezept endgÃ¼ltig ab
 prescriptionsRouter.post("/prescriptions/:id/doctor-reject", (req, res) => {
   try {
     const db = getDb();
@@ -276,9 +313,9 @@ prescriptionsRouter.post("/prescriptions/:id/doctor-reject", (req, res) => {
     const { doctorUserId, reason } = req.body;
     const rx = db.prepare("SELECT status, patient_id, medication_name FROM prescriptions WHERE id = ?").get(id) as any;
     if (!rx) { res.status(404).json({ success: false, error: "Rezept nicht gefunden" }); return; }
-    if (rx.status !== "mfa_approved") { res.status(409).json({ success: false, error: "Rezept muss von MFA geprüft sein (mfa_approved)" }); return; }
+    if (rx.status !== "mfa_approved") { res.status(409).json({ success: false, error: "Rezept muss von MFA geprÃ¼ft sein (mfa_approved)" }); return; }
     db.prepare("UPDATE prescriptions SET status = 'doctor_rejected', doctor_rejection_reason = ?, updated_at = datetime('now') WHERE id = ?").run(reason || null, id);
-    createNotification(db, rx.patient_id, "PRESCRIPTION_REJECTED_DOCTOR", "Rezept vom Arzt abgelehnt", "Ihre Rezeptanfrage für " + rx.medication_name + " wurde vom Arzt abgelehnt." + (reason ? " Grund: " + reason : ""), id);
+    createNotification(db, rx.patient_id, "PRESCRIPTION_REJECTED_DOCTOR", "Rezept vom Arzt abgelehnt", "Ihre Rezeptanfrage fÃ¼r " + rx.medication_name + " wurde vom Arzt abgelehnt." + (reason ? " Grund: " + reason : ""), id);
     res.json({ success: true, data: { id, status: "doctor_rejected" } });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });

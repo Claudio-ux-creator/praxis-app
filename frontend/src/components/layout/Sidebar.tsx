@@ -1,4 +1,4 @@
-﻿import { Bell, Calendar, ClipboardList, FlaskConical, Home, LayoutDashboard, LogOut, Pill, Settings, User, Stethoscope, CalendarDays, ClipboardCheck, Clock } from "lucide-react";
+﻿import { Bell, Calendar, ClipboardList, FlaskConical, Home, LayoutDashboard, LogOut, Pill, Settings, User, Stethoscope, CalendarDays, ClipboardCheck, Clock, AlertTriangle } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +17,7 @@ const mfaLinks = [
   { to: "/mfa/prescriptions", icon: Pill, label: "Rezepte" },
   { to: "/mfa/vaccinations", icon: FlaskConical, label: "Impfungen" },
   { to: "/mfa/reminders", icon: Bell, label: "Erinnerungen" },
+  { to: "/mfa/critical-medications", icon: AlertTriangle, label: "Kritische Medikamente" },
 ];
 
 const doctorLinks = [

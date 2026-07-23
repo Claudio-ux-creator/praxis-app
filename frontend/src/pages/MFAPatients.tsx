@@ -64,7 +64,7 @@ export default function MFAPatients() {
 
   const loadPatients = () => {
     setLoading(true);
-    get<Patient[]>("/patients").then((r) => {
+    get<Patient[]>("/patients").then((r: any) => {
       if (r.success && r.data) setPatients(r.data);
       setLoading(false);
     });
@@ -124,7 +124,7 @@ export default function MFAPatients() {
     setDeleteInfo(null);
     try {
       const r = await del("/patients/" + p.id);
-      if (r.success) setDeleteInfo(r.data);
+      if (r.success) setDeleteInfo((r as any).data);
     } catch {}
   };
 

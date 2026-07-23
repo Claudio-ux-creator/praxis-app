@@ -116,6 +116,37 @@ patientsRouter.patch('/patients/:id/comment', (req, res) => {
   }
 });
 
+// GET /api/patients/search - Patienten anhand Versichertennummer oder Name suchen (MFA-Autovervollständigung)
+patientsRouter.get('/patients/search', (req, res) => {
+  try {
+    const db = getDb();
+    const insuranceNumber = (req.query.insuranceNumber as string || '').trim();
+    const lastName = (req.query.lastName as string || '').trim();
+    const firstName = (req.query.firstName as string || '').trim();
+
+    let rows;
+    if (insuranceNumber) {
+      rows = db.prepare(
+        'SELECT id, insurance_number, first_name, last_name, date_of_birth FROM patients WHERE insurance_number LIKE ? ORDER BY last_name, first_name LIMIT 20'
+      ).all('%' + insuranceNumber + '%');
+    } else if (lastName && firstName) {
+      rows = db.prepare(
+        'SELECT id, insurance_number, first_name, last_name, date_of_birth FROM patients WHERE last_name LIKE ? AND first_name LIKE ? ORDER BY last_name, first_name LIMIT 20'
+      ).all('%' + lastName + '%', '%' + firstName + '%');
+    } else if (lastName) {
+      rows = db.prepare(
+        'SELECT id, insurance_number, first_name, last_name, date_of_birth FROM patients WHERE last_name LIKE ? ORDER BY last_name, first_name LIMIT 20'
+      ).all('%' + lastName + '%');
+    } else {
+      res.json({ success: true, data: [] });
+      return;
+    }
+    res.json({ success: true, data: rows });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+  }
+});
+
 // POST /api/patients/lookup - Patient anhand Versichertennummer suchen
 patientsRouter.post('/patients/lookup', (req, res) => {
   try {
@@ -152,5 +183,54 @@ patientsRouter.get('/patients/:id/diagnoses', (req, res) => {
     res.json({ success: true, data: rows });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+  }
+});
+
+// GET /api/patients/check-consultation - Prueft ob Patient in den letzten 12 Monaten beim Arzt war
+patientsRouter.get("/patients/check-consultation", (req, res) => {
+  try {
+    const db = getDb();
+    const insuranceNumber = req.query.insuranceNumber;
+    if (!insuranceNumber) { res.status(400).json({ success: false, error: "insuranceNumber erforderlich" }); return; }
+    const patient = db.prepare("SELECT id, last_consultation FROM patients WHERE insurance_number = ?").get(insuranceNumber);
+    if (!patient) { res.status(404).json({ success: false, error: "Patient nicht gefunden" }); return; }
+    if (!patient.last_consultation) {
+      res.json({ success: true, blocked: true, message: "Sie hatten noch keine Untersuchung in unserer Praxis. Bitte vereinbaren Sie zuerst einen Kontrolltermin." });
+      return;
+    }
+    const lastConsult = new Date(patient.last_consultation);
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    if (lastConsult < oneYearAgo) {
+      res.json({ success: true, blocked: true, message: "Ihr letzter Arztbesuch ist laenger als ein Jahr her. Bitte vereinbaren Sie zuerst einen Kontrolltermin." });
+      return;
+    }
+    res.json({ success: true, blocked: false });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
+  }
+});
+
+// GET /api/notifications?patientId= - Benachrichtigungen eines Patienten abrufen
+patientsRouter.get("/notifications", (req, res) => {
+  try {
+    const db = getDb();
+    const patientId = Number(req.query.patientId);
+    if (!patientId) { res.status(400).json({ success: false, error: "patientId erforderlich" }); return; }
+    const rows = db.prepare("SELECT id, type, title, message, related_entity_type, related_entity_id, created_at FROM patient_notifications WHERE patient_id = ? ORDER BY created_at DESC LIMIT 20").all(patientId);
+    res.json({ success: true, data: rows });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
+  }
+});
+
+// PUT /api/notifications/:id/read - Benachrichtigung als gelesen markieren
+patientsRouter.put("/notifications/:id/read", (req, res) => {
+  try {
+    const db = getDb();
+    db.prepare("UPDATE patient_notifications SET read = 1 WHERE id = ?").run(Number(req.params.id));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
   }
 });

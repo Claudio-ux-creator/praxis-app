@@ -3,7 +3,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { get, patch } from '@/lib/api';
-import { formatDate } from "@/lib/utils";
 
 interface AppointmentResult {
   id: number;
@@ -66,6 +65,16 @@ export default function PatientAppointments() {
 
   const handleConfirmSeries = async (appointmentId: number) => {
     const r = await patch('/appointments/' + appointmentId + '/confirm-series', {});
+    if (r.success) loadAppointments();
+  };
+
+  const handleConfirmSuggestion = async (appointmentId: number) => {
+    const r = await patch('/appointments/' + appointmentId + '/confirm-suggestion', { insuranceNumber });
+    if (r.success) loadAppointments();
+  };
+
+  const handleRejectSuggestion = async (appointmentId: number) => {
+    const r = await patch('/appointments/' + appointmentId + '/reject-suggestion', { insuranceNumber });
     if (r.success) loadAppointments();
   };
 
@@ -135,7 +144,13 @@ export default function PatientAppointments() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                {a.status === 'PENDING_CONFIRMATION' && (
+                {a.status === 'PENDING_CONFIRMATION' && (a.series_dose_number || 0) > 1 && (
+                  <>
+                    <Button size="sm" variant="outline" onClick={() => handleRejectSuggestion(a.id)}>Ablehnen</Button>
+                    <Button size="sm" onClick={() => handleConfirmSuggestion(a.id)}>Bestätigen</Button>
+                  </>
+                )}
+                {a.status === 'PENDING_CONFIRMATION' && (a.series_dose_number || 0) <= 1 && (
                   <Button size="sm" onClick={() => handleConfirmSeries(a.id)}>Bestätigen</Button>
                 )}
                 <Badge variant={STATUS_BADGE[a.status] as any || 'outline'}>

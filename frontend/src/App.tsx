@@ -11,6 +11,7 @@ import MFAPatients from '@/pages/MFAPatients';
 import MFAAppointments from '@/pages/MFAAppointments';
 import MFAPrescriptions from '@/pages/MFAPrescriptions';
 import MFAVaccinations from '@/pages/MFAVaccinations';
+import MFACriticalMedications from '@/pages/MFACriticalMedications';
 import MFAReminders from '@/pages/MFAReminders';
 import DoctorLogin from '@/pages/DoctorLogin';
 import DoctorDashboard from '@/pages/DoctorDashboard';
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/mfa/appointments" element={<MFAAppointments />} />
           <Route path="/mfa/prescriptions" element={<MFAPrescriptions />} />
           <Route path="/mfa/vaccinations" element={<MFAVaccinations />} />
+          <Route path="/mfa/critical-medications" element={<MFACriticalMedications />} />
           <Route path="/mfa/reminders" element={<MFAReminders />} />
         </Route>
 

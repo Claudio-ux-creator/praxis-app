@@ -104,6 +104,7 @@ export default function PatientPortal() {
   const [time, setTime] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Answer[]>([]);
+  const [medicationName, setMedicationName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<{
@@ -245,7 +246,7 @@ export default function PatientPortal() {
   // Select time ? go to questions
   const handleTimeSelect = (t: string) => {
     setTime(t);
-    setStep("questions");
+    if(bookingMode==="series"){handleSubmitSeries(t);}else{setStep("questions");}
   };
 
   // Handle answer change
@@ -256,7 +257,29 @@ export default function PatientPortal() {
   };
 
   // Submit booking (single or series)
-  const handleSubmit = async () => {
+  const handleSubmitSeries = async (selectedTime: string) => {
+    if (!date || !doctorId || !selectedSeriesId) return;
+    setLoading(true);
+    const dateStr = date.getFullYear() +"-"+ String(date.getMonth() + 1).padStart(2, "0") +"-"+ String(date.getDate()).padStart(2, "0");
+    const res = await post<{ seriesGroupId: string; appointments: any[] }>("/appointments/series", {
+      insuranceNumber,
+      doctorId,
+      date: dateStr,
+      time: selectedTime,
+      seriesTemplateId: selectedSeriesId,
+    });
+    setLoading(false);
+    if (res.success && res.data) {
+      const template = seriesTemplates.find((t) => t.id === selectedSeriesId);
+      setSuccess({ type: "series", data: { ...res.data, templateName: template?.name || "Impfserie" } });
+      setStep("confirm");
+      loadAppointments();
+    } else {
+      setError(res.error || "Buchung fehlgeschlagen");
+    }
+  };
+
+const handleSubmit = async () => {
     if (!date || !doctorId || !category || !time) return;
 
     const missing = questions.filter((q) => q.required && !answers.find((a) => a.questionId === q.id)?.answer);
@@ -266,6 +289,24 @@ export default function PatientPortal() {
     }
 
     setError("");
+
+    if (category === "PRESCRIPTION_PICKUP") {
+      if (!medicationName) {
+        setError("Bitte geben Sie ein Medikament ein.");
+        return;
+      }
+      var checkRes = await fetch("/api/doctor/check-critical-medication?name=" + encodeURIComponent(medicationName)).then(function(r) { return r.json(); });
+      if (checkRes.success && checkRes.isCritical) {
+        setError("Abgelehnt - nur nach ärztlichem Gespräch möglich.");
+        return;
+      }
+      var consultRes = await fetch("/api/patients/check-consultation?insuranceNumber=" + encodeURIComponent(insuranceNumber)).then(function(r) { return r.json(); });
+      if (consultRes.success && consultRes.blocked) {
+        setError(consultRes.message);
+        return;
+      }
+    }
+
     setLoading(true);
     const dateStr = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
     const filteredAnswers = answers.filter((a) => a.answer !== "");
@@ -274,10 +315,10 @@ export default function PatientPortal() {
       const res = await post<{ seriesGroupId: string; appointments: any[] }>("/appointments/series", {
         insuranceNumber,
         doctorId,
-        startDate: dateStr,
-        startTime: time,
-        seriesId: selectedSeriesId,
-        answers: filteredAnswers,
+        date: dateStr,
+        time,
+        seriesTemplateId: selectedSeriesId,
+        
       });
       setLoading(false);
       if (res.success && res.data) {
@@ -317,15 +358,27 @@ export default function PatientPortal() {
     }
   };
 
-  // Confirm a pending series dose
+  // Confirm a suggested follow-up dose
   const handleConfirmDose = async (appointmentId: number) => {
     setLoading(true);
-    const res = await patch("/appointments/" + appointmentId + "/confirm-series", {});
+    const res = await patch("/appointments/" + appointmentId + "/confirm-suggestion", { insuranceNumber });
     setLoading(false);
     if (res.success) {
       loadAppointments();
     } else {
       setError(res.error || "Bestätigung fehlgeschlagen");
+    }
+  };
+
+  // Reject a suggested follow-up dose
+  const handleRejectDose = async (appointmentId: number) => {
+    setLoading(true);
+    const res = await patch("/appointments/" + appointmentId + "/reject-suggestion", { insuranceNumber });
+    setLoading(false);
+    if (res.success) {
+      loadAppointments();
+    } else {
+      setError(res.error || "Ablehnung fehlgeschlagen");
     }
   };
 
@@ -354,10 +407,52 @@ export default function PatientPortal() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  // Folgetermin-Vorschläge aus einer Impfserie, die der Patient noch bestätigen/ablehnen muss
+  const pendingSuggestions = myAppointments.filter(
+    (a) => a.status === "PENDING_CONFIRMATION" && (a.series_dose_number || 0) > 1
+  );
+
   // -- Render: Confirm Success ------------------
   if (success && step === "confirm") {
     if (success.type === "series") {
       const s = success.data;
+
+      const handleInlineConfirm = async (appointmentId: number) => {
+        setLoading(true);
+        const res = await patch("/appointments/" + appointmentId + "/confirm-suggestion", { insuranceNumber });
+        setLoading(false);
+        if (res.success) {
+          setSuccess((prev: any) => prev && ({
+            ...prev,
+            data: {
+              ...prev.data,
+              appointments: prev.data.appointments.map((a: any) => a.id === appointmentId ? { ...a, status: "SCHEDULED" } : a),
+            },
+          }));
+          loadAppointments();
+        } else {
+          setError(res.error || "Bestätigung fehlgeschlagen");
+        }
+      };
+
+      const handleInlineReject = async (appointmentId: number) => {
+        setLoading(true);
+        const res = await patch("/appointments/" + appointmentId + "/reject-suggestion", { insuranceNumber });
+        setLoading(false);
+        if (res.success) {
+          setSuccess((prev: any) => prev && ({
+            ...prev,
+            data: {
+              ...prev.data,
+              appointments: prev.data.appointments.map((a: any) => a.id === appointmentId ? { ...a, status: "CANCELLED" } : a),
+            },
+          }));
+          loadAppointments();
+        } else {
+          setError(res.error || "Ablehnung fehlgeschlagen");
+        }
+      };
+
       return (
         <div className="space-y-6">
           <h1 className="text-2xl font-semibold">Mein Bereich</h1>
@@ -371,20 +466,37 @@ export default function PatientPortal() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
+              {error && (
+                <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
+              )}
               <div className="rounded-lg bg-muted p-4 space-y-2">
-                {s.appointments.map((apt: any, _i: number) => (
-                  <div key={apt.id} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Dosis {apt.series_dose_number}</span>
-                    <span className="font-medium">
-                      {apt.date} um {apt.time} Uhr
-                      {apt.status === "SCHEDULED" && "\u2705"}
-                      {apt.status === "PENDING_CONFIRMATION" && "\u2705"}
-                    </span>
+                {s.appointments.map((apt: any) => (
+                  <div key={apt.id} className="flex items-center justify-between text-sm py-1">
+                    <div>
+                      <span className="text-muted-foreground">Dosis {apt.series_dose_number}</span>
+                      <span className="font-medium ml-2">{apt.date} um {apt.time} Uhr</span>
+                    </div>
+                    {(apt.series_dose_number || 1) <= 1 ? (
+                      <span className="text-green-600">{"\u2705"}</span>
+                    ) : apt.status === "SCHEDULED" ? (
+                      <span className="text-green-600 font-medium">{"\u2705 Best\u00e4tigt"}</span>
+                    ) : apt.status === "CANCELLED" ? (
+                      <span className="text-muted-foreground font-medium">Abgelehnt</span>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" onClick={() => handleInlineReject(apt.id)} disabled={loading}>
+                          Ablehnen
+                        </Button>
+                        <Button size="sm" onClick={() => handleInlineConfirm(apt.id)} disabled={loading}>
+                          {"Best\u00e4tigen"}
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
               <p className="text-xs text-muted-foreground">
-                💡 Folgetermine müssen Sie später einzeln bestätigen.
+                {"\u{1F4A1}"} Bitte bestätigen oder lehnen Sie jeden Folgetermin einzeln ab.
               </p>
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={handleBackToMenu}>
@@ -466,27 +578,32 @@ export default function PatientPortal() {
         )}
 
         {/* Pending confirmations */}
-        {myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").length > 0 && (
+        {pendingSuggestions.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 ⏳ Bestätigung ausstehend
                 <Badge variant="secondary" className="ml-auto">
-                  {myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").length}
+                  {pendingSuggestions.length}
                 </Badge>
               </CardTitle>
-              <CardDescription>Folgetermine einer Impfserie, die Sie bestätigen müssen</CardDescription>
+              <CardDescription>Folgetermine einer Impfserie, die Sie bestätigen oder ablehnen müssen</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").map((apt) => (
+              {pendingSuggestions.map((apt) => (
                 <div key={apt.id} className="flex items-center justify-between rounded-lg border p-3">
                   <div>
                     <div className="font-medium text-sm">Dosis {apt.series_dose_number} – {apt.date} um {apt.time} Uhr</div>
                     <div className="text-xs text-muted-foreground">Dr. {apt.doctor_last_name}</div>
                   </div>
-                  <Button size="sm" onClick={() => handleConfirmDose(apt.id)} disabled={loading}>
-                    {loading ? "..." : "Bestätigen"}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => handleRejectDose(apt.id)} disabled={loading}>
+                      Ablehnen
+                    </Button>
+                    <Button size="sm" onClick={() => handleConfirmDose(apt.id)} disabled={loading}>
+                      {loading ? "..." : "Bestätigen"}
+                    </Button>
+                  </div>
                 </div>
               ))}
             </CardContent>
@@ -642,14 +759,48 @@ export default function PatientPortal() {
 
       {/* Step: Category */}
       {step === "category" && (
-        <div className="grid gap-4 md:grid-cols-2">
-          {CATEGORIES.map((cat) => (
-            <Card key={cat.value} className="cursor-pointer transition-all hover:border-primary hover:shadow-md" onClick={() => handleCategory(cat.value)}>
+        <div className="space-y-6">
+          {pendingSuggestions.length > 0 && (
+            <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg"><span>{cat.icon}</span>{cat.label}</CardTitle>
+                <CardTitle className="text-base flex items-center gap-2">
+                  ⏳ Bestätigung ausstehend
+                  <Badge variant="secondary" className="ml-auto">
+                    {pendingSuggestions.length}
+                  </Badge>
+                </CardTitle>
+                <CardDescription>Folgetermine einer Impfserie, die Sie bestätigen oder ablehnen müssen</CardDescription>
               </CardHeader>
+              <CardContent className="space-y-3">
+                {pendingSuggestions.map((apt) => (
+                  <div key={apt.id} className="flex items-center justify-between rounded-lg border p-3">
+                    <div>
+                      <div className="font-medium text-sm">Dosis {apt.series_dose_number} – {apt.date} um {apt.time} Uhr</div>
+                      <div className="text-xs text-muted-foreground">Dr. {apt.doctor_last_name}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => handleRejectDose(apt.id)} disabled={loading}>
+                        Ablehnen
+                      </Button>
+                      <Button size="sm" onClick={() => handleConfirmDose(apt.id)} disabled={loading}>
+                        {loading ? "..." : "Bestätigen"}
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
             </Card>
-          ))}
+          )}
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {CATEGORIES.map((cat) => (
+              <Card key={cat.value} className="cursor-pointer transition-all hover:border-primary hover:shadow-md" onClick={() => handleCategory(cat.value)}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg"><span>{cat.icon}</span>{cat.label}</CardTitle>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
         </div>
       )}
 
@@ -734,6 +885,13 @@ export default function PatientPortal() {
             <CardDescription>Bitte beantworten Sie die folgenden Fragen für Ihren Termin.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {category === "PRESCRIPTION_PICKUP" && (
+              <div className="space-y-2 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                <Label className="font-semibold text-amber-800">Welches Medikament benötigen Sie? *</Label>
+                <Input value={medicationName} onChange={function(e) { setMedicationName(e.target.value); }} placeholder="z.B. Ibuprofen 400mg" className="bg-white" />
+                <p className="text-xs text-amber-700">Geben Sie den Namen des Medikaments ein, das Sie verschrieben haben möchten.</p>
+              </div>
+            )}
             {questions.length === 0 && <p className="text-sm text-muted-foreground">Für diese Terminart sind keine Fragen hinterlegt.</p>}
             {questions.map((q) => {
               const answer = answers.find((a) => a.questionId === q.id);

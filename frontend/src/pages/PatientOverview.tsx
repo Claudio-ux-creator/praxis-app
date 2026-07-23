@@ -1,10 +1,8 @@
 ﻿﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Calendar, ClipboardList, Pill } from 'lucide-react';
 import { get } from '@/lib/api';
-import { formatDate } from "@/lib/utils";
 
 interface AppointmentResult {
   id: number;
@@ -51,6 +49,7 @@ export default function PatientOverview() {
 
   const [appointments, setAppointments] = useState<AppointmentResult[]>([]);
   const [prescriptions, setPrescriptions] = useState<PrescriptionResult[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
 
   useEffect(() => {
     if (!insuranceNumber) return;
@@ -59,6 +58,16 @@ export default function PatientOverview() {
     });
     get<PrescriptionResult[]>('/prescriptions?insuranceNumber=' + insuranceNumber).then((r) => {
       if (r.success && r.data) setPrescriptions(r.data);
+    });
+    get<any>('/patients?search=' + insuranceNumber).then((r2) => {
+      if (r2.success && r2.data && r2.data.length > 0) {
+        const pid = r2.data[0].id;
+        get<any[]>('/notifications?patientId=' + pid).then((r3) => {
+          if (r3.success && r3.data) {
+            setNotifications(r3.data.filter(function(n) { return n.type === "PRESCRIPTION_AUTO_REJECTED"; }));
+          }
+        });
+      }
     });
   }, [insuranceNumber]);
 
@@ -94,6 +103,21 @@ export default function PatientOverview() {
             </p>
           </CardContent>
         </Card>
+      )}
+
+      {/* Benachrichtigungen bei AUTO_REJECTED_CRITICAL */}
+      {notifications.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-semibold text-amber-700 flex items-center gap-1">⚠️ Benachrichtigungen</h3>
+          {notifications.map((n: any) => (
+            <Card key={n.id} className="border-amber-200 bg-amber-50">
+              <CardContent className="py-3">
+                <p className="text-sm font-medium">{n.title}</p>
+                <p className="text-xs text-amber-800 mt-1">{n.message}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       )}
 
       {/* Quick Actions */}

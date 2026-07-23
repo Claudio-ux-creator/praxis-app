@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Pill, CalendarDays, Stethoscope, FileText, ClipboardCheck } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { CalendarDays, Stethoscope, ClipboardCheck } from "lucide-react";
 import { get } from "@/lib/api";
 
 interface PrescriptionSummary {

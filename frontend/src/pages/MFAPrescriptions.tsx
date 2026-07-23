@@ -1,10 +1,9 @@
 ﻿import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Pill, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
+import { Pill, Eye } from 'lucide-react';
 import { get, post, patch } from '@/lib/api';
-import { formatDate } from "@/lib/utils";
 
 interface Prescription {
   id: number;
@@ -29,6 +28,7 @@ const STATUS_MAP: Record<string, string> = {
   doctor_approved: 'Arzt freigegeben',
   doctor_rejected: 'Arzt abgelehnt',
   collected: 'Abgeholt',
+  AUTO_REJECTED_CRITICAL: 'AUTO_REJECTED_CRITICAL',
 };
 
 const STATUS_BADGE: Record<string, string> = {
@@ -38,15 +38,9 @@ const STATUS_BADGE: Record<string, string> = {
   doctor_approved: 'default',
   doctor_rejected: 'destructive',
   collected: 'outline',
+  AUTO_REJECTED_CRITICAL: 'destructive',
 };
 
-const RX_NEXT_STATUS: Record<string, string[]> = {
-  PENDING: ['IN_PROGRESS', 'REJECTED'],
-  IN_PROGRESS: [],
-  APPROVED: ['COLLECTED'],
-  REJECTED: [],
-  COLLECTED: [],
-};
 
 export default function MFAPrescriptions() {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
@@ -98,7 +92,7 @@ export default function MFAPrescriptions() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Rezeptverwaltung</h1>
         <div className="flex gap-1 flex-wrap">
-          {['ALL', 'PENDING', 'mfa_approved', 'mfa_rejected', 'auto_rejected', 'doctor_approved', 'doctor_rejected', 'collected'].map((s) => {
+          {['ALL', 'PENDING', 'mfa_approved', 'mfa_rejected', 'auto_rejected', 'doctor_approved', 'doctor_rejected', 'collected', 'AUTO_REJECTED_CRITICAL'].map((s) => {
             if (!counts[s]) return null;
             return (
               <Button key={s} size="sm" variant={filter === s ? 'default' : 'outline'} onClick={() => setFilter(s)} className="text-xs">
@@ -140,6 +134,9 @@ export default function MFAPrescriptions() {
                   </div>
                   {rx.notes && (
                     <div className="text-xs italic bg-muted p-2 rounded inline-block">{rx.notes}</div>
+                  )}
+                  {rx.status === "AUTO_REJECTED_CRITICAL" && (
+                    <p className="text-xs text-amber-600 mt-1">Grund: Medikament nur nach ärztlichem Gespräch</p>
                   )}
                   {rx.status === 'PENDING' && (
                     <div className="flex gap-1 pt-1">

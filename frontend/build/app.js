@@ -1,4 +1,3 @@
-"use strict";
 var PraxisApp = (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
@@ -7290,7 +7289,7 @@ var PraxisApp = (() => {
   __export(entry_umd_exports, {
     default: () => entry_umd_default
   });
-  var import_react54 = __toESM(require_react(), 1);
+  var import_react55 = __toESM(require_react(), 1);
   var import_client = __toESM(require_client(), 1);
 
   // node_modules/react-router-dom/dist/index.js
@@ -11733,7 +11732,8 @@ var PraxisApp = (() => {
     { to: "/mfa/appointments", icon: Calendar, label: "Termine" },
     { to: "/mfa/prescriptions", icon: Pill, label: "Rezepte" },
     { to: "/mfa/vaccinations", icon: FlaskConical, label: "Impfungen" },
-    { to: "/mfa/reminders", icon: Bell, label: "Erinnerungen" }
+    { to: "/mfa/reminders", icon: Bell, label: "Erinnerungen" },
+    { to: "/mfa/critical-medications", icon: TriangleAlert, label: "Kritische Medikamente" }
   ];
   var doctorLinks = [
     { to: "/doctor", icon: LayoutDashboard, label: "Dashboard" },
@@ -19436,6 +19436,7 @@ var PraxisApp = (() => {
     const [time, setTime] = (0, import_react36.useState)("");
     const [questions, setQuestions] = (0, import_react36.useState)([]);
     const [answers, setAnswers] = (0, import_react36.useState)([]);
+    const [medicationName, setMedicationName] = (0, import_react36.useState)("");
     const [loading, setLoading] = (0, import_react36.useState)(false);
     const [error, setError] = (0, import_react36.useState)("");
     const [success, setSuccess] = (0, import_react36.useState)(null);
@@ -19552,12 +19553,37 @@ var PraxisApp = (() => {
     }, [doctorId, category]);
     const handleTimeSelect = (t) => {
       setTime(t);
-      setStep("questions");
+      if (bookingMode === "series") {
+        handleSubmitSeries(t);
+      } else {
+        setStep("questions");
+      }
     };
     const handleAnswerChange = (questionId, value) => {
       setAnswers(
         (prev) => prev.map((a) => a.questionId === questionId ? { ...a, answer: value } : a)
       );
+    };
+    const handleSubmitSeries = async (selectedTime) => {
+      if (!date || !doctorId || !selectedSeriesId) return;
+      setLoading(true);
+      const dateStr = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+      const res = await post("/appointments/series", {
+        insuranceNumber,
+        doctorId,
+        date: dateStr,
+        time: selectedTime,
+        seriesTemplateId: selectedSeriesId
+      });
+      setLoading(false);
+      if (res.success && res.data) {
+        const template = seriesTemplates.find((t) => t.id === selectedSeriesId);
+        setSuccess({ type: "series", data: { ...res.data, templateName: template?.name || "Impfserie" } });
+        setStep("confirm");
+        loadAppointments();
+      } else {
+        setError(res.error || "Buchung fehlgeschlagen");
+      }
     };
     const handleSubmit = async () => {
       if (!date || !doctorId || !category || !time) return;
@@ -19567,6 +19593,26 @@ var PraxisApp = (() => {
         return;
       }
       setError("");
+      if (category === "PRESCRIPTION_PICKUP") {
+        if (!medicationName) {
+          setError("Bitte geben Sie ein Medikament ein.");
+          return;
+        }
+        var checkRes = await fetch("/api/doctor/check-critical-medication?name=" + encodeURIComponent(medicationName)).then(function(r2) {
+          return r2.json();
+        });
+        if (checkRes.success && checkRes.isCritical) {
+          setError("Abgelehnt - nur nach \xE4rztlichem Gespr\xE4ch m\xF6glich.");
+          return;
+        }
+        var consultRes = await fetch("/api/patients/check-consultation?insuranceNumber=" + encodeURIComponent(insuranceNumber)).then(function(r2) {
+          return r2.json();
+        });
+        if (consultRes.success && consultRes.blocked) {
+          setError(consultRes.message);
+          return;
+        }
+      }
       setLoading(true);
       const dateStr = date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
       const filteredAnswers = answers.filter((a) => a.answer !== "");
@@ -19574,10 +19620,9 @@ var PraxisApp = (() => {
         const res = await post("/appointments/series", {
           insuranceNumber,
           doctorId,
-          startDate: dateStr,
-          startTime: time,
-          seriesId: selectedSeriesId,
-          answers: filteredAnswers
+          date: dateStr,
+          time,
+          seriesTemplateId: selectedSeriesId
         });
         setLoading(false);
         if (res.success && res.data) {
@@ -19618,12 +19663,22 @@ var PraxisApp = (() => {
     };
     const handleConfirmDose = async (appointmentId) => {
       setLoading(true);
-      const res = await patch("/appointments/" + appointmentId + "/confirm-series", {});
+      const res = await patch("/appointments/" + appointmentId + "/confirm-suggestion", { insuranceNumber });
       setLoading(false);
       if (res.success) {
         loadAppointments();
       } else {
         setError(res.error || "Best\xE4tigung fehlgeschlagen");
+      }
+    };
+    const handleRejectDose = async (appointmentId) => {
+      setLoading(true);
+      const res = await patch("/appointments/" + appointmentId + "/reject-suggestion", { insuranceNumber });
+      setLoading(false);
+      if (res.success) {
+        loadAppointments();
+      } else {
+        setError(res.error || "Ablehnung fehlgeschlagen");
       }
     };
     const handleNewBooking = () => {
@@ -19647,9 +19702,46 @@ var PraxisApp = (() => {
     };
     const today = /* @__PURE__ */ new Date();
     today.setHours(0, 0, 0, 0);
+    const pendingSuggestions = myAppointments.filter(
+      (a) => a.status === "PENDING_CONFIRMATION" && (a.series_dose_number || 0) > 1
+    );
     if (success && step === "confirm") {
       if (success.type === "series") {
         const s2 = success.data;
+        const handleInlineConfirm = async (appointmentId) => {
+          setLoading(true);
+          const res = await patch("/appointments/" + appointmentId + "/confirm-suggestion", { insuranceNumber });
+          setLoading(false);
+          if (res.success) {
+            setSuccess((prev) => prev && {
+              ...prev,
+              data: {
+                ...prev.data,
+                appointments: prev.data.appointments.map((a) => a.id === appointmentId ? { ...a, status: "SCHEDULED" } : a)
+              }
+            });
+            loadAppointments();
+          } else {
+            setError(res.error || "Best\xE4tigung fehlgeschlagen");
+          }
+        };
+        const handleInlineReject = async (appointmentId) => {
+          setLoading(true);
+          const res = await patch("/appointments/" + appointmentId + "/reject-suggestion", { insuranceNumber });
+          setLoading(false);
+          if (res.success) {
+            setSuccess((prev) => prev && {
+              ...prev,
+              data: {
+                ...prev.data,
+                appointments: prev.data.appointments.map((a) => a.id === appointmentId ? { ...a, status: "CANCELLED" } : a)
+              }
+            });
+            loadAppointments();
+          } else {
+            setError(res.error || "Ablehnung fehlgeschlagen");
+          }
+        };
         return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-6", children: [
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h1", { className: "text-2xl font-semibold", children: "Mein Bereich" }),
           /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { className: "max-w-lg", children: [
@@ -19663,21 +19755,29 @@ var PraxisApp = (() => {
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardContent, { className: "space-y-3", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "rounded-lg bg-muted p-4 space-y-2", children: s2.appointments.map((apt, _i) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex justify-between text-sm", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "text-muted-foreground", children: [
-                  "Dosis ",
-                  apt.series_dose_number
+              error && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: error }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "rounded-lg bg-muted p-4 space-y-2", children: s2.appointments.map((apt) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between text-sm py-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "text-muted-foreground", children: [
+                    "Dosis ",
+                    apt.series_dose_number
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "font-medium ml-2", children: [
+                    apt.date,
+                    " um ",
+                    apt.time,
+                    " Uhr"
+                  ] })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "font-medium", children: [
-                  apt.date,
-                  " um ",
-                  apt.time,
-                  " Uhr",
-                  apt.status === "SCHEDULED" && "\u2705",
-                  apt.status === "PENDING_CONFIRMATION" && "\u2705"
+                (apt.series_dose_number || 1) <= 1 ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-green-600", children: "\u2705" }) : apt.status === "SCHEDULED" ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-green-600 font-medium", children: "\u2705 Best\xE4tigt" }) : apt.status === "CANCELLED" ? /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "text-muted-foreground font-medium", children: "Abgelehnt" }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => handleInlineReject(apt.id), disabled: loading, children: "Ablehnen" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { size: "sm", onClick: () => handleInlineConfirm(apt.id), disabled: loading, children: "Best\xE4tigen" })
                 ] })
               ] }, apt.id)) }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "text-xs text-muted-foreground", children: "\u{1F4A1} Folgetermine m\xFCssen Sie sp\xE4ter einzeln best\xE4tigen." }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+                "\u{1F4A1}",
+                " Bitte best\xE4tigen oder lehnen Sie jeden Folgetermin einzeln ab."
+              ] }),
               /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-2", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { variant: "outline", className: "flex-1", onClick: handleBackToMenu, children: "\xDCbersicht" }),
                 /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { className: "flex-1", onClick: handleNewBooking, children: "Weiteren Termin buchen" })
@@ -19739,15 +19839,15 @@ var PraxisApp = (() => {
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { variant: "outline", className: "text-sm", children: patientName })
         ] }),
         error && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: error }),
-        myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { children: [
+        pendingSuggestions.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
               "\u23F3 Best\xE4tigung ausstehend",
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { variant: "secondary", className: "ml-auto", children: myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").length })
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { variant: "secondary", className: "ml-auto", children: pendingSuggestions.length })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "Folgetermine einer Impfserie, die Sie best\xE4tigen m\xFCssen" })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "Folgetermine einer Impfserie, die Sie best\xE4tigen oder ablehnen m\xFCssen" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardContent, { className: "space-y-3", children: myAppointments.filter((a) => a.status === "PENDING_CONFIRMATION").map((apt) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardContent, { className: "space-y-3", children: pendingSuggestions.map((apt) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-3", children: [
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "font-medium text-sm", children: [
                 "Dosis ",
@@ -19763,7 +19863,10 @@ var PraxisApp = (() => {
                 apt.doctor_last_name
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { size: "sm", onClick: () => handleConfirmDose(apt.id), disabled: loading, children: loading ? "..." : "Best\xE4tigen" })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => handleRejectDose(apt.id), disabled: loading, children: "Ablehnen" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { size: "sm", onClick: () => handleConfirmDose(apt.id), disabled: loading, children: loading ? "..." : "Best\xE4tigen" })
+            ] })
           ] }, apt.id)) })
         ] }),
         Object.entries(seriesGroups).map(([groupId, aps]) => {
@@ -19898,10 +20001,42 @@ var PraxisApp = (() => {
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { type: "submit", className: "w-full", disabled: loading, children: loading ? "Wird geladen..." : "Weiter" })
         ] }) })
       ] }),
-      step === "category" && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "grid gap-4 md:grid-cols-2", children: CATEGORIES.map((cat) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => handleCategory(cat.value), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "flex items-center gap-2 text-lg", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: cat.icon }),
-        cat.label
-      ] }) }) }, cat.value)) }),
+      step === "category" && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-6", children: [
+        pendingSuggestions.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(Card, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+              "\u23F3 Best\xE4tigung ausstehend",
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Badge, { variant: "secondary", className: "ml-auto", children: pendingSuggestions.length })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "Folgetermine einer Impfserie, die Sie best\xE4tigen oder ablehnen m\xFCssen" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardContent, { className: "space-y-3", children: pendingSuggestions.map((apt) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "font-medium text-sm", children: [
+                "Dosis ",
+                apt.series_dose_number,
+                " \u2013 ",
+                apt.date,
+                " um ",
+                apt.time,
+                " Uhr"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "text-xs text-muted-foreground", children: [
+                "Dr. ",
+                apt.doctor_last_name
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "flex gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => handleRejectDose(apt.id), disabled: loading, children: "Ablehnen" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Button3, { size: "sm", onClick: () => handleConfirmDose(apt.id), disabled: loading, children: loading ? "..." : "Best\xE4tigen" })
+            ] })
+          ] }, apt.id)) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "grid gap-4 md:grid-cols-2", children: CATEGORIES.map((cat) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => handleCategory(cat.value), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardTitle, { className: "flex items-center gap-2 text-lg", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: cat.icon }),
+          cat.label
+        ] }) }) }, cat.value)) })
+      ] }),
       step === "seriesChoice" && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "grid gap-4 md:grid-cols-2", children: [
         /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => handleSeriesChoice("single"), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardHeader, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardTitle, { className: "text-lg", children: "\u{1F489} Einzeltermin" }),
@@ -19955,6 +20090,13 @@ var PraxisApp = (() => {
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(CardDescription, { children: "Bitte beantworten Sie die folgenden Fragen f\xFCr Ihren Termin." })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(CardContent, { className: "space-y-4", children: [
+          category === "PRESCRIPTION_PICKUP" && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "space-y-2 p-3 bg-amber-50 rounded-lg border border-amber-200", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Label, { className: "font-semibold text-amber-800", children: "Welches Medikament ben\xF6tigen Sie? *" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Input3, { value: medicationName, onChange: function(e) {
+              setMedicationName(e.target.value);
+            }, placeholder: "z.B. Ibuprofen 400mg", className: "bg-white" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "text-xs text-amber-700", children: "Geben Sie den Namen des Medikaments ein, das Sie verschrieben haben m\xF6chten." })
+          ] }),
           questions.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "text-sm text-muted-foreground", children: "F\xFCr diese Terminart sind keine Fragen hinterlegt." }),
           questions.map((q) => {
             const answer = answers.find((a) => a.questionId === q.id);
@@ -20003,6 +20145,7 @@ var PraxisApp = (() => {
     const insuranceNumber = localStorage.getItem("patient_insurance") || "";
     const [appointments, setAppointments] = (0, import_react37.useState)([]);
     const [prescriptions, setPrescriptions] = (0, import_react37.useState)([]);
+    const [notifications, setNotifications] = (0, import_react37.useState)([]);
     (0, import_react37.useEffect)(() => {
       if (!insuranceNumber) return;
       get("/appointments?insuranceNumber=" + insuranceNumber).then((r2) => {
@@ -20010,6 +20153,18 @@ var PraxisApp = (() => {
       });
       get("/prescriptions?insuranceNumber=" + insuranceNumber).then((r2) => {
         if (r2.success && r2.data) setPrescriptions(r2.data);
+      });
+      get("/patients?search=" + insuranceNumber).then((r2) => {
+        if (r2.success && r2.data && r2.data.length > 0) {
+          const pid = r2.data[0].id;
+          get("/notifications?patientId=" + pid).then((r3) => {
+            if (r3.success && r3.data) {
+              setNotifications(r3.data.filter(function(n) {
+                return n.type === "PRESCRIPTION_AUTO_REJECTED";
+              }));
+            }
+          });
+        }
       });
     }, [insuranceNumber]);
     const nextAppointment = appointments.filter((a) => a.status !== "CANCELLED" && a.status !== "NO_SHOW").sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))[0];
@@ -20045,6 +20200,13 @@ var PraxisApp = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "font-medium", children: STATUS_MAP2[nextAppointment.status] || nextAppointment.status })
           ] })
         ] })
+      ] }),
+      notifications.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "space-y-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { className: "text-sm font-semibold text-amber-700 flex items-center gap-1", children: "\u26A0\uFE0F Benachrichtigungen" }),
+        notifications.map((n) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Card, { className: "border-amber-200 bg-amber-50", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardContent, { className: "py-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "text-sm font-medium", children: n.title }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "text-xs text-amber-800 mt-1", children: n.message })
+        ] }) }, n.id))
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "grid gap-4 md:grid-cols-3", children: [
         /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/patient/book"), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(CardHeader, { children: [
@@ -20135,6 +20297,14 @@ var PraxisApp = (() => {
       const r2 = await patch("/appointments/" + appointmentId + "/confirm-series", {});
       if (r2.success) loadAppointments();
     };
+    const handleConfirmSuggestion = async (appointmentId) => {
+      const r2 = await patch("/appointments/" + appointmentId + "/confirm-suggestion", { insuranceNumber });
+      if (r2.success) loadAppointments();
+    };
+    const handleRejectSuggestion = async (appointmentId) => {
+      const r2 = await patch("/appointments/" + appointmentId + "/reject-suggestion", { insuranceNumber });
+      if (r2.success) loadAppointments();
+    };
     const filtered = filter === "ALL" ? appointments : appointments.filter((a) => a.status === filter);
     const counts = {};
     for (const a of appointments) {
@@ -20193,7 +20363,11 @@ var PraxisApp = (() => {
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex items-center gap-2", children: [
-          a.status === "PENDING_CONFIRMATION" && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { size: "sm", onClick: () => handleConfirmSeries(a.id), children: "Best\xE4tigen" }),
+          a.status === "PENDING_CONFIRMATION" && (a.series_dose_number || 0) > 1 && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => handleRejectSuggestion(a.id), children: "Ablehnen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { size: "sm", onClick: () => handleConfirmSuggestion(a.id), children: "Best\xE4tigen" })
+          ] }),
+          a.status === "PENDING_CONFIRMATION" && (a.series_dose_number || 0) <= 1 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { size: "sm", onClick: () => handleConfirmSeries(a.id), children: "Best\xE4tigen" }),
           /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { variant: STATUS_BADGE[a.status] || "outline", children: STATUS_MAP3[a.status] || a.status })
         ] })
       ] }) }, a.id)) })
@@ -20209,7 +20383,8 @@ var PraxisApp = (() => {
     mfa_rejected: "MFA abgelehnt",
     doctor_approved: "Freigegeben",
     doctor_rejected: "Abgelehnt (Arzt)",
-    collected: "Abgeholt"
+    collected: "Abgeholt",
+    AUTO_REJECTED_CRITICAL: "\u274C Abgelehnt - nur nach \xE4rztlichem Gespr\xE4ch m\xF6glich"
   };
   var STATUS_BADGE2 = {
     PENDING: "secondary",
@@ -20217,7 +20392,8 @@ var PraxisApp = (() => {
     mfa_rejected: "destructive",
     doctor_approved: "default",
     doctor_rejected: "destructive",
-    collected: "outline"
+    collected: "outline",
+    AUTO_REJECTED_CRITICAL: "destructive"
   };
   function PatientPrescriptions() {
     const insuranceNumber = localStorage.getItem("patient_insurance") || "";
@@ -20251,7 +20427,8 @@ var PraxisApp = (() => {
             " \u2014 ",
             p.request_date
           ] }),
-          p.notes && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "text-xs text-muted-foreground mt-1", children: p.notes })
+          p.notes && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "text-xs text-muted-foreground mt-1", children: p.notes }),
+          p.status === "AUTO_REJECTED_CRITICAL" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "text-xs text-amber-600 mt-2", children: "\u26A0\uFE0F Dieses Medikament darf nur nach einem pers\xF6nlichen Arztgespr\xE4ch verschrieben werden. Bitte vereinbaren Sie einen Termin." })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Badge, { variant: STATUS_BADGE2[p.status] || "outline", children: STATUS_MAP4[p.status] || p.status })
       ] }) }, p.id)) })
@@ -20457,6 +20634,12 @@ var PraxisApp = (() => {
     const [showPrescriptionDialog, setShowPrescriptionDialog] = (0, import_react41.useState)(false);
     const [fixPatient, setFixPatient] = (0, import_react41.useState)("");
     const [fixMedication, setFixMedication] = (0, import_react41.useState)("");
+    const [fixLastName, setFixLastName] = (0, import_react41.useState)("");
+    const [fixFirstName, setFixFirstName] = (0, import_react41.useState)("");
+    const [fixDob, setFixDob] = (0, import_react41.useState)("");
+    const [fixDosage, setFixDosage] = (0, import_react41.useState)("");
+    const [fixNotes, setFixNotes] = (0, import_react41.useState)("");
+    const [patientCandidates, setPatientCandidates] = (0, import_react41.useState)([]);
     const [acuteSlots, setAcuteSlots] = (0, import_react41.useState)(null);
     const [showBookingDialog, setShowBookingDialog] = (0, import_react41.useState)(false);
     const [bookingSlotId, setBookingSlotId] = (0, import_react41.useState)(null);
@@ -20473,6 +20656,45 @@ var PraxisApp = (() => {
     (0, import_react41.useEffect)(() => {
       loadData();
     }, []);
+    (0, import_react41.useEffect)(() => {
+      if (!showPrescriptionDialog) {
+        setPatientCandidates([]);
+        return;
+      }
+      const byInsurance = fixPatient.trim().length >= 4;
+      const byFullName = fixLastName.trim().length >= 2 && fixFirstName.trim().length >= 2;
+      const byLastNameOnly = !byFullName && fixLastName.trim().length >= 2;
+      if (!byInsurance && !byFullName && !byLastNameOnly) {
+        setPatientCandidates([]);
+        return;
+      }
+      const timer = setTimeout(async () => {
+        const query = byInsurance ? "/patients/search?insuranceNumber=" + encodeURIComponent(fixPatient.trim()) : byFullName ? "/patients/search?lastName=" + encodeURIComponent(fixLastName.trim()) + "&firstName=" + encodeURIComponent(fixFirstName.trim()) : "/patients/search?lastName=" + encodeURIComponent(fixLastName.trim());
+        const res = await get(query);
+        if (!res.success || !res.data) {
+          setPatientCandidates([]);
+          return;
+        }
+        if (res.data.length === 1) {
+          const p = res.data[0];
+          setFixPatient(p.insurance_number);
+          setFixLastName(p.last_name);
+          setFixFirstName(p.first_name);
+          setFixDob(p.date_of_birth);
+          setPatientCandidates([]);
+        } else {
+          setPatientCandidates(res.data);
+        }
+      }, 400);
+      return () => clearTimeout(timer);
+    }, [fixPatient, fixLastName, fixFirstName, showPrescriptionDialog]);
+    const selectPatientCandidate = (p) => {
+      setFixPatient(p.insurance_number);
+      setFixLastName(p.last_name);
+      setFixFirstName(p.first_name);
+      setFixDob(p.date_of_birth);
+      setPatientCandidates([]);
+    };
     (0, import_react41.useEffect)(() => {
       if (!loading) {
         const today = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
@@ -20549,15 +20771,31 @@ var PraxisApp = (() => {
       loadData();
     };
     const handleCreatePrescription = async () => {
-      const r2 = await post("/prescriptions", {
-        insuranceNumber: fixPatient,
+      const lookup = await post("/patients/lookup", { insuranceNumber: fixPatient, dateOfBirth: fixDob });
+      if (!lookup.success || !lookup.data) {
+        alert(lookup.error || "Patient nicht gefunden");
+        return;
+      }
+      if (lookup.data.last_name !== fixLastName || lookup.data.first_name !== fixFirstName) {
+        alert("Name stimmt nicht mit dem Patienten aus der Versichertennummer \xFCberein.");
+        return;
+      }
+      const r2 = await post("/prescriptions/mfa-create", {
+        patientId: lookup.data.id,
         medicationName: fixMedication,
+        dosage: fixDosage || void 0,
+        notes: fixNotes || void 0,
         initiatedByMfaId: 1
       });
       if (r2.success) {
         setShowPrescriptionDialog(false);
         setFixPatient("");
+        setFixLastName("");
+        setFixFirstName("");
+        setFixDob("");
         setFixMedication("");
+        setFixDosage("");
+        setFixNotes("");
         loadData();
       } else {
         alert(r2.error || "Fehler");
@@ -20687,20 +20925,68 @@ var PraxisApp = (() => {
           ] })
         ] })
       ] }) }),
-      showPrescriptionDialog && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(Card, { className: "w-full max-w-sm", children: [
+      showPrescriptionDialog && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(Card, { className: "w-full max-w-lg bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 z-[999]", children: [
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(CardTitle, { className: "text-base", children: "Neues Rezept anlegen" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(CardContent, { className: "space-y-3", children: [
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-1", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Versichertennummer" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Versichertennummer *" }),
             /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Input3, { value: fixPatient, onChange: (e) => setFixPatient(e.target.value), placeholder: "z. B. A123456789" })
           ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "grid grid-cols-2 gap-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Nachname *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Input3, { value: fixLastName, onChange: (e) => setFixLastName(e.target.value), placeholder: "z. B. Mustermann" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Vorname *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Input3, { value: fixFirstName, onChange: (e) => setFixFirstName(e.target.value), placeholder: "z. B. Max" })
+            ] })
+          ] }),
+          patientCandidates.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "rounded-lg border bg-amber-50 border-amber-200 p-2 space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "text-xs font-medium text-amber-800 px-1", children: "Mehrere Patienten gefunden \u2013 bitte ausw\xE4hlen:" }),
+            patientCandidates.map((p) => /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
+              "button",
+              {
+                type: "button",
+                onClick: () => selectPatientCandidate(p),
+                className: "w-full text-left text-sm rounded-md px-2 py-1.5 hover:bg-white flex items-center justify-between",
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "font-medium", children: [
+                    p.last_name,
+                    ", ",
+                    p.first_name
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "text-xs text-muted-foreground", children: [
+                    p.insurance_number,
+                    " \xB7 ",
+                    p.date_of_birth
+                  ] })
+                ]
+              },
+              p.id
+            ))
+          ] }),
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-1", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Medikament" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Geburtsdatum *" }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Input3, { type: "date", value: fixDob, onChange: (e) => setFixDob(e.target.value) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Medikament *" }),
             /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Input3, { value: fixMedication, onChange: (e) => setFixMedication(e.target.value), placeholder: "z. B. Ibuprofen 400mg" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "grid grid-cols-2 gap-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Dosierung" }),
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Input3, { value: fixDosage, onChange: (e) => setFixDosage(e.target.value), placeholder: "Optional" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Label, { children: "Notiz" }),
+              /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Input3, { value: fixNotes, onChange: (e) => setFixNotes(e.target.value), placeholder: "Optional" })
+            ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
             /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button3, { variant: "outline", onClick: () => setShowPrescriptionDialog(false), children: "Abbrechen" }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button3, { onClick: handleCreatePrescription, disabled: !fixPatient || !fixMedication, children: "Anlegen" })
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Button3, { onClick: handleCreatePrescription, disabled: !fixPatient || !fixLastName || !fixFirstName || !fixDob || !fixMedication, children: "Anlegen" })
           ] })
         ] })
       ] }) })
@@ -21313,7 +21599,8 @@ var PraxisApp = (() => {
     mfa_rejected: "MFA abgelehnt",
     doctor_approved: "Arzt freigegeben",
     doctor_rejected: "Arzt abgelehnt",
-    collected: "Abgeholt"
+    collected: "Abgeholt",
+    AUTO_REJECTED_CRITICAL: "AUTO_REJECTED_CRITICAL"
   };
   var STATUS_BADGE4 = {
     PENDING: "secondary",
@@ -21321,7 +21608,8 @@ var PraxisApp = (() => {
     mfa_rejected: "destructive",
     doctor_approved: "default",
     doctor_rejected: "destructive",
-    collected: "outline"
+    collected: "outline",
+    AUTO_REJECTED_CRITICAL: "destructive"
   };
   function MFAPrescriptions() {
     const [prescriptions, setPrescriptions] = (0, import_react44.useState)([]);
@@ -21369,7 +21657,7 @@ var PraxisApp = (() => {
     return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "space-y-6", children: [
       /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex items-center justify-between", children: [
         /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("h1", { className: "text-2xl font-semibold", children: "Rezeptverwaltung" }),
-        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "flex gap-1 flex-wrap", children: ["ALL", "PENDING", "mfa_approved", "mfa_rejected", "auto_rejected", "doctor_approved", "doctor_rejected", "collected"].map((s) => {
+        /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "flex gap-1 flex-wrap", children: ["ALL", "PENDING", "mfa_approved", "mfa_rejected", "auto_rejected", "doctor_approved", "doctor_rejected", "collected", "AUTO_REJECTED_CRITICAL"].map((s) => {
           if (!counts[s]) return null;
           return /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(Button3, { size: "sm", variant: filter === s ? "default" : "outline", onClick: () => setFilter(s), className: "text-xs", children: [
             s === "ALL" ? "Alle" : STATUS_MAP6[s],
@@ -21409,6 +21697,7 @@ var PraxisApp = (() => {
             rx.request_date
           ] }),
           rx.notes && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { className: "text-xs italic bg-muted p-2 rounded inline-block", children: rx.notes }),
+          rx.status === "AUTO_REJECTED_CRITICAL" && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("p", { className: "text-xs text-amber-600 mt-1", children: "Grund: Medikament nur nach \xE4rztlichem Gespr\xE4ch" }),
           rx.status === "PENDING" && /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "flex gap-1 pt-1", children: [
             /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button3, { size: "xs", variant: "default", onClick: () => handleForwardToDoctor(rx.id), className: "text-xs", children: "An Arzt weiterleiten" }),
             /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Button3, { size: "xs", variant: "destructive", onClick: () => handleRejectByMfa(rx.id), className: "text-xs", children: "Ablehnen" })
@@ -21514,16 +21803,151 @@ var PraxisApp = (() => {
     ] });
   }
 
-  // src/pages/MFAReminders.tsx
+  // src/pages/MFACriticalMedications.tsx
   var import_react46 = __toESM(require_react(), 1);
   var import_jsx_runtime26 = __toESM(require_jsx_runtime(), 1);
-  function MFAReminders() {
-    const [pending, setPending] = (0, import_react46.useState)([]);
-    const [dashboard, setDashboard] = (0, import_react46.useState)(null);
-    const [processing, setProcessing] = (0, import_react46.useState)(false);
+  function MFACriticalMedications() {
+    const [criticalMeds, setCriticalMeds] = (0, import_react46.useState)([]);
     const [loading, setLoading] = (0, import_react46.useState)(true);
-    const [statusMsg, setStatusMsg] = (0, import_react46.useState)("");
-    const [error, setError] = (0, import_react46.useState)("");
+    const [showModal, setShowModal] = (0, import_react46.useState)(false);
+    const [editId, setEditId] = (0, import_react46.useState)(null);
+    const [medName, setMedName] = (0, import_react46.useState)("");
+    const [medIngredient, setMedIngredient] = (0, import_react46.useState)("");
+    const [medAtc, setMedAtc] = (0, import_react46.useState)("");
+    const [medNotes, setMedNotes] = (0, import_react46.useState)("");
+    const [saving, setSaving] = (0, import_react46.useState)(false);
+    const loadData = () => {
+      setLoading(true);
+      get("/doctor/critical-medications").then((r2) => {
+        if (r2.success && r2.data) setCriticalMeds(r2.data);
+        setLoading(false);
+      });
+    };
+    (0, import_react46.useEffect)(() => {
+      loadData();
+    }, []);
+    const openAddModal = () => {
+      setEditId(null);
+      setMedName("");
+      setMedIngredient("");
+      setMedAtc("");
+      setMedNotes("");
+      setShowModal(true);
+    };
+    const openEditModal = (m) => {
+      setEditId(m.id);
+      setMedName(m.medication_name);
+      setMedIngredient(m.active_ingredient || "");
+      setMedAtc(m.atc_code || "");
+      setMedNotes(m.notes || "");
+      setShowModal(true);
+    };
+    const handleSave = async () => {
+      if (!medName.trim()) return;
+      setSaving(true);
+      const payload = { medication_name: medName.trim(), active_ingredient: medIngredient.trim() || null, atc_code: medAtc.trim() || null, notes: medNotes.trim() || null };
+      let r2;
+      if (editId) {
+        r2 = await put("/doctor/critical-medications/" + editId, payload);
+      } else {
+        r2 = await post("/doctor/critical-medications", payload);
+      }
+      setSaving(false);
+      if (r2.success) {
+        setShowModal(false);
+        loadData();
+      } else {
+        alert(r2.error || "Fehler beim Speichern");
+      }
+    };
+    const handleDelete = async (id) => {
+      if (!confirm("Wirklich l\xF6schen?")) return;
+      const r2 = await del("/doctor/critical-medications/" + id);
+      if (r2.success) {
+        loadData();
+      } else {
+        alert(r2.error || "Fehler beim L\xF6schen");
+      }
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h1", { className: "text-2xl font-semibold", children: "Kritische Medikamente" }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "text-sm text-muted-foreground", children: "Medikamente, die nur nach pers\xF6nlicher \xE4rztlicher Untersuchung verschrieben werden d\xFCrfen" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(Button3, { onClick: openAddModal, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+          " Medikament hinzuf\xFCgen"
+        ] })
+      ] }),
+      loading && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "text-muted-foreground", children: "Lade Liste..." }),
+      !loading && criticalMeds.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(CardContent, { className: "py-8 text-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(TriangleAlert, { className: "h-8 w-8 mx-auto text-muted-foreground mb-2" }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "text-muted-foreground", children: "Keine kritischen Medikamente eingetragen." })
+      ] }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "space-y-2", children: criticalMeds.map((m) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center gap-3 min-w-0", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Badge, { variant: "destructive", className: "shrink-0", children: "Kritisch" }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "min-w-0", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "font-medium", children: m.medication_name }),
+            m.active_ingredient && /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "text-sm text-muted-foreground ml-2", children: [
+              "(",
+              m.active_ingredient,
+              ")"
+            ] }),
+            m.atc_code && /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "text-xs text-muted-foreground ml-2", children: [
+              "ATC: ",
+              m.atc_code
+            ] }),
+            m.notes && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "text-xs text-muted-foreground mt-0.5 truncate", children: m.notes })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex gap-1 shrink-0 ml-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => openEditModal(m), children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Pencil, { className: "h-3.5 w-3.5" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button3, { size: "sm", variant: "ghost", className: "text-destructive", onClick: () => handleDelete(m.id), children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Trash2, { className: "h-3.5 w-3.5" }) })
+        ] })
+      ] }) }, m.id)) }),
+      showModal && /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "fixed inset-0 z-50 flex items-center justify-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "absolute inset-0 bg-black/40", onClick: () => setShowModal(false) }),
+        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "relative bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg mx-4 z-50 border", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h3", { className: "text-lg font-semibold mb-4", children: editId ? "Kritisches Medikament bearbeiten" : "Kritisches Medikament hinzuf\xFCgen" }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "space-y-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Label, { children: "Medikamentenname *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Input3, { value: medName, onChange: (e) => setMedName(e.target.value), placeholder: "z.B. Oxycodon", autoFocus: true })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Label, { children: "Wirkstoff" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Input3, { value: medIngredient, onChange: (e) => setMedIngredient(e.target.value), placeholder: "z.B. Oxycodonhydrochlorid" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Label, { children: "ATC-Code" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Input3, { value: medAtc, onChange: (e) => setMedAtc(e.target.value), placeholder: "z.B. N02AA01" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Label, { children: "Notiz" }),
+              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Input3, { value: medNotes, onChange: (e) => setMedNotes(e.target.value), placeholder: "z.B. Nur nach pers\xF6nlicher Untersuchung" })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex justify-end gap-2 mt-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button3, { variant: "outline", onClick: () => setShowModal(false), disabled: saving, children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button3, { onClick: handleSave, disabled: !medName.trim() || saving, children: saving ? "Wird gespeichert..." : editId ? "Speichern" : "Hinzuf\xFCgen" })
+          ] })
+        ] })
+      ] })
+    ] });
+  }
+
+  // src/pages/MFAReminders.tsx
+  var import_react47 = __toESM(require_react(), 1);
+  var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
+  function MFAReminders() {
+    const [pending, setPending] = (0, import_react47.useState)([]);
+    const [dashboard, setDashboard] = (0, import_react47.useState)(null);
+    const [processing, setProcessing] = (0, import_react47.useState)(false);
+    const [loading, setLoading] = (0, import_react47.useState)(true);
+    const [statusMsg, setStatusMsg] = (0, import_react47.useState)("");
+    const [error, setError] = (0, import_react47.useState)("");
     const loadData = async () => {
       setLoading(true);
       const [dashRes, pendRes] = await Promise.all([
@@ -21534,7 +21958,7 @@ var PraxisApp = (() => {
       if (dashRes.success && dashRes.data) setDashboard(dashRes.data);
       if (pendRes.success && pendRes.data) setPending(pendRes.data);
     };
-    (0, import_react46.useEffect)(() => {
+    (0, import_react47.useEffect)(() => {
       loadData();
     }, []);
     const handleProcess = async () => {
@@ -21552,49 +21976,49 @@ var PraxisApp = (() => {
       }
     };
     if (loading) {
-      return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "space-y-6", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h1", { className: "text-2xl font-semibold", children: "Erinnerungen" }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "text-muted-foreground", children: "Lade..." })
+      return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "space-y-6", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("h1", { className: "text-2xl font-semibold", children: "Erinnerungen" }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { className: "text-muted-foreground", children: "Lade..." })
       ] });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "space-y-6", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center justify-between", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("h1", { className: "text-2xl font-semibold", children: "Erinnerungs-Zentrale" }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(Badge, { variant: "outline", className: "text-sm", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("h1", { className: "text-2xl font-semibold", children: "Erinnerungs-Zentrale" }),
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "flex items-center gap-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(Badge, { variant: "outline", className: "text-sm", children: [
             "Heute: ",
             dashboard?.sentToday || 0,
             " gesendet"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(Badge, { variant: pending.length > 0 ? "default" : "secondary", className: "text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(Badge, { variant: pending.length > 0 ? "default" : "secondary", className: "text-sm", children: [
             pending.length,
             " ausstehend"
           ] })
         ] })
       ] }),
-      error && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: error }),
-      statusMsg && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("div", { className: "rounded-lg border border-green-500/50 bg-green-50 p-3 text-sm text-green-700", children: statusMsg }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(Card, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(CardHeader, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CardTitle, { className: "text-base", children: "Erinnerungen verarbeiten" }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CardDescription, { children: "Generiert 24h-Erinnerungen fuer morgige Termine und sendet alle ausstehenden Erinnerungen (Simulation)." })
+      error && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: error }),
+      statusMsg && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "rounded-lg border border-green-500/50 bg-green-50 p-3 text-sm text-green-700", children: statusMsg }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardTitle, { className: "text-base", children: "Erinnerungen verarbeiten" }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardDescription, { children: "Generiert 24h-Erinnerungen fuer morgige Termine und sendet alle ausstehenden Erinnerungen (Simulation)." })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Button3, { onClick: handleProcess, disabled: processing, className: "w-full sm:w-auto", children: processing ? "Verarbeite..." : "Jetzt verarbeiten & senden" }) })
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardContent, { children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Button3, { onClick: handleProcess, disabled: processing, className: "w-full sm:w-auto", children: processing ? "Verarbeite..." : "Jetzt verarbeiten & senden" }) })
       ] }),
-      pending.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(Card, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(CardTitle, { className: "text-base", children: [
+      pending.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardTitle, { className: "text-base", children: [
           "Ausstehende Erinnerungen (",
           pending.length,
           ")"
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CardContent, { className: "space-y-2", children: pending.map((r2) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-3 text-sm", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "font-medium", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardContent, { className: "space-y-2", children: pending.map((r2) => /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-3 text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "font-medium", children: [
               r2.patient_last_name,
               ", ",
               r2.patient_first_name
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "text-xs text-muted-foreground", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "text-xs text-muted-foreground", children: [
               r2.appointment_date,
               " um ",
               r2.appointment_time,
@@ -21602,38 +22026,38 @@ var PraxisApp = (() => {
               r2.doctor_last_name
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Badge, { variant: "outline", className: "text-xs", children: r2.type === "24H" ? "24h" : "Same-Day" }),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Badge, { variant: r2.channel === "EMAIL" ? "default" : "secondary", className: "text-xs", children: r2.channel }),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Badge, { variant: "outline", className: "bg-amber-100 text-amber-700", children: "Ausstehend" })
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Badge, { variant: "outline", className: "text-xs", children: r2.type === "24H" ? "24h" : "Same-Day" }),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Badge, { variant: r2.channel === "EMAIL" ? "default" : "secondary", className: "text-xs", children: r2.channel }),
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Badge, { variant: "outline", className: "bg-amber-100 text-amber-700", children: "Ausstehend" })
           ] })
         ] }, r2.id)) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(Card, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(CardHeader, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CardTitle, { className: "text-base", children: "Verlauf (letzte 50)" }),
-          /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(CardDescription, { children: "Alle gesendeten und ausstehenden Erinnerungen" })
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardTitle, { className: "text-base", children: "Verlauf (letzte 50)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardDescription, { children: "Alle gesendeten und ausstehenden Erinnerungen" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(CardContent, { className: "space-y-1 max-h-96 overflow-y-auto", children: [
-          dashboard?.recent.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("p", { className: "text-sm text-muted-foreground", children: "Noch keine Erinnerungen." }),
-          dashboard?.recent.map((r2) => /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-2 text-xs", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center gap-3", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "font-medium", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardContent, { className: "space-y-1 max-h-96 overflow-y-auto", children: [
+          dashboard?.recent.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("p", { className: "text-sm text-muted-foreground", children: "Noch keine Erinnerungen." }),
+          dashboard?.recent.map((r2) => /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "flex items-center justify-between rounded-lg border p-2 text-xs", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "flex items-center gap-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "font-medium", children: [
                 r2.patient_last_name,
                 ", ",
                 r2.patient_first_name
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("span", { className: "text-muted-foreground", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("span", { className: "text-muted-foreground", children: [
                 r2.appointment_date,
                 " ",
                 r2.appointment_time
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "text-muted-foreground", children: r2.channel })
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "text-muted-foreground", children: r2.channel })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "flex items-center gap-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Badge, { variant: "outline", className: "text-[10px] px-1 py-0", children: r2.type === "24H" ? "24h" : "Today" }),
-              /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(Badge, { className: "text-[10px] px-1 py-0 " + (r2.status === "SENT" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"), children: r2.status === "SENT" ? "Gesendet" : "Ausstehend" }),
-              r2.sent_at && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("span", { className: "text-muted-foreground", children: r2.sent_at })
+            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Badge, { variant: "outline", className: "text-[10px] px-1 py-0", children: r2.type === "24H" ? "24h" : "Today" }),
+              /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Badge, { className: "text-[10px] px-1 py-0 " + (r2.status === "SENT" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"), children: r2.status === "SENT" ? "Gesendet" : "Ausstehend" }),
+              r2.sent_at && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "text-muted-foreground", children: r2.sent_at })
             ] })
           ] }, r2.id))
         ] })
@@ -21642,15 +22066,15 @@ var PraxisApp = (() => {
   }
 
   // src/pages/DoctorLogin.tsx
-  var import_react47 = __toESM(require_react(), 1);
-  var import_jsx_runtime27 = __toESM(require_jsx_runtime(), 1);
+  var import_react48 = __toESM(require_react(), 1);
+  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
   function DoctorLogin() {
     const navigate = useNavigate();
-    const [firstName, setFirstName] = (0, import_react47.useState)("");
-    const [lastName, setLastName] = (0, import_react47.useState)("");
-    const [loading, setLoading] = (0, import_react47.useState)(false);
-    const [error, setError] = (0, import_react47.useState)("");
-    (0, import_react47.useEffect)(() => {
+    const [firstName, setFirstName] = (0, import_react48.useState)("");
+    const [lastName, setLastName] = (0, import_react48.useState)("");
+    const [loading, setLoading] = (0, import_react48.useState)(false);
+    const [error, setError] = (0, import_react48.useState)("");
+    (0, import_react48.useEffect)(() => {
       const stored = localStorage.getItem("doctor_info");
       if (stored) {
         navigate("/doctor");
@@ -21673,40 +22097,40 @@ var PraxisApp = (() => {
       }
       setLoading(false);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-slate-100 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(Card, { className: "w-full max-w-md shadow-lg", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardHeader, { className: "text-center", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardTitle, { className: "text-2xl", children: "Arzt-Login" }),
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(CardDescription, { children: "Bitte melden Sie sich mit Ihrem Namen an" })
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-slate-100 p-4", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(Card, { className: "w-full max-w-md shadow-lg", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(CardHeader, { className: "text-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(CardTitle, { className: "text-2xl", children: "Arzt-Login" }),
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(CardDescription, { children: "Bitte melden Sie sich mit Ihrem Namen an" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(CardContent, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("form", { onSubmit: handleLogin, className: "space-y-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "space-y-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Label, { htmlFor: "firstName", children: "Vorname" }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Input3, { id: "firstName", value: firstName, onChange: (e) => setFirstName(e.target.value), placeholder: "z. B. Ahmet", required: true })
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(CardContent, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("form", { onSubmit: handleLogin, className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Label, { htmlFor: "firstName", children: "Vorname" }),
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Input3, { id: "firstName", value: firstName, onChange: (e) => setFirstName(e.target.value), placeholder: "z. B. Ahmet", required: true })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "space-y-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Label, { htmlFor: "lastName", children: "Nachname" }),
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Input3, { id: "lastName", value: lastName, onChange: (e) => setLastName(e.target.value), placeholder: "z. B. Demir", required: true })
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Label, { htmlFor: "lastName", children: "Nachname" }),
+            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Input3, { id: "lastName", value: lastName, onChange: (e) => setLastName(e.target.value), placeholder: "z. B. Demir", required: true })
           ] }),
-          error && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive", children: error }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(Button3, { type: "submit", className: "w-full", disabled: loading, children: loading ? "Wird gepr\xFCft..." : "Anmelden" })
+          error && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-2 text-sm text-destructive", children: error }),
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Button3, { type: "submit", className: "w-full", disabled: loading, children: loading ? "Wird gepr\xFCft..." : "Anmelden" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("div", { className: "mt-4 text-center text-sm text-muted-foreground", children: /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("p", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("div", { className: "mt-4 text-center text-sm text-muted-foreground", children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("p", { children: [
           "Testzugang: ",
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("code", { className: "rounded bg-muted px-1.5 py-0.5 text-xs font-mono", children: "Ahmet Demir" })
+          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("code", { className: "rounded bg-muted px-1.5 py-0.5 text-xs font-mono", children: "Ahmet Demir" })
         ] }) })
       ] })
     ] }) });
   }
 
   // src/pages/DoctorDashboard.tsx
-  var import_react48 = __toESM(require_react(), 1);
-  var import_jsx_runtime28 = __toESM(require_jsx_runtime(), 1);
+  var import_react49 = __toESM(require_react(), 1);
+  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
   function DoctorDashboard() {
     const navigate = useNavigate();
-    const [doctorInfo, setDoctorInfo] = (0, import_react48.useState)(null);
-    const [pendingRx, setPendingRx] = (0, import_react48.useState)([]);
-    (0, import_react48.useEffect)(() => {
+    const [doctorInfo, setDoctorInfo] = (0, import_react49.useState)(null);
+    const [pendingRx, setPendingRx] = (0, import_react49.useState)([]);
+    (0, import_react49.useEffect)(() => {
       const stored = localStorage.getItem("doctor_info");
       if (stored) {
         const info = JSON.parse(stored);
@@ -21721,46 +22145,46 @@ var PraxisApp = (() => {
       }
     }, []);
     if (!doctorInfo) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "space-y-6", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("h1", { className: "text-2xl font-semibold", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("h1", { className: "text-2xl font-semibold", children: [
           "Willkommen, Dr. ",
           doctorInfo.last_name
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { className: "text-muted-foreground", children: "Arzt-Portal" })
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "text-muted-foreground", children: "Arzt-Portal" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { className: "grid gap-4 md:grid-cols-3", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/doctor/prescriptions"), children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(CardHeader, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(ClipboardCheck, { className: "h-4 w-4" }),
+      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "grid gap-4 md:grid-cols-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/doctor/prescriptions"), children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(ClipboardCheck, { className: "h-4 w-4" }),
             "Rezept-Freigabe"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(CardDescription, { children: pendingRx.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { className: "text-amber-600 font-semibold", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardDescription, { children: pendingRx.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "text-amber-600 font-semibold", children: [
             pendingRx.length,
             " ausstehend"
           ] }) : "Keine ausstehenden Rezepte" })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/doctor/absences"), children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(CardHeader, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(CalendarDays, { className: "h-4 w-4" }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/doctor/absences"), children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CalendarDays, { className: "h-4 w-4" }),
             "Urlaub & Abwesenheit"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(CardDescription, { children: "Abwesenheiten verwalten" })
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardDescription, { children: "Abwesenheiten verwalten" })
         ] }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/doctor/master-data"), children: /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(CardHeader, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(Stethoscope, { className: "h-4 w-4" }),
+        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/doctor/master-data"), children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Stethoscope, { className: "h-4 w-4" }),
             "Stammdaten"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(CardDescription, { children: "Diagnosen & Medikamente bearbeiten" })
+          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardDescription, { children: "Diagnosen & Medikamente bearbeiten" })
         ] }) })
       ] })
     ] });
   }
 
   // src/pages/DoctorPrescriptions.tsx
-  var import_react49 = __toESM(require_react(), 1);
-  var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+  var import_react50 = __toESM(require_react(), 1);
+  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
   var STATUS_MAP7 = {
     PENDING: "Ausstehend",
     mfa_approved: "MFA gepr\xFCft",
@@ -21779,18 +22203,18 @@ var PraxisApp = (() => {
   };
   function DoctorPrescriptions() {
     const navigate = useNavigate();
-    const [doctorInfo, setDoctorInfo] = (0, import_react49.useState)(null);
-    const [prescriptions, setPrescriptions] = (0, import_react49.useState)([]);
-    const [filter, setFilter] = (0, import_react49.useState)("mfa_approved");
-    const [loading, setLoading] = (0, import_react49.useState)(true);
-    const [rejectModal, setRejectModal] = (0, import_react49.useState)(null);
-    const [rejectReason, setRejectReason] = (0, import_react49.useState)("");
-    const [showNewForm, setShowNewForm] = (0, import_react49.useState)(false);
-    const [newInsurance, setNewInsurance] = (0, import_react49.useState)("");
-    const [newMedication, setNewMedication] = (0, import_react49.useState)("");
-    const [newDosage, setNewDosage] = (0, import_react49.useState)("");
-    const [newNotes, setNewNotes] = (0, import_react49.useState)("");
-    (0, import_react49.useEffect)(() => {
+    const [doctorInfo, setDoctorInfo] = (0, import_react50.useState)(null);
+    const [prescriptions, setPrescriptions] = (0, import_react50.useState)([]);
+    const [filter, setFilter] = (0, import_react50.useState)("mfa_approved");
+    const [loading, setLoading] = (0, import_react50.useState)(true);
+    const [rejectModal, setRejectModal] = (0, import_react50.useState)(null);
+    const [rejectReason, setRejectReason] = (0, import_react50.useState)("");
+    const [showNewForm, setShowNewForm] = (0, import_react50.useState)(false);
+    const [newInsurance, setNewInsurance] = (0, import_react50.useState)("");
+    const [newMedication, setNewMedication] = (0, import_react50.useState)("");
+    const [newDosage, setNewDosage] = (0, import_react50.useState)("");
+    const [newNotes, setNewNotes] = (0, import_react50.useState)("");
+    (0, import_react50.useEffect)(() => {
       const stored = localStorage.getItem("doctor_info");
       if (stored) {
         setDoctorInfo(JSON.parse(stored));
@@ -21805,7 +22229,7 @@ var PraxisApp = (() => {
         setLoading(false);
       });
     };
-    (0, import_react49.useEffect)(() => {
+    (0, import_react50.useEffect)(() => {
       if (doctorInfo) loadPrescriptions();
     }, [doctorInfo]);
     const handleApprove = async (id) => {
@@ -21848,83 +22272,83 @@ var PraxisApp = (() => {
     const counts = {};
     for (const p of prescriptions) counts[p.status] = (counts[p.status] || 0) + 1;
     counts["ALL"] = prescriptions.length;
-    return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-6", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex items-center justify-between flex-wrap gap-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("h1", { className: "text-2xl font-semibold", children: "Rezept-Freigabe" }),
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex gap-1 flex-wrap", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between flex-wrap gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("h1", { className: "text-2xl font-semibold", children: "Rezept-Freigabe" }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex gap-1 flex-wrap", children: [
           ["ALL", "PENDING", "mfa_approved", "mfa_rejected", "auto_rejected", "doctor_approved", "doctor_rejected", "collected"].map((s) => {
             if (!counts[s] && s !== "ALL") return null;
-            return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Button3, { size: "sm", variant: filter === s ? "default" : "outline", onClick: () => setFilter(s), className: "text-xs", children: [
+            return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Button3, { size: "sm", variant: filter === s ? "default" : "outline", onClick: () => setFilter(s), className: "text-xs", children: [
               s === "ALL" ? "Alle" : STATUS_MAP7[s],
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "ml-1.5 opacity-70", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "ml-1.5 opacity-70", children: [
                 "(",
                 counts[s] || 0,
                 ")"
               ] })
             ] }, s);
           }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button3, { size: "sm", variant: "outline", className: "ml-2", onClick: () => setShowNewForm(!showNewForm), children: "+ Neues Rezept" })
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { size: "sm", variant: "outline", className: "ml-2", onClick: () => setShowNewForm(!showNewForm), children: "+ Neues Rezept" })
         ] })
       ] }),
-      showNewForm && /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Card, { className: "border-primary", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardTitle, { children: "Neues Rezept ausstellen" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardContent, { className: "space-y-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "grid gap-3 md:grid-cols-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Label, { children: "Versichertennummer *" }),
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Input3, { value: newInsurance, onChange: (e) => setNewInsurance(e.target.value), placeholder: "A123456789" })
+      showNewForm && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Card, { className: "border-primary", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardTitle, { children: "Neues Rezept ausstellen" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(CardContent, { className: "space-y-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "grid gap-3 md:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Versichertennummer *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Input3, { value: newInsurance, onChange: (e) => setNewInsurance(e.target.value), placeholder: "A123456789" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Label, { children: "Medikament *" }),
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Input3, { value: newMedication, onChange: (e) => setNewMedication(e.target.value), placeholder: "Medikamentname" })
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Medikament *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Input3, { value: newMedication, onChange: (e) => setNewMedication(e.target.value), placeholder: "Medikamentname" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Label, { children: "Dosierung" }),
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Input3, { value: newDosage, onChange: (e) => setNewDosage(e.target.value), placeholder: "z. B. 500 mg" })
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Dosierung" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Input3, { value: newDosage, onChange: (e) => setNewDosage(e.target.value), placeholder: "z. B. 500 mg" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Label, { children: "Notizen" }),
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Input3, { value: newNotes, onChange: (e) => setNewNotes(e.target.value), placeholder: "Optional" })
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Notizen" }),
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Input3, { value: newNotes, onChange: (e) => setNewNotes(e.target.value), placeholder: "Optional" })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button3, { variant: "outline", onClick: () => setShowNewForm(false), children: "Abbrechen" }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button3, { onClick: handleCreate, children: "Rezept ausstellen" })
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { variant: "outline", onClick: () => setShowNewForm(false), children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { onClick: handleCreate, children: "Rezept ausstellen" })
           ] })
         ] })
       ] }),
-      loading && /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "text-muted-foreground", children: "Lade Rezepte..." }),
-      /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "space-y-3", children: filtered.map((p) => /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardContent, { className: "py-4", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex items-start justify-between", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(User, { className: "h-4 w-4 text-muted-foreground" }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "font-medium", children: [
+      loading && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "text-muted-foreground", children: "Lade Rezepte..." }),
+      /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "space-y-3", children: filtered.map((p) => /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardContent, { className: "py-4", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-start justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(User, { className: "h-4 w-4 text-muted-foreground" }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "font-medium", children: [
               p.patient_last_name,
               ", ",
               p.patient_first_name
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "text-xs text-muted-foreground", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "text-xs text-muted-foreground", children: [
               "(",
               p.insurance_number,
               ")"
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex items-center gap-3 text-sm text-muted-foreground", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "flex items-center gap-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Pill, { className: "h-3.5 w-3.5" }),
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-3 text-sm text-muted-foreground", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Pill, { className: "h-3.5 w-3.5" }),
               p.medication_name,
-              p.dosage && /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "ml-1", children: [
+              p.dosage && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "ml-1", children: [
                 "(",
                 p.dosage,
                 ")"
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("span", { className: "flex items-center gap-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Calendar, { className: "h-3.5 w-3.5" }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Calendar, { className: "h-3.5 w-3.5" }),
               p.request_date
             ] })
           ] }),
-          p.notes && /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { className: "text-xs text-muted-foreground mt-1", children: [
+          p.notes && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("p", { className: "text-xs text-muted-foreground mt-1", children: [
             "Notiz: ",
             p.notes
           ] }),
@@ -21933,38 +22357,38 @@ var PraxisApp = (() => {
             const oneYearAgo = /* @__PURE__ */ new Date();
             oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
             const isOld = lastConsult < oneYearAgo;
-            return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("p", { className: "text-xs mt-1", children: [
+            return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("p", { className: "text-xs mt-1", children: [
               "Letzte Konsultation: ",
               p.last_consultation,
               isOld ? " \u26A0\uFE0F > 1 Jahr her \u2013 Freigabe nicht m\xF6glich" : " \u2705 < 1 Jahr"
             ] });
           })(),
-          !p.last_consultation && /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "text-xs mt-1 text-destructive font-semibold", children: "Keine Konsultation bekannt \\u2013 Freigabe nicht m\\u00F6glich" })
+          !p.last_consultation && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "text-xs mt-1 text-destructive font-semibold", children: "Keine Konsultation bekannt \\u2013 Freigabe nicht m\\u00F6glich" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex items-center gap-2", children: [
-          p.status === "mfa_approved" && /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(import_jsx_runtime29.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Button3, { size: "sm", variant: "default", onClick: () => handleApprove(p.id), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CircleCheckBig, { className: "h-3.5 w-3.5 mr-1" }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2", children: [
+          p.status === "mfa_approved" && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(import_jsx_runtime30.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Button3, { size: "sm", variant: "default", onClick: () => handleApprove(p.id), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CircleCheckBig, { className: "h-3.5 w-3.5 mr-1" }),
               " Freigeben"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Button3, { size: "sm", variant: "destructive", onClick: () => setRejectModal(p.id), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CircleX, { className: "h-3.5 w-3.5 mr-1" }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Button3, { size: "sm", variant: "destructive", onClick: () => setRejectModal(p.id), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CircleX, { className: "h-3.5 w-3.5 mr-1" }),
               " Ablehnen"
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Badge, { variant: STATUS_BADGE5[p.status] || "outline", children: STATUS_MAP7[p.status] || p.status })
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Badge, { variant: STATUS_BADGE5[p.status] || "outline", children: STATUS_MAP7[p.status] || p.status })
         ] })
       ] }) }) }, p.id)) }),
-      rejectModal !== null && /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("div", { className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50", children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(Card, { className: "w-full max-w-md mx-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(CardTitle, { children: "Rezept ablehnen" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardContent, { className: "space-y-3", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-1", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Label, { children: "Grund der Ablehnung" }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Textarea, { value: rejectReason, onChange: (e) => setRejectReason(e.target.value), placeholder: "Bitte Grund angeben..." })
+      rejectModal !== null && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "fixed inset-0 bg-black/50 flex items-center justify-center z-50", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Card, { className: "w-full max-w-md mx-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardTitle, { children: "Rezept ablehnen" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(CardContent, { className: "space-y-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Grund der Ablehnung" }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Textarea, { value: rejectReason, onChange: (e) => setRejectReason(e.target.value), placeholder: "Bitte Grund angeben..." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "flex gap-2 justify-end", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button3, { variant: "outline", onClick: () => setRejectModal(null), children: "Abbrechen" }),
-            /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Button3, { variant: "destructive", onClick: () => handleReject(rejectModal), children: "Ablehnen" })
+          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex gap-2 justify-end", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { variant: "outline", onClick: () => setRejectModal(null), children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { variant: "destructive", onClick: () => handleReject(rejectModal), children: "Ablehnen" })
           ] })
         ] })
       ] }) })
@@ -21972,21 +22396,21 @@ var PraxisApp = (() => {
   }
 
   // src/pages/DoctorAbsences.tsx
-  var import_react50 = __toESM(require_react(), 1);
-  var import_jsx_runtime30 = __toESM(require_jsx_runtime(), 1);
+  var import_react51 = __toESM(require_react(), 1);
+  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
   function DoctorAbsences() {
     const navigate = useNavigate();
-    const [doctorInfo, setDoctorInfo] = (0, import_react50.useState)(null);
-    const [absences, setAbsences] = (0, import_react50.useState)([]);
-    const [doctors, setDoctors] = (0, import_react50.useState)([]);
-    const [loading, setLoading] = (0, import_react50.useState)(true);
-    const [showForm, setShowForm] = (0, import_react50.useState)(false);
-    const [type, setType] = (0, import_react50.useState)("VACATION");
-    const [selectedDoctors, setSelectedDoctors] = (0, import_react50.useState)([]);
-    const [startDate, setStartDate] = (0, import_react50.useState)("");
-    const [endDate, setEndDate] = (0, import_react50.useState)("");
-    const [reason, setReason] = (0, import_react50.useState)("");
-    (0, import_react50.useEffect)(() => {
+    const [doctorInfo, setDoctorInfo] = (0, import_react51.useState)(null);
+    const [absences, setAbsences] = (0, import_react51.useState)([]);
+    const [doctors, setDoctors] = (0, import_react51.useState)([]);
+    const [loading, setLoading] = (0, import_react51.useState)(true);
+    const [showForm, setShowForm] = (0, import_react51.useState)(false);
+    const [type, setType] = (0, import_react51.useState)("VACATION");
+    const [selectedDoctors, setSelectedDoctors] = (0, import_react51.useState)([]);
+    const [startDate, setStartDate] = (0, import_react51.useState)("");
+    const [endDate, setEndDate] = (0, import_react51.useState)("");
+    const [reason, setReason] = (0, import_react51.useState)("");
+    (0, import_react51.useEffect)(() => {
       const stored = localStorage.getItem("doctor_info");
       if (stored) {
         setDoctorInfo(JSON.parse(stored));
@@ -22005,7 +22429,7 @@ var PraxisApp = (() => {
         setLoading(false);
       });
     };
-    (0, import_react50.useEffect)(() => {
+    (0, import_react51.useEffect)(() => {
       if (doctorInfo) loadData();
     }, [doctorInfo]);
     const handleCreate = async () => {
@@ -22043,87 +22467,87 @@ var PraxisApp = (() => {
       TRAINING: "Fortbildung",
       OTHER: "Sonstiges"
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-6", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center justify-between", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("h1", { className: "text-2xl font-semibold", children: "Urlaub & Abwesenheit" }),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Button3, { onClick: () => setShowForm(!showForm), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+    return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("h1", { className: "text-2xl font-semibold", children: "Urlaub & Abwesenheit" }),
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Button3, { onClick: () => setShowForm(!showForm), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
           " Abwesenheit eintragen"
         ] })
       ] }),
-      showForm && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Card, { className: "border-primary", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardTitle, { className: "text-base", children: "Neue Abwesenheit" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(CardContent, { className: "space-y-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "grid gap-4 md:grid-cols-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Typ" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("select", { className: "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm", value: type, onChange: (e) => setType(e.target.value), children: Object.entries(typeLabels).map(([k, v]) => /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("option", { value: k, children: v }, k)) })
+      showForm && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Card, { className: "border-primary", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CardTitle, { className: "text-base", children: "Neue Abwesenheit" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(CardContent, { className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "grid gap-4 md:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Label, { children: "Typ" }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("select", { className: "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm", value: type, onChange: (e) => setType(e.target.value), children: Object.entries(typeLabels).map(([k, v]) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("option", { value: k, children: v }, k)) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Betroffene \xC4rzte" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("div", { className: "flex flex-wrap gap-1", children: doctors.map((doc) => /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(Button3, { type: "button", size: "sm", variant: selectedDoctors.includes(doc.id) ? "default" : "outline", onClick: () => toggleDoctor(doc.id), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Label, { children: "Betroffene \xC4rzte" }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "flex flex-wrap gap-1", children: doctors.map((doc) => /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Button3, { type: "button", size: "sm", variant: selectedDoctors.includes(doc.id) ? "default" : "outline", onClick: () => toggleDoctor(doc.id), children: [
                 "Dr. ",
                 doc.last_name
               ] }, doc.id)) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Startdatum" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Input3, { type: "date", value: startDate, onChange: (e) => setStartDate(e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Label, { children: "Startdatum" }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Input3, { type: "date", value: startDate, onChange: (e) => setStartDate(e.target.value) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Enddatum" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Input3, { type: "date", value: endDate, onChange: (e) => setEndDate(e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Label, { children: "Enddatum" }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Input3, { type: "date", value: endDate, onChange: (e) => setEndDate(e.target.value) })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Label, { children: "Grund (optional)" }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Textarea, { value: reason, onChange: (e) => setReason(e.target.value), placeholder: "Grund der Abwesenheit..." })
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Label, { children: "Grund (optional)" }),
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Textarea, { value: reason, onChange: (e) => setReason(e.target.value), placeholder: "Grund der Abwesenheit..." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { variant: "outline", onClick: () => setShowForm(false), children: "Abbrechen" }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { onClick: handleCreate, children: "Speichern" })
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Button3, { variant: "outline", onClick: () => setShowForm(false), children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Button3, { onClick: handleCreate, children: "Speichern" })
           ] })
         ] })
       ] }),
-      loading && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "text-muted-foreground", children: "Lade Abwesenheiten..." }),
-      /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-3", children: [
-        absences.length === 0 && !loading && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)("p", { className: "text-muted-foreground", children: "Keine Abwesenheiten eingetragen." }) }) }),
-        absences.map((a) => /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)(CardContent, { className: "py-4 flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "space-y-1", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("div", { className: "flex items-center gap-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(CalendarDays, { className: "h-4 w-4 text-muted-foreground" }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("span", { className: "font-medium", children: [
+      loading && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "text-muted-foreground", children: "Lade Abwesenheiten..." }),
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-3", children: [
+        absences.length === 0 && !loading && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "text-muted-foreground", children: "Keine Abwesenheiten eingetragen." }) }) }),
+        absences.map((a) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(CardContent, { className: "py-4 flex items-center justify-between", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CalendarDays, { className: "h-4 w-4 text-muted-foreground" }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { className: "font-medium", children: [
                 a.start_date,
                 " bis ",
                 a.end_date
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Badge, { variant: "secondary", children: typeLabels[a.type] || a.type }),
-              a.blocks_booking === 1 && /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Badge, { variant: "outline", children: "Keine Buchung" })
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Badge, { variant: "secondary", children: typeLabels[a.type] || a.type }),
+              a.blocks_booking === 1 && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Badge, { variant: "outline", children: "Keine Buchung" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("p", { className: "text-sm text-muted-foreground", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { className: "text-sm text-muted-foreground", children: [
               "\xC4rzte: ",
               a.doctor_ids.split(",").map((id) => {
                 const doc = doctors.find((d) => d.id === Number(id));
                 return doc ? `Dr. ${doc.last_name}` : id;
               }).join(", ")
             ] }),
-            a.reason && /* @__PURE__ */ (0, import_jsx_runtime30.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+            a.reason && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
               "Grund: ",
               a.reason
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleDelete(a.id), children: /* @__PURE__ */ (0, import_jsx_runtime30.jsx)(Trash2, { className: "h-4 w-4 text-destructive" }) })
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleDelete(a.id), children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Trash2, { className: "h-4 w-4 text-destructive" }) })
         ] }) }, a.id))
       ] })
     ] });
   }
 
   // src/pages/DoctorMasterData.tsx
-  var import_react51 = __toESM(require_react(), 1);
+  var import_react52 = __toESM(require_react(), 1);
 
   // src/components/ui/tabs.tsx
   var React65 = __toESM(require_react(), 1);
-  var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
   var TabsContext = React65.createContext(null);
   function Tabs({ defaultValue, value: controlledValue, onValueChange, children, className }) {
     const [uncontrolledValue, setUncontrolledValue] = React65.useState(defaultValue || "");
@@ -22136,15 +22560,15 @@ var PraxisApp = (() => {
       },
       [isControlled, onValueChange]
     );
-    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(TabsContext.Provider, { value: { value: currentValue, onValueChange: handleValueChange }, children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: cn("w-full", className), children }) });
+    return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(TabsContext.Provider, { value: { value: currentValue, onValueChange: handleValueChange }, children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: cn("w-full", className), children }) });
   }
   function TabsList({ children, className }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: cn("inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground", className), children });
+    return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: cn("inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground", className), children });
   }
   function TabsTrigger({ value, children, className }) {
     const ctx = React65.useContext(TabsContext);
     const isActive = ctx?.value === value;
-    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(
       "button",
       {
         type: "button",
@@ -22162,43 +22586,74 @@ var PraxisApp = (() => {
   function TabsContent({ value, children, className }) {
     const ctx = React65.useContext(TabsContext);
     if (ctx?.value !== value) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { role: "tabpanel", className: cn("mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", className), children });
+    return /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { role: "tabpanel", className: cn("mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", className), children });
   }
 
   // src/pages/DoctorMasterData.tsx
-  var import_jsx_runtime32 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime33 = __toESM(require_jsx_runtime(), 1);
   function DoctorMasterData() {
     const navigate = useNavigate();
-    const [doctorInfo, setDoctorInfo] = (0, import_react51.useState)(null);
-    const [medications, setMedications] = (0, import_react51.useState)([]);
-    const [diagnoses, setDiagnoses] = (0, import_react51.useState)([]);
-    const [medSearch, setMedSearch] = (0, import_react51.useState)("");
-    const [diagSearch, setDiagSearch] = (0, import_react51.useState)("");
-    const [showMedForm, setShowMedForm] = (0, import_react51.useState)(false);
-    const [editMedId, setEditMedId] = (0, import_react51.useState)(null);
-    const [medName, setMedName] = (0, import_react51.useState)("");
-    const [medIngredient, setMedIngredient] = (0, import_react51.useState)("");
-    const [medStrength, setMedStrength] = (0, import_react51.useState)("");
-    const [medForm, setMedForm] = (0, import_react51.useState)("");
-    const [showDiagForm, setShowDiagForm] = (0, import_react51.useState)(false);
-    const [diagInsurance, setDiagInsurance] = (0, import_react51.useState)("");
-    const [diagIcd, setDiagIcd] = (0, import_react51.useState)("");
-    const [diagText, setDiagText] = (0, import_react51.useState)("");
-    const [diagDate, setDiagDate] = (0, import_react51.useState)("");
-    const [diagNotes, setDiagNotes] = (0, import_react51.useState)("");
-    const [slots, setSlots] = (0, import_react51.useState)([]);
-    const [loadingSlots, setLoadingSlots] = (0, import_react51.useState)(false);
-    const [showSlotForm, setShowSlotForm] = (0, import_react51.useState)(false);
-    const [newSlotWeekday, setNewSlotWeekday] = (0, import_react51.useState)(1);
-    const [newSlotStart, setNewSlotStart] = (0, import_react51.useState)("08:00");
-    const [newSlotEnd, setNewSlotEnd] = (0, import_react51.useState)("12:00");
-    const [patients, setPatients] = (0, import_react51.useState)([]);
-    const [patientSearch, setPatientSearch] = (0, import_react51.useState)("");
-    const [loadingPatients, setLoadingPatients] = (0, import_react51.useState)(false);
-    const [selectedPatient, setSelectedPatient] = (0, import_react51.useState)(null);
-    const [patientDiagnoses, setPatientDiagnoses] = (0, import_react51.useState)([]);
-    const [loadingPatientDiagnoses, setLoadingPatientDiagnoses] = (0, import_react51.useState)(false);
-    (0, import_react51.useEffect)(() => {
+    const [doctorInfo, setDoctorInfo] = (0, import_react52.useState)(null);
+    const [medications, setMedications] = (0, import_react52.useState)([]);
+    const [diagnoses, setDiagnoses] = (0, import_react52.useState)([]);
+    const [medSearch, setMedSearch] = (0, import_react52.useState)("");
+    const [diagSearch, setDiagSearch] = (0, import_react52.useState)("");
+    const [showMedForm, setShowMedForm] = (0, import_react52.useState)(false);
+    const [editMedId, setEditMedId] = (0, import_react52.useState)(null);
+    const [medName, setMedName] = (0, import_react52.useState)("");
+    const [medIngredient, setMedIngredient] = (0, import_react52.useState)("");
+    const [medStrength, setMedStrength] = (0, import_react52.useState)("");
+    const [medForm, setMedForm] = (0, import_react52.useState)("");
+    const [showDiagForm, setShowDiagForm] = (0, import_react52.useState)(false);
+    const [diagInsurance, setDiagInsurance] = (0, import_react52.useState)("");
+    const [diagIcd, setDiagIcd] = (0, import_react52.useState)("");
+    const [diagText, setDiagText] = (0, import_react52.useState)("");
+    const [diagDate, setDiagDate] = (0, import_react52.useState)("");
+    const [diagNotes, setDiagNotes] = (0, import_react52.useState)("");
+    const [slots, setSlots] = (0, import_react52.useState)([]);
+    const [loadingSlots, setLoadingSlots] = (0, import_react52.useState)(false);
+    const [showSlotForm, setShowSlotForm] = (0, import_react52.useState)(false);
+    const [newSlotWeekday, setNewSlotWeekday] = (0, import_react52.useState)(1);
+    const [newSlotStart, setNewSlotStart] = (0, import_react52.useState)("08:00");
+    const [newSlotEnd, setNewSlotEnd] = (0, import_react52.useState)("12:00");
+    const [patients, setPatients] = (0, import_react52.useState)([]);
+    const [patientSearch, setPatientSearch] = (0, import_react52.useState)("");
+    const [loadingPatients, setLoadingPatients] = (0, import_react52.useState)(false);
+    const [selectedPatient, setSelectedPatient] = (0, import_react52.useState)(null);
+    const [patientDiagnoses, setPatientDiagnoses] = (0, import_react52.useState)([]);
+    const [loadingPatientDiagnoses, setLoadingPatientDiagnoses] = (0, import_react52.useState)(false);
+    const [showAddDiagnosis, setShowAddDiagnosis] = (0, import_react52.useState)(false);
+    const [editDiagId, setEditDiagId] = (0, import_react52.useState)(null);
+    const [diagIcdInput, setDiagIcdInput] = (0, import_react52.useState)("");
+    const [diagTextInput, setDiagTextInput] = (0, import_react52.useState)("");
+    const [diagDateInput, setDiagDateInput] = (0, import_react52.useState)("");
+    const [diagNotesInput, setDiagNotesInput] = (0, import_react52.useState)("");
+    const [savingDiag, setSavingDiag] = (0, import_react52.useState)(false);
+    const [showHistory, setShowHistory] = (0, import_react52.useState)(null);
+    const [historyData, setHistoryData] = (0, import_react52.useState)([]);
+    const [loadingHistory, setLoadingHistory] = (0, import_react52.useState)(false);
+    const [criticalMeds, setCriticalMeds] = (0, import_react52.useState)([]);
+    const [loadingCritical, setLoadingCritical] = (0, import_react52.useState)(false);
+    const [showCritModal, setShowCritModal] = (0, import_react52.useState)(false);
+    const [critEditId, setCritEditId] = (0, import_react52.useState)(null);
+    const [critName, setCritName] = (0, import_react52.useState)("");
+    const [critIngredient, setCritIngredient] = (0, import_react52.useState)("");
+    const [critAtc, setCritAtc] = (0, import_react52.useState)("");
+    const [critNotes, setCritNotes] = (0, import_react52.useState)("");
+    const [savingCrit, setSavingCrit] = (0, import_react52.useState)(false);
+    const [editPatient, setEditPatient] = (0, import_react52.useState)(null);
+    const [editFirstName, setEditFirstName] = (0, import_react52.useState)("");
+    const [editLastName, setEditLastName] = (0, import_react52.useState)("");
+    const [editDob, setEditDob] = (0, import_react52.useState)("");
+    const [editPhone, setEditPhone] = (0, import_react52.useState)("");
+    const [editEmail, setEditEmail] = (0, import_react52.useState)("");
+    const [savingPatient, setSavingPatient] = (0, import_react52.useState)(false);
+    const [deletePatient, setDeletePatient] = (0, import_react52.useState)(null);
+    const [deleteInfo, setDeleteInfo] = (0, import_react52.useState)(null);
+    const [deleting, setDeleting] = (0, import_react52.useState)(false);
+    const [editDiagnosisId, setEditDiagnosisId] = (0, import_react52.useState)(null);
+    const [savingDiagnosis, setSavingDiagnosis] = (0, import_react52.useState)(false);
+    (0, import_react52.useEffect)(() => {
       const stored = localStorage.getItem("doctor_info");
       if (!stored) {
         navigate("/doctor-login");
@@ -22216,10 +22671,13 @@ var PraxisApp = (() => {
         setLoadingSlots(false);
       });
     };
-    (0, import_react51.useEffect)(() => {
+    (0, import_react52.useEffect)(() => {
       if (doctorInfo) loadSlots();
     }, [doctorInfo]);
-    (0, import_react51.useEffect)(() => {
+    (0, import_react52.useEffect)(() => {
+      if (doctorInfo) loadCriticalMeds();
+    }, [doctorInfo]);
+    (0, import_react52.useEffect)(() => {
       if (doctorInfo) {
         setLoadingPatients(true);
         get("/patients").then((r2) => {
@@ -22310,14 +22768,201 @@ var PraxisApp = (() => {
       setDiagNotes("");
       loadDiagnoses();
     };
-    const openPatientDiagnoses = (p) => {
-      setSelectedPatient(p);
+    const handleSavePatient = async () => {
+      if (!doctorInfo || !selectedPatient) return;
+      setSavingPatient(true);
+      const r2 = await patch("/patients/" + selectedPatient.id, {
+        firstName: editFirstName,
+        lastName: editLastName,
+        dateOfBirth: editDob,
+        phone: editPhone,
+        email: editEmail || null
+      });
+      if (!r2.success) {
+        alert(r2.error || "Fehler beim Speichern");
+        setSavingPatient(false);
+        return;
+      }
+      setSavingPatient(false);
+      setPatients((prev) => prev.map((p) => p.id === selectedPatient.id ? { ...p, first_name: editFirstName, last_name: editLastName, date_of_birth: editDob, phone: editPhone, email: editEmail || null } : p));
+      setSelectedPatient((prev) => prev ? { ...prev, first_name: editFirstName, last_name: editLastName, date_of_birth: editDob, phone: editPhone, email: editEmail || null } : null);
+      setEditPatient(null);
+    };
+    const openDeletePatient = async (p) => {
+      setDeletePatient(p);
+      setDeleteInfo(null);
+      const r2 = await del("/patients/" + p.id);
+      if (r2.success && r2.data) setDeleteInfo(r2.data);
+    };
+    const handleForceDelete = async () => {
+      if (!deletePatient) return;
+      setDeleting(true);
+      const r2 = await del("/patients/" + deletePatient.id + "/force");
+      if (r2.success) {
+        setPatients((prev) => prev.filter((p) => p.id !== deletePatient.id));
+        setDeletePatient(null);
+        if (selectedPatient?.id === deletePatient.id) setSelectedPatient(null);
+      } else {
+        alert(r2.error || "Fehler beim L\xF6schen");
+      }
+      setDeleting(false);
+    };
+    const openPatientEdit = () => {
+      if (!selectedPatient) return;
+      setEditFirstName(selectedPatient.first_name);
+      setEditLastName(selectedPatient.last_name);
+      setEditDob(selectedPatient.date_of_birth);
+      setEditPhone(selectedPatient.phone);
+      setEditEmail(selectedPatient.email || "");
+      setEditPatient(selectedPatient);
+    };
+    const loadPtDiags = (pid) => {
       setLoadingPatientDiagnoses(true);
-      get("/patients/" + p.id + "/diagnoses").then((r2) => {
+      get("/patients/" + pid + "/diagnoses").then((r2) => {
         if (r2.success && r2.data) setPatientDiagnoses(r2.data);
         else setPatientDiagnoses([]);
         setLoadingPatientDiagnoses(false);
       });
+    };
+    const openPatientDiagnoses = (p) => {
+      setSelectedPatient(p);
+      loadPtDiags(p.id);
+    };
+    const openAddDiag = () => {
+      setEditDiagId(null);
+      setDiagIcdInput("");
+      setDiagTextInput("");
+      setDiagDateInput((/* @__PURE__ */ new Date()).toISOString().slice(0, 10));
+      setDiagNotesInput("");
+      setShowAddDiagnosis(true);
+    };
+    const openEditDiag = (d) => {
+      setEditDiagId(d.id);
+      setDiagIcdInput(d.icd_code);
+      setDiagTextInput(d.diagnosis_text);
+      setDiagDateInput(d.diagnosis_date);
+      setDiagNotesInput(d.notes || "");
+      setShowAddDiagnosis(true);
+    };
+    const handleSaveDiag = async () => {
+      if (!doctorInfo || !selectedPatient) return;
+      if (!diagIcdInput || !diagTextInput) {
+        alert("ICD-Code und Diagnosetext erforderlich");
+        return;
+      }
+      setSavingDiag(true);
+      if (editDiagId) {
+        const r2 = await patch("/doctor/diagnoses/" + editDiagId, {
+          icdCode: diagIcdInput,
+          diagnosisText: diagTextInput,
+          diagnosisDate: diagDateInput || void 0,
+          notes: diagNotesInput || void 0,
+          doctorId: doctorInfo.id
+        });
+        if (!r2.success) {
+          alert(r2.error || "Fehler");
+          setSavingDiag(false);
+          return;
+        }
+      } else {
+        const r2 = await post("/doctor/diagnoses", {
+          insuranceNumber: selectedPatient.insurance_number,
+          icdCode: diagIcdInput,
+          diagnosisText: diagTextInput,
+          diagnosisDate: diagDateInput || void 0,
+          notes: diagNotesInput || void 0,
+          doctorId: doctorInfo.id
+        });
+        if (!r2.success) {
+          alert(r2.error || "Fehler");
+          setSavingDiag(false);
+          return;
+        }
+      }
+      setShowAddDiagnosis(false);
+      setSavingDiag(false);
+      loadPtDiags(selectedPatient.id);
+    };
+    const handleDeleteDiag = async (diagId) => {
+      if (!confirm("Diagnose wirklich l\xF6schen?")) return;
+      if (!doctorInfo) return;
+      const r2 = await del("/doctor/diagnoses/" + diagId + "?doctorId=" + doctorInfo.id);
+      if (!r2.success) {
+        alert(r2.error || "Fehler");
+        return;
+      }
+      if (selectedPatient) loadPtDiags(selectedPatient.id);
+    };
+    const openHistory = async (diagId) => {
+      setShowHistory(diagId);
+      setLoadingHistory(true);
+      const r2 = await get("/doctor/diagnoses/" + diagId + "/history");
+      if (r2.success && r2.data) setHistoryData(r2.data);
+      else setHistoryData([]);
+      setLoadingHistory(false);
+    };
+    const loadCriticalMeds = () => {
+      setLoadingCritical(true);
+      get("/doctor/critical-medications").then((r2) => {
+        if (r2.success && r2.data) setCriticalMeds(r2.data);
+        else setCriticalMeds([]);
+        setLoadingCritical(false);
+      });
+    };
+    const handleSaveCritical = async () => {
+      if (!critName || !doctorInfo) return;
+      setSavingCrit(true);
+      let r2;
+      if (critEditId) {
+        r2 = await put("/doctor/critical-medications/" + critEditId, {
+          medicationName: critName,
+          activeIngredient: critIngredient || void 0,
+          atcCode: critAtc || void 0,
+          notes: critNotes || void 0
+        });
+      } else {
+        r2 = await post("/doctor/critical-medications", {
+          medicationName: critName,
+          activeIngredient: critIngredient || void 0,
+          atcCode: critAtc || void 0,
+          notes: critNotes || void 0,
+          doctorId: doctorInfo.id
+        });
+      }
+      if (!r2.success) {
+        alert(r2.error || "Fehler");
+        setSavingCrit(false);
+        return;
+      }
+      setCritName("");
+      setCritIngredient("");
+      setCritAtc("");
+      setCritNotes("");
+      setCritEditId(null);
+      setShowCritModal(false);
+      setSavingCrit(false);
+      loadCriticalMeds();
+    };
+    const handleDeleteCritical = async (id) => {
+      if (!confirm("Kritisches Medikament wirklich aus der Liste entfernen?")) return;
+      const r2 = await del("/doctor/critical-medications/" + id);
+      if (r2.success) loadCriticalMeds();
+    };
+    const handleEditCritical = (med) => {
+      setCritEditId(med.id);
+      setCritName(med.medication_name);
+      setCritIngredient(med.active_ingredient || "");
+      setCritAtc(med.atc_code || "");
+      setCritNotes(med.notes || "");
+      setShowCritModal(true);
+    };
+    const openAddCritModal = () => {
+      setCritEditId(null);
+      setCritName("");
+      setCritIngredient("");
+      setCritAtc("");
+      setCritNotes("");
+      setShowCritModal(true);
     };
     const filteredPatients = patients.filter((p) => {
       if (!patientSearch) return true;
@@ -22335,246 +22980,337 @@ var PraxisApp = (() => {
       return d.icd_code.toLowerCase().includes(q) || d.diagnosis_text.toLowerCase().includes(q) || d.patient_last_name.toLowerCase().includes(q);
     });
     if (!doctorInfo) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-6", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h1", { className: "text-2xl font-semibold", children: "Stammdaten" }),
-      /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Tabs, { defaultValue: "patients", className: "space-y-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsList, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsTrigger, { value: "patients", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(User, { className: "h-4 w-4 mr-1" }),
+    return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h1", { className: "text-2xl font-semibold", children: "Stammdaten" }),
+      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Tabs, { defaultValue: "patients", className: "space-y-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(TabsList, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(TabsTrigger, { value: "patients", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(User, { className: "h-4 w-4 mr-1" }),
             " Patienten"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsTrigger, { value: "medications", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Pill, { className: "h-4 w-4 mr-1" }),
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(TabsTrigger, { value: "medications", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Pill, { className: "h-4 w-4 mr-1" }),
             " Medikamente"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsTrigger, { value: "diagnoses", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Stethoscope, { className: "h-4 w-4 mr-1" }),
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(TabsTrigger, { value: "diagnoses", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Stethoscope, { className: "h-4 w-4 mr-1" }),
             " Diagnosen"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsTrigger, { value: "availability", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Clock, { className: "h-4 w-4 mr-1" }),
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(TabsTrigger, { value: "availability", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Clock, { className: "h-4 w-4 mr-1" }),
             " Sprechzeiten"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(TabsTrigger, { value: "critical", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(TriangleAlert, { className: "h-4 w-4 mr-1" }),
+            " Kritische Medikamente"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "patients", className: "space-y-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h3", { className: "text-lg font-medium", children: "Alle Patienten" }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "relative w-64", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { placeholder: "Patient suchen...", value: patientSearch, onChange: (e) => setPatientSearch(e.target.value), className: "pl-9" })
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(TabsContent, { value: "patients", className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h3", { className: "text-lg font-medium", children: "Alle Patienten" }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "relative w-64", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { placeholder: "Patient suchen...", value: patientSearch, onChange: (e) => setPatientSearch(e.target.value), className: "pl-9" })
             ] })
           ] }),
-          loadingPatients && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Lade Patienten..." }),
-          !loadingPatients && filteredPatients.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Keine Patienten gefunden." }) }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "grid gap-4 md:grid-cols-2 xl:grid-cols-3", children: filteredPatients.map((p) => /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-sm", onClick: () => openPatientDiagnoses(p), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardHeader, { className: "pb-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "flex items-start justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+          loadingPatients && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-muted-foreground", children: "Lade Patienten..." }),
+          !loadingPatients && filteredPatients.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-muted-foreground", children: "Keine Patienten gefunden." }) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "grid gap-4 md:grid-cols-2 xl:grid-cols-3", children: filteredPatients.map((p) => /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-sm", onClick: () => openPatientDiagnoses(p), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardHeader, { className: "pb-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "flex items-start justify-between", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
                 p.last_name,
                 ", ",
                 p.first_name,
-                p.insurance_type === "private" && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Badge, { variant: "outline", className: "text-[10px] px-1.5 py-0 border-amber-300 text-amber-700 bg-amber-50", children: "Privat" })
+                p.insurance_type === "private" && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Badge, { variant: "outline", className: "text-[10px] px-1.5 py-0 border-amber-300 text-amber-700 bg-amber-50", children: "Privat" })
               ] }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardDescription, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardDescription, { children: [
                 "Vers.-Nr.: ",
                 p.insurance_number,
                 " \xB7 geb. ",
                 p.date_of_birth
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "space-y-2 text-sm pt-0", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-2 text-muted-foreground", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Phone, { className: "h-3.5 w-3.5" }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardContent, { className: "space-y-2 text-sm pt-0", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center gap-2 text-muted-foreground", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Phone, { className: "h-3.5 w-3.5" }),
                 " ",
                 p.phone
               ] }),
-              p.email && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-2 text-muted-foreground", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Mail, { className: "h-3.5 w-3.5" }),
+              p.email && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center gap-2 text-muted-foreground", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Mail, { className: "h-3.5 w-3.5" }),
                 " ",
                 p.email
               ] }),
-              p.mfa_comment && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 rounded p-2 mt-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(MessageSquare, { className: "h-3 w-3 mt-0.5 shrink-0" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { className: "italic", children: p.mfa_comment })
+              p.mfa_comment && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 rounded p-2 mt-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(MessageSquare, { className: "h-3 w-3 mt-0.5 shrink-0" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { className: "italic", children: p.mfa_comment })
               ] }),
-              p.no_show_count >= 2 && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-2 text-destructive text-xs font-medium pt-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(TriangleAlert, { className: "h-3.5 w-3.5" }),
+              p.no_show_count >= 2 && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center gap-2 text-destructive text-xs font-medium pt-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(TriangleAlert, { className: "h-3.5 w-3.5" }),
                 " No-Shows: ",
                 p.no_show_count
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "text-xs text-muted-foreground flex items-center gap-1 pt-1 border-t mt-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Stethoscope, { className: "h-3 w-3" }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "text-xs text-muted-foreground flex items-center gap-1 pt-1 border-t mt-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Stethoscope, { className: "h-3 w-3" }),
                 " ",
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { children: "Klick f\xFCr Diagnosen" })
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { children: "Klick f\xFCr Diagnosen" })
               ] })
             ] })
           ] }, p.id)) }),
-          selectedPatient && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "w-full max-w-2xl bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 z-[999] max-h-[85vh] overflow-y-auto", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between mb-4", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("h3", { className: "text-base font-semibold", children: [
+          selectedPatient && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "w-full max-w-2xl bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 z-[999] max-h-[85vh] overflow-y-auto", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center justify-between mb-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("h3", { className: "text-base font-semibold", children: [
                   selectedPatient.last_name,
                   ", ",
                   selectedPatient.first_name
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
                   "Vers.-Nr.: ",
                   selectedPatient.insurance_number,
                   selectedPatient.insurance_type === "private" ? " \xB7 Privatversichert" : ""
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "ghost", size: "sm", onClick: () => setSelectedPatient(null), children: "Schlie\xDFen" })
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { size: "sm", variant: "ghost", className: "text-destructive hover:text-destructive", onClick: () => openDeletePatient(selectedPatient), title: "Patient l\xF6schen", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Trash2, { className: "h-4 w-4" }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Button3, { variant: "outline", size: "sm", onClick: openPatientEdit, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Pencil, { className: "h-3.5 w-3.5 mr-1" }),
+                  " Patient bearbeiten"
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Button3, { variant: "outline", size: "sm", onClick: openAddDiag, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Plus, { className: "h-3.5 w-3.5 mr-1" }),
+                  " Diagnose hinzuf\xFCgen"
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { variant: "ghost", size: "sm", onClick: () => setSelectedPatient(null), children: "Schlie\xDFen" })
+              ] })
             ] }),
-            selectedPatient.mfa_comment && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "mb-4 p-3 bg-muted/30 rounded-lg text-sm", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("span", { className: "font-medium flex items-center gap-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(MessageSquare, { className: "h-3.5 w-3.5" }),
+            editPatient && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "mb-4 p-4 border-2 border-blue-300/50 rounded-xl bg-blue-50/30", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("h4", { className: "text-sm font-medium mb-3 flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Pencil, { className: "h-3.5 w-3.5" }),
+                " Patientendaten bearbeiten"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-3", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "grid grid-cols-2 gap-3", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Vorname *" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: editFirstName, onChange: (e) => setEditFirstName(e.target.value) })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Nachname *" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: editLastName, onChange: (e) => setEditLastName(e.target.value) })
+                  ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "grid grid-cols-3 gap-3", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Geburtsdatum *" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { type: "date", value: editDob, onChange: (e) => setEditDob(e.target.value) })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Telefon *" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: editPhone, onChange: (e) => setEditPhone(e.target.value) })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "E-Mail" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: editEmail, onChange: (e) => setEditEmail(e.target.value), placeholder: "optional" })
+                  ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex gap-2 justify-end", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { variant: "outline", onClick: () => setEditPatient(null), disabled: savingPatient, children: "Abbrechen" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { onClick: handleSavePatient, disabled: !editFirstName || !editLastName || !editDob || !editPhone || savingPatient, children: savingPatient ? "Wird gespeichert..." : "Speichern" })
+                ] })
+              ] })
+            ] }),
+            selectedPatient.mfa_comment && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "mb-4 p-3 bg-muted/30 rounded-lg text-sm", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("span", { className: "font-medium flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(MessageSquare, { className: "h-3.5 w-3.5" }),
                 " MFA-Kommentar:"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground mt-1 italic", children: selectedPatient.mfa_comment })
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-muted-foreground mt-1 italic", children: selectedPatient.mfa_comment })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("h4", { className: "text-sm font-medium flex items-center gap-1 mb-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Stethoscope, { className: "h-4 w-4" }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("h4", { className: "text-sm font-medium flex items-center gap-1 mb-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Stethoscope, { className: "h-4 w-4" }),
                 " Diagnosen"
               ] }),
-              loadingPatientDiagnoses && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-sm text-muted-foreground", children: "Lade Diagnosen..." }),
-              !loadingPatientDiagnoses && patientDiagnoses.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-sm text-muted-foreground", children: "Keine Diagnosen eingetragen." }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "space-y-2", children: patientDiagnoses.map((d) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-3", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-start gap-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Badge, { variant: "secondary", children: d.icd_code }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "font-medium text-sm", children: d.diagnosis_text }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground mt-0.5", children: [
-                    "Dr. ",
-                    d.doctor_last_name,
-                    " \xB7 ",
-                    d.diagnosis_date
-                  ] }),
-                  d.notes && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground mt-1 italic", children: [
-                    "Notiz: ",
-                    d.notes
+              loadingPatientDiagnoses && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-sm text-muted-foreground", children: "Lade Diagnosen..." }),
+              !loadingPatientDiagnoses && patientDiagnoses.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-sm text-muted-foreground", children: "Keine Diagnosen eingetragen." }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "space-y-2", children: patientDiagnoses.map((d) => /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CardContent, { className: "py-3", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-start justify-between gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-start gap-2 flex-1 min-w-0", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Badge, { variant: "secondary", children: d.icd_code }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "min-w-0", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "font-medium text-sm", children: d.diagnosis_text }),
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { className: "text-xs text-muted-foreground mt-0.5", children: [
+                      "Dr. ",
+                      d.doctor_last_name,
+                      " \xB7 ",
+                      d.diagnosis_date
+                    ] }),
+                    d.notes && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { className: "text-xs text-muted-foreground mt-1 italic", children: [
+                      "Notiz: ",
+                      d.notes
+                    ] })
                   ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex gap-1 shrink-0", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { size: "sm", variant: "ghost", className: "h-7 w-7 p-0", onClick: () => openHistory(d.id), title: "\xC4nderungshistorie", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Clock, { className: "h-3.5 w-3.5" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { size: "sm", variant: "ghost", className: "h-7 w-7 p-0", onClick: () => openEditDiag(d), title: "Bearbeiten", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Pencil, { className: "h-3.5 w-3.5" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { size: "sm", variant: "ghost", className: "h-7 w-7 p-0 text-destructive", onClick: () => handleDeleteDiag(d.id), title: "L\xF6schen", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Trash2, { className: "h-3.5 w-3.5" }) })
                 ] })
               ] }) }) }, d.id)) })
-            ] })
-          ] }) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "medications", className: "space-y-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h3", { className: "text-lg font-medium", children: "Medikamente verwalten" }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-3", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "relative w-56", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { placeholder: "Medikament suchen...", value: medSearch, onChange: (e) => setMedSearch(e.target.value), className: "pl-9" })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Button3, { onClick: () => {
-                setEditMedId(null);
-                setMedName("");
-                setMedIngredient("");
-                setMedStrength("");
-                setMedForm("");
-                setShowMedForm(true);
-              }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
-                " Medikament hinzuf\xFCgen"
-              ] })
-            ] })
-          ] }),
-          showMedForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "border-primary", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardTitle, { className: "text-base", children: editMedId ? "Medikament bearbeiten" : "Neues Medikament" }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "space-y-3", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "grid gap-3 md:grid-cols-4", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Name *" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medName, onChange: (e) => setMedName(e.target.value), placeholder: "z.B. Ibuprofen" })
+            ] }),
+            showAddDiagnosis && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "mt-4 p-4 border-2 border-primary/30 rounded-xl bg-muted/20", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h4", { className: "text-sm font-medium mb-3", children: editDiagId ? "Diagnose bearbeiten" : "Neue Diagnose" }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-3", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "grid grid-cols-2 gap-3", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "ICD-Code *" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: diagIcdInput, onChange: (e) => setDiagIcdInput(e.target.value), placeholder: "J06.9" })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Datum" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { type: "date", value: diagDateInput, onChange: (e) => setDiagDateInput(e.target.value) })
+                  ] })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Wirkstoff" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medIngredient, onChange: (e) => setMedIngredient(e.target.value), placeholder: "z.B. Ibuprofen" })
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Diagnosetext *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: diagTextInput, onChange: (e) => setDiagTextInput(e.target.value), placeholder: "Diagnosebeschreibung" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "St\xE4rke" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medStrength, onChange: (e) => setMedStrength(e.target.value), placeholder: "z.B. 400 mg" })
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Notizen" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Textarea, { value: diagNotesInput, onChange: (e) => setDiagNotesInput(e.target.value), placeholder: "Optionale Notizen", rows: 2 })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Darreichungsform" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: medForm, onChange: (e) => setMedForm(e.target.value), placeholder: "z.B. Tabletten" })
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex gap-2 justify-end", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { variant: "outline", onClick: () => setShowAddDiagnosis(false), disabled: savingDiag, children: "Abbrechen" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { onClick: handleSaveDiag, disabled: !diagIcdInput || !diagTextInput || savingDiag, children: savingDiag ? "Wird gespeichert..." : editDiagId ? "Aktualisieren" : "Hinzuf\xFCgen" })
                 ] })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "outline", onClick: () => setShowMedForm(false), children: "Abbrechen" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { onClick: handleMedSave, disabled: !medName, children: editMedId ? "Aktualisieren" : "Hinzuf\xFCgen" })
-              ] })
-            ] })
-          ] }),
-          filteredMeds.length === 0 && !showMedForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Keine Medikamente gefunden." }) }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "grid gap-3 md:grid-cols-2 xl:grid-cols-3", children: filteredMeds.map((m) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "font-medium", children: m.name }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
-                m.active_ingredient && `${m.active_ingredient} `,
-                m.strength && `- ${m.strength} `,
-                m.form && `- ${m.form}`
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleMedEdit(m), children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Pencil, { className: "h-3.5 w-3.5" }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleMedDelete(m.id), children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Trash2, { className: "h-3.5 w-3.5 text-destructive" }) })
-            ] })
-          ] }) }, m.id)) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "diagnoses", className: "space-y-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h3", { className: "text-lg font-medium", children: "Diagnosen verwalten" }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-3", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "relative w-56", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { placeholder: "Diagnose suchen...", value: diagSearch, onChange: (e) => setDiagSearch(e.target.value), className: "pl-9" })
+            deletePatient && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "fixed inset-0 z-[1000] flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "w-full max-w-md bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h3", { className: "text-base font-semibold mb-2", children: "Patient l\xF6schen" }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { className: "text-sm text-muted-foreground mb-4", children: [
+                "M\xF6chten Sie ",
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("strong", { children: [
+                  deletePatient.last_name,
+                  ", ",
+                  deletePatient.first_name
+                ] }),
+                " wirklich aus dem System l\xF6schen? Diese Aktion kann nicht r\xFCckg\xE4ngig gemacht werden."
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Button3, { onClick: () => {
+              deleteInfo && (deleteInfo.appointmentCount > 0 || deleteInfo.prescriptionCount > 0 || deleteInfo.diagnosisCount > 0) && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { className: "font-medium text-amber-800 flex items-center gap-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(TriangleAlert, { className: "h-4 w-4" }),
+                  " Verkn\xFCpfte Daten"
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("ul", { className: "text-amber-700 mt-1 space-y-0.5 text-xs", children: [
+                  deleteInfo.appointmentCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("li", { children: [
+                    deleteInfo.appointmentCount,
+                    " Termin(e)"
+                  ] }),
+                  deleteInfo.prescriptionCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("li", { children: [
+                    deleteInfo.prescriptionCount,
+                    " Rezept(e)"
+                  ] }),
+                  deleteInfo.diagnosisCount > 0 && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("li", { children: [
+                    deleteInfo.diagnosisCount,
+                    " Diagnose(n)"
+                  ] })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-xs text-amber-600 mt-2", children: "Diese Daten werden ebenfalls gel\xF6scht." })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex gap-2 justify-end", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { variant: "outline", onClick: () => setDeletePatient(null), disabled: deleting, children: "Abbrechen" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { variant: "destructive", onClick: handleForceDelete, disabled: deleting, children: deleting ? "Wird gel\xF6scht..." : "Endg\xFCltig l\xF6schen" })
+              ] })
+            ] }) }),
+            showHistory !== null && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "fixed inset-0 z-[1000] flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "w-full max-w-lg bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 max-h-[70vh] overflow-y-auto", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center justify-between mb-4", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h4", { className: "text-sm font-semibold", children: "\xC4nderungshistorie" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { variant: "ghost", size: "sm", onClick: () => setShowHistory(null), children: "Schlie\xDFen" })
+              ] }),
+              loadingHistory && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-sm text-muted-foreground", children: "Lade Historie..." }),
+              !loadingHistory && historyData.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-sm text-muted-foreground", children: "Keine \xC4nderungen aufgezeichnet." }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "space-y-3", children: historyData.map((h) => /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardContent, { className: "py-2 px-3", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center gap-2 text-xs", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Badge, { variant: h.action === "CREATED" ? "default" : h.action === "UPDATED" ? "secondary" : "destructive", className: "text-[10px] px-1.5", children: h.action === "CREATED" ? "Erstellt" : h.action === "UPDATED" ? "Bearbeitet" : "Gel\xF6scht" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { className: "text-muted-foreground", children: h.created_at })
+                ] }),
+                h.action === "UPDATED" && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "mt-1 text-xs text-muted-foreground", children: [
+                  h.old_icd_code !== h.new_icd_code && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { children: [
+                    "ICD: ",
+                    h.old_icd_code,
+                    " \u2192 ",
+                    h.new_icd_code
+                  ] }),
+                  h.old_diagnosis_text !== h.new_diagnosis_text && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { children: [
+                    "Text: ",
+                    h.old_diagnosis_text?.substring(0, 30),
+                    " \u2192 ",
+                    h.new_diagnosis_text?.substring(0, 30)
+                  ] })
+                ] }),
+                h.action === "CREATED" && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "mt-1 text-xs text-muted-foreground", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("span", { children: [
+                  h.new_icd_code,
+                  " \u2013 ",
+                  h.new_diagnosis_text?.substring(0, 40)
+                ] }) })
+              ] }) }, h.id)) })
+            ] }) })
+          ] }) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(TabsContent, { value: "diagnoses", className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h3", { className: "text-lg font-medium", children: "Diagnosen verwalten" }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center gap-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "relative w-56", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Search, { className: "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { placeholder: "Diagnose suchen...", value: diagSearch, onChange: (e) => setDiagSearch(e.target.value), className: "pl-9" })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Button3, { onClick: () => {
                 setShowDiagForm(true);
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
                 " Diagnose hinzuf\xFCgen"
               ] })
             ] })
           ] }),
-          showDiagForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "border-primary", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardTitle, { className: "text-base", children: "Neue Diagnose" }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "space-y-3", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "grid gap-3 md:grid-cols-5", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Versichertennr. *" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagInsurance, onChange: (e) => setDiagInsurance(e.target.value), placeholder: "A123456789" })
+          showDiagForm && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Card, { className: "border-primary", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CardTitle, { className: "text-base", children: "Neue Diagnose" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardContent, { className: "space-y-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "grid gap-3 md:grid-cols-5", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Versichertennr. *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: diagInsurance, onChange: (e) => setDiagInsurance(e.target.value), placeholder: "A123456789" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "ICD-Code *" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagIcd, onChange: (e) => setDiagIcd(e.target.value), placeholder: "J06.9" })
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "ICD-Code *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: diagIcd, onChange: (e) => setDiagIcd(e.target.value), placeholder: "J06.9" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Diagnose *" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagText, onChange: (e) => setDiagText(e.target.value), placeholder: "Diagnosetext" })
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Diagnose *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: diagText, onChange: (e) => setDiagText(e.target.value), placeholder: "Diagnosetext" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Datum" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { type: "date", value: diagDate, onChange: (e) => setDiagDate(e.target.value) })
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Datum" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { type: "date", value: diagDate, onChange: (e) => setDiagDate(e.target.value) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Notizen" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { value: diagNotes, onChange: (e) => setDiagNotes(e.target.value), placeholder: "Optional" })
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Notizen" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: diagNotes, onChange: (e) => setDiagNotes(e.target.value), placeholder: "Optional" })
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "outline", onClick: () => setShowDiagForm(false), children: "Abbrechen" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { onClick: handleDiagSave, disabled: !diagInsurance || !diagIcd || !diagText, children: "Speichern" })
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { variant: "outline", onClick: () => setShowDiagForm(false), children: "Abbrechen" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { onClick: handleDiagSave, disabled: !diagInsurance || !diagIcd || !diagText, children: "Speichern" })
               ] })
             ] })
           ] }),
-          filteredDiags.length === 0 && !showDiagForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Keine Diagnosen gefunden." }) }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "space-y-2", children: filteredDiags.map((d) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-start gap-3", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Badge, { variant: "secondary", children: d.icd_code }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("span", { className: "font-medium", children: d.diagnosis_text }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground mt-1", children: [
+          filteredDiags.length === 0 && !showDiagForm && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-muted-foreground", children: "Keine Diagnosen gefunden." }) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "space-y-2", children: filteredDiags.map((d) => /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-start gap-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Badge, { variant: "secondary", children: d.icd_code }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { className: "font-medium", children: d.diagnosis_text }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { className: "text-xs text-muted-foreground mt-1", children: [
                   "Patient: ",
                   d.patient_last_name,
                   ", ",
@@ -22584,96 +23320,160 @@ var PraxisApp = (() => {
                   ") - ",
                   d.diagnosis_date
                 ] }),
-                d.notes && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+                d.notes && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
                   "Notiz: ",
                   d.notes
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("div", { className: "flex gap-1", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Pencil, { className: "h-3.5 w-3.5" }) }) })
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "flex gap-1", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { size: "sm", variant: "ghost", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Pencil, { className: "h-3.5 w-3.5" }) }) })
           ] }) }, d.id)) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(TabsContent, { value: "availability", className: "space-y-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h3", { className: "text-lg font-medium", children: "Sprechzeiten verwalten" }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Button3, { onClick: handleAddSlot, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(TabsContent, { value: "availability", className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h3", { className: "text-lg font-medium", children: "Sprechzeiten verwalten" }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Button3, { onClick: handleAddSlot, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
               " Zeitfenster hinzuf\xFCgen"
             ] })
           ] }),
-          showSlotForm && /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(Card, { className: "border-primary", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardTitle, { className: "text-base", children: "Neues Zeitfenster" }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "space-y-3", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "grid gap-3 md:grid-cols-4", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Wochentag *" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("select", { className: "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm", value: newSlotWeekday, onChange: (e) => setNewSlotWeekday(Number(e.target.value)), children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("option", { value: "1", children: "Montag" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("option", { value: "2", children: "Dienstag" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("option", { value: "3", children: "Mittwoch" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("option", { value: "4", children: "Donnerstag" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("option", { value: "5", children: "Freitag" })
+          showSlotForm && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Card, { className: "border-primary", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CardTitle, { className: "text-base", children: "Neues Zeitfenster" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CardContent, { className: "space-y-3", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "grid gap-3 md:grid-cols-4", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Wochentag *" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("select", { className: "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm", value: newSlotWeekday, onChange: (e) => setNewSlotWeekday(Number(e.target.value)), children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("option", { value: "1", children: "Montag" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("option", { value: "2", children: "Dienstag" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("option", { value: "3", children: "Mittwoch" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("option", { value: "4", children: "Donnerstag" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("option", { value: "5", children: "Freitag" })
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Startzeit *" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { type: "time", value: newSlotStart, onChange: (e) => setNewSlotStart(e.target.value) })
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Startzeit *" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { type: "time", value: newSlotStart, onChange: (e) => setNewSlotStart(e.target.value) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "Endzeit *" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Input3, { type: "time", value: newSlotEnd, onChange: (e) => setNewSlotEnd(e.target.value) })
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Endzeit *" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { type: "time", value: newSlotEnd, onChange: (e) => setNewSlotEnd(e.target.value) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Label, { children: "\xA0" }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-2", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { variant: "outline", onClick: () => setShowSlotForm(false), children: "Abbrechen" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { onClick: handleSlotSave, children: "Speichern" })
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "\xA0" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex gap-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { variant: "outline", onClick: () => setShowSlotForm(false), children: "Abbrechen" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { onClick: handleSlotSave, children: "Speichern" })
                 ] })
               ] })
             ] }) })
           ] }),
-          loadingSlots && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Lade Sprechzeiten..." }),
-          !loadingSlots && slots.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("p", { className: "text-muted-foreground", children: "Keine Sprechzeiten eingetragen. Bitte f\xFCgen Sie Zeitfenster hinzu." }) }) }),
+          loadingSlots && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-muted-foreground", children: "Lade Sprechzeiten..." }),
+          !loadingSlots && slots.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-muted-foreground", children: "Keine Sprechzeiten eingetragen. Bitte f\xFCgen Sie Zeitfenster hinzu." }) }) }),
           [1, 2, 3, 4, 5].map((day) => {
             const daySlots = slots.filter((s) => s.weekday === day);
             if (daySlots.length === 0) return null;
             const dayNames = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"];
-            return /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "space-y-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime32.jsx)("h4", { className: "font-medium text-sm text-muted-foreground", children: dayNames[day - 1] }),
-              daySlots.map((slot) => /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex items-center gap-3", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("span", { className: "font-medium", children: [
+            return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h4", { className: "font-medium text-sm text-muted-foreground", children: dayNames[day - 1] }),
+              daySlots.map((slot) => /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center gap-3", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("span", { className: "font-medium", children: [
                     slot.start_time,
                     " - ",
                     slot.end_time
                   ] }),
-                  slot.is_active === 0 && /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Badge, { variant: "outline", children: "Inaktiv" })
+                  slot.is_active === 0 && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Badge, { variant: "outline", children: "Inaktiv" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime32.jsxs)("div", { className: "flex gap-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleToggleSlot(slot.id, slot.is_active), children: slot.is_active ? /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CircleX, { className: "h-3.5 w-3.5" }) : /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(CircleCheckBig, { className: "h-3.5 w-3.5 text-green-600" }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleDeleteSlot(slot.id), children: /* @__PURE__ */ (0, import_jsx_runtime32.jsx)(Trash2, { className: "h-3.5 w-3.5 text-destructive" }) })
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex gap-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleToggleSlot(slot.id, slot.is_active), children: slot.is_active ? /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CircleX, { className: "h-3.5 w-3.5" }) : /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CircleCheckBig, { className: "h-3.5 w-3.5 text-green-600" }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleDeleteSlot(slot.id), children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Trash2, { className: "h-3.5 w-3.5 text-destructive" }) })
                 ] })
               ] }) }, slot.id))
             ] }, day);
           })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(TabsContent, { value: "critical", className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h3", { className: "text-lg font-medium", children: "Kritische Medikamente verwalten" }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Button3, { onClick: openAddCritModal, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+              " Kritisches Medikament hinzuf\xFCgen"
+            ] })
+          ] }),
+          loadingCritical && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-muted-foreground", children: "Lade Liste..." }),
+          !loadingCritical && criticalMeds.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardContent, { className: "py-8 text-center", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-muted-foreground", children: "Keine kritischen Medikamente eingetragen." }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-xs text-muted-foreground mt-1", children: "F\xFCgen Sie Medikamente hinzu, die nur nach pers\xF6nlicher \xE4rztlicher Untersuchung verschrieben werden d\xFCrfen." })
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "space-y-2", children: criticalMeds.map((m) => /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardContent, { className: "py-3 flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center gap-3 min-w-0", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Badge, { variant: "destructive", className: "shrink-0", children: "Kritisch" }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "min-w-0", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { className: "font-medium", children: m.medication_name }),
+                m.active_ingredient && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("span", { className: "text-sm text-muted-foreground ml-2", children: [
+                  "(",
+                  m.active_ingredient,
+                  ")"
+                ] }),
+                m.atc_code && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("span", { className: "text-xs text-muted-foreground ml-2", children: [
+                  "ATC: ",
+                  m.atc_code
+                ] }),
+                m.notes && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-xs text-muted-foreground mt-0.5 truncate", children: m.notes })
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex gap-1 shrink-0 ml-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => handleEditCritical(m), children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Pencil, { className: "h-3.5 w-3.5" }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { size: "sm", variant: "ghost", className: "text-destructive", onClick: () => handleDeleteCritical(m.id), children: /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Trash2, { className: "h-3.5 w-3.5" }) })
+            ] })
+          ] }) }, m.id)) }),
+          showCritModal && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "fixed inset-0 z-50 flex items-center justify-center", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "absolute inset-0 bg-black/40", onClick: () => setShowCritModal(false) }),
+            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "relative bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg mx-4 z-50 border", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h3", { className: "text-lg font-semibold mb-4", children: critEditId ? "Kritisches Medikament bearbeiten" : "Kritisches Medikament hinzuf\xFCgen" }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-3", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Medikamentenname *" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: critName, onChange: (e) => setCritName(e.target.value), placeholder: "z.B. Oxycodon" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Wirkstoff" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: critIngredient, onChange: (e) => setCritIngredient(e.target.value), placeholder: "z.B. Oxycodonhydrochlorid" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "ATC-Code" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: critAtc, onChange: (e) => setCritAtc(e.target.value), placeholder: "z.B. N02AA01" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Notiz" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { value: critNotes, onChange: (e) => setCritNotes(e.target.value), placeholder: "z.B. Nur nach pers\xF6nlicher Untersuchung" })
+                ] })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex justify-end gap-2 mt-4", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { variant: "outline", onClick: () => setShowCritModal(false), disabled: savingCrit, children: "Abbrechen" }),
+                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { variant: "destructive", onClick: handleSaveCritical, disabled: !critName || savingCrit, children: savingCrit ? "Wird gespeichert..." : critEditId ? "Speichern" : "Hinzuf\xFCgen" })
+              ] })
+            ] })
+          ] })
         ] })
       ] })
     ] });
   }
 
   // src/pages/DoctorAcuteHours.tsx
-  var import_react52 = __toESM(require_react(), 1);
-  var import_jsx_runtime33 = __toESM(require_jsx_runtime(), 1);
+  var import_react53 = __toESM(require_react(), 1);
+  var import_jsx_runtime34 = __toESM(require_jsx_runtime(), 1);
   function DoctorAcuteHours() {
-    const [doctorInfo, setDoctorInfo] = (0, import_react52.useState)(null);
-    const [date, setDate] = (0, import_react52.useState)((/* @__PURE__ */ new Date()).toISOString().slice(0, 10));
-    const [startTime, setStartTime] = (0, import_react52.useState)("08:00");
-    const [endTime, setEndTime] = (0, import_react52.useState)("12:00");
-    const [slotInterval, setSlotInterval] = (0, import_react52.useState)(30);
-    const [isActive, setIsActive] = (0, import_react52.useState)(true);
-    const [saved, setSaved] = (0, import_react52.useState)(false);
-    const [loading, setLoading] = (0, import_react52.useState)(false);
-    const [saving, setSaving] = (0, import_react52.useState)(false);
-    (0, import_react52.useEffect)(() => {
+    const [doctorInfo, setDoctorInfo] = (0, import_react53.useState)(null);
+    const [date, setDate] = (0, import_react53.useState)((/* @__PURE__ */ new Date()).toISOString().slice(0, 10));
+    const [startTime, setStartTime] = (0, import_react53.useState)("08:00");
+    const [endTime, setEndTime] = (0, import_react53.useState)("12:00");
+    const [slotInterval, setSlotInterval] = (0, import_react53.useState)(30);
+    const [isActive, setIsActive] = (0, import_react53.useState)(true);
+    const [saved, setSaved] = (0, import_react53.useState)(false);
+    const [loading, setLoading] = (0, import_react53.useState)(false);
+    const [saving, setSaving] = (0, import_react53.useState)(false);
+    (0, import_react53.useEffect)(() => {
       const stored = localStorage.getItem("doctor_info");
       if (stored) setDoctorInfo(JSON.parse(stored));
     }, []);
@@ -22693,7 +23493,7 @@ var PraxisApp = (() => {
         setLoading(false);
       });
     };
-    (0, import_react52.useEffect)(() => {
+    (0, import_react53.useEffect)(() => {
       loadHours();
     }, [doctorInfo, date]);
     const handleSave = async () => {
@@ -22714,89 +23514,89 @@ var PraxisApp = (() => {
       }
       setSaving(false);
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-6", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center justify-between", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("h1", { className: "text-2xl font-semibold", children: "Akutsprechstunde" }),
-        saved && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Badge, { variant: "default", className: "bg-green-100 text-green-800 border-green-300 flex items-center gap-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Save, { className: "h-3 w-3" }),
+    return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-center justify-between", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("h1", { className: "text-2xl font-semibold", children: "Akutsprechstunde" }),
+        saved && /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(Badge, { variant: "default", className: "bg-green-100 text-green-800 border-green-300 flex items-center gap-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Save, { className: "h-3 w-3" }),
           " Gespeichert"
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(Card, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardHeader, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Calendar, { className: "h-4 w-4" }),
-            "Akutsprechstunde f\xFCr ein Datum festlegen"
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(Card, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(CardHeader, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(CardTitle, { className: "text-base flex items-center gap-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Calendar, { className: "h-4 w-4" }),
+            "Akutsprechstunde f\uFFFDr ein Datum festlegen"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CardDescription, { children: "Legen Sie fest, an welchen Tagen Sie Akutsprechstunde anbieten. Die MFA sieht dann nur Slots f\xFCr \xC4rzte mit aktiver Akutsprechstunde." })
+          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(CardDescription, { children: "Legen Sie fest, an welchen Tagen Sie Akutsprechstunde anbieten. Die MFA sieht dann nur Slots f\uFFFDr \uFFFDrzte mit aktiver Akutsprechstunde." })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardContent, { className: "space-y-4", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "grid gap-4 md:grid-cols-2 lg:grid-cols-3", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Datum *" }),
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { type: "date", value: date, onChange: (e) => {
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(CardContent, { className: "space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "grid gap-4 md:grid-cols-2 lg:grid-cols-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Label, { children: "Datum *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Input3, { type: "date", value: date, onChange: (e) => {
                 setDate(e.target.value);
                 setSaved(false);
               } })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Beginn *" }),
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { type: "time", value: startTime, onChange: (e) => setStartTime(e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Label, { children: "Beginn *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Input3, { type: "time", value: startTime, onChange: (e) => setStartTime(e.target.value) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Ende *" }),
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { type: "time", value: endTime, onChange: (e) => setEndTime(e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Label, { children: "Ende *" }),
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Input3, { type: "time", value: endTime, onChange: (e) => setEndTime(e.target.value) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Slot-Intervall (Min.)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Input3, { type: "number", min: "10", max: "120", step: "5", value: slotInterval, onChange: (e) => setSlotInterval(Number(e.target.value)) })
+            /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Label, { children: "Slot-Intervall (Min.)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Input3, { type: "number", min: "10", max: "120", step: "5", value: slotInterval, onChange: (e) => setSlotInterval(Number(e.target.value)) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Max. Slots (berechnet)" }),
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("div", { className: "flex items-center h-10 px-3 rounded-md border border-input bg-muted/50 text-sm", children: (() => {
+            /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Label, { children: "Max. Slots (berechnet)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { className: "flex items-center h-10 px-3 rounded-md border border-input bg-muted/50 text-sm", children: (() => {
                 const sp = startTime.split(":").map(Number);
                 const ep = endTime.split(":").map(Number);
                 const sm = sp[0] * 60 + sp[1];
                 const em = ep[0] * 60 + ep[1];
                 const total = em - sm;
                 const calc = total > 0 && slotInterval > 0 ? Math.floor(total / slotInterval) : 1;
-                return /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("span", { children: [
+                return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("span", { children: [
                   "Es werden ",
-                  /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("strong", { children: calc }),
+                  /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("strong", { children: calc }),
                   " Slots generiert"
                 ] });
               })() })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "space-y-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Label, { children: "Aktiv" }),
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center gap-2 pt-2", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("input", { type: "checkbox", checked: isActive, onChange: (e) => setIsActive(e.target.checked), className: "h-4 w-4" }),
-                /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { className: "text-sm", children: isActive ? "Akutsprechstunde aktiv" : "Deaktiviert" })
+            /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Label, { children: "Aktiv" }),
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-center gap-2 pt-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("input", { type: "checkbox", checked: isActive, onChange: (e) => setIsActive(e.target.checked), className: "h-4 w-4" }),
+                /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { className: "text-sm", children: isActive ? "Akutsprechstunde aktiv" : "Deaktiviert" })
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("div", { className: "flex items-center gap-3 pt-2", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Button3, { onClick: handleSave, disabled: !date || saving, children: saving ? "Wird gespeichert..." : saved ? "Aktualisieren" : "Akutsprechstunde festlegen" }),
-            saved && /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)("p", { className: "text-xs text-green-600 flex items-center gap-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Save, { className: "h-3 w-3" }),
-              " Einstellungen f\xFCr ",
+          /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-center gap-3 pt-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Button3, { onClick: handleSave, disabled: !date || saving, children: saving ? "Wird gespeichert..." : saved ? "Aktualisieren" : "Akutsprechstunde festlegen" }),
+            saved && /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("p", { className: "text-xs text-green-600 flex items-center gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Save, { className: "h-3 w-3" }),
+              " Einstellungen f\uFFFDr ",
               date,
               " gespeichert"
             ] })
           ] }),
-          loading && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("p", { className: "text-sm text-muted-foreground", children: "Lade Einstellungen..." })
+          loading && /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("p", { className: "text-sm text-muted-foreground", children: "Lade Einstellungen..." })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(Card, { className: "bg-muted/30", children: /* @__PURE__ */ (0, import_jsx_runtime33.jsxs)(CardContent, { className: "py-4 text-sm text-muted-foreground flex items-start gap-2", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(CircleAlert, { className: "h-4 w-4 mt-0.5 shrink-0" }),
-        /* @__PURE__ */ (0, import_jsx_runtime33.jsx)("span", { children: "Die MFA sieht im Dashboard nur Akutslots f\xFCr \xC4rzte, die an diesem Tag eine aktive Akutsprechstunde eingetragen haben. Die Slots werden automatisch generiert, wenn die MFA das Dashboard aufruft." })
+      /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Card, { className: "bg-muted/30", children: /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(CardContent, { className: "py-4 text-sm text-muted-foreground flex items-start gap-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(CircleAlert, { className: "h-4 w-4 mt-0.5 shrink-0" }),
+        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { children: "Die MFA sieht im Dashboard nur Akutslots f\uFFFDr \uFFFDrzte, die an diesem Tag eine aktive Akutsprechstunde eingetragen haben. Die Slots werden automatisch generiert, wenn die MFA das Dashboard aufruft." })
       ] }) })
     ] });
   }
 
   // src/pages/DoctorAppointmentsOverview.tsx
-  var import_react53 = __toESM(require_react(), 1);
-  var import_jsx_runtime34 = __toESM(require_jsx_runtime(), 1);
+  var import_react54 = __toESM(require_react(), 1);
+  var import_jsx_runtime35 = __toESM(require_jsx_runtime(), 1);
   var STATUS_MAP8 = {
     SCHEDULED: { label: "Best\xE4tigt", class: "bg-green-100 text-green-800 border-green-300" },
     PENDING_CONFIRMATION: { label: "Ausstehend", class: "bg-yellow-100 text-yellow-800 border-yellow-300" },
@@ -22818,7 +23618,7 @@ var PraxisApp = (() => {
   var CATEGORY_MAP = {
     CHECKUP: { label: "Vorsorge", icon: ClipboardList },
     CONSULTATION: { label: "Beratung", icon: User },
-    VACCINATION: { label: "Impfung", icon: FlaskConical },
+    VACCINATION: { label: "Impfung", icon: Calendar },
     PRESCRIPTION_PICKUP: { label: "Rezept-Abholung", icon: Pill },
     ACUTE: { label: "Akut", icon: Clock }
   };
@@ -22840,12 +23640,12 @@ var PraxisApp = (() => {
     return STATUS_MAP8[status] || { label: status, class: "bg-gray-100 text-gray-700" };
   }
   function DoctorAppointmentsOverview() {
-    const [doctorInfo, setDoctorInfo] = (0, import_react53.useState)(null);
-    const [appointments, setAppointments] = (0, import_react53.useState)([]);
-    const [loading, setLoading] = (0, import_react53.useState)(true);
-    const [fromDate, setFromDate] = (0, import_react53.useState)((/* @__PURE__ */ new Date()).toISOString().slice(0, 10));
-    const [toDate2, setToDate] = (0, import_react53.useState)(new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10));
-    (0, import_react53.useEffect)(() => {
+    const [doctorInfo, setDoctorInfo] = (0, import_react54.useState)(null);
+    const [appointments, setAppointments] = (0, import_react54.useState)([]);
+    const [loading, setLoading] = (0, import_react54.useState)(true);
+    const [fromDate, setFromDate] = (0, import_react54.useState)((/* @__PURE__ */ new Date()).toISOString().slice(0, 10));
+    const [toDate2, setToDate] = (0, import_react54.useState)(new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10));
+    (0, import_react54.useEffect)(() => {
       const stored = localStorage.getItem("doctor_info");
       if (stored) setDoctorInfo(JSON.parse(stored));
     }, []);
@@ -22859,7 +23659,7 @@ var PraxisApp = (() => {
         setLoading(false);
       });
     };
-    (0, import_react53.useEffect)(() => {
+    (0, import_react54.useEffect)(() => {
       loadAppointments();
     }, [doctorInfo]);
     const shiftDays = (days) => {
@@ -22870,7 +23670,7 @@ var PraxisApp = (() => {
       setFromDate(from.toISOString().slice(0, 10));
       setToDate(to.toISOString().slice(0, 10));
     };
-    (0, import_react53.useEffect)(() => {
+    (0, import_react54.useEffect)(() => {
       if (fromDate && toDate2) loadAppointments();
     }, [fromDate, toDate2]);
     const grouped = {};
@@ -22880,50 +23680,50 @@ var PraxisApp = (() => {
     }
     const sortedDates = Object.keys(grouped).sort();
     if (!doctorInfo) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-6", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-center justify-between flex-wrap gap-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("h1", { className: "text-2xl font-semibold", children: "Termin\xFCbersicht" }),
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("p", { className: "text-muted-foreground", children: "Alle Termine auf einen Blick" })
+    return /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "space-y-6", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "flex items-center justify-between flex-wrap gap-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("h1", { className: "text-2xl font-semibold", children: "Termin\xFCbersicht" }),
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("p", { className: "text-muted-foreground", children: "Alle Termine auf einen Blick" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-center gap-2", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(Button3, { variant: "outline", size: "sm", onClick: () => shiftDays(-7), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(ChevronLeft, { className: "h-4 w-4" }),
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Button3, { variant: "outline", size: "sm", onClick: () => shiftDays(-7), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(ChevronLeft, { className: "h-4 w-4" }),
             " Vorwoche"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(Button3, { variant: "outline", size: "sm", onClick: () => {
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Button3, { variant: "outline", size: "sm", onClick: () => {
             setFromDate((/* @__PURE__ */ new Date()).toISOString().slice(0, 10));
             setToDate(new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10));
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Calendar, { className: "h-4 w-4" }),
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Calendar, { className: "h-4 w-4" }),
             " Heute"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(Button3, { variant: "outline", size: "sm", onClick: () => shiftDays(7), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Button3, { variant: "outline", size: "sm", onClick: () => shiftDays(7), children: [
             "N\xE4chste Woche ",
-            /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(ChevronRight, { className: "h-4 w-4" })
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(ChevronRight, { className: "h-4 w-4" })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-center gap-4", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Label, { children: "Von" }),
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Input3, { type: "date", value: fromDate, onChange: (e) => setFromDate(e.target.value), className: "w-44" })
+      /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "flex items-center gap-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "space-y-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Label, { children: "Von" }),
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Input3, { type: "date", value: fromDate, onChange: (e) => setFromDate(e.target.value), className: "w-44" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-1", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Label, { children: "Bis" }),
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Input3, { type: "date", value: toDate2, onChange: (e) => setToDate(e.target.value), className: "w-44" })
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "space-y-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Label, { children: "Bis" }),
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Input3, { type: "date", value: toDate2, onChange: (e) => setToDate(e.target.value), className: "w-44" })
         ] })
       ] }),
-      loading && /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("p", { className: "text-muted-foreground", children: "Lade Termine..." }),
-      !loading && sortedDates.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(CardContent, { className: "py-12 text-center", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(CalendarDays, { className: "h-12 w-12 mx-auto text-muted-foreground/50" }),
-        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("p", { className: "text-lg font-medium mt-4", children: "Keine Termine im gew\xE4hlten Zeitraum" }),
-        /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("p", { className: "text-sm text-muted-foreground", children: "Alle Termine werden hier angezeigt, sobald sie gebucht wurden." })
+      loading && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("p", { className: "text-muted-foreground", children: "Lade Termine..." }),
+      !loading && sortedDates.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(CardContent, { className: "py-12 text-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(CalendarDays, { className: "h-12 w-12 mx-auto text-muted-foreground/50" }),
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("p", { className: "text-lg font-medium mt-4", children: "Keine Termine im gew\xE4hlten Zeitraum" }),
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("p", { className: "text-sm text-muted-foreground", children: "Alle Termine werden hier angezeigt, sobald sie gebucht wurden." })
       ] }) }),
-      sortedDates.map((date) => /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "space-y-3", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-center gap-2 sticky top-0 bg-background py-2 z-10", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("h2", { className: "text-lg font-semibold", children: formatDateLabel(date) }),
-          /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(Badge, { variant: "outline", className: "text-xs", children: [
+      sortedDates.map((date) => /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "space-y-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "flex items-center gap-2 sticky top-0 bg-background py-2 z-10", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("h2", { className: "text-lg font-semibold", children: formatDateLabel(date) }),
+          /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Badge, { variant: "outline", className: "text-xs", children: [
             grouped[date].length,
             " Termin",
             grouped[date].length !== 1 ? "e" : ""
@@ -22934,23 +23734,23 @@ var PraxisApp = (() => {
           const st = statusBadge(appt.status);
           const isPrescription = appt.source_type === "PRESCRIPTION";
           const isAcute = appt.source_type === "ACUTE_SLOT";
-          return /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Card, { className: "transition-all border-l-4 " + (appt.status === "CANCELLED" || appt.status?.startsWith("rejected") ? "border-l-red-400 opacity-70" : appt.status === "COMPLETED" || appt.status === "collected" ? "border-l-green-400 opacity-80" : appt.source_type === "PRESCRIPTION" ? "border-l-amber-400" : appt.source_type === "ACUTE_SLOT" ? "border-l-teal-400" : "border-l-primary"), children: /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(CardContent, { className: "py-4", children: /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-start justify-between gap-4", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-start gap-3 min-w-0 flex-1", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { className: "mt-0.5", children: /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Icon2, { className: "h-5 w-5 text-muted-foreground" }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "min-w-0 flex-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-center gap-2 flex-wrap", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { className: "font-semibold", children: isAcute ? appt.patient_first_name : appt.patient_last_name + ", " + appt.patient_first_name }),
-                  appt.insurance_number && /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { className: "text-xs text-muted-foreground", children: appt.insurance_number })
+          return /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Card, { className: "transition-all border-l-4 " + (appt.status === "CANCELLED" || appt.status?.startsWith("rejected") ? "border-l-red-400 opacity-70" : appt.status === "COMPLETED" || appt.status === "collected" ? "border-l-green-400 opacity-80" : appt.source_type === "PRESCRIPTION" ? "border-l-amber-400" : appt.source_type === "ACUTE_SLOT" ? "border-l-teal-400" : "border-l-primary"), children: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(CardContent, { className: "py-4", children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "flex items-start justify-between gap-4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "flex items-start gap-3 min-w-0 flex-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "mt-0.5", children: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Icon2, { className: "h-5 w-5 text-muted-foreground" }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "min-w-0 flex-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "flex items-center gap-2 flex-wrap", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { className: "font-semibold", children: isAcute ? appt.patient_first_name : appt.patient_last_name + ", " + appt.patient_first_name }),
+                  appt.insurance_number && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { className: "text-xs text-muted-foreground", children: appt.insurance_number })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex items-center gap-2 mt-0.5 text-sm text-muted-foreground", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { children: categoryLabel2(appt.category) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { children: "\xB7" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Clock, { className: "h-3 w-3" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { children: appt.time || "\u2014" }),
-                  appt.series_name && /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)(import_jsx_runtime34.Fragment, { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { children: "\xB7" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(FlaskConical, { className: "h-3 w-3" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "flex items-center gap-2 mt-0.5 text-sm text-muted-foreground", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { children: categoryLabel2(appt.category) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { children: "\xB7" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Clock, { className: "h-3 w-3" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { children: appt.time || "\u2014" }),
+                  appt.series_name && /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(import_jsx_runtime35.Fragment, { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { children: "\xB7" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Calendar, { className: "h-3 w-3" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("span", { children: [
                       appt.series_name,
                       " (",
                       appt.series_dose_number,
@@ -22958,36 +23758,36 @@ var PraxisApp = (() => {
                     ] })
                   ] })
                 ] }),
-                isPrescription && appt.medication_name && /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("p", { className: "text-sm mt-1", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("span", { className: "font-medium", children: "Medikament:" }),
+                isPrescription && appt.medication_name && /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("p", { className: "text-sm mt-1", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("span", { className: "font-medium", children: "Medikament:" }),
                   " ",
                   appt.medication_name
                 ] }),
-                appt.answers && appt.answers.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime34.jsx)("div", { className: "mt-2 space-y-1", children: appt.answers.map((a, i) => /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("span", { className: "font-medium", children: [
+                appt.answers && appt.answers.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime35.jsx)("div", { className: "mt-2 space-y-1", children: appt.answers.map((a, i) => /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("span", { className: "font-medium", children: [
                     a.question_text,
                     ":"
                   ] }),
                   " ",
                   a.answer
                 ] }, i)) }),
-                appt.notes && /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("p", { className: "text-xs text-muted-foreground mt-1 italic", children: [
+                appt.notes && /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("p", { className: "text-xs text-muted-foreground mt-1 italic", children: [
                   "Notiz: ",
                   appt.notes
                 ] }),
-                appt.reject_reason && /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "mt-2 flex items-start gap-1 text-xs text-red-600 bg-red-50 rounded p-2", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(CircleAlert, { className: "h-3 w-3 mt-0.5 shrink-0" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("span", { children: [
+                appt.reject_reason && /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "mt-2 flex items-start gap-1 text-xs text-red-600 bg-red-50 rounded p-2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(CircleAlert, { className: "h-3 w-3 mt-0.5 shrink-0" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("span", { children: [
                     "Ablehnungsgrund: ",
                     appt.reject_reason
                   ] })
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("div", { className: "flex flex-col items-end gap-1 shrink-0", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Badge, { className: st.class + " border text-xs", children: st.label }),
-              appt.phone && /* @__PURE__ */ (0, import_jsx_runtime34.jsxs)("span", { className: "text-xs text-muted-foreground flex items-center gap-1", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime34.jsx)(Phone, { className: "h-3 w-3" }),
+            /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("div", { className: "flex flex-col items-end gap-1 shrink-0", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Badge, { className: st.class + " border text-xs", children: st.label }),
+              appt.phone && /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)("span", { className: "text-xs text-muted-foreground flex items-center gap-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Phone, { className: "h-3 w-3" }),
                 " ",
                 appt.phone
               ] })
@@ -22999,33 +23799,34 @@ var PraxisApp = (() => {
   }
 
   // src/App.tsx
-  var import_jsx_runtime35 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime36 = __toESM(require_jsx_runtime(), 1);
   function App() {
-    return /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(BrowserRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Routes, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(LandingPage, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/doctor-login", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(DoctorLogin, {}) }),
-      /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Route, { element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(RootLayout, { role: "patient" }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/patient", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(PatientOverview, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/patient/book", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(PatientPortal, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/patient/appointments", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(PatientAppointments, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/patient/prescriptions", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(PatientPrescriptions, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/patient/settings", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(PatientSettings, {}) })
+    return /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(BrowserRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(Routes, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(LandingPage, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/doctor-login", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DoctorLogin, {}) }),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(Route, { element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(RootLayout, { role: "patient" }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/patient", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(PatientOverview, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/patient/book", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(PatientPortal, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/patient/appointments", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(PatientAppointments, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/patient/prescriptions", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(PatientPrescriptions, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/patient/settings", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(PatientSettings, {}) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Route, { element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(RootLayout, { role: "mfa" }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/mfa", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(MFADashboard, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/mfa/patients", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(MFAPatients, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/mfa/appointments", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(MFAAppointments, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/mfa/prescriptions", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(MFAPrescriptions, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/mfa/vaccinations", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(MFAVaccinations, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/mfa/reminders", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(MFAReminders, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(Route, { element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(RootLayout, { role: "mfa" }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/mfa", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(MFADashboard, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/mfa/patients", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(MFAPatients, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/mfa/appointments", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(MFAAppointments, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/mfa/prescriptions", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(MFAPrescriptions, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/mfa/vaccinations", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(MFAVaccinations, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/mfa/critical-medications", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(MFACriticalMedications, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/mfa/reminders", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(MFAReminders, {}) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime35.jsxs)(Route, { element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(RootLayout, { role: "doctor" }), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/doctor", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(DoctorDashboard, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/doctor/prescriptions", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(DoctorPrescriptions, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/doctor/absences", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(DoctorAbsences, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/doctor/master-data", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(DoctorMasterData, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/doctor/acute-hours", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(DoctorAcuteHours, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(Route, { path: "/doctor/appointments", element: /* @__PURE__ */ (0, import_jsx_runtime35.jsx)(DoctorAppointmentsOverview, {}) })
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)(Route, { element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(RootLayout, { role: "doctor" }), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/doctor", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DoctorDashboard, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/doctor/prescriptions", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DoctorPrescriptions, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/doctor/absences", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DoctorAbsences, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/doctor/master-data", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DoctorMasterData, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/doctor/acute-hours", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DoctorAcuteHours, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(Route, { path: "/doctor/appointments", element: /* @__PURE__ */ (0, import_jsx_runtime36.jsx)(DoctorAppointmentsOverview, {}) })
       ] })
     ] }) });
   }
@@ -23034,7 +23835,7 @@ var PraxisApp = (() => {
   var root = document.getElementById("root");
   if (root) {
     import_client.default.createRoot(root).render(
-      import_react54.default.createElement(import_react54.default.StrictMode, null, import_react54.default.createElement(App))
+      import_react55.default.createElement(import_react55.default.StrictMode, null, import_react55.default.createElement(App))
     );
   }
   var entry_umd_default = App;

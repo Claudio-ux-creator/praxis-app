@@ -1,10 +1,8 @@
 ﻿import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { FlaskConical, Calendar, Plus, Syringe } from 'lucide-react';
+import { FlaskConical, Syringe } from 'lucide-react';
 import { get } from '@/lib/api';
-import { formatDate } from "@/lib/utils";
 
 interface VaccineAppointment {
   id: number;

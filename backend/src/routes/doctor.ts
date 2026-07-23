@@ -1,4 +1,4 @@
-﻿import { Router } from 'express';
+import { Router } from 'express';
 import { getDb } from '../db/connection.ts';
 import { isDoctorAbsent } from '../services/absenceCheck.ts';
 
@@ -293,78 +293,135 @@ doctorRouter.delete('/doctor/medications/:id', (req, res) => {
 });
 
 // ==================== DIAGNOSES (Diagnosen) ====================
+function addDiagnosisHistory(db, diagnosisId, patientId, action, changedByType, changedById, oldData, newData) {
+  db.prepare(
+    "INSERT INTO diagnosis_history (diagnosis_id, patient_id, action, changed_by_type, changed_by_id, old_icd_code, new_icd_code, old_diagnosis_text, new_diagnosis_text, old_notes, new_notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+  ).run(diagnosisId, patientId, action, changedByType, changedById || null,
+    oldData?.icd_code || null, newData?.icd_code || null,
+    oldData?.diagnosis_text || null, newData?.diagnosis_text || null,
+    oldData?.notes || null, newData?.notes || null);
+}
 
-// GET /api/doctor/diagnoses?patientId= oder ?insuranceNumber=
-doctorRouter.get('/doctor/diagnoses', (req, res) => {
+doctorRouter.get("/doctor/diagnoses", (req, res) => {
+  try { const db = getDb(); const patientId = req.query.patientId ? Number(req.query.patientId) : undefined; const insuranceNumber = req.query.insuranceNumber;
+    let sql = "SELECT d.*, doc.first_name AS doctor_first_name, doc.last_name AS doctor_last_name, pat.first_name AS patient_first_name, pat.last_name AS patient_last_name, pat.insurance_number FROM diagnoses d JOIN doctors doc ON doc.id = d.doctor_id JOIN patients pat ON pat.id = d.patient_id";
+    const p = []; if (insuranceNumber) { sql += " WHERE pat.insurance_number = ?"; p.push(insuranceNumber); } else if (patientId) { sql += " WHERE d.patient_id = ?"; p.push(patientId); }
+    sql += " ORDER BY d.diagnosis_date DESC"; res.json({ success: true, data: db.prepare(sql).all(...p) });
+  } catch (e) { res.status(500).json({ success: false, error: e.message || "Fehler" }); }
+});
+doctorRouter.post("/doctor/diagnoses", (req, res) => {
+  try { const db = getDb(); const { insuranceNumber, icdCode, diagnosisText, diagnosisDate, notes, doctorId } = req.body;
+    if (!insuranceNumber || !icdCode || !diagnosisText || !doctorId) { res.status(400).json({ success: false, error: "Felder fehlen" }); return; }
+    const pat = db.prepare("SELECT id FROM patients WHERE insurance_number = ?").get(insuranceNumber);
+    if (!pat) { res.status(404).json({ success: false, error: "Patient nicht gefunden" }); return; }
+    const today = diagnosisDate || new Date().toISOString().slice(0, 10);
+    db.exec("BEGIN TRANSACTION");
+    try { const r = db.prepare("INSERT INTO diagnoses (patient_id, doctor_id, icd_code, diagnosis_text, diagnosis_date, notes) VALUES (?,?,?,?,?,?)").run(pat.id, doctorId, icdCode, diagnosisText, today, notes || null);
+      addDiagnosisHistory(db, r.lastInsertRowid, pat.id, "CREATED", "doctor", doctorId, {}, { icd_code: icdCode, diagnosis_text: diagnosisText, notes: notes || null });
+      db.exec("COMMIT"); res.json({ success: true, data: { id: r.lastInsertRowid } });
+    } catch (e) { db.exec("ROLLBACK"); throw e; }
+  } catch (e) { res.status(500).json({ success: false, error: e.message || "Fehler" }); }
+});
+doctorRouter.patch("/doctor/diagnoses/:id", (req, res) => {
+  try { const db = getDb(); const id = Number(req.params.id); const { icdCode, diagnosisText, diagnosisDate, notes, doctorId } = req.body;
+    const oldData = db.prepare("SELECT * FROM diagnoses WHERE id = ?").get(id);
+    if (!oldData) { res.status(404).json({ success: false, error: "Diagnose nicht gefunden" }); return; }
+    db.exec("BEGIN TRANSACTION");
+    try { db.prepare("UPDATE diagnoses SET icd_code = COALESCE(?,icd_code), diagnosis_text = COALESCE(?,diagnosis_text), diagnosis_date = COALESCE(?,diagnosis_date), notes = ?, updated_by_doctor_id = COALESCE(?,updated_by_doctor_id), updated_at = datetime('now') WHERE id = ?")
+        .run(icdCode||null, diagnosisText||null, diagnosisDate||null, notes!==undefined?notes:null, doctorId||null, id);
+      const newData = db.prepare("SELECT * FROM diagnoses WHERE id = ?").get(id);
+      addDiagnosisHistory(db, id, oldData.patient_id, "UPDATED", "doctor", doctorId || oldData.doctor_id, oldData, newData);
+      db.exec("COMMIT"); res.json({ success: true, data: { id } });
+    } catch (e) { db.exec("ROLLBACK"); throw e; }
+  } catch (e) { res.status(500).json({ success: false, error: e.message || "Fehler" }); }
+});
+doctorRouter.delete("/doctor/diagnoses/:id", (req, res) => {
+  try { const db = getDb(); const id = Number(req.params.id); const doctorId = req.query.doctorId ? Number(req.query.doctorId) : null;
+    const oldData = db.prepare("SELECT * FROM diagnoses WHERE id = ?").get(id);
+    if (!oldData) { res.status(404).json({ success: false, error: "Diagnose nicht gefunden" }); return; }
+    db.exec("BEGIN TRANSACTION");
+    try { addDiagnosisHistory(db, id, oldData.patient_id, "DELETED", "doctor", doctorId || oldData.doctor_id, oldData, {});
+      db.prepare("DELETE FROM diagnosis_history WHERE diagnosis_id = ?").run(id);
+      db.prepare("DELETE FROM diagnoses WHERE id = ?").run(id); db.exec("COMMIT"); res.json({ success: true, data: { id } });
+    } catch (e) { db.exec("ROLLBACK"); throw e; }
+  } catch (e) { res.status(500).json({ success: false, error: e.message || "Fehler" }); }
+});
+doctorRouter.get("/doctor/diagnoses/:id/history", (req, res) => {
+  try { const db = getDb(); const id = Number(req.params.id);
+    res.json({ success: true, data: db.prepare("SELECT * FROM diagnosis_history WHERE diagnosis_id = ? ORDER BY created_at DESC").all(id) });
+  } catch (e) { res.status(500).json({ success: false, error: e.message || "Fehler" }); }
+});
+
+// ==================== CRITICAL MEDICATIONS ====================
+
+// GET /api/doctor/critical-medications
+doctorRouter.get("/doctor/critical-medications", (_req, res) => {
   try {
     const db = getDb();
-    const patientId = req.query.patientId ? Number(req.query.patientId) : undefined;
-    const insuranceNumber = req.query.insuranceNumber as string;
-
-    let sql = `SELECT d.*, doc.first_name AS doctor_first_name, doc.last_name AS doctor_last_name,
-               pat.first_name AS patient_first_name, pat.last_name AS patient_last_name, pat.insurance_number
-               FROM diagnoses d
-               JOIN doctors doc ON doc.id = d.doctor_id
-               JOIN patients pat ON pat.id = d.patient_id`;
-    const params: any[] = [];
-
-    if (insuranceNumber) {
-      sql += ' WHERE pat.insurance_number = ?';
-      params.push(insuranceNumber);
-    } else if (patientId) {
-      sql += ' WHERE d.patient_id = ?';
-      params.push(patientId);
-    }
-
-    sql += ' ORDER BY d.diagnosis_date DESC';
-    const rows = db.prepare(sql).all(...params);
+    const rows = db.prepare("SELECT * FROM critical_medications ORDER BY medication_name ASC").all();
     res.json({ success: true, data: rows });
   } catch (error) {
-    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
   }
 });
 
-// POST /api/doctor/diagnoses
-doctorRouter.post('/doctor/diagnoses', (req, res) => {
+// POST /api/doctor/critical-medications
+doctorRouter.post("/doctor/critical-medications", (req, res) => {
   try {
     const db = getDb();
-    const { insuranceNumber, icdCode, diagnosisText, diagnosisDate, notes, doctorId } = req.body;
-
-    if (!insuranceNumber || !icdCode || !diagnosisText || !doctorId) {
-      res.status(400).json({ success: false, error: 'insuranceNumber, icdCode, diagnosisText und doctorId erforderlich' });
+    const { medicationName, activeIngredient, atcCode, notes, doctorId } = req.body;
+    if (!medicationName || !doctorId) {
+      res.status(400).json({ success: false, error: "medicationName und doctorId erforderlich" });
       return;
     }
-
-    const patient = db.prepare('SELECT id FROM patients WHERE insurance_number = ?').get(insuranceNumber) as { id: number } | undefined;
-    if (!patient) {
-      res.status(404).json({ success: false, error: 'Patient nicht gefunden' });
-      return;
-    }
-
-    const today = diagnosisDate || new Date().toISOString().slice(0, 10);
-    const result = db.prepare(
-      "INSERT INTO diagnoses (patient_id, doctor_id, icd_code, diagnosis_text, diagnosis_date, notes) VALUES (?, ?, ?, ?, ?, ?)"
-    ).run(patient.id, doctorId, icdCode, diagnosisText, today, notes || null);
-
+    const result = db.prepare("INSERT INTO critical_medications (medication_name, active_ingredient, atc_code, notes, created_by_doctor_id) VALUES (?, ?, ?, ?, ?)")
+      .run(medicationName, activeIngredient || null, atcCode || null, notes || null, doctorId);
     res.json({ success: true, data: { id: result.lastInsertRowid } });
   } catch (error) {
-    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
   }
 });
 
-// PATCH /api/doctor/diagnoses/:id
-doctorRouter.patch('/doctor/diagnoses/:id', (req, res) => {
+// PUT /api/doctor/critical-medications/:id
+doctorRouter.put("/doctor/critical-medications/:id", (req, res) => {
   try {
     const db = getDb();
     const id = Number(req.params.id);
-    const { icdCode, diagnosisText, notes } = req.body;
-
-    db.prepare("UPDATE diagnoses SET icd_code = COALESCE(?, icd_code), diagnosis_text = COALESCE(?, diagnosis_text), notes = COALESCE(?, notes), updated_at = datetime('now') WHERE id = ?")
-      .run(icdCode || null, diagnosisText || null, notes || null, id);
-
+    const { medicationName, activeIngredient, atcCode, notes } = req.body;
+    if (!medicationName) {
+      res.status(400).json({ success: false, error: "medicationName erforderlich" });
+      return;
+    }
+    db.prepare("UPDATE critical_medications SET medication_name = COALESCE(?, medication_name), active_ingredient = COALESCE(?, active_ingredient), atc_code = COALESCE(?, atc_code), notes = COALESCE(?, notes) WHERE id = ?")
+      .run(medicationName || null, activeIngredient || null, atcCode || null, notes || null, id);
     res.json({ success: true, data: { id } });
   } catch (error) {
-    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
+  }
+});
+
+// DELETE /api/doctor/critical-medications/:id
+doctorRouter.delete("/doctor/critical-medications/:id", (req, res) => {
+  try {
+    const db = getDb();
+    const id = Number(req.params.id);
+    db.prepare("DELETE FROM critical_medications WHERE id = ?").run(id);
+    res.json({ success: true, data: { id } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
+  }
+});
+
+// GET /api/doctor/check-critical-medication?name=xxx
+doctorRouter.get("/doctor/check-critical-medication", (req, res) => {
+  try {
+    const db = getDb();
+    const name = (req.query.name || "") ;
+    const lower = name.toLowerCase();
+    const rows = db.prepare("SELECT * FROM critical_medications WHERE LOWER(medication_name) LIKE ? OR LOWER(active_ingredient) LIKE ?").all("%" + lower + "%", "%" + lower + "%");
+    res.json({ success: true, data: rows, isCritical: rows.length > 0 });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : "Datenbankfehler" });
   }
 });
 

@@ -1,8 +1,7 @@
 ﻿﻿import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { get } from '@/lib/api';
-import { formatDate } from "@/lib/utils";
 
 interface PrescriptionResult {
   id: number;
@@ -23,6 +22,7 @@ const STATUS_MAP: Record<string, string> = {
   doctor_approved: 'Freigegeben',
   doctor_rejected: 'Abgelehnt (Arzt)',
   collected: 'Abgeholt',
+  AUTO_REJECTED_CRITICAL: '❌ Abgelehnt - nur nach ärztlichem Gespräch möglich',
 };
 
 const STATUS_BADGE: Record<string, string> = {
@@ -32,6 +32,7 @@ const STATUS_BADGE: Record<string, string> = {
   doctor_approved: 'default',
   doctor_rejected: 'destructive',
   collected: 'outline',
+  AUTO_REJECTED_CRITICAL: 'destructive',
 };
 
 export default function PatientPrescriptions() {
@@ -77,6 +78,7 @@ export default function PatientPrescriptions() {
                   {p.request_date}
                 </p>
                 {p.notes && <p className="text-xs text-muted-foreground mt-1">{p.notes}</p>}
+                {p.status === "AUTO_REJECTED_CRITICAL" && <p className="text-xs text-amber-600 mt-2">⚠️ Dieses Medikament darf nur nach einem persönlichen Arztgespräch verschrieben werden. Bitte vereinbaren Sie einen Termin.</p>}
               </div>
               <Badge variant={STATUS_BADGE[p.status] as any || 'outline'}>
                 {STATUS_MAP[p.status] || p.status}

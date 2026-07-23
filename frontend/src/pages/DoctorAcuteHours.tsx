@@ -1,10 +1,10 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calendar, Clock, Save, AlertCircle } from "lucide-react";
+import { Calendar, Save, AlertCircle } from "lucide-react";
 import { get, post } from "@/lib/api";
 
 interface DoctorInfo {
@@ -32,7 +32,7 @@ export default function DoctorAcuteHours() {
   const loadHours = () => {
     if (!doctorInfo || !date) return;
     setLoading(true);
-    get("/acute-slots/doctor-hours?doctorId=" + doctorInfo.id + "&date=" + date).then((r) => {
+    get("/acute-slots/doctor-hours?doctorId=" + doctorInfo.id + "&date=" + date).then((r: any) => {
       if (r.success && r.data) {
         setStartTime(r.data.start_time || "08:00");
         setEndTime(r.data.end_time || "12:00");
@@ -82,11 +82,11 @@ export default function DoctorAcuteHours() {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            Akutsprechstunde für ein Datum festlegen
+            Akutsprechstunde f�r ein Datum festlegen
           </CardTitle>
           <CardDescription>
             Legen Sie fest, an welchen Tagen Sie Akutsprechstunde anbieten. Die MFA sieht dann nur Slots
-            für Ärzte mit aktiver Akutsprechstunde.
+            f�r �rzte mit aktiver Akutsprechstunde.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -136,7 +136,7 @@ export default function DoctorAcuteHours() {
             </Button>
             {saved && (
               <p className="text-xs text-green-600 flex items-center gap-1">
-                <Save className="h-3 w-3" /> Einstellungen für {date} gespeichert
+                <Save className="h-3 w-3" /> Einstellungen f�r {date} gespeichert
               </p>
             )}
           </div>
@@ -149,7 +149,7 @@ export default function DoctorAcuteHours() {
         <CardContent className="py-4 text-sm text-muted-foreground flex items-start gap-2">
           <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
           <span>
-            Die MFA sieht im Dashboard nur Akutslots für Ärzte, die an diesem Tag eine aktive
+            Die MFA sieht im Dashboard nur Akutslots f�r �rzte, die an diesem Tag eine aktive
             Akutsprechstunde eingetragen haben. Die Slots werden automatisch generiert, wenn die MFA
             das Dashboard aufruft.
           </span>

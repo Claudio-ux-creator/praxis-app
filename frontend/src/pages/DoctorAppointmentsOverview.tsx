@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Calendar, Clock, ChevronLeft, ChevronRight, Pill, FlaskConical, FlaskConical, User, Phone, AlertCircle, ClipboardList, CalendarDays } from "lucide-react";
+import { Calendar, Clock, ChevronLeft, ChevronRight, Pill, User, Phone, AlertCircle, ClipboardList, CalendarDays } from "lucide-react";
 import { get } from "@/lib/api";
 
 interface AppointmentItem {
@@ -37,7 +37,7 @@ interface DoctorInfo {
   last_name: string;
 }
 
-const WEEKDAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+// const WEEKDAY_NAMES = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
 
 const STATUS_MAP: Record<string, { label: string; class: string }> = {
   SCHEDULED: { label: "Bestätigt", class: "bg-green-100 text-green-800 border-green-300" },
@@ -61,7 +61,7 @@ const STATUS_MAP: Record<string, { label: string; class: string }> = {
 const CATEGORY_MAP: Record<string, { label: string; icon: any }> = {
   CHECKUP: { label: "Vorsorge", icon: ClipboardList },
   CONSULTATION: { label: "Beratung", icon: User },
-  VACCINATION: { label: "Impfung", icon: FlaskConical },
+  VACCINATION: { label: "Impfung", icon: Calendar },
   PRESCRIPTION_PICKUP: { label: "Rezept-Abholung", icon: Pill },
   ACUTE: { label: "Akut", icon: Clock },
 };
@@ -234,7 +234,7 @@ export default function DoctorAppointmentsOverview() {
                           {appt.series_name && (
                             <>
                               <span>·</span>
-                              <FlaskConical className="h-3 w-3" />
+                              <Calendar className="h-3 w-3" />
                               <span>{appt.series_name} ({appt.series_dose_number}. Dosis)</span>
                             </>
                           )}
