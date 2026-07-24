@@ -1,6 +1,6 @@
 ﻿import { Router } from 'express';
 import { getDb } from '../db/connection.ts';
-import { isDoctorAbsent } from '../services/absenceCheck.ts';
+import { isDoctorAbsent, getPracticeClosure } from '../services/absenceCheck.ts';
 
 export const slotsRouter = Router();
 
@@ -60,8 +60,8 @@ slotsRouter.get('/slots', (req, res) => {
       return;
     }
 
-    // Prüfen ob der Arzt an diesem Datum abwesend ist (shared helper)
-    const isBlocked = isDoctorAbsent(db, doctorId, date);
+    // Prüfen ob die Praxis geschlossen oder der Arzt an diesem Datum abwesend ist (shared helper)
+    const isBlocked = getPracticeClosure(db, date) || isDoctorAbsent(db, doctorId, date);
 
     if (isBlocked) {
       res.json({ success: true, data: { date, doctorId, category, slots: [] } });

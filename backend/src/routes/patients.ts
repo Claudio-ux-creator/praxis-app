@@ -8,9 +8,21 @@ patientsRouter.get('/patients', (_req, res) => {
   try {
     const db = getDb();
     const rows = db.prepare(
-      'SELECT id, insurance_number, first_name, last_name, date_of_birth, phone, email, no_show_count, insurance_type, created_by_mfa_id, mfa_comment FROM patients ORDER BY last_name, first_name'
+      'SELECT id, insurance_number, first_name, last_name, date_of_birth, phone, email, no_show_count, is_blocked, insurance_type, created_by_mfa_id, mfa_comment FROM patients ORDER BY last_name, first_name'
     ).all();
     res.json({ success: true, data: rows });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+  }
+});
+
+// PATCH /api/patients/:id/unblock - Online-Sperre manuell aufheben (MFA)
+patientsRouter.patch('/patients/:id/unblock', (req, res) => {
+  try {
+    const db = getDb();
+    const id = Number(req.params.id);
+    db.prepare('UPDATE patients SET is_blocked = 0 WHERE id = ?').run(id);
+    res.json({ success: true, data: { id } });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
   }

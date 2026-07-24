@@ -82,6 +82,11 @@ const NEXT_STATUS_MAP: Record<string, string[]> = {
   CHECKED_IN: ["IN_PROGRESS", "NO_SHOW", "CANCELLED"], IN_PROGRESS: ["COMPLETED", "NO_SHOW"],
   COMPLETED: [], CANCELLED: [], NO_SHOW: []
 };
+function fmtClosureDate(iso: string): string {
+  const [, m, d] = iso.split("-");
+  return d + "." + m + ".";
+}
+
 export default function MFADashboard() {
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -94,6 +99,7 @@ export default function MFADashboard() {
   const [fixDosage, setFixDosage] = useState("");
   const [fixNotes, setFixNotes] = useState("");
   const [patientCandidates, setPatientCandidates] = useState<any[]>([]);
+  const [upcomingClosure, setUpcomingClosure] = useState<{ start_date: string; end_date: string; reason: string | null } | null>(null);
   interface AcuteSlotsData{date:string;slots:any[];}const [acuteSlots, setAcuteSlots] = useState<AcuteSlotsData|null>(null);
   const [showBookingDialog, setShowBookingDialog] = useState<boolean>(false);
   const [bookingSlotId, setBookingSlotId] = useState<number|null>(null);
@@ -108,6 +114,12 @@ export default function MFADashboard() {
     });
   };
   useEffect(() => { loadData(); }, []);
+
+  useEffect(() => {
+    get<{ start_date: string; end_date: string; reason: string | null } | null>("/practice-closures/upcoming").then((r) => {
+      if (r.success) setUpcomingClosure(r.data || null);
+    });
+  }, []);
 
   // Autovervollständigung im Rezept-Dialog: bei Versichertennummer oder komplettem Namen suchen
   useEffect(() => {
@@ -230,6 +242,13 @@ export default function MFADashboard() {
         <h1 className="text-2xl font-semibold">MFA-Dashboard</h1>
         <p className="text-sm text-muted-foreground">{dashboard?.date || ""}</p>
       </div>
+
+      {upcomingClosure && (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+          ⚠️ Praxisschließung: {fmtClosureDate(upcomingClosure.start_date)} – {fmtClosureDate(upcomingClosure.end_date)}{upcomingClosure.end_date.slice(0, 4)}
+          {upcomingClosure.reason && ` (${upcomingClosure.reason})`}
+        </div>
+      )}
       <div className="grid gap-6 md:grid-cols-3">
         {/* SPALTE 1: Heutige Termine */}
         <Card className="md:col-span-1">

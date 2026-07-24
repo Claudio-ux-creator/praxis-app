@@ -64,7 +64,7 @@ export default function PatientOverview() {
         const pid = r2.data[0].id;
         get<any[]>('/notifications?patientId=' + pid).then((r3) => {
           if (r3.success && r3.data) {
-            setNotifications(r3.data.filter(function(n) { return n.type === "PRESCRIPTION_AUTO_REJECTED"; }));
+            setNotifications(r3.data.filter(function(n) { return n.type === "PRESCRIPTION_AUTO_REJECTED" || n.type === "APPOINTMENT_CANCELLED_CLOSURE"; }));
           }
         });
       }

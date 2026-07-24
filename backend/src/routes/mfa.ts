@@ -1,8 +1,20 @@
 import { Router } from 'express';
 import { getDb } from '../db/connection.ts';
-import { isDoctorAbsent } from '../services/absenceCheck.ts';
+import { isDoctorAbsent, getPracticeClosure, formatGermanDate } from '../services/absenceCheck.ts';
+import { runNoShowCheck } from '../services/noShowCheck.ts';
 
 export const mfaRouter = Router();
+
+// POST /api/mfa/run-no-show-check - No-Show-Check manuell auslösen (normalerweise täglicher Hintergrundjob)
+mfaRouter.post('/mfa/run-no-show-check', (_req, res) => {
+  try {
+    const db = getDb();
+    const result = runNoShowCheck(db);
+    res.json({ success: true, data: result });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+  }
+});
 
 const PRESCRIPTION_ONLY_KEYWORDS = [
   'amoxicillin', 'penicillin', 'antibiotikum', 'antibiotika', 'ciprofloxacin', 'doxycyclin', 'erythromycin',
@@ -110,6 +122,15 @@ mfaRouter.patch('/mfa/appointments/:id/move', (req, res) => {
       { id: number; doctor_id: number; date: string; time: string; mfa_note: string | null } | undefined;
     if (!appt) {
       res.status(404).json({ success: false, error: 'Termin nicht gefunden' });
+      return;
+    }
+
+    const closure = getPracticeClosure(db, newDate);
+    if (closure) {
+      res.status(409).json({
+        success: false,
+        error: `Die Praxis ist vom ${formatGermanDate(closure.start_date)} bis ${formatGermanDate(closure.end_date)} geschlossen. Bitte wählen Sie einen anderen Termin.`,
+      });
       return;
     }
 

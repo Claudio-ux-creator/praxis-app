@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import { initDatabase } from './db/connection.ts';
+import { initDatabase, getDb } from './db/connection.ts';
 import { migrateSchema } from './db/migrate.ts';
+import { runNoShowCheck } from './services/noShowCheck.ts';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -34,6 +35,7 @@ app.use('/api', (await import('./routes/doctor.ts')).doctorRouter);
 app.use('/api', (await import('./routes/availability.ts')).availabilityRouter);
 app.use('/api', (await import('./routes/acuteSlots.ts')).acuteSlotsRouter);
 app.use('/api', (await import('./routes/doctorAppointments.ts')).doctorAppointmentsRouter);
+app.use('/api', (await import('./routes/practiceClosures.ts')).practiceClosuresRouter);
 
 // Unbekannte API-Routen: immer JSON statt HTML zurückgeben
 app.use('/api', (req, res) => {
@@ -75,5 +77,20 @@ function startServer(port) {
   });
 }
 startServer(PORT);
+
+// Täglicher No-Show-Check (einmal beim Start + danach alle 24h)
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+function runDailyNoShowCheck() {
+  try {
+    const result = runNoShowCheck(getDb());
+    if (result.markedNoShow > 0) {
+      console.log('[NO-SHOW-CHECK]', result.markedNoShow, 'Termine als NO_SHOW markiert. Warnungen:', result.warnings, 'Sperrungen:', result.blocked);
+    }
+  } catch (err) {
+    console.error('[NO-SHOW-CHECK] Fehler:', err);
+  }
+}
+runDailyNoShowCheck();
+setInterval(runDailyNoShowCheck, ONE_DAY_MS);
 
 

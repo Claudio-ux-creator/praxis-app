@@ -17,6 +17,7 @@ interface Patient {
   phone: string;
   email: string | null;
   no_show_count: number;
+  is_blocked: number;
   insurance_type: "public" | "private" | null;
   created_by_mfa_id: number | null;
   mfa_comment: string | null;
@@ -116,6 +117,12 @@ export default function MFAPatients() {
     setEditSaving(false);
     if (r.success) { setEditPatient(null); loadPatients(); }
     else { alert(r.error || "Fehler beim Speichern"); }
+  };
+
+  const handleUnblock = async (p: Patient, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const r = await patch("/patients/" + p.id + "/unblock", {});
+    if (r.success) loadPatients();
   };
 
   const openDelete = async (p: Patient, e: React.MouseEvent) => {
@@ -224,9 +231,19 @@ export default function MFAPatients() {
                   <span className="italic">{p.mfa_comment}</span>
                 </div>
               )}
-              {p.no_show_count >= 2 && (
+              {p.no_show_count > 0 && (
                 <div className="flex items-center gap-2 text-destructive text-xs font-medium pt-1">
                   <AlertTriangle className="h-3.5 w-3.5" /> No-Shows: {p.no_show_count}
+                </div>
+              )}
+              {p.is_blocked === 1 && (
+                <div className="flex items-center justify-between gap-2 text-xs font-medium pt-1">
+                  <span className="flex items-center gap-2 text-destructive">
+                    <ShieldAlert className="h-3.5 w-3.5" /> Online-Buchung gesperrt
+                  </span>
+                  <Button size="sm" variant="outline" className="h-6 text-xs" onClick={(e) => handleUnblock(p, e)}>
+                    Sperre aufheben
+                  </Button>
                 </div>
               )}
               <div className="text-xs text-muted-foreground flex items-center gap-1 pt-1 border-t mt-2">

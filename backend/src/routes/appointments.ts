@@ -1,6 +1,6 @@
 ﻿import { Router } from 'express';
 import { getDb } from '../db/connection.ts';
-import { isDoctorAbsent } from '../services/absenceCheck.ts';
+import { isDoctorAbsent, getPracticeClosure, formatGermanDate } from '../services/absenceCheck.ts';
 
 export const appointmentsRouter = Router();
 
@@ -22,7 +22,7 @@ appointmentsRouter.get('/appointments', (req, res) => {
     }
 
     const rows = db.prepare(
-      "SELECT a.id, a.date, a.time, a.status, a.category, a.series_id, a.series_dose_number, a.series_group_id, d.first_name AS doctor_first_name, d.last_name AS doctor_last_name FROM appointments a JOIN doctors d ON d.id = a.doctor_id WHERE a.patient_id = ? ORDER BY a.date DESC, a.time DESC"
+      "SELECT a.id, a.date, a.time, a.status, a.category, a.doctor_id, a.series_id, a.series_dose_number, a.series_group_id, d.first_name AS doctor_first_name, d.last_name AS doctor_last_name FROM appointments a JOIN doctors d ON d.id = a.doctor_id WHERE a.patient_id = ? ORDER BY a.date DESC, a.time DESC"
     ).all(patient.id);
 
     res.json({ success: true, data: rows });
@@ -42,9 +42,25 @@ appointmentsRouter.post('/appointments', (req, res) => {
       return;
     }
 
-    const patient = db.prepare('SELECT id FROM patients WHERE insurance_number = ?').get(insuranceNumber) as { id: number } | undefined;
+    const patient = db.prepare('SELECT id, is_blocked FROM patients WHERE insurance_number = ?').get(insuranceNumber) as { id: number; is_blocked: number } | undefined;
     if (!patient) {
       res.status(404).json({ success: false, error: 'Patient nicht gefunden' });
+      return;
+    }
+
+    // Prüfen ob der Patient wegen wiederholter No-Shows gesperrt ist
+    if (patient.is_blocked) {
+      res.status(403).json({ success: false, error: 'Sie können derzeit keine Termine online buchen. Bitte wenden Sie sich telefonisch an die Praxis.' });
+      return;
+    }
+
+    // Prüfen ob die Praxis an diesem Tag geschlossen ist
+    const closure = getPracticeClosure(db, date);
+    if (closure) {
+      res.status(409).json({
+        success: false,
+        error: `Die Praxis ist vom ${formatGermanDate(closure.start_date)} bis ${formatGermanDate(closure.end_date)} geschlossen. Bitte wählen Sie einen anderen Termin.`,
+      });
       return;
     }
 
@@ -94,10 +110,22 @@ appointmentsRouter.post('/appointments/series', (req, res) => {
       res.status(400).json({ success: false, error: 'Pflichtfelder fehlen' });
       return;
     }
-    const patient = db.prepare('SELECT id FROM patients WHERE insurance_number = ?').get(insuranceNumber);
+    const patient = db.prepare('SELECT id, is_blocked FROM patients WHERE insurance_number = ?').get(insuranceNumber) as { id: number; is_blocked: number } | undefined;
     if (!patient) { res.status(404).json({ success: false, error: 'Patient nicht gefunden' }); return; }
+    if (patient.is_blocked) {
+      res.status(403).json({ success: false, error: 'Sie können derzeit keine Termine online buchen. Bitte wenden Sie sich telefonisch an die Praxis.' });
+      return;
+    }
     const template = db.prepare('SELECT * FROM vaccination_templates WHERE id = ?').get(seriesTemplateId);
     if (!template) { res.status(404).json({ success: false, error: 'Impfserien-Vorlage nicht gefunden' }); return; }
+    const closure = getPracticeClosure(db, date);
+    if (closure) {
+      res.status(409).json({
+        success: false,
+        error: `Die Praxis ist vom ${formatGermanDate(closure.start_date)} bis ${formatGermanDate(closure.end_date)} geschlossen. Bitte wählen Sie einen anderen Termin.`,
+      });
+      return;
+    }
     if (isDoctorAbsent(db, doctorId, date)) {
       res.status(409).json({ success: false, error: 'Der gewünschte Arzt ist an diesem Tag abwesend.' });
       return;
@@ -146,6 +174,115 @@ appointmentsRouter.patch('/appointments/:id/confirm-series', (req, res) => {
       db.prepare('UPDATE appointments SET status = ? WHERE id = ?').run('SCHEDULED', id);
     }
     res.json({ success: true, data: { id } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+  }
+});
+
+// PATCH /api/appointments/:id/cancel - Termin durch den Patienten selbst absagen (bis 2h vorher)
+appointmentsRouter.patch('/appointments/:id/cancel', (req, res) => {
+  try {
+    const db = getDb();
+    const id = Number(req.params.id);
+    const { insuranceNumber } = req.body;
+    if (!insuranceNumber) { res.status(400).json({ success: false, error: 'insuranceNumber erforderlich' }); return; }
+
+    const patient = db.prepare('SELECT id FROM patients WHERE insurance_number = ?').get(insuranceNumber) as { id: number } | undefined;
+    if (!patient) { res.status(404).json({ success: false, error: 'Patient nicht gefunden' }); return; }
+
+    const appt = db.prepare('SELECT id, patient_id, date, time, status FROM appointments WHERE id = ?').get(id) as
+      { id: number; patient_id: number; date: string; time: string; status: string } | undefined;
+    if (!appt) { res.status(404).json({ success: false, error: 'Termin nicht gefunden' }); return; }
+    if (appt.patient_id !== patient.id) { res.status(403).json({ success: false, error: 'Kein Zugriff auf diesen Termin' }); return; }
+    if (appt.status === 'CANCELLED' || appt.status === 'COMPLETED' || appt.status === 'NO_SHOW') {
+      res.status(400).json({ success: false, error: 'Dieser Termin kann nicht mehr storniert werden.' });
+      return;
+    }
+
+    const appointmentStart = new Date(appt.date + 'T' + appt.time + ':00');
+    const hoursUntilAppointment = (appointmentStart.getTime() - Date.now()) / (1000 * 60 * 60);
+    if (hoursUntilAppointment < 2) {
+      res.status(409).json({
+        success: false,
+        error: 'Termine können nur bis zu 2 Stunden vor dem Termin abgesagt werden. Bitte rufen Sie die Praxis an, wenn Sie den Termin nicht wahrnehmen können.',
+      });
+      return;
+    }
+
+    db.prepare("UPDATE appointments SET status = 'CANCELLED', updated_at = datetime('now') WHERE id = ?").run(id);
+    db.prepare(
+      "INSERT INTO appointment_history (appointment_id, patient_id, action, changed_by_type, changed_by_id, old_status, new_status, reason) VALUES (?, ?, 'CANCELLED', 'patient', ?, ?, 'CANCELLED', ?)"
+    ).run(id, patient.id, patient.id, appt.status, 'Vom Patienten storniert');
+
+    res.json({ success: true, data: { id, status: 'CANCELLED' } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
+  }
+});
+
+// PATCH /api/appointments/:id/reschedule - Termin durch den Patienten selbst verschieben (bis 2h vorher, nur auf freien Slot)
+appointmentsRouter.patch('/appointments/:id/reschedule', (req, res) => {
+  try {
+    const db = getDb();
+    const id = Number(req.params.id);
+    const { insuranceNumber, newDate, newTime } = req.body;
+    if (!insuranceNumber || !newDate || !newTime) {
+      res.status(400).json({ success: false, error: 'insuranceNumber, newDate und newTime erforderlich' });
+      return;
+    }
+
+    const patient = db.prepare('SELECT id FROM patients WHERE insurance_number = ?').get(insuranceNumber) as { id: number } | undefined;
+    if (!patient) { res.status(404).json({ success: false, error: 'Patient nicht gefunden' }); return; }
+
+    const appt = db.prepare('SELECT id, patient_id, doctor_id, category, date, time, status FROM appointments WHERE id = ?').get(id) as
+      { id: number; patient_id: number; doctor_id: number; category: string; date: string; time: string; status: string } | undefined;
+    if (!appt) { res.status(404).json({ success: false, error: 'Termin nicht gefunden' }); return; }
+    if (appt.patient_id !== patient.id) { res.status(403).json({ success: false, error: 'Kein Zugriff auf diesen Termin' }); return; }
+    if (appt.status === 'CANCELLED' || appt.status === 'COMPLETED' || appt.status === 'NO_SHOW') {
+      res.status(400).json({ success: false, error: 'Dieser Termin kann nicht mehr verschoben werden.' });
+      return;
+    }
+
+    const appointmentStart = new Date(appt.date + 'T' + appt.time + ':00');
+    const hoursUntilAppointment = (appointmentStart.getTime() - Date.now()) / (1000 * 60 * 60);
+    if (hoursUntilAppointment < 2) {
+      res.status(409).json({
+        success: false,
+        error: 'Termine können nur bis zu 2 Stunden vor dem Termin verschoben werden. Bitte rufen Sie die Praxis an, wenn Sie den Termin nicht wahrnehmen können.',
+      });
+      return;
+    }
+
+    const closure = getPracticeClosure(db, newDate);
+    if (closure) {
+      res.status(409).json({
+        success: false,
+        error: `Die Praxis ist vom ${formatGermanDate(closure.start_date)} bis ${formatGermanDate(closure.end_date)} geschlossen. Bitte wählen Sie einen anderen Termin.`,
+      });
+      return;
+    }
+    if (isDoctorAbsent(db, appt.doctor_id, newDate)) {
+      res.status(409).json({ success: false, error: 'Der behandelnde Arzt ist am gewünschten Tag abwesend.' });
+      return;
+    }
+
+    // Nur auf einen freien Slot verschiebbar - belegte Slots sind ausgeschlossen
+    const conflict = db.prepare(
+      "SELECT id FROM appointments WHERE doctor_id = ? AND date = ? AND time = ? AND status != 'CANCELLED' AND id != ?"
+    ).get(appt.doctor_id, newDate, newTime, id);
+    if (conflict) {
+      res.status(409).json({ success: false, error: 'Dieser Termin ist bereits belegt. Bitte wählen Sie einen anderen freien Slot.' });
+      return;
+    }
+
+    const oldDate = appt.date;
+    const oldTime = appt.time;
+    db.prepare("UPDATE appointments SET date = ?, time = ?, updated_at = datetime('now') WHERE id = ?").run(newDate, newTime, id);
+    db.prepare(
+      "INSERT INTO appointment_history (appointment_id, patient_id, action, changed_by_type, changed_by_id, old_status, new_status, reason) VALUES (?, ?, 'MOVED', 'patient', ?, ?, ?, ?)"
+    ).run(id, patient.id, patient.id, appt.status, appt.status, `Vom Patienten verschoben von ${oldDate} ${oldTime} auf ${newDate} ${newTime}`);
+
+    res.json({ success: true, data: { id, date: newDate, time: newTime } });
   } catch (error) {
     res.status(500).json({ success: false, error: error instanceof Error ? error.message : 'Datenbankfehler' });
   }

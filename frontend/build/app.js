@@ -8944,6 +8944,17 @@ var PraxisApp = (() => {
     ["path", { d: "M10.3 21a1.94 1.94 0 0 0 3.4 0", key: "qgo35s" }]
   ]);
 
+  // node_modules/lucide-react/dist/esm/icons/building-2.js
+  var Building2 = createLucideIcon("Building2", [
+    ["path", { d: "M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z", key: "1b4qmf" }],
+    ["path", { d: "M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2", key: "i71pzd" }],
+    ["path", { d: "M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2", key: "10jefs" }],
+    ["path", { d: "M10 6h4", key: "1itunk" }],
+    ["path", { d: "M10 10h4", key: "tcdvrf" }],
+    ["path", { d: "M10 14h4", key: "kelpxr" }],
+    ["path", { d: "M10 18h4", key: "1ulq68" }]
+  ]);
+
   // node_modules/lucide-react/dist/esm/icons/calendar-clock.js
   var CalendarClock = createLucideIcon("CalendarClock", [
     ["path", { d: "M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5", key: "1osxxc" }],
@@ -20219,7 +20230,7 @@ var PraxisApp = (() => {
           get("/notifications?patientId=" + pid).then((r3) => {
             if (r3.success && r3.data) {
               setNotifications(r3.data.filter(function(n) {
-                return n.type === "PRESCRIPTION_AUTO_REJECTED";
+                return n.type === "PRESCRIPTION_AUTO_REJECTED" || n.type === "APPOINTMENT_CANCELLED_CLOSURE";
               }));
             }
           });
@@ -20312,6 +20323,9 @@ var PraxisApp = (() => {
   // src/pages/PatientAppointments.tsx
   var import_react38 = __toESM(require_react(), 1);
   var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
+  function isCancellable(status) {
+    return status !== "CANCELLED" && status !== "COMPLETED" && status !== "NO_SHOW";
+  }
   var STATUS_MAP3 = {
     SCHEDULED: "Gebucht",
     PENDING_CONFIRMATION: "Best\xE4tigung ausstehend",
@@ -20342,6 +20356,14 @@ var PraxisApp = (() => {
     const [appointments, setAppointments] = (0, import_react38.useState)([]);
     const [filter, setFilter] = (0, import_react38.useState)("ALL");
     const [loading, setLoading] = (0, import_react38.useState)(true);
+    const [error, setError] = (0, import_react38.useState)("");
+    const [moveTarget, setMoveTarget] = (0, import_react38.useState)(null);
+    const [moveDate, setMoveDate] = (0, import_react38.useState)("");
+    const [moveTime, setMoveTime] = (0, import_react38.useState)("");
+    const [moveSlots, setMoveSlots] = (0, import_react38.useState)([]);
+    const [moveSlotsLoading, setMoveSlotsLoading] = (0, import_react38.useState)(false);
+    const [moveError, setMoveError] = (0, import_react38.useState)("");
+    const [moving, setMoving] = (0, import_react38.useState)(false);
     const loadAppointments = () => {
       setLoading(true);
       get("/appointments?insuranceNumber=" + insuranceNumber).then((r2) => {
@@ -20352,10 +20374,6 @@ var PraxisApp = (() => {
     (0, import_react38.useEffect)(() => {
       loadAppointments();
     }, [insuranceNumber]);
-    const handleConfirmSeries = async (appointmentId) => {
-      const r2 = await patch("/appointments/" + appointmentId + "/confirm-series", {});
-      if (r2.success) loadAppointments();
-    };
     const handleConfirmSuggestion = async (appointmentId) => {
       const r2 = await patch("/appointments/" + appointmentId + "/confirm-suggestion", { insuranceNumber });
       if (r2.success) loadAppointments();
@@ -20363,6 +20381,66 @@ var PraxisApp = (() => {
     const handleRejectSuggestion = async (appointmentId) => {
       const r2 = await patch("/appointments/" + appointmentId + "/reject-suggestion", { insuranceNumber });
       if (r2.success) loadAppointments();
+    };
+    const handleCancel = async (appointmentId) => {
+      setError("");
+      if (!window.confirm("Diesen Termin wirklich absagen?")) return;
+      const r2 = await patch("/appointments/" + appointmentId + "/cancel", { insuranceNumber });
+      if (r2.success) {
+        loadAppointments();
+      } else {
+        setError(r2.error || "Absage fehlgeschlagen");
+      }
+    };
+    const openMoveDialog = (a) => {
+      setMoveTarget(a);
+      setMoveDate(a.date);
+      setMoveTime(a.time);
+      setMoveError("");
+      setError("");
+    };
+    const closeMoveDialog = () => {
+      setMoveTarget(null);
+      setMoveSlots([]);
+      setMoveError("");
+    };
+    (0, import_react38.useEffect)(() => {
+      if (!moveTarget || !moveDate) {
+        setMoveSlots([]);
+        return;
+      }
+      setMoveSlotsLoading(true);
+      setMoveError("");
+      get("/slots?doctorId=" + moveTarget.doctor_id + "&date=" + moveDate + "&category=" + moveTarget.category).then((r2) => {
+        setMoveSlotsLoading(false);
+        if (r2.success && r2.data) {
+          let slots = r2.data.slots;
+          if (moveDate === moveTarget.date && !slots.includes(moveTarget.time)) {
+            slots = [...slots, moveTarget.time].sort();
+          }
+          setMoveSlots(slots);
+        } else {
+          setMoveSlots([]);
+          setMoveError(r2.error || "Slots konnten nicht geladen werden");
+        }
+      });
+    }, [moveTarget, moveDate]);
+    const handleMove = async () => {
+      if (!moveTarget || !moveDate || !moveTime) return;
+      setMoving(true);
+      setMoveError("");
+      const r2 = await patch("/appointments/" + moveTarget.id + "/reschedule", {
+        insuranceNumber,
+        newDate: moveDate,
+        newTime: moveTime
+      });
+      setMoving(false);
+      if (r2.success) {
+        closeMoveDialog();
+        loadAppointments();
+      } else {
+        setMoveError(r2.error || "Verschieben fehlgeschlagen");
+      }
     };
     const filtered = filter === "ALL" ? appointments : appointments.filter((a) => a.status === filter);
     const counts = {};
@@ -20398,6 +20476,7 @@ var PraxisApp = (() => {
           );
         }) })
       ] }),
+      error && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: error }),
       appointments.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(CardContent, { className: "py-8 text-center", children: [
         /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "text-muted-foreground", children: "Sie haben noch keine Termine." }),
         /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { className: "mt-4", onClick: () => window.location.href = "/patient/book", children: "Termin buchen" })
@@ -20426,10 +20505,44 @@ var PraxisApp = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => handleRejectSuggestion(a.id), children: "Ablehnen" }),
             /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { size: "sm", onClick: () => handleConfirmSuggestion(a.id), children: "Best\xE4tigen" })
           ] }),
-          a.status === "PENDING_CONFIRMATION" && (a.series_dose_number || 0) <= 1 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { size: "sm", onClick: () => handleConfirmSeries(a.id), children: "Best\xE4tigen" }),
+          isCancellable(a.status) && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { size: "sm", variant: "outline", onClick: () => openMoveDialog(a), children: "Verschieben" }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { size: "sm", variant: "destructive", onClick: () => handleCancel(a.id), children: "Absagen" })
+          ] }),
           /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Badge, { variant: STATUS_BADGE[a.status] || "outline", children: STATUS_MAP3[a.status] || a.status })
         ] })
-      ] }) }, a.id)) })
+      ] }) }, a.id)) }),
+      moveTarget && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-black/30", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(Card, { className: "w-full max-w-md bg-white rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] p-6 z-[999]", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(CardTitle, { className: "text-base", children: "Termin verschieben" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(CardContent, { className: "space-y-3", children: [
+          moveError && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: moveError }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "rounded-lg bg-muted p-3 text-sm text-muted-foreground", children: [
+            "Aktuell: ",
+            moveTarget.date,
+            " um ",
+            moveTarget.time,
+            " Uhr bei Dr. ",
+            moveTarget.doctor_last_name
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Label, { children: "Neues Datum *" }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Input3, { type: "date", value: moveDate, onChange: (e) => {
+              setMoveDate(e.target.value);
+              setMoveTime("");
+            } })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Label, { children: "Neue Uhrzeit *" }),
+            moveSlotsLoading && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "text-sm text-muted-foreground", children: "Lade verf\xFCgbare Slots..." }),
+            !moveSlotsLoading && !moveError && moveSlots.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "text-sm text-muted-foreground", children: "Keine freien Slots an diesem Tag." }),
+            !moveSlotsLoading && moveSlots.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "flex flex-wrap gap-2", children: moveSlots.map((t) => /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { type: "button", size: "sm", variant: moveTime === t ? "default" : "outline", onClick: () => setMoveTime(t), children: t }, t)) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "flex gap-2 justify-end pt-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { variant: "outline", onClick: closeMoveDialog, disabled: moving, children: "Abbrechen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Button3, { onClick: handleMove, disabled: moving || !moveDate || !moveTime, children: moving ? "..." : "Verschieben" })
+          ] })
+        ] })
+      ] }) })
     ] });
   }
 
@@ -20687,6 +20800,10 @@ var PraxisApp = (() => {
     CANCELLED: [],
     NO_SHOW: []
   };
+  function fmtClosureDate(iso) {
+    const [, m, d] = iso.split("-");
+    return d + "." + m + ".";
+  }
   function MFADashboard() {
     const [dashboard, setDashboard] = (0, import_react41.useState)(null);
     const [loading, setLoading] = (0, import_react41.useState)(true);
@@ -20699,6 +20816,7 @@ var PraxisApp = (() => {
     const [fixDosage, setFixDosage] = (0, import_react41.useState)("");
     const [fixNotes, setFixNotes] = (0, import_react41.useState)("");
     const [patientCandidates, setPatientCandidates] = (0, import_react41.useState)([]);
+    const [upcomingClosure, setUpcomingClosure] = (0, import_react41.useState)(null);
     const [acuteSlots, setAcuteSlots] = (0, import_react41.useState)(null);
     const [showBookingDialog, setShowBookingDialog] = (0, import_react41.useState)(false);
     const [bookingSlotId, setBookingSlotId] = (0, import_react41.useState)(null);
@@ -20714,6 +20832,11 @@ var PraxisApp = (() => {
     };
     (0, import_react41.useEffect)(() => {
       loadData();
+    }, []);
+    (0, import_react41.useEffect)(() => {
+      get("/practice-closures/upcoming").then((r2) => {
+        if (r2.success) setUpcomingClosure(r2.data || null);
+      });
     }, []);
     (0, import_react41.useEffect)(() => {
       if (!showPrescriptionDialog) {
@@ -20870,6 +20993,14 @@ var PraxisApp = (() => {
       /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center justify-between", children: [
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h1", { className: "text-2xl font-semibold", children: "MFA-Dashboard" }),
         /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { className: "text-sm text-muted-foreground", children: dashboard?.date || "" })
+      ] }),
+      upcomingClosure && /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800", children: [
+        "\u26A0\uFE0F Praxisschlie\xDFung: ",
+        fmtClosureDate(upcomingClosure.start_date),
+        " \u2013 ",
+        fmtClosureDate(upcomingClosure.end_date),
+        upcomingClosure.end_date.slice(0, 4),
+        upcomingClosure.reason && ` (${upcomingClosure.reason})`
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "grid gap-6 md:grid-cols-3", children: [
         /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(Card, { className: "md:col-span-1", children: [
@@ -21162,6 +21293,11 @@ var PraxisApp = (() => {
         alert(r2.error || "Fehler beim Speichern");
       }
     };
+    const handleUnblock = async (p, e) => {
+      e.stopPropagation();
+      const r2 = await patch("/patients/" + p.id + "/unblock", {});
+      if (r2.success) loadPatients();
+    };
     const openDelete = async (p, e) => {
       e.stopPropagation();
       setDeletePatient(p);
@@ -21297,10 +21433,17 @@ var PraxisApp = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(MessageSquare, { className: "h-3 w-3 mt-0.5 shrink-0" }),
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "italic", children: p.mfa_comment })
           ] }),
-          p.no_show_count >= 2 && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2 text-destructive text-xs font-medium pt-1", children: [
+          p.no_show_count > 0 && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center gap-2 text-destructive text-xs font-medium pt-1", children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(TriangleAlert, { className: "h-3.5 w-3.5" }),
             " No-Shows: ",
             p.no_show_count
+          ] }),
+          p.is_blocked === 1 && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "flex items-center justify-between gap-2 text-xs font-medium pt-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "flex items-center gap-2 text-destructive", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ShieldAlert, { className: "h-3.5 w-3.5" }),
+              " Online-Buchung gesperrt"
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Button3, { size: "sm", variant: "outline", className: "h-6 text-xs", onClick: (e) => handleUnblock(p, e), children: "Sperre aufheben" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "text-xs text-muted-foreground flex items-center gap-1 pt-1 border-t mt-2", children: [
             /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(Stethoscope, { className: "h-3 w-3" }),
@@ -22381,10 +22524,15 @@ var PraxisApp = (() => {
   // src/pages/DoctorDashboard.tsx
   var import_react49 = __toESM(require_react(), 1);
   var import_jsx_runtime29 = __toESM(require_jsx_runtime(), 1);
+  function fmtClosureDate2(iso) {
+    const [, m, d] = iso.split("-");
+    return d + "." + m + ".";
+  }
   function DoctorDashboard() {
     const navigate = useNavigate();
     const [doctorInfo, setDoctorInfo] = (0, import_react49.useState)(null);
     const [pendingRx, setPendingRx] = (0, import_react49.useState)([]);
+    const [upcomingClosure, setUpcomingClosure] = (0, import_react49.useState)(null);
     (0, import_react49.useEffect)(() => {
       const stored = localStorage.getItem("doctor_info");
       if (stored) {
@@ -22398,6 +22546,9 @@ var PraxisApp = (() => {
       } else {
         navigate("/doctor-login");
       }
+      get("/practice-closures/upcoming").then((r2) => {
+        if (r2.success) setUpcomingClosure(r2.data || null);
+      });
     }, []);
     if (!doctorInfo) return null;
     return /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "space-y-6", children: [
@@ -22407,6 +22558,14 @@ var PraxisApp = (() => {
           doctorInfo.last_name
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime29.jsx)("p", { className: "text-muted-foreground", children: "Arzt-Portal" })
+      ] }),
+      upcomingClosure && /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800", children: [
+        "\u26A0\uFE0F Praxisschlie\xDFung: ",
+        fmtClosureDate2(upcomingClosure.start_date),
+        " \u2013 ",
+        fmtClosureDate2(upcomingClosure.end_date),
+        upcomingClosure.end_date.slice(0, 4),
+        upcomingClosure.reason && ` (${upcomingClosure.reason})`
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)("div", { className: "grid gap-4 md:grid-cols-3", children: [
         /* @__PURE__ */ (0, import_jsx_runtime29.jsx)(Card, { className: "cursor-pointer transition-all hover:border-primary hover:shadow-md", onClick: () => navigate("/doctor/prescriptions"), children: /* @__PURE__ */ (0, import_jsx_runtime29.jsxs)(CardHeader, { children: [
@@ -22655,6 +22814,7 @@ var PraxisApp = (() => {
   var import_jsx_runtime31 = __toESM(require_jsx_runtime(), 1);
   function DoctorAbsences() {
     const navigate = useNavigate();
+    const [tab, setTab] = (0, import_react51.useState)("absences");
     const [doctorInfo, setDoctorInfo] = (0, import_react51.useState)(null);
     const [absences, setAbsences] = (0, import_react51.useState)([]);
     const [doctors, setDoctors] = (0, import_react51.useState)([]);
@@ -22665,6 +22825,13 @@ var PraxisApp = (() => {
     const [startDate, setStartDate] = (0, import_react51.useState)("");
     const [endDate, setEndDate] = (0, import_react51.useState)("");
     const [reason, setReason] = (0, import_react51.useState)("");
+    const [closures, setClosures] = (0, import_react51.useState)([]);
+    const [showClosureForm, setShowClosureForm] = (0, import_react51.useState)(false);
+    const [editingClosureId, setEditingClosureId] = (0, import_react51.useState)(null);
+    const [closureStart, setClosureStart] = (0, import_react51.useState)("");
+    const [closureEnd, setClosureEnd] = (0, import_react51.useState)("");
+    const [closureReason, setClosureReason] = (0, import_react51.useState)("");
+    const [closureError, setClosureError] = (0, import_react51.useState)("");
     (0, import_react51.useEffect)(() => {
       const stored = localStorage.getItem("doctor_info");
       if (stored) {
@@ -22677,16 +22844,58 @@ var PraxisApp = (() => {
       setLoading(true);
       Promise.all([
         get("/doctor/absences"),
-        get("/doctors")
-      ]).then(([a, d]) => {
+        get("/doctors"),
+        get("/practice-closures")
+      ]).then(([a, d, c]) => {
         if (a.success && a.data) setAbsences(a.data);
         if (d.success && d.data) setDoctors(d.data);
+        if (c.success && c.data) setClosures(c.data);
         setLoading(false);
       });
     };
     (0, import_react51.useEffect)(() => {
       if (doctorInfo) loadData();
     }, [doctorInfo]);
+    const resetClosureForm = () => {
+      setShowClosureForm(false);
+      setEditingClosureId(null);
+      setClosureStart("");
+      setClosureEnd("");
+      setClosureReason("");
+      setClosureError("");
+    };
+    const openNewClosureForm = () => {
+      resetClosureForm();
+      setShowClosureForm(true);
+    };
+    const openEditClosureForm = (c) => {
+      setEditingClosureId(c.id);
+      setClosureStart(c.start_date);
+      setClosureEnd(c.end_date);
+      setClosureReason(c.reason || "");
+      setClosureError("");
+      setShowClosureForm(true);
+    };
+    const handleSaveClosure = async () => {
+      if (!closureStart || !closureEnd) return;
+      setClosureError("");
+      const body = { startDate: closureStart, endDate: closureEnd, reason: closureReason || void 0 };
+      const r2 = editingClosureId ? await patch("/practice-closures/" + editingClosureId, body) : await post("/practice-closures", { ...body, createdBy: doctorInfo?.id });
+      if (r2.success) {
+        const cancelled = r2.data?.cancelledAppointments || 0;
+        resetClosureForm();
+        loadData();
+        if (cancelled > 0) {
+          alert(cancelled + (cancelled === 1 ? " Termin wurde" : " Termine wurden") + " storniert und die Patienten benachrichtigt.");
+        }
+      } else {
+        setClosureError(r2.error || "Speichern fehlgeschlagen");
+      }
+    };
+    const handleDeleteClosure = async (id) => {
+      const r2 = await del("/practice-closures/" + id);
+      if (r2.success) loadData();
+    };
     const handleCreate = async () => {
       if (!startDate || !endDate || selectedDoctors.length === 0) return;
       const r2 = await post("/doctor/absences", {
@@ -22725,12 +22934,33 @@ var PraxisApp = (() => {
     return /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-6", children: [
       /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center justify-between", children: [
         /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("h1", { className: "text-2xl font-semibold", children: "Urlaub & Abwesenheit" }),
-        /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Button3, { onClick: () => setShowForm(!showForm), children: [
+        tab === "absences" ? /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Button3, { onClick: () => setShowForm(!showForm), children: [
           /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
           " Abwesenheit eintragen"
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Button3, { onClick: openNewClosureForm, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Plus, { className: "h-4 w-4 mr-1" }),
+          " Praxisschlie\xDFung anlegen"
         ] })
       ] }),
-      showForm && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Card, { className: "border-primary", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex rounded-lg border bg-muted p-0.5 w-fit", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+          "button",
+          {
+            onClick: () => setTab("absences"),
+            className: "px-3 py-1.5 text-sm font-medium rounded-md transition-colors " + (tab === "absences" ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"),
+            children: "Abwesenheiten"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(
+          "button",
+          {
+            onClick: () => setTab("closures"),
+            className: "px-3 py-1.5 text-sm font-medium rounded-md transition-colors " + (tab === "closures" ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"),
+            children: "Praxisschlie\xDFungen"
+          }
+        )
+      ] }),
+      tab === "absences" && showForm && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Card, { className: "border-primary", children: [
         /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CardTitle, { className: "text-base", children: "Neue Abwesenheit" }) }),
         /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(CardContent, { className: "space-y-4", children: [
           /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "grid gap-4 md:grid-cols-2", children: [
@@ -22764,35 +22994,88 @@ var PraxisApp = (() => {
           ] })
         ] })
       ] }),
-      loading && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "text-muted-foreground", children: "Lade Abwesenheiten..." }),
-      /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-3", children: [
-        absences.length === 0 && !loading && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "text-muted-foreground", children: "Keine Abwesenheiten eingetragen." }) }) }),
-        absences.map((a) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(CardContent, { className: "py-4 flex items-center justify-between", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center gap-2", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CalendarDays, { className: "h-4 w-4 text-muted-foreground" }),
-              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { className: "font-medium", children: [
-                a.start_date,
-                " bis ",
-                a.end_date
+      tab === "absences" && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(import_jsx_runtime31.Fragment, { children: [
+        loading && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "text-muted-foreground", children: "Lade Abwesenheiten..." }),
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-3", children: [
+          absences.length === 0 && !loading && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "text-muted-foreground", children: "Keine Abwesenheiten eingetragen." }) }) }),
+          absences.map((a) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(CardContent, { className: "py-4 flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CalendarDays, { className: "h-4 w-4 text-muted-foreground" }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { className: "font-medium", children: [
+                  a.start_date,
+                  " bis ",
+                  a.end_date
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Badge, { variant: "secondary", children: typeLabels[a.type] || a.type }),
+                a.blocks_booking === 1 && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Badge, { variant: "outline", children: "Keine Buchung" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Badge, { variant: "secondary", children: typeLabels[a.type] || a.type }),
-              a.blocks_booking === 1 && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Badge, { variant: "outline", children: "Keine Buchung" })
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { className: "text-sm text-muted-foreground", children: [
+                "\xC4rzte: ",
+                a.doctor_ids.split(",").map((id) => {
+                  const doc = doctors.find((d) => d.id === Number(id));
+                  return doc ? `Dr. ${doc.last_name}` : id;
+                }).join(", ")
+              ] }),
+              a.reason && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+                "Grund: ",
+                a.reason
+              ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { className: "text-sm text-muted-foreground", children: [
-              "\xC4rzte: ",
-              a.doctor_ids.split(",").map((id) => {
-                const doc = doctors.find((d) => d.id === Number(id));
-                return doc ? `Dr. ${doc.last_name}` : id;
-              }).join(", ")
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleDelete(a.id), children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Trash2, { className: "h-4 w-4 text-destructive" }) })
+          ] }) }, a.id))
+        ] })
+      ] }),
+      tab === "closures" && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(import_jsx_runtime31.Fragment, { children: [
+        showClosureForm && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(Card, { className: "border-primary", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CardTitle, { className: "text-base", children: editingClosureId ? "Praxisschlie\xDFung bearbeiten" : "Neue Praxisschlie\xDFung" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(CardContent, { className: "space-y-4", children: [
+            closureError && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("div", { className: "rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive", children: closureError }),
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "grid gap-4 md:grid-cols-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Label, { children: "Startdatum *" }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Input3, { type: "date", value: closureStart, onChange: (e) => setClosureStart(e.target.value) })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Label, { children: "Enddatum *" }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Input3, { type: "date", value: closureEnd, onChange: (e) => setClosureEnd(e.target.value) })
+              ] })
             ] }),
-            a.reason && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
-              "Grund: ",
-              a.reason
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Label, { children: "Grund (optional)" }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Textarea, { value: closureReason, onChange: (e) => setClosureReason(e.target.value), placeholder: "z. B. Betriebsferien, Fortbildung..." })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex gap-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Button3, { variant: "outline", onClick: resetClosureForm, children: "Abbrechen" }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Button3, { onClick: handleSaveClosure, disabled: !closureStart || !closureEnd, children: "Speichern" })
             ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleDelete(a.id), children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Trash2, { className: "h-4 w-4 text-destructive" }) })
-        ] }) }, a.id))
+          ] })
+        ] }),
+        loading && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "text-muted-foreground", children: "Lade Praxisschlie\xDFungen..." }),
+        /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-3", children: [
+          closures.length === 0 && !loading && /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(CardContent, { className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)("p", { className: "text-muted-foreground", children: "Keine Praxisschlie\xDFungen eingetragen." }) }) }),
+          closures.map((c) => /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Card, { children: /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)(CardContent, { className: "py-4 flex items-center justify-between", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "space-y-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Building2, { className: "h-4 w-4 text-muted-foreground" }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("span", { className: "font-medium", children: [
+                  c.start_date,
+                  " bis ",
+                  c.end_date
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Badge, { variant: "outline", children: "Ganze Praxis" })
+              ] }),
+              c.reason && /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("p", { className: "text-xs text-muted-foreground", children: [
+                "Grund: ",
+                c.reason
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime31.jsxs)("div", { className: "flex items-center gap-1", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => openEditClosureForm(c), children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Pencil, { className: "h-4 w-4" }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Button3, { size: "sm", variant: "ghost", onClick: () => handleDeleteClosure(c.id), children: /* @__PURE__ */ (0, import_jsx_runtime31.jsx)(Trash2, { className: "h-4 w-4 text-destructive" }) })
+            ] })
+          ] }) }, c.id))
+        ] })
       ] })
     ] });
   }
@@ -24211,6 +24494,14 @@ lucide-react/dist/esm/createLucideIcon.js:
    *)
 
 lucide-react/dist/esm/icons/bell.js:
+  (**
+   * @license lucide-react v0.378.0 - ISC
+   *
+   * This source code is licensed under the ISC license.
+   * See the LICENSE file in the root directory of this source tree.
+   *)
+
+lucide-react/dist/esm/icons/building-2.js:
   (**
    * @license lucide-react v0.378.0 - ISC
    *

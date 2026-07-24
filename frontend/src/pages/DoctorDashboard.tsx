@@ -20,10 +20,16 @@ interface DoctorInfo {
   color: string | null;
 }
 
+function fmtClosureDate(iso: string): string {
+  const [, m, d] = iso.split("-");
+  return d + "." + m + ".";
+}
+
 export default function DoctorDashboard() {
   const navigate = useNavigate();
   const [doctorInfo, setDoctorInfo] = useState<DoctorInfo | null>(null);
   const [pendingRx, setPendingRx] = useState<PrescriptionSummary[]>([]);
+  const [upcomingClosure, setUpcomingClosure] = useState<{ start_date: string; end_date: string; reason: string | null } | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem("doctor_info");
@@ -38,6 +44,9 @@ export default function DoctorDashboard() {
     } else {
       navigate("/doctor-login");
     }
+    get<{ start_date: string; end_date: string; reason: string | null } | null>("/practice-closures/upcoming").then((r) => {
+      if (r.success) setUpcomingClosure(r.data || null);
+    });
   }, []);
 
   if (!doctorInfo) return null;
@@ -48,6 +57,13 @@ export default function DoctorDashboard() {
         <h1 className="text-2xl font-semibold">Willkommen, Dr. {doctorInfo.last_name}</h1>
         <p className="text-muted-foreground">Arzt-Portal</p>
       </div>
+
+      {upcomingClosure && (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+          ⚠️ Praxisschließung: {fmtClosureDate(upcomingClosure.start_date)} – {fmtClosureDate(upcomingClosure.end_date)}{upcomingClosure.end_date.slice(0, 4)}
+          {upcomingClosure.reason && ` (${upcomingClosure.reason})`}
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="grid gap-4 md:grid-cols-3">

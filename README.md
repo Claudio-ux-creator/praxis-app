@@ -1,13 +1,28 @@
 # Praxis-App Demir & Kollegen
 
-Online-Terminverwaltung zur Reduzierung des Telefonstresses für medizinische Fachangestellte (MFAs).
+Online-Terminverwaltung zur Reduzierung des Telefonstresses fÃ¼r medizinische Fachangestellte (MFAs).
 
-## Überblick
+## Verwendetes KI-Tool/Modell
+- **ChatGPT** â€“ fÃ¼r den GroÃŸteil der Entwicklung
+- **Claude** â€“ fÃ¼r die finalen Schritte, nachdem die ChatGPT-Tokens aufgebraucht waren
 
-Patienten können online Termine buchen, Impfserien planen und Wiederholungsrezepte anfragen.
+## Abgabe
+- Repo: [praxis-app](https://github.com/Claudio-ux-creator/praxis-app) (Ã¶ffentlich)
+- Commit-Historie: mehrere Commits Ã¼ber den gesamten Entwicklungsverlauf (kein einzelner â€žFinal"-Commit)
+
+## Setup
+1. Backend starten: `cd backend && npm run dev`
+2. Frontend bauen (einmalig, bzw. nach jeder Ã„nderung an `frontend/src`): `cd frontend && node build.cjs`
+3. App Ã¶ffnen: http://localhost:3000
+
+> Hinweis: Das Frontend wird nicht per `npm run dev` (Vite-Dev-Server) betrieben, sondern per esbuild zu einer einzelnen `build/app.js` gebÃ¼ndelt und vom Backend unter Port 3000 mit ausgeliefert. Details siehe [Installation & Start](#installation--start) weiter unten.
+
+## Ãœberblick
+
+Patienten kÃ¶nnen online Termine buchen, Impfserien planen und Wiederholungsrezepte anfragen.
 Das MFA-Dashboard bietet eine 3-Spalten-Ansicht mit heutigen Terminen, offenen Rezeptanfragen
 und Akutsprechstunden-Verwaltung. Automatische Benachrichtigungen reduzieren No-Shows.
-Ärzte können Rezepte freigeben, Stammdaten pflegen, Diagnosen verwalten und Abwesenheiten eintragen.
+Ã„rzte kÃ¶nnen Rezepte freigeben, Stammdaten pflegen, Diagnosen verwalten und Abwesenheiten eintragen.
 
 ## Technologie-Stack
 
@@ -22,35 +37,35 @@ und Akutsprechstunden-Verwaltung. Automatische Benachrichtigungen reduzieren No-
 
 ### Patienten-Portal (/patient)
 - **Termin buchen** - 5-Stufen-Flow: Login -> Terminart -> Arzt -> Datum/Zeit -> Fragebogen
-- **Impfserien** - FSME, Hepatitis B, HPV, COVID-19 als Mehrfachbuchung (1. Dosis sofort, Folgedosen bestätigbar)
-- **Meine Termine** - Übersicht aller Termine und Serien mit Bestätigungs-Button für ausstehende Dosen
-- **Meine Rezepte** - Statusübersicht aller Rezeptanfragen (ausstehend, in Prüfung, freigegeben, abgelehnt)
-- **Einstellungen** - E-Mail-Adresse und Opt-in für Erinnerungen verwalten
+- **Impfserien** - FSME, Hepatitis B, HPV, COVID-19 als Mehrfachbuchung (1. Dosis sofort, Folgedosen bestÃ¤tigbar)
+- **Meine Termine** - Ãœbersicht aller Termine und Serien mit BestÃ¤tigungs-Button fÃ¼r ausstehende Dosen
+- **Meine Rezepte** - StatusÃ¼bersicht aller Rezeptanfragen (ausstehend, in PrÃ¼fung, freigegeben, abgelehnt)
+- **Einstellungen** - E-Mail-Adresse und Opt-in fÃ¼r Erinnerungen verwalten
 
 ### MFA-Dashboard (/mfa)
-- **Heutige Termine** - Liste mit Statusänderung (Check-In, No-Show, Abschluss) + Notiz-Funktion
-- **Offene Rezeptanfragen** - Workflow: Neu (PENDING) - MFA prüft - an Arzt weiterleiten (mfa_approved) oder ablehnen (mfa_rejected)
-- **Akutslots** - Übersicht aller Akutslots für Ärzte mit aktiver Akutsprechstunde. MFA bucht Patienten manuell ein und kann Buchungen stornieren.
+- **Heutige Termine** - Liste mit StatusÃ¤nderung (Check-In, No-Show, Abschluss) + Notiz-Funktion
+- **Offene Rezeptanfragen** - Workflow: Neu (PENDING) - MFA prÃ¼ft - an Arzt weiterleiten (mfa_approved) oder ablehnen (mfa_rejected)
+- **Akutslots** - Ãœbersicht aller Akutslots fÃ¼r Ã„rzte mit aktiver Akutsprechstunde. MFA bucht Patienten manuell ein und kann Buchungen stornieren.
 - **Rezeptverwaltung** - Alle Rezepte mit Filter nach Status (PENDING, mfa_approved, mfa_rejected, auto_rejected, doctor_approved, doctor_rejected, collected)
-- **Patientenübersicht** - Suche nach Versichertennummer, Name oder Telefon
-- **Impfungen** - Übersicht aller Impftermine (einzeln und als Serie)
+- **PatientenÃ¼bersicht** - Suche nach Versichertennummer, Name oder Telefon
+- **Impfungen** - Ãœbersicht aller Impftermine (einzeln und als Serie)
 - **Erinnerungs-Zentrale** - Ausstehende Erinnerungen anzeigen, generieren und verarbeiten
 
 ### Arzt-Bereich (/doctor-login)
 - **Dashboard** - Termine des Tages, offene Rezeptanfragen, Patienten-Diagnosen
-- **Rezept-Freigabe** - Geprüfte Rezepte freigeben oder ablehnen + eigenes Rezept ausstellen
+- **Rezept-Freigabe** - GeprÃ¼fte Rezepte freigeben oder ablehnen + eigenes Rezept ausstellen
 
-- **Akutsprechstunde** - Separater Menüpunkt: Akutsprechstunde für beliebige Daten festlegen (Datum, Beginn, Ende, Slot-Intervall, max. Slots, Aktiv/Inaktiv)
+- **Akutsprechstunde** - Separater MenÃ¼punkt: Akutsprechstunde fÃ¼r beliebige Daten festlegen (Datum, Beginn, Ende, Slot-Intervall, max. Slots, Aktiv/Inaktiv)
 
 - **Abwesenheiten** - Urlaub/Abwesenheit pro Datumsbereich eintragen (blockiert Buchungen + Rezept-Workflow)
 
-### Geschäftslogik
+### GeschÃ¤ftslogik
 ## Rezept-Workflow (2-Stufen-Freigabe)
 
 Patient fordert Rezept an (PENDING):
-- Prüfung auf letzte Kontrolluntersuchung (12 Monate) - bei fehlender Untersuchung automatische Ablehnung (auto_rejected)
-- MFA prüft: 'An Arzt weiterleiten' (mfa_approved) oder 'Ablehnen' (mfa_rejected)
-- Arzt prüft: 'Freigeben' (doctor_approved) oder 'Ablehnen' (doctor_rejected)
+- PrÃ¼fung auf letzte Kontrolluntersuchung (12 Monate) - bei fehlender Untersuchung automatische Ablehnung (auto_rejected)
+- MFA prÃ¼ft: 'An Arzt weiterleiten' (mfa_approved) oder 'Ablehnen' (mfa_rejected)
+- Arzt prÃ¼ft: 'Freigeben' (doctor_approved) oder 'Ablehnen' (doctor_rejected)
 - MFA markiert als 'Abgeholt' (collected)
 
 ## Akutsprechstunde (Akutslots)
@@ -60,22 +75,23 @@ Patient fordert Rezept an (PENDING):
 1. **Arzt konfiguriert** unter `/doctor/acute-hours` einen oder mehrere Tage mit Akutsprechstunde:
    - Datum, Beginn (z. B. 08:00) und Ende (z. B. 12:00)
    - Slot-Intervall (z. B. alle 30 Minuten) und maximale Slot-Anzahl (z. B. 5)
-   - Aktiv/Inaktiv-Schalter – nur aktive Einträge erzeugen Slots
-2. **Automatische Slot-Generierung** beim ersten Aufruf des MFA-Dashboards für ein Datum:
+   - Aktiv/Inaktiv-Schalter - nur aktive EintrÃ¤ge erzeugen Slots
+2. **Automatische Slot-Generierung** beim ersten Aufruf des MFA-Dashboards fÃ¼r ein Datum:
    - Pro Arzt mit aktiver `doctor_acute_hours`-Eintrag werden Slots in der `acute_slots`-Tabelle angelegt
-   - Einmalig pro Tag/Arzt – nachträgliche Änderungen an der Konfiguration erzeugen keine neuen Slots
+   - Einmalig pro Tag/Arzt - nachtrÃ¤gliche Ã„nderungen an der Konfiguration erzeugen keine neuen Slots
 3. **MFA bucht Patienten manuell ein** im Dashboard (rechte Spalte):
    - Freie Slots anzeigen, Patientenname + Telefon eintragen, buchen
-   - Gebuchte Slots können storniert werden
-   - Keine Patient-ID erforderlich – auch Laufkundschaft ohne Stammdaten-Eintrag buchbar
-4. **Validierung**: Buchung nur gleicher Tag ab 07:00 Uhr, nur für Ärzte mit aktiver Akutsprechstunde
+   - Gebuchte Slots kÃ¶nnen storniert werden
+   - Keine Patient-ID erforderlich - auch Laufkundschaft ohne Stammdaten-Eintrag buchbar
+4. **Validierung**: Buchung nur gleicher Tag ab 07:00 Uhr, nur fÃ¼r Ã„rzte mit aktiver Akutsprechstunde
 
-- **No-Show-Sperre** - Ab 3 versäumten Terminen keine Online-Buchung mehr möglich
+- **No-Show-Management** - Automatischer tÃ¤glicher Check markiert vergangene, nicht abgeschlossene/abgesagte Termine als No-Show; ab 2 No-Shows Erinnerung, ab 3 Online-Sperre (`is_blocked`, von MFA manuell aufhebbar)
+- **Termin absagen/verschieben (Patient)** - Bis 2 Stunden vor dem Termin, Verschieben nur auf freie Slots
 - **Akutslots** - Automatische Generierung aus eingetragenen Akutsprechstunden, MFA bucht manuell ein, nur gleicher Tag ab 07:00 Uhr, fest pro Arzt zugewiesen
-- **Praxis-Schließungen** - Pro Arzt oder gesamte Praxis, blockiert Buchungen und Rezept-Workflow
+- **PraxisschlieÃŸungen** - Zeitraum fÃ¼r die gesamte Praxis; storniert automatisch betroffene Termine und benachrichtigt Patienten, Hinweisbanner im MFA-/Arzt-Dashboard
 - **Fragebogen** - Max. 5 Fragen pro Terminart, Pflichtfelder werden validiert
-- **Verschreibungspflicht-Prüfung** - MFA prüft Medikament auf Rezeptpflicht und Konsultationsfrist vor Weiterleitung an Arzt
-- **DSGVO** - Opt-in für Benachrichtigungen, minimale Datenspeicherung
+- **Verschreibungspflicht-PrÃ¼fung** - MFA prÃ¼ft Medikament auf Rezeptpflicht und Konsultationsfrist vor Weiterleitung an Arzt
+- **DSGVO** - Opt-in fÃ¼r Benachrichtigungen, minimale Datenspeicherung
 
 ## Installation & Start
 
@@ -96,29 +112,29 @@ cd backend
 node --experimental-strip-types src/index.ts
 ```
 
-Der Server läuft auf http://localhost:3000. Bei Port-Konflikt wird automatisch Port 3001 usw. probiert.
+Der Server lÃ¤uft auf http://localhost:3000. Bei Port-Konflikt wird automatisch Port 3001 usw. probiert.
 
 ### Frontend bauen
 
-Das Frontend wird mit esbuild in eine IIFE-Datei gebündelt und vom Backend als Static-File ausgeliefert:
+Das Frontend wird mit esbuild in eine IIFE-Datei gebÃ¼ndelt und vom Backend als Static-File ausgeliefert:
 
 ```bash
 cd frontend
 node build.cjs
 ```
 
-Dann http://localhost:3000 im Browser öffnen.
+Dann http://localhost:3000 im Browser Ã¶ffnen.
 
 ### Datenbank
 
 Die SQLite-Datenbank liegt unter backend/prisma/praxis.db.
-Migrationen (Tabellen + Seed-Daten) werden beim Backend-Start automatisch ausgeführt.
+Migrationen (Tabellen + Seed-Daten) werden beim Backend-Start automatisch ausgefÃ¼hrt.
 
 Enthaltene Seed-Daten:
-- **3 Ärzte**: Ahmet Demir, Fatma Demir, Mehmet Kollegen
+- **3 Ã„rzte**: Ahmet Demir, Fatma Demir, Mehmet Kollegen
 - **2 MFAs**: Ayse Yilmaz, Ali Kaya
 - **1 Test-Patient**: Max Mustermann (Versichertennummer: A123456789, Geburtsdatum: 1990-05-15)
-- **Fragebögen**: Für Vorsorge (5), Beratung (3), Impfung (3)
+- **FragebÃ¶gen**: FÃ¼r Vorsorge (5), Beratung (3), Impfung (3)
 - **5 Impfvorlagen**: FSME, Hepatitis B, HPV, COVID-19, Tetanus/Diphtherie
 - **10 Medikamente**: Ibuprofen, Paracetamol, Amoxicillin, Metformin u. a.
 
@@ -130,33 +146,56 @@ Enthaltene Seed-Daten:
 |---|---|---|
 | GET | /api/health | Server-Status + DB-Statistiken |
 
-### Ärzte & Slots
+### Ã„rzte & Slots
 
 | Methode | Endpunkt | Beschreibung |
 |---|---|---|
-| GET | /api/doctors | Alle Ärzte mit Farbe und Akutslot-Kontingent |
+| GET | /api/doctors | Alle Ã„rzte mit Farbe und Akutslot-Kontingent |
 | GET | /api/slots | Freie Online-Buchungsslots (Query: doctorId, date, category) |
-| GET | /api/slots/acute | Verbleibende Akutslots pro Arzt (heute) – siehe Akutslots-API |
+| GET | /api/slots/acute | Verbleibende Akutslots pro Arzt (heute) - siehe Akutslots-API |
 
 ### Patienten
 
 | Methode | Endpunkt | Beschreibung |
 |---|---|---|
-| POST | /api/patients/lookup | Patient per Versichertennummer + Geburtsdatum suchen |
-| GET | /api/patients | Alle Patienten (MFA) |
+| POST | /api/patients/lookup | Patient per Versichertennummer (+ optional Geburtsdatum) suchen |
+| GET | /api/patients/search | Live-Suche per Versichertennummer oder Name (AutovervollstÃ¤ndigung, Duplikat-Erkennung) |
+| GET | /api/patients | Alle Patienten (MFA), inkl. no_show_count + is_blocked |
+| PATCH | /api/patients/:id/unblock | Online-Sperre eines Patienten manuell aufheben (MFA) |
 | GET | /api/patients/:id/reminder-settings | Opt-in-Status abrufen |
-| PATCH | /api/patients/:id/reminder-settings | Opt-in + E-Mail ändern |
+| PATCH | /api/patients/:id/reminder-settings | Opt-in + E-Mail Ã¤ndern |
 
 ### Termine
 
 | Methode | Endpunkt | Beschreibung |
 |---|---|---|
-| POST | /api/appointments | Termin buchen (mit No-Show-Prüfung + Fragebogen) |
+| POST | /api/appointments | Termin buchen (PraxisschlieÃŸung/Abwesenheit/Sperre werden geprÃ¼ft) |
 | GET | /api/appointments | Termine eines Patienten (Query: insuranceNumber) |
-| PATCH | /api/appointments/:id/status | Status ändern (MFA) |
+| PATCH | /api/appointments/:id/status | Status Ã¤ndern (MFA) |
 | PATCH | /api/appointments/:id/note | MFA-Notiz speichern |
-| POST | /api/appointments/series | Impfserie buchen (mehrere Dosen) |
-| PATCH | /api/appointments/:id/confirm-series | Folgetermin bestätigen |
+| PATCH | /api/appointments/:id/cancel | Patient sagt eigenen Termin ab (bis 2h vorher, sonst 409) |
+| PATCH | /api/appointments/:id/reschedule | Patient verschiebt eigenen Termin auf einen freien Slot (bis 2h vorher) |
+| POST | /api/appointments/series | Impfserie buchen (mehrere Dosen, berechnet Folgetermine automatisch) |
+| PATCH | /api/appointments/:id/confirm-series | Ganze Impfserie bestÃ¤tigen |
+| PATCH | /api/appointments/:id/confirm-suggestion | Einzelnen Folgetermin-Vorschlag bestÃ¤tigen |
+| PATCH | /api/appointments/:id/reject-suggestion | Einzelnen Folgetermin-Vorschlag ablehnen |
+| PATCH | /api/mfa/appointments/:id/move | Termin durch MFA verschieben (Konflikt-/AbwesenheitsprÃ¼fung) |
+
+### PraxisschlieÃŸungen
+
+| Methode | Endpunkt | Beschreibung |
+|---|---|---|
+| GET | /api/practice-closures | Alle PraxisschlieÃŸungen |
+| GET | /api/practice-closures/upcoming | Aktuelle/nÃ¤chste SchlieÃŸung (Dashboard-Hinweis) |
+| POST | /api/practice-closures | SchlieÃŸung anlegen (storniert automatisch betroffene Termine + benachrichtigt Patienten) |
+| PATCH | /api/practice-closures/:id | SchlieÃŸung bearbeiten |
+| DELETE | /api/practice-closures/:id | SchlieÃŸung lÃ¶schen |
+
+### No-Show-Management
+
+| Methode | Endpunkt | Beschreibung |
+|---|---|---|
+| POST | /api/mfa/run-no-show-check | TÃ¤glichen No-Show-Check manuell auslÃ¶sen (lÃ¤uft sonst automatisch alle 24h) |
 
 ### Rezepte
 
@@ -167,7 +206,7 @@ Enthaltene Seed-Daten:
 | POST | /api/prescriptions/request | Patient reicht Medikamentenanfrage ein |
 | POST | /api/prescriptions | Neues Rezept anlegen (MFA) |
 | PATCH | /api/prescriptions/:id/status | Status-Workflow (MFA: IN_PROGRESS, COLLECTED) |
-| POST | /api/mfa/prescriptions/:id/forward | MFA prüft Rezept und leitet an Arzt weiter |
+| POST | /api/mfa/prescriptions/:id/forward | MFA prÃ¼ft Rezept und leitet an Arzt weiter |
 
 ### Arzt-Bereich
 
@@ -180,13 +219,13 @@ Enthaltene Seed-Daten:
 | GET | /api/doctor/medications | Medikamentenliste |
 | POST | /api/doctor/medications | Neues Medikament anlegen |
 | PATCH | /api/doctor/medications/:id | Medikament bearbeiten |
-| DELETE | /api/doctor/medications/:id | Medikament löschen |
+| DELETE | /api/doctor/medications/:id | Medikament lÃ¶schen |
 | GET | /api/doctor/diagnoses | Diagnosen abrufen (Query: patientId oder insuranceNumber) |
 | POST | /api/doctor/diagnoses | Neue Diagnose eintragen |
 | PATCH | /api/doctor/diagnoses/:id | Diagnose bearbeiten |
 | GET | /api/doctor/absences | Abwesenheiten des Arztes |
 | POST | /api/doctor/absences | Abwesenheit eintragen |
-| DELETE | /api/doctor/absences/:id | Abwesenheit löschen |
+| DELETE | /api/doctor/absences/:id | Abwesenheit lÃ¶schen |
 | GET | /api/doctor/dashboard | Dashboard-Daten (Termine + Rezepte + Diagnosen) |
 
 ### Akutslots & Akutsprechstunde
@@ -194,8 +233,8 @@ Enthaltene Seed-Daten:
 | Methode | Endpunkt | Beschreibung |
 |---|---|---|
 | GET | /api/acute-slots?date=YYYY-MM-DD | Akutslots abrufen (on-demand generiert aus `doctor_acute_hours`) |
-| POST | /api/acute-slots/:id/book | Slot manuell buchen (MFA) – patientName, phone, bookedByMfaId |
-| POST | /api/acute-slots/:id/cancel | Buchung stornieren (setzt Slot zurück) |
+| POST | /api/acute-slots/:id/book | Slot manuell buchen (MFA) - patientName, phone, bookedByMfaId |
+| POST | /api/acute-slots/:id/cancel | Buchung stornieren (setzt Slot zurÃ¼ck) |
 | GET | /api/acute-slots/doctor-hours?doctorId=X&date=YYYY-MM-DD | Akutsprechstunden-Einstellung eines Arztes abrufen |
 | POST | /api/acute-slots/doctor-hours | Akutsprechstunde speichern (UPSERT per `doctor_id` + `date`) |
 
@@ -219,7 +258,7 @@ Enthaltene Seed-Daten:
 | POST | /api/reminders/process | Erinnerungen generieren + senden (Simulation) |
 | GET | /api/reminders/dashboard | Erinnerungs-Statistiken + Verlauf |
 
-### Verfügbarkeit
+### VerfÃ¼gbarkeit
 
 | Methode | Endpunkt | Beschreibung |
 |---|---|---|
@@ -232,55 +271,66 @@ Enthaltene Seed-Daten:
 
 1. /patient aufrufen
 2. Versichertennummer eingeben (z. B. A123456789)
-3. Terminart auswählen (Vorsorge, Beratung, Impfung, Rezept-Abholung)
-4. Bei Impfung: Einzeltermin oder Impfserie wählen
-5. Arzt auswählen
+3. Terminart auswÃ¤hlen (Vorsorge, Beratung, Impfung, Rezept-Abholung)
+4. Bei Impfung: Einzeltermin oder Impfserie wÃ¤hlen
+5. Arzt auswÃ¤hlen
 6. Datum im Kalender + freie Uhrzeit klicken
-7. Fragebogen ausfüllen (Pflichtfelder sind markiert)
+7. Fragebogen ausfÃ¼llen (Pflichtfelder sind markiert)
 8. Termin verbindlich buchen
 
-### Impfserie bestätigen (Patient)
+### Impfserie bestÃ¤tigen (Patient)
 
 1. Nach Anmeldung Meine Termine klicken
-2. Unter Bestätigung ausstehend den Bestätigen-Button klicken
-3. Status wechselt von Bestätigung ausstehend zu Gebucht
+2. Unter BestÃ¤tigung ausstehend den BestÃ¤tigen-Button klicken
+3. Status wechselt von BestÃ¤tigung ausstehend zu Gebucht
 
 ### MFA-Dashboard bedienen
 
 1. /mfa aufrufen
-2. Linke Spalte: Termin-Status per Klick ändern (Check-In, No-Show, Abschluss)
-3. Notiz-Button: Notiz zu einem Termin hinzufügen
-4. Mitte Spalte (Rezepte): Rezept prüfen - 'An Arzt weiterleiten' oder 'Ablehnen'
-5. Bei Status doctor_approved: 'Abgeholt'-Button zum Abschließen
+2. Linke Spalte: Termin-Status per Klick Ã¤ndern (Check-In, No-Show, Abschluss)
+3. Notiz-Button: Notiz zu einem Termin hinzufÃ¼gen
+4. Mitte Spalte (Rezepte): Rezept prÃ¼fen - 'An Arzt weiterleiten' oder 'Ablehnen'
+5. Bei Status doctor_approved: 'Abgeholt'-Button zum AbschlieÃŸen
 6. + Neues Rezept anlegen: Versichertennummer + Medikament eingeben
 7. Rechte Spalte (Akutslots): Freie Slots pro Arzt anzeigen, Patienten manuell eintragen und buchen, Buchungen stornieren
-7. Erinnerungs-Zentrale: Im Menü aufrufbar - Jetzt verarbeiten und senden
+7. Erinnerungs-Zentrale: Im MenÃ¼ aufrufbar - Jetzt verarbeiten und senden
 
 ### Arzt-Bereich
 
 1. /doctor-login aufrufen, mit Vor- und Nachname anmelden (z. B. Ahmet / Demir)
 2. Dashboard: Termine + Rezepte + schnelle Diagnose-Ansicht
-3. Rezept-Freigabe: Rezepte prüfen, freigeben oder ablehnen; eigenes Rezept ausstellen
+3. Rezept-Freigabe: Rezepte prÃ¼fen, freigeben oder ablehnen; eigenes Rezept ausstellen
 4. Stammdaten: Medikamente verwalten, Diagnosen mit ICD-Code eintragen
 5. Abwesenheiten: Urlaubstage eintragen - Buchungen und Rezept-Workflow werden blockiert
 
 ## Datenbank-Migrationen
 
-Migrationen werden beim Backend-Start automatisch ausgeführt:
+Migrationen werden beim Backend-Start automatisch ausgefÃ¼hrt:
 
-| # | Name | Änderung |
+| # | Name | Ã„nderung |
 |---|---|---|
 | 0001 | Init | Alle Basistabellen (patients, doctors, appointments, prescriptions u. a.) + Seed-Daten |
 | 0002 | Fragebogen | questionnaire_answers-Tabelle |
 | 0003 | Impfserien | vaccination_templates-Tabelle |
 | 0005 | Erinnerungen | reminders-Tabelle |
 | 0006 | Arzt-Dashboard | medications- und diagnoses-Tabellen |
-| 0007 | Verfügbarkeit | doctor_availability-Tabelle mit Sprechzeiten |
+| 0007 | VerfÃ¼gbarkeit | doctor_availability-Tabelle mit Sprechzeiten |
 | 0008 | Benachrichtigungen | patient_notifications-Tabelle |
-| 0009 | Rezept-Fragen | Frage für PRESCRIPTION_PICKUP-Kategorie
+| 0009 | Rezept-Fragen | Frage fÃ¼r PRESCRIPTION_PICKUP-Kategorie
 | 0010 | Rezept-Workflow | 2-Stufen-Freigabe (MFA - Arzt), neue Status und Felder
 | 0011 | Akutslots | acute_slots-Tabelle: Slots pro Arzt/Datum/Zeit mit MFA-Buchungsdaten
-| 0012 | Arzt-Akutsprechstunde | doctor_acute_hours-Tabelle: Ärzte konfigurieren Akutsprechstunden pro Datum |
+| 0012 | Arzt-Akutsprechstunde | doctor_acute_hours-Tabelle: Ã„rzte konfigurieren Akutsprechstunden pro Datum |
+| 0013 | MFA-Patientenfelder | Zusatzfelder fÃ¼r MFA-verwaltete Patienten |
+| 0014 | Diagnosen-Historie | Ã„nderungsnachvollziehbarkeit fÃ¼r Diagnosen (Spalten) |
+| 0015 | Diagnosen-CRUD | diagnosis_history-Tabelle |
+| 0016 | Kritische Medikamente | Verwaltung rezeptpflichtiger/kritischer Medikamente |
+| 0017 | Auto-Reject-Status | Automatische Ablehnung bei fehlender Kontrolluntersuchung |
+| 0018 | Impfserien-Tracking | vaccination_series- und followup_reminders-Tabellen |
+| 0019 | Impf-Frage entfernt | Redundante Fragebogen-Frage fÃ¼r Impfungen entfernt |
+| 0020 | PraxisschlieÃŸungen | practice_closures-Tabelle (Start-/Enddatum, Grund) |
+| 0021 | Termin-Historie | appointment_history-Tabelle (Stornierungen, Verschiebungen) |
+| 0022 | No-Show-Tracking | no_show_warning_sent- und is_blocked-Spalten auf patients |
+| 0023 | Termin-Historie erweitert | appointment_history um Aktion NO_SHOW erweitert |
 
 ## Projektstruktur
 
@@ -288,12 +338,12 @@ Migrationen werden beim Backend-Start automatisch ausgeführt:
 praxis-app/
 +-- backend/
 |   +-- prisma/
-|   |   +-- migrations/       # SQL-Migrationen (werden automatisch ausgeführt)
+|   |   +-- migrations/       # SQL-Migrationen (werden automatisch ausgefÃ¼hrt)
 |   |   +-- praxis.db         # SQLite-Datenbank
 |   +-- src/
 |       +-- db/               # DB-Connection + Migration
 |       +-- routes/           # Express-Router (TypeScript)
-|       +-- services/         # Business-Logik (absenceCheck)
+|       +-- services/         # Business-Logik (absenceCheck, noShowCheck)
 |       +-- index.ts          # Server-Einstiegspunkt
 +-- frontend/
 |   +-- src/
@@ -303,7 +353,7 @@ praxis-app/
 |   |   +-- lib/              # API-Client, Utils
 |   |   +-- pages/            # 17 Seiten (Patient, MFA, Arzt)
 |   |   +-- App.tsx           # Router-Konfiguration
-|   |   +-- entry-umd.tsx     # Einstiegspunkt für esbuild-Bundle
+|   |   +-- entry-umd.tsx     # Einstiegspunkt fÃ¼r esbuild-Bundle
 |   +-- build.cjs             # esbuild-Build-Script
 |   +-- index.html            # HTML-Template
 |   +-- build/app.js          # Kompilierte Bundle-Datei

@@ -1,0 +1,1 @@
+﻿-- AUTO_REJECTED_CRITICAL status is handled in application code (no schema change needed)
